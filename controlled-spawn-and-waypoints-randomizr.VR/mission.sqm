@@ -12,19 +12,18 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={4321.0112,253.87442,2241.8569};
-		dir[]={-0.006269441,-0.99901122,0.04401673};
-		up[]={-0.14087056,0.044457171,0.98902929};
-		aside[]={0.99000823,4.6566129e-010,0.14100999};
+		pos[]={4019.5015,72.579941,2242.311};
+		dir[]={0.078918263,-0.4382886,0.89536595};
+		up[]={0.038482014,0.89883423,0.43659702};
+		aside[]={0.99614036,8.0326572e-009,-0.08780054};
 	};
 };
 binarizationWanted=0;
-sourceName="controlled-waypoints-randomizr";
+sourceName="controlled-spawn-and-waypoints-randomizr";
 addons[]=
 {
 	"A3_Characters_F",
 	"A3_Weapons_F",
-	"ace_optics",
 	"A3_Structures_F_Walls",
 	"A3_Ui_F",
 	"A3_Structures_F_Mil_Cargo",
@@ -35,7 +34,7 @@ class AddonsMetaData
 {
 	class List
 	{
-		items=7;
+		items=6;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -52,33 +51,26 @@ class AddonsMetaData
 		};
 		class Item2
 		{
-			className="ace_optics";
-			name="ACE3 - Optics";
-			author="ACE-Team";
-			url="http://ace3mod.com/";
-		};
-		class Item3
-		{
 			className="A3_Structures_F";
 			name="Arma 3 - Buildings and Structures";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item4
+		class Item3
 		{
 			className="A3_Ui_F";
 			name="Arma 3 - User Interface";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item5
+		class Item4
 		{
 			className="A3_Structures_F_Mil";
 			name="Arma 3 - Military Buildings and Structures";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item6
+		class Item5
 		{
 			className="A3_Modules_F_Curator";
 			name="Arma 3 Zeus Update - Scripted Modules";
@@ -206,25 +198,6 @@ class Mission
 					{
 						class Attribute0
 						{
-							property="ace_isEngineer";
-							expression="if !(_value == ([0, 1] select (_this getUnitTrait 'engineer')) || {_value == -1}) then {_this setVariable ['ace_isEngineer', _value, true]}";
-							class Value
-							{
-								class data
-								{
-									class type
-									{
-										type[]=
-										{
-											"SCALAR"
-										};
-									};
-									value=2;
-								};
-							};
-						};
-						class Attribute1
-						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -242,45 +215,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
-						{
-							property="ace_isEOD";
-							expression="_this setVariable ['ACE_isEOD', _value, true]";
-							class Value
-							{
-								class data
-								{
-									class type
-									{
-										type[]=
-										{
-											"BOOL"
-										};
-									};
-									value=1;
-								};
-							};
-						};
-						class Attribute3
-						{
-							property="pitch";
-							expression="_this setpitch _value;";
-							class Value
-							{
-								class data
-								{
-									class type
-									{
-										type[]=
-										{
-											"SCALAR"
-										};
-									};
-									value=1.04;
-								};
-							};
-						};
-						class Attribute4
+						class Attribute1
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -299,10 +234,10 @@ class Mission
 								};
 							};
 						};
-						class Attribute5
+						class Attribute2
 						{
-							property="ace_isMedic";
-							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							property="pitch";
+							expression="_this setpitch _value;";
 							class Value
 							{
 								class data
@@ -314,30 +249,11 @@ class Mission
 											"SCALAR"
 										};
 									};
-									value=2;
+									value=1.04;
 								};
 							};
 						};
-						class Attribute6
-						{
-							property="ace_advanced_fatigue_performanceFactor";
-							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
-							class Value
-							{
-								class data
-								{
-									class type
-									{
-										type[]=
-										{
-											"SCALAR"
-										};
-									};
-									value=2;
-								};
-							};
-						};
-						class Attribute7
+						class Attribute3
 						{
 							property="enableStamina";
 							expression="_this enablestamina _value;";
@@ -356,7 +272,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=8;
+						nAttributes=4;
 					};
 				};
 			};
