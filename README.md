@@ -1,2 +1,2 @@
-# Arma-3---Controlled-Waypoints-Randomizr
+# Arma-3-Controlled-Waypoints-Randomizr
 Soon.
