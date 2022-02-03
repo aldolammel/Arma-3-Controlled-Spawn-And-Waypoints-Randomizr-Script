@@ -1,0 +1,31 @@
+// MISSION CONFIGS
+class Header {
+	gameType 			= Sandbox; 	
+	minPlayers			= 1;		
+	maxPlayers			= 1;
+};
+
+	// About
+	onLoadName 			= "CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR";
+	author 				= "thy"; 						
+	overviewPicture 	= "images\thumb.jpg"; 			
+	onLoadMission 		= "A simple and controlled script of spawn and waypoints where groups of units and vehicles will be randomized through marks in your mission."; 
+
+	// Gameplay
+	joinUnassigned 		= 1;
+	respawnButton 		= 0;
+	respawnDialog 		= 0;
+	debriefing 			= 0;
+	saving 				= 0;
+	enableDebugConsole 	= 1;
+	
+	// Performance
+	DisabledAI				= 1;
+	corpseManagerMode 		= 1;
+	corpseLimit 			= 30;
+	corpseRemovalMinTime	= 1200;
+	corpseRemovalMaxTime 	= 3600;
+	wreckManagerMode 		= 1;
+	wreckLimit 				= 5;
+	wreckRemovalMinTime 	= 1200;
+	wreckRemovalMaxTime 	= 3600;
