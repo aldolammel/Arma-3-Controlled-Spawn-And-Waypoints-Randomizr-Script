@@ -1,4 +1,4 @@
-# Arma-3-Controlled-Waypoints-Randomizr
+# Arma-3-Controlled-Spawn-and-Waypoints-Randomizr
 
 **Faction Spawns:**
 Manually define which marks the faction can use as a spawn point. You can create unlimited spawn points for one or more factions. Once the spawn points are created, the script will spawn the groups randomly through the faction spawns.
@@ -14,6 +14,10 @@ Manually set the number of soldiers and vehicles per faction group type. There a
 
 **Strategy:**
 Manually define how many groups, what type of groups, and how the random moves of each group in the faction will be.
+
+----------
+# Ideas and fix?
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 Cheers, 
 thy.
