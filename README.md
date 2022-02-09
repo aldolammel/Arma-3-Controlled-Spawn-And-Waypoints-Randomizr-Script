@@ -1,4 +1,4 @@
-# Arma 3, Controlled Spawn and Waypoints Randomizr v.1.2
+# Arma 3, Controlled Spawn & Waypoints Randomizr v1.2
 
 A simple and controlled spawn and waypoints solution where groups of units and vehicles will be randomized through marks in your mission. 
 
