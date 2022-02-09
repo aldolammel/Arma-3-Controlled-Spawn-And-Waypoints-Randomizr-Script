@@ -6,13 +6,13 @@ class Header {
 };
 
 	// About
-	onLoadName 			= "CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR";
+	onLoadName 			= "SPAWN & WPs RANDOMIZR";
 	author 				= "thy"; 						
 	overviewPicture 	= "images\thumb.jpg"; 			
 	onLoadMission 		= "A simple and controlled script of spawn and waypoints where groups of units and vehicles will be randomized through marks in your mission."; 
 
 	// Gameplay
-	joinUnassigned 		= 1;
+	joinUnassigned 		= 0;
 	respawnButton 		= 0;
 	respawnDialog 		= 0;
 	debriefing 			= 0;

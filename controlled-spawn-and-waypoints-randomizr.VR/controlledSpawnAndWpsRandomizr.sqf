@@ -14,6 +14,9 @@
 */
 //---------------------
 
+publicVariable "goToDestinBlu", "goToDestinOp", "goToDestinInd", "goToDestinCiv", "goToSharedDestin", "goToAnywhere";
+private ["_bluAllSpawns","_opAllSpawns","_indAllSpawns","_civAllSpawns","_where","_wp","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy","_bluVehLight","_bluVehRegular","_bluVehHeavy","_opSquadLight","_opSquadRegular","_opSquadHeavy","_opVehLight","_opVehRegular","_opVehHeavy","_indSquadLight","_indSquadRegular","_indSquadHeavy","_indVehLight","_indVehRegular","_indVehHeavy","_civAlone","_civCouple","_civGang","_civVehLight","_civVehRegular","_civVehHeavy","_bluGroup","_bluVehSpawn","_bluVehPos","_bluVeh","_opGroup","_opVehSpawn","_opVehPos","_opVeh","_indGroup","_indVehSpawn","_indVehPos","_indVeh","_civGroup","_civVehSpawn","_civVehPos","_civVeh"];
+
 
 //
 // 
@@ -126,38 +129,46 @@
 // GROUPS: BLUFOR
 // Number of soldiers and type of faction squads.
 	// Soldiers
-	_bluSquadLight			= ["B_Soldier_TL_F", "B_soldier_AR_F"];
-	_bluSquadRegular 		= ["B_Soldier_TL_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F"];
-	_bluSquadHeavy 			= ["B_Soldier_TL_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F"];
+	_bluSquadLight	= ["B_Soldier_TL_F", "B_soldier_AR_F"];
+	_bluSquadRegular = ["B_Soldier_TL_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F"];
+	_bluSquadHeavy 	= ["B_Soldier_TL_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F", "B_soldier_AR_F"];
 	// Vehicles
-	_bluVehLight			= ["B_Quadbike_01_F"];
-	_bluVehRegular			= ["B_MRAP_01_hmg_F"];
-	_bluVehHeavy			= ["B_MBT_01_TUSK_F"];
+	_bluVehLight	= ["B_Quadbike_01_F"];
+	_bluVehRegular	= ["B_MRAP_01_hmg_F"];
+	_bluVehHeavy	= ["B_MBT_01_TUSK_F"];
 
 // GROUPS: OPFOR
 // Number of soldiers and type of faction squads.
 	// Soldiers
-	_opSquadLight			= ["O_Soldier_TL_F", "O_soldier_AR_F"];
-	_opSquadRegular			= ["O_Soldier_TL_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F"];
-	_opSquadHeavy			= ["O_Soldier_TL_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F"];
+	_opSquadLight	= ["O_Soldier_TL_F", "O_soldier_AR_F"];
+	_opSquadRegular	= ["O_Soldier_TL_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F"];
+	_opSquadHeavy	= ["O_Soldier_TL_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F", "O_soldier_AR_F"];
 	// Vehicles
-	_opVehLight				= ["O_Quadbike_01_F"];
-	_opVehRegular			= ["O_MRAP_02_hmg_F"];
-	_opVehHeavy				= ["O_MBT_02_cannon_F"];
+	_opVehLight		= ["O_Quadbike_01_F"];
+	_opVehRegular	= ["O_MRAP_02_hmg_F"];
+	_opVehHeavy		= ["O_MBT_02_cannon_F"];
 
 // GROUPS: INDEPENDENT
 // Number of soldiers and type of faction squads.
 	// Soldiers
-	_indSquadLight			= ["I_Soldier_TL_F", "I_Soldier_AR_F"];
-	_indSquadRegular		= ["I_Soldier_TL_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F"];
-	_indSquadHeavy			= ["I_Soldier_TL_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F"];
+	_indSquadLight	= ["I_Soldier_TL_F", "I_Soldier_AR_F"];
+	_indSquadRegular = ["I_Soldier_TL_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F"];
+	_indSquadHeavy	= ["I_Soldier_TL_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F", "I_Soldier_AR_F"];
 	// Vehicles
-	_indVehLight			= ["I_Quadbike_01_F"];
-	_indVehRegular			= ["I_MRAP_03_hmg_F"];
-	_indVehHeavy			= ["I_MBT_03_cannon_F"];
+	_indVehLight	= ["I_Quadbike_01_F"];
+	_indVehRegular	= ["I_MRAP_03_hmg_F"];
+	_indVehHeavy	= ["I_MBT_03_cannon_F"];
 
 // GROUPS: CIVILIAN
-// It works better setting the units directly in STRATEGY area below.
+// Number of people and type of their groups.
+	// People
+	_civAlone		= ["C_man_polo_1_F"];
+	_civCouple		= ["C_man_polo_1_F", "C_man_polo_2_F"];
+	_civGang		= ["C_man_polo_1_F", "C_man_polo_2_F", "C_man_polo_3_F", "C_man_polo_1_F"];
+	// Vehicles
+	_civVehLight	= ["C_Offroad_01_repair_F"];
+	_civVehRegular	= ["C_Offroad_01_repair_F"];
+	_civVehHeavy	= ["C_Offroad_01_repair_F"];
 
 	
 // ................................................................................................................................................
@@ -187,7 +198,7 @@
 
 						// Vehicles Blufor
 						_bluVehSpawn 	= getmarkerpos (selectRandom _bluAllSpawns);
-						_bluVehPos 		= _bluVehSpawn findEmptyPosition [2,20];
+						_bluVehPos 		= _bluVehSpawn findEmptyPosition [4,50];
 						_bluVeh 		= [_bluVehPos, BLUFOR, _bluVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 							[_bluVeh] spawn fnc_goToSharedDestin;
 
@@ -219,7 +230,7 @@
 		
 						// Vehicles Opfor
 						_opVehSpawn 	= getmarkerpos (selectRandom _opAllSpawns);
-						_opVehPos 		= _opVehSpawn findEmptyPosition [2,20];
+						_opVehPos 		= _opVehSpawn findEmptyPosition [4,50];
 						_opVeh 			= [_opVehPos, OPFOR, _opVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 							[_opVeh] spawn fnc_goToSharedDestin;
 							
@@ -253,7 +264,7 @@
 
 						// Vehicles Independent
 						_indVehSpawn 	= getmarkerpos (selectRandom _indAllSpawns);
-						_indVehPos 		= _indVehSpawn findEmptyPosition [2,20];
+						_indVehPos 		= _indVehSpawn findEmptyPosition [4,50];
 						_indVeh 		= [_indVehPos, INDEPENDENT, _indVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 							[_indVeh] spawn fnc_goToSharedDestin;
 						
@@ -262,26 +273,26 @@
 // Setting the group numbers and their destination.
 
 	// People Civilian 
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin;  
 		
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F","C_man_polo_2_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin;  
 		
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin;  
 		
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F","C_man_polo_2_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin; 
 		
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin;  
 		
-	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, ["C_man_polo_1_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+	_civGroup = [getmarkerpos (selectRandom _civAllSpawns), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 		[_civGroup] spawn fnc_goToSharedDestin; 
 
 						// Vehicles Civilian
 						_civVehSpawn 	= getmarkerpos (selectRandom _civAllSpawns);
-						_civVehPos 		= _civVehSpawn findEmptyPosition [2,20];
-						_civVeh 		= [_civVehPos, INDEPENDENT, ["C_Offroad_01_repair_F"],[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+						_civVehPos 		= _civVehSpawn findEmptyPosition [4,50];
+						_civVeh 		= [_civVehPos, CIVILIAN, _civVehLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 							[_civVeh] spawn fnc_goToSharedDestin;

@@ -13,9 +13,9 @@ class EditorData
 	class Camera
 	{
 		pos[]={4019.5015,72.579941,2242.311};
-		dir[]={0.078918263,-0.4382886,0.89536595};
-		up[]={0.038482014,0.89883423,0.43659702};
-		aside[]={0.99614036,8.0326572e-009,-0.08780054};
+		dir[]={0.078918256,-0.43828747,0.89536369};
+		up[]={0.038481906,0.89883482,0.43659481};
+		aside[]={0.9961381,0,-0.087800607};
 	};
 };
 binarizationWanted=0;
@@ -24,6 +24,7 @@ addons[]=
 {
 	"A3_Characters_F",
 	"A3_Weapons_F",
+	"ace_optics",
 	"A3_Structures_F_Walls",
 	"A3_Ui_F",
 	"A3_Structures_F_Mil_Cargo",
@@ -34,7 +35,7 @@ class AddonsMetaData
 {
 	class List
 	{
-		items=6;
+		items=7;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -51,26 +52,33 @@ class AddonsMetaData
 		};
 		class Item2
 		{
+			className="ace_optics";
+			name="ACE3 - Optics";
+			author="ACE-Team";
+			url="http://ace3mod.com/";
+		};
+		class Item3
+		{
 			className="A3_Structures_F";
 			name="Arma 3 - Buildings and Structures";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item3
+		class Item4
 		{
 			className="A3_Ui_F";
 			name="Arma 3 - User Interface";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item4
+		class Item5
 		{
 			className="A3_Structures_F_Mil";
 			name="Arma 3 - Military Buildings and Structures";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item5
+		class Item6
 		{
 			className="A3_Modules_F_Curator";
 			name="Arma 3 Zeus Update - Scripted Modules";
