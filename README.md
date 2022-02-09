@@ -1,4 +1,4 @@
-# Arma-3-Controlled-Spawn-and-Waypoints-Randomizr
+# Arma 3, Controlled Spawn and Waypoints Randomizr v.1.2
 
 A simple and controlled spawn and waypoints solution where groups of units and vehicles will be randomized through marks in your mission. 
 
@@ -26,10 +26,13 @@ A simple and controlled spawn and waypoints solution where groups of units and v
 **Strategy:**
 - Manually define how many groups, what type of groups, and how the random moves of each group in the faction will be. 
 
-----------
-
 # Ideas and fix?
 https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-waypoints-randomizr/
 
-Cheers, 
-thy.
+Cheers, thy.
+
+# Changelog
+
+**v1.2 Feb, 9th 2022**
+- Zeus now can see all units and vehicle spawned of the script;
+- Fix the missing global and private variables declaration;
