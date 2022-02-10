@@ -9,8 +9,9 @@ null=[] execVM "controlledSpawnAndWpsRandomizr.sqf";
 		{
 			sleep 5;
 			_x addCuratorEditableObjects [allUnits, true];
+			sleep 15;
 			_x addCuratorEditableObjects [vehicles, true];
-			sleep 120;
+			sleep 15;
 		} forEach allCurators;
 	};
 };
