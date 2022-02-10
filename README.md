@@ -4,10 +4,10 @@
 A simple and controlled spawn and waypoints solution where groups of units and vehicles will be randomized through marks in your mission. 
 
 **Faction Spawns:** 
-- Manually define which marks the faction can use as spawn points.
-- You can create unlimited spawn points for one or more factions.
+- Manually define which marks the faction can use as a spawn point.
+- You can create a lot of spawn points for one or more factions.
 - Once the spawn points are created, the script will spawn the groups randomly through the faction spawns.
-- There is no AI re-spawn. Death is death.
+- There is no re-spawn. Death is death. 
 
 **Destination:**
 - Manually define which marks will be used as group destinations.
@@ -15,22 +15,21 @@ A simple and controlled spawn and waypoints solution where groups of units and v
 - Once the destination points are created, the script will consider (or not) them randomly when the groups are moving.
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
 
-**Moving:**
-- From destination to the next one, only one waypoint per group will be created automatically, so each group moving will head straight on. 
-- There are 3 types of group movement: groups that go randomly and only to their faction's destinations; groups that go randomly and only to destinations shared with other factions; and groups that go randomly to any configured destination, ignoring rules.
-- By default, groups will move forever from spawn to waypoints and, from there, to the next one, randomly waiting (you set the timeframe) to heading toward.
+**Destination / Waypoints:**
+- Manually define which marks will be used as waypoints.
+- There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
+- Once the destinations are created, the script will take care of taking (or not) the groups there, randomly.
 
-**Groups:**
-- Manually set the number of soldiers and vehicles per faction group type.
-- There are 3 infantry and 3 vehicle templates for you to customize: light squad; normal squad; heavy squad; light vehicle; normal vehicle; and heavy vehicle.
+**Group Members:**
+- Manually set the number of soldiers, who they are, who belongs in each squad, even vehicles.
+- There are 3 infantry and 3 vehicle templates to customize: light squad; regular squad; heavy squad; light vehicle; regular vehicle; and heavy vehicle. 
 
 **Strategy:**
-- Manually define how many groups, what type of groups, and how the random moves of each group in the faction will be. 
+- Manually define how many groups, what type of groups, if they will spawn chill or already aware, running etc.
+- It does important you as editor set the movements through the field each group can consider randomly. 
 
 ## Ideas and fix?
 https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-waypoints-randomizr/
-
-Cheers, thy.
 
 ## Changelog
 
