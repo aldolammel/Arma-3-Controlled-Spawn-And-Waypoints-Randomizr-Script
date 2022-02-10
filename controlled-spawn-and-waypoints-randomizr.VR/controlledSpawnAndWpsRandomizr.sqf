@@ -2,7 +2,7 @@
 /* 
 
 
-	CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR (Version 1.3)
+	CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR (Version 1.2.1)
 	by thy (@aldolammel)
 	
 	Github: https://github.com/aldolammel/Arma-3-Controlled-Waypoints-Randomizr-Script
