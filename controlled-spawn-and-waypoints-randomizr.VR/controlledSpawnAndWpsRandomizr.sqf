@@ -250,15 +250,15 @@ private ["_bluAllSpawns","_opAllSpawns","_indAllSpawns","_civAllSpawns","_where"
 	sleep 0.1;
 		
 					// Vehicles Opfor
-					_opVehSpawn 	= getmarkerpos (selectRandom _opAllSpawns);
-					_opVehPos 		= _opVehSpawn findEmptyPosition [4,50];
-					_opVeh 			= [_opVehPos, OPFOR, _opVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_opVehSpawn = getmarkerpos (selectRandom _opAllSpawns);
+					_opVehPos = _opVehSpawn findEmptyPosition [4,50];
+					_opVeh = [_opVehPos, OPFOR, _opVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_opVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
 
-					_opVehSpawn 	= getmarkerpos (selectRandom _opAllSpawns);
-					_opVehPos 		= _opVehSpawn findEmptyPosition [4,50];
-					_opVeh 			= [_opVehPos, OPFOR, _opVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_opVehSpawn = getmarkerpos (selectRandom _opAllSpawns);
+					_opVehPos = _opVehSpawn findEmptyPosition [4,50];
+					_opVeh = [_opVehPos, OPFOR, _opVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_opVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
 							
@@ -297,15 +297,15 @@ private ["_bluAllSpawns","_opAllSpawns","_indAllSpawns","_civAllSpawns","_where"
 
 
 					// Vehicles Independent
-					_indVehSpawn 	= getmarkerpos (selectRandom _indAllSpawns);
-					_indVehPos 		= _indVehSpawn findEmptyPosition [4,50];
-					_indVeh 		= [_indVehPos, INDEPENDENT, _indVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_indVehSpawn = getmarkerpos (selectRandom _indAllSpawns);
+					_indVehPos = _indVehSpawn findEmptyPosition [4,50];
+					_indVeh = [_indVehPos, INDEPENDENT, _indVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_indVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
 
-					_indVehSpawn 	= getmarkerpos (selectRandom _indAllSpawns);
-					_indVehPos 		= _indVehSpawn findEmptyPosition [4,50];
-					_indVeh 		= [_indVehPos, INDEPENDENT, _indVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_indVehSpawn = getmarkerpos (selectRandom _indAllSpawns);
+					_indVehPos = _indVehSpawn findEmptyPosition [4,50];
+					_indVeh = [_indVehPos, INDEPENDENT, _indVehRegular,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_indVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
 
@@ -343,14 +343,14 @@ private ["_bluAllSpawns","_opAllSpawns","_indAllSpawns","_civAllSpawns","_where"
 	sleep 0.1;
 
 					// Vehicles Civilian
-					_civVehSpawn 	= getmarkerpos (selectRandom _civAllSpawns);
-					_civVehPos 		= _civVehSpawn findEmptyPosition [4,50];
-					_civVeh 		= [_civVehPos, CIVILIAN, _civVehLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_civVehSpawn = getmarkerpos (selectRandom _civAllSpawns);
+					_civVehPos = _civVehSpawn findEmptyPosition [4,50];
+					_civVeh = [_civVehPos, CIVILIAN, _civVehLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_civVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
 
-					_civVehSpawn 	= getmarkerpos (selectRandom _civAllSpawns);
-					_civVehPos 		= _civVehSpawn findEmptyPosition [4,50];
-					_civVeh 		= [_civVehPos, CIVILIAN, _civVehLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
+					_civVehSpawn = getmarkerpos (selectRandom _civAllSpawns);
+					_civVehPos = _civVehSpawn findEmptyPosition [4,50];
+					_civVeh = [_civVehPos, CIVILIAN, _civVehLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 					[_civVeh] spawn fnc_goToSharedDestin;
 					sleep 0.2;
