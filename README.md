@@ -9,12 +9,6 @@ A simple and controlled spawn and waypoints solution where groups of units and v
 - Once the spawn points are created, the script will spawn the groups randomly through the faction spawns.
 - There is no re-spawn. Death is death. 
 
-**Destination:**
-- Manually define which marks will be used as group destinations.
-- You can create unlimited destination points for one or more factions.
-- Once the destination points are created, the script will consider (or not) them randomly when the groups are moving.
-- There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
-
 **Destination / Waypoints:**
 - Manually define which marks will be used as waypoints.
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
