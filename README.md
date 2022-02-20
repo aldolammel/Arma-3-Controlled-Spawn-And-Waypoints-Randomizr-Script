@@ -27,6 +27,10 @@ https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-wayp
 
 ## Changelog
 
+**v1.5 Feb, 20th 2022**
+- Fixed for dedicated servers: now the script is called through description.ext function and not more initServer.sqf execVN;
+- Improved: automatic setMarkerAlpha for destination and spawn point markers.
+
 **v1.2.1 Feb, 10th 2022**
 - Zeus now can see all units and vehicle spawned of the script;
 - Fix the missing global and private variables declaration;
