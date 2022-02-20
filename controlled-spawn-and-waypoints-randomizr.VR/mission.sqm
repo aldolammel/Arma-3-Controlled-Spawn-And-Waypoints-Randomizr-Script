@@ -5,7 +5,7 @@ class EditorData
 	angleGridStep=0.2617994;
 	scaleGridStep=1;
 	autoGroupingDist=10;
-	toggles=1;
+	toggles=1025;
 	class ItemIDProvider
 	{
 		nextID=49;
@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={1893.4691,30.685535,5664.752};
-		dir[]={0.21670568,-0.13191064,0.96730477};
-		up[]={0.028839068,0.99126053,0.12873042};
-		aside[]={0.97583598,-1.4376928e-007,-0.21861741};
+		pos[]={1796.9976,55.58865,5754.1216};
+		dir[]={0.88888752,-0.44060734,-0.12550291};
+		up[]={0.43628088,0.89769959,-0.06159886};
+		aside[]={-0.1398041,-2.4079418e-007,-0.99018312};
 	};
 };
 binarizationWanted=0;
@@ -463,19 +463,20 @@ class Mission
 		class Item24
 		{
 			dataType="Trigger";
-			position[]={1906.7419,18.457144,5714.8579};
+			position[]={1907.933,19.656975,5714.4282};
 			class Attributes
 			{
-				onActivation="hint ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in controlledSpawnAndWpsRandomizr.sqf file.\n\nIf you drop lot of unit groups, it will take a while (~50s) to show all of them on Zeus map.""";
+				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in THY_fnc_CSWRandomizr.sqf file. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
 				sizeA=3;
 				sizeB=3;
-				sizeC=2;
+				sizeC=1.3940001;
+				interuptable=1;
 				repeatable=1;
 				activationBy="ANYPLAYER";
 			};
 			id=36;
 			type="EmptyDetector";
-			atlOffset=3.6239624e-005;
+			atlOffset=3.1389008;
 		};
 	};
 };

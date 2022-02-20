@@ -1,15 +1,16 @@
 // MISSION CONFIGS
-class Header {
+class Header
+{
 	gameType 			= Sandbox; 	
 	minPlayers			= 1;		
 	maxPlayers			= 1;
 };
 
 	// About
-	onLoadName 			= "SPAWN & WPs RANDOMIZR";
+	onLoadName 			= "CSWRandomizr";
 	author 				= "thy"; 						
 	overviewPicture 	= "images\thumb.jpg"; 			
-	onLoadMission 		= "A simple and controlled script of spawn and waypoints where groups of units and vehicles will be randomized through marks in your mission."; 
+	onLoadMission 		= "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to set life faster on your mission map."; 
 
 	// Gameplay
 	joinUnassigned 		= 0;
@@ -29,3 +30,15 @@ class Header {
 	wreckLimit 				= 5;
 	wreckRemovalMinTime 	= 1200;
 	wreckRemovalMaxTime 	= 3600;
+
+// CBA MOD
+cba_settings_hasSettingsFile = 0;
+
+
+// - - - - - - - - - EVERYTHING ABOVE IS NOT NEEDED FOR THIS SCRIPT WORKS - - - - - - - - - 
+
+class cfgFunctions 
+{
+	// CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
+	#include "CSWRandomizr\THY_fnc_functions.hpp"
+};
