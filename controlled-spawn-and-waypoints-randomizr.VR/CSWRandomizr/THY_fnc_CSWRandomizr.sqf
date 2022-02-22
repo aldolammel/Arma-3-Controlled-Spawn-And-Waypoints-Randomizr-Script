@@ -3,7 +3,7 @@
 
 
 
-	CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR (Version 1.5)
+	CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR (Version 1.5.5)
 	by thy (@aldolammel)
 	
 	Github: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script
@@ -33,11 +33,11 @@
 	there, randomly. You will use these commands below to set
 	the waypoint of each group:  									
 
-		CSWR_wp_goToAnywhere .......... go to anywhere / no rules.
-		CSWR_wp_goToDestShared ........ go through places where anyone may go. 
-		CSWR_wp_goToDestBlu ........... go to blufor special destination.
-		CSWR_wp_goToDestOp ............ go to opfor special destination.
-		CSWR_wp_goToDestInd ........... go to independent special destination.
+		CSWR_fnc_wpGoToAnywhere ....... go to anywhere / no rules.
+		CSWR_fnc_wpGoToDestShared ..... go to where anyone may go (mainly civilian). 
+		CSWR_fnc_wpGoToDestBlu ........ go to blufor special destination.
+		CSWR_fnc_wpGoToDestOp ......... go to opfor special destination.
+		CSWR_fnc_wpGoToDestInd ........ go to independent special destination.
 
 
 	## GROUP MEMBERS:
@@ -58,19 +58,14 @@
 //---------------------
 */
 
-
-//publicVariable "CSWR_wp_timeOut", "CSWR_goToDestBlu", "CSWR_goToDestOp", "CSWR_goToDestInd", "CSWR_goToDestShared", "CSWR_goToAnywhere";
-
 private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy","_bluVehLight","_bluVehRegular","_bluVehHeavy","_opSquadLight","_opSquadRegular","_opSquadHeavy","_opVehLight","_opVehRegular","_opVehHeavy","_indSquadLight","_indSquadRegular","_indSquadHeavy","_indVehLight","_indVehRegular","_indVehHeavy","_civAlone","_civCouple","_civGang","_civVehLight","_civVehRegular","_civVehHeavy","_bluGroup","_bluVehSpawn","_bluVehPos","_bluVeh","_opGroup","_opVehSpawn","_opVehPos","_opVeh","_indGroup","_indVehSpawn","_indVehPos","_indVeh","_civGroup","_civVehSpawn","_civVehPos","_civVeh"];
 	
+// if is not dedicated or hosted server, get out!
+if (!isServer) exitWith {};
+
 [] spawn
 {
-	waitUntil
-	{
-		sleep 0.1; 
-		!isNull player
-	};
-	
+
 	// FACTION SPAWNS
 	// Define where each faction in-game will spawn randomly.
 	// For new spawnpoints, add a new "empty marker" on Eden, set its name and add the new marker down below:
@@ -111,7 +106,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 	// Define where anyone (including civilian) in-game will move randomly.
 	// For new destination, add a new "empty marker" on Eden, set its name and add the new marker down below:
 		
-		CSWR_goToDestShared = 
+		CSWR_destinationShared = 
 		[
 			"destShared01",
 			"destShared02",
@@ -129,19 +124,19 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 	// Define where each faction in-game will move randomly.
 	// For new destination, add a new "empty marker" on Eden, set its name and add the new marker down below:
 		
-		CSWR_goToDestBlu = // BluFor destination:
+		CSWR_destinationBlu = // BluFor destination:
 		[
 			//"destBlu01",
 			//"destBlu02"
 		];
 		
-		CSWR_goToDestOp = // OpFor destination:
+		CSWR_destinationOp = // OpFor destination:
 		[
 			//"destOp01",
 			//"destOp02"
 		];
 		
-		CSWR_goToDestInd = // Independent destination:
+		CSWR_destinationInd = // Independent destination:
 		[
 			//"destInd01",
 			//"destInd02"
@@ -150,76 +145,76 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 	
 	// WAYPOINTS TIMEOUT
 	// Define how long the group can wait randomly to move forward after reach a destination:
-		CSWR_wp_timeOut = [5, 30, 60]; // in seconds: [min, average, max].
+		CSWR_wpTimeOut = [5, 30, 60]; // in seconds: [min, average, max].
 
 
 	// ................................................................................................................................................
 	
-	// CORE / TRY TO CHANGE NOTHING IN THE SECTION BELOW:
+	// CSWR CORE / TRY TO CHANGE NOTHING IN THIS SECTION:
 	
-		_noSpawnCollision = [20, 100]; // [radius, maxDistance]
+		_noSpawnCollision = [30, 100]; // [radius, maxDistance]
 		
 		CSWR_allSpawnPoints = CSWR_bluSpawnPoints + CSWR_opSpawnPoints + CSWR_indSpawnPoints + CSWR_civSpawnPoints;
 		
-			{ _x setMarkerAlpha 0 } forEach CSWR_allSpawnPoints;
+			{ _x setMarkerAlpha 0 } forEach CSWR_allSpawnPoints; // hiding the spawn markers.
 		
-		CSWR_goToAnywhere = CSWR_goToDestShared + CSWR_goToDestBlu + CSWR_goToDestOp + CSWR_goToDestInd;
+		CSWR_destinationAnywhere = CSWR_destinationShared + CSWR_destinationBlu + CSWR_destinationOp + CSWR_destinationInd;
 		
-			{ _x setMarkerAlpha 0 } forEach CSWR_goToAnywhere;
+			{ _x setMarkerAlpha 0 } forEach CSWR_destinationAnywhere; // hiding the destination markers.
 		
-			CSWR_wp_goToAnywhere =
+			CSWR_fnc_wpGoToAnywhere =
 			{ 
 				private ["_where","_wp"];
 				params ["_grp"];
 				
-				_where = getMarkerPos (selectRandom CSWR_goToAnywhere);
+				_where = getMarkerPos (selectRandom CSWR_destinationAnywhere);
 				_wp = _grp addWaypoint [_where, 0]; 
-				_wp setWaypointTimeout CSWR_wp_timeOut;  
-				_wp setWaypointStatements ["true", "[group this] spawn CSWR_wp_goToAnywhere"];
+				_wp setWaypointTimeout CSWR_wpTimeOut;  
+				_wp setWaypointStatements ["true", "[group this] spawn CSWR_fnc_wpGoToAnywhere"];
 			};
 			
-			CSWR_wp_goToDestShared = 
+			CSWR_fnc_wpGoToDestShared = 
 			{ 
 				private ["_where","_wp"];
 				params ["_grp"];
 				
-				_where = getMarkerPos (selectRandom CSWR_goToDestShared);
+				_where = getMarkerPos (selectRandom CSWR_destinationShared);
 				_wp = _grp addWaypoint [_where, 0];
-				_wp setWaypointTimeout CSWR_wp_timeOut; 
-				_wp setWaypointStatements ["true", "[group this] spawn CSWR_wp_goToDestShared"];
+				_wp setWaypointTimeout CSWR_wpTimeOut; 
+				_wp setWaypointStatements ["true", "[group this] spawn CSWR_fnc_wpGoToDestShared"];
 			};
 			
-			CSWR_wp_goToDestBlu = 
+			CSWR_fnc_wpGoToDestBlu = 
 			{ 
 				private ["_where","_wp"];
 				params ["_grp"];
 				
-				_where = getMarkerPos (selectRandom CSWR_goToDestBlu);
+				_where = getMarkerPos (selectRandom CSWR_destinationBlu);
 				_wp = _grp addWaypoint [_where, 0]; 
-				_wp setWaypointTimeout CSWR_wp_timeOut;
-				_wp setWaypointStatements ["true", "[group this] spawn CSWR_wp_goToDestBlu"];
+				_wp setWaypointTimeout CSWR_wpTimeOut;
+				_wp setWaypointStatements ["true", "[group this] spawn CSWR_fnc_wpGoToDestBlu"];
 			};
 			
-			CSWR_wp_goToDestOp = 
+			CSWR_fnc_wpGoToDestOp = 
 			{ 
 				private ["_where","_wp"];
 				params ["_grp"];
 				
-				_where = getMarkerPos (selectRandom CSWR_goToDestOp);
+				_where = getMarkerPos (selectRandom CSWR_destinationOp);
 				_wp = _grp addWaypoint [_where, 0]; 
-				_wp setWaypointTimeout CSWR_wp_timeOut; 
-				_wp setWaypointStatements ["true", "[group this] spawn CSWR_wp_goToDestOp"];
+				_wp setWaypointTimeout CSWR_wpTimeOut; 
+				_wp setWaypointStatements ["true", "[group this] spawn CSWR_fnc_wpGoToDestOp"];
 			};
 			
-			CSWR_wp_goToDestInd = 
+			CSWR_fnc_wpGoToDestInd = 
 			{	
 				private ["_where","_wp"];
 				params ["_grp"];
 				
-				_where = getMarkerPos (selectRandom CSWR_goToDestInd);
+				_where = getMarkerPos (selectRandom CSWR_destinationInd);
 				_wp = _grp addWaypoint [_where, 0]; 
-				_wp setWaypointTimeout CSWR_wp_timeOut; 
-				_wp setWaypointStatements ["true", "[group this] spawn CSWR_wp_goToDestInd"];
+				_wp setWaypointTimeout CSWR_wpTimeOut; 
+				_wp setWaypointStatements ["true", "[group this] spawn CSWR_fnc_wpGoToDestInd"];
 			};
 		
 
@@ -300,7 +295,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_bluVehSpawn = getMarkerPos (selectRandom CSWR_bluSpawnPoints);
@@ -309,7 +304,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_bluVehSpawn = getMarkerPos (selectRandom CSWR_bluSpawnPoints);
@@ -318,7 +313,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_bluVehSpawn = getMarkerPos (selectRandom CSWR_bluSpawnPoints);
@@ -327,7 +322,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_bluVehSpawn = getMarkerPos (selectRandom CSWR_bluSpawnPoints);
@@ -336,7 +331,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_bluVehSpawn = getMarkerPos (selectRandom CSWR_bluSpawnPoints);
@@ -345,7 +340,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluVeh setBehaviour "SAFE";
 			_bluVeh setCombatMode "YELLOW";
 			_bluVeh setSpeedMode "LIMITED";
-			[_bluVeh] spawn CSWR_wp_goToAnywhere;
+			[_bluVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 		
@@ -355,168 +350,168 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 			
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 			
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;  
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 			
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;  
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;  
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;  
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere;  
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_bluGroup = [getMarkerPos (selectRandom CSWR_bluSpawnPoints), BLUFOR, _bluSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
 			_bluGroup setBehaviourStrong "SAFE";
 			_bluGroup setCombatMode "YELLOW";
 			_bluGroup setSpeedMode "NORMAL";
-			[_bluGroup] spawn CSWR_wp_goToAnywhere; 
+			[_bluGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 
@@ -538,7 +533,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_opVehSpawn = getMarkerPos (selectRandom CSWR_opSpawnPoints);
@@ -547,7 +542,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_opVehSpawn = getMarkerPos (selectRandom CSWR_opSpawnPoints);
@@ -556,7 +551,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_opVehSpawn = getMarkerPos (selectRandom CSWR_opSpawnPoints);
@@ -565,7 +560,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_opVehSpawn = getMarkerPos (selectRandom CSWR_opSpawnPoints);
@@ -574,7 +569,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_opVehSpawn = getMarkerPos (selectRandom CSWR_opSpawnPoints);
@@ -583,7 +578,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opVeh setBehaviour "SAFE";
 			_opVeh setCombatMode "YELLOW";
 			_opVeh setSpeedMode "LIMITED";
-			[_opVeh] spawn CSWR_wp_goToAnywhere;
+			[_opVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 	
 	
@@ -593,126 +588,126 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 			
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 			
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere; 
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_opGroup = [getMarkerPos (selectRandom CSWR_opSpawnPoints), OPFOR, _opSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_opGroup setBehaviourStrong "SAFE";
 			_opGroup setCombatMode "YELLOW";
 			_opGroup setSpeedMode "NORMAL";
-			[_opGroup] spawn CSWR_wp_goToAnywhere;
+			[_opGroup] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 1;
 			
 								
@@ -735,7 +730,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_indVehSpawn = getMarkerPos (selectRandom CSWR_indSpawnPoints);
@@ -744,7 +739,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_indVehSpawn = getMarkerPos (selectRandom CSWR_indSpawnPoints);
@@ -753,7 +748,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_indVehSpawn = getMarkerPos (selectRandom CSWR_indSpawnPoints);
@@ -762,7 +757,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 			
 			_indVehSpawn = getMarkerPos (selectRandom CSWR_indSpawnPoints);
@@ -771,7 +766,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 
 			_indVehSpawn = getMarkerPos (selectRandom CSWR_indSpawnPoints);
@@ -780,7 +775,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indVeh setBehaviour "SAFE";
 			_indVeh setCombatMode "YELLOW";
 			_indVeh setSpeedMode "LIMITED";
-			[_indVeh] spawn CSWR_wp_goToAnywhere;
+			[_indVeh] spawn CSWR_fnc_wpGoToAnywhere;
 			sleep 2;
 		
 		// Only groups of soldiers Independent /////////////////////
@@ -789,126 +784,126 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 			
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 			
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadLight,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere;  
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere;  
 			sleep 1;
 
 			_indGroup = [getMarkerPos (selectRandom CSWR_indSpawnPoints), INDEPENDENT, _indSquadHeavy,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_indGroup setBehaviourStrong "SAFE";
 			_indGroup setCombatMode "YELLOW";
 			_indGroup setSpeedMode "NORMAL";
-			[_indGroup] spawn CSWR_wp_goToAnywhere; 
+			[_indGroup] spawn CSWR_fnc_wpGoToAnywhere; 
 			sleep 1;
 
 
@@ -931,7 +926,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 			
 			_civVehSpawn = getMarkerPos (selectRandom CSWR_civSpawnPoints);
@@ -940,7 +935,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 
 			_civVehSpawn = getMarkerPos (selectRandom CSWR_civSpawnPoints);
@@ -949,7 +944,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 			
 			_civVehSpawn = getMarkerPos (selectRandom CSWR_civSpawnPoints);
@@ -958,7 +953,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 			
 			_civVehSpawn = getMarkerPos (selectRandom CSWR_civSpawnPoints);
@@ -967,7 +962,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 
 			_civVehSpawn = getMarkerPos (selectRandom CSWR_civSpawnPoints);
@@ -976,7 +971,7 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civVeh setBehaviour "SAFE";
 			_civVeh setCombatMode "RED";
 			_civVeh setSpeedMode "LIMITED";
-			[_civVeh] spawn CSWR_wp_goToDestShared;
+			[_civVeh] spawn CSWR_fnc_wpGoToDestShared;
 			sleep 2;
 		
 		// Only groups of Civilian /////////////////////
@@ -985,126 +980,126 @@ private ["_noSpawnCollision","_bluSquadLight","_bluSquadRegular","_bluSquadHeavy
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 			
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 			
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civAlone,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civCouple,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared;  
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared;  
 			sleep 1;
 
 			_civGroup = [getMarkerPos (selectRandom CSWR_civSpawnPoints), CIVILIAN, _civGang,[],[],[],[],[],180] call BIS_fnc_spawnGroup;   
 			_civGroup setBehaviourStrong "SAFE";
 			_civGroup setCombatMode "RED";
 			_civGroup setSpeedMode "NORMAL";
-			[_civGroup] spawn CSWR_wp_goToDestShared; 
+			[_civGroup] spawn CSWR_fnc_wpGoToDestShared; 
 			sleep 1;
 
 	// ................................................................................................................................................
