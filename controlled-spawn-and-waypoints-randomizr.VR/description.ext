@@ -35,7 +35,10 @@ class Header
 cba_settings_hasSettingsFile = 0;
 
 
-// - - - - - - - - - EVERYTHING ABOVE IS NOT NEEDED FOR THIS SCRIPT WORKS - - - - - - - - - 
+
+// - - - - - - - - - EVERYTHING ABOVE IS NOT NEEDED FOR THIS SCRIPT WORKS - - - - - - - - -
+// - - - - - - - - - - - TAKE ONLY THESE LINES BELOW FOR YOUR MISSION - - - - - - - - - - -
+
 
 class cfgFunctions 
 {
