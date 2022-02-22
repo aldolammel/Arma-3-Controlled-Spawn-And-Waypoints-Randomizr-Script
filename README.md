@@ -1,4 +1,4 @@
-# Arma 3 > CSWR: Controlled Spawn & Waypoints Randomizr v1.5
+# Arma 3 > CSWR: Controlled Spawn & Waypoints Randomizr v1.5.5
 >*Dependencies: none.*
 
 A simple and controlled spawn and waypoints solution where groups of units and vehicles will be randomized through marks in your mission. 
@@ -27,9 +27,11 @@ https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-wayp
 
 ## Changelog
 
-**Feb, 20th 2022 | v1.5**
+**Feb, 20th 2022 | v1.5.5**
 - Fixed for dedicated servers: now the script is called through description.ext function and not more initServer.sqf execVN;
-- Improved: automatic setMarkerAlpha for destination and spawn point markers.
+- Improved: automatic setMarkerAlpha for destination and spawn point markers;
+- Adjustment: function names.
+- Removed "waitUntil" for player.
 
 **Feb, 10th 2022 | v1.2.1**
 - Zeus now can see all units and vehicle spawned of the script;
