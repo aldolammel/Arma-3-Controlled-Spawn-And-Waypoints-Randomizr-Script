@@ -27,7 +27,7 @@ https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-wayp
 
 ## Changelog
 
-**Feb, 20th 2022 | v1.5.5**
+**Feb, 22nd 2022 | v1.5.5**
 - Fixed for dedicated servers: now the script is called through description.ext function and not more initServer.sqf execVN;
 - Improved: automatic setMarkerAlpha for destination and spawn point markers;
 - Adjustment: function names.
