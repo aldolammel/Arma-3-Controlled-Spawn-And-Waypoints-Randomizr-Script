@@ -16,18 +16,18 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=3;
+		nextID=9;
 	};
 	class Camera
 	{
-		pos[]={1753.8488,61.696129,5555.7393};
-		dir[]={0.82301354,-0.31161395,0.47492507};
-		up[]={0.26990101,0.95020771,0.15574804};
-		aside[]={0.49981022,7.5386197e-008,-0.86613774};
+		pos[]={1867.1888,32.599964,5666.7896};
+		dir[]={0.85205555,-0.44216457,0.28017008};
+		up[]={0.42004138,0.89693356,0.13811688};
+		aside[]={0.31236476,1.2567034e-007,-0.94996458};
 	};
 };
 binarizationWanted=0;
-sourceName="controlled-spawn-and-waypoints-randomizr";
+sourceName="controlled-spawn-and-waypoint-randomizr";
 addons[]=
 {
 	"A3_Characters_F",
@@ -401,7 +401,7 @@ class Mission
 			position[]={1907.933,19.656975,5714.4282};
 			class Attributes
 			{
-				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in THY_fnc_CSWRandomizr.sqf file. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
+				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in CSWR files. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
 				sizeA=3;
 				sizeB=3;
 				sizeC=1.3940001;
