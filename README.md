@@ -35,7 +35,8 @@ https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-wayp
 
 **Jul, 6th 2022 | v2**
 - A bunch of performance improvements;
-- Documentation has been included.
+- Documentation has been included;
+- initServer.sqf has been removed.
 
 **Feb, 22nd 2022 | v1.5.5**
 - Fixed for dedicated servers: now the script is called through description.ext function and not more initServer.sqf execVN;
