@@ -5,9 +5,9 @@ Controlled Spawn and Waypoint Randomizr (CSWR) is an Arma 3 script that's a simp
 
 ## HOW TO INSTALL / DOCUMENTATION
 
-video demo: xxxxxxxxxxxxxxxxxxxxxxx
+video demo: soon.
 
-Doc: xxxxxxxxxxxxxxxxxxxxxxxxxx
+Doc: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing 
 
 __
 
@@ -46,7 +46,9 @@ __
 
 ## CHANGELONG
 
-**Jul, 6th 2022 | v2**
+**Jul, 8th 2022 | v2**
+- Fixed vehicles spawn problems when a lot of them;
+- Fixed infantry could not walk properly if in "safe" behavior;
 - A bunch of performance improvements;
 - Documentation has been included;
 - initServer.sqf has been removed.
