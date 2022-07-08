@@ -4,7 +4,7 @@
 
 if (!isServer) exitWith {};
 
-// FACTION SPAWNS
+// FACTION SPAWNPOINTS:
 // Define where each faction in-game will spawn randomly.
 // For new spawnpoints, add a new "empty marker" on Eden, set its name and add the new marker down below:
 
@@ -41,7 +41,7 @@ if (!isServer) exitWith {};
 	];
 
 
-// DESTINATION: SHARED
+// WAYPOINTS: SHARED
 // Define where anyone (including civilian) in-game will move randomly.
 // For new destination, add a new "empty marker" on Eden, set its name and add the new marker down below:
 
@@ -59,7 +59,7 @@ if (!isServer) exitWith {};
 		"destShared10"
 	]; 
 
-// DESTINATION: FACTION
+// WAYPOINTS: BY FACTION
 // Define where each faction in-game will move randomly.
 // For new destination, add a new "empty marker" on Eden, set its name and add the new marker down below:
 

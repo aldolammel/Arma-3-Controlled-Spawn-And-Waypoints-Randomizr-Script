@@ -8,42 +8,140 @@ THY_fnc_CSWR_people =
 {
 	// This function: generates a group of people. 
 	
-	params ["_faction","_spwnPnts","_grpType","_behaviourMode","_combatMode","_speedMode","_wpFunction"];
+	params ["_faction","_spwnPnts","_grpType","_behavior","_wpFunction"];
 	private ["_grp"];
 	
-	_grp = [getMarkerPos (selectRandom _spwnPnts), _faction, _grpType,[],[],[],[],[],180] call BIS_fnc_spawnGroup; 
-	_grp setBehaviourStrong str(_behaviourMode);
-	_grp setCombatMode str(_combatMode);
-	_grp setSpeedMode str(_speedMode);
+	_grp = [getMarkerPos (selectRandom _spwnPnts), _faction, _grpType,[],[],[],[],[],180, false, 0] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+	_grp deleteGroupWhenEmpty true;
+	
+	// Group behavior:
+	switch (_behavior) do {
+			case "SAFE": {
+				_grp setBehaviourStrong "SAFE"; // calm.
+				_grp setSpeedMode "LIMITED";  // walk.
+				sleep 0.1;
+			};
+			case "AWARE": {
+				_grp setBehaviourStrong "AWARE";  // consern.
+				_grp setSpeedMode "LIMITED";  // walk, but guns ready.
+				sleep 0.1;
+			};
+			case "COMBAT": {
+				_grp setBehaviourStrong "AWARE";  // guns ready. Dont set "COMBAT" here coz the bevarior will make the group to prone and stuff over and over again.
+				_grp setSpeedMode "NORMAL";  // full speed, maintain formation.
+				sleep 0.1;
+			};
+			case "CHAOS": {
+				_grp setBehaviourStrong "AWARE";   // Dont set "COMBAT" here coz the bevarior will make the group to prone and stuff over and over again.
+				_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
+				sleep 0.1;
+			};
+	};
+	
+	// Each unit behavior:
+	{ 
+		switch (_behavior) do {
+			case "SAFE": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				weaponLowered _x;
+				sleep 0.1;
+			};
+			case "AWARE": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "COMBAT": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "CHAOS": {
+				_x setUnitCombatMode "RED";  // Fire at will, engage at will/loose formation.
+				sleep 0.1;
+			};
+		};
+	} forEach units _grp;
+
 	[_grp] spawn _wpFunction; 
 	sleep 1;
 };
+
+
+// ----------------------------
 
 
 THY_fnc_CSWR_vehicle = 
 {
 	// This function: generates a vehicle. Its crew is created automatically.
 	
-	params ["_faction","_spwnPnts","_vehType","_behaviourMode","_combatMode","_speedMode","_wpFunction"];
-	private ["_vehSpawn","_vehPos","_veh"];
+	params ["_faction","_spwnPnts","_vehType","_behavior","_wpFunction"];
+	private ["_vehSpawn","_vehPos","_grpVeh"];
 	
 	_vehSpawn = getMarkerPos (selectRandom _spwnPnts);
-	_vehPos = _vehSpawn findEmptyPosition [30, 100];            // trying to avoid collisions on spawn: [radius, distance]
-	_veh = [_vehPos, _faction, _vehType,[],[],[],[],[],180] call BIS_fnc_spawnGroup;  
-	_veh setBehaviour str(_behaviourMode);
-	_veh setCombatMode str(_combatMode);
-	_veh setSpeedMode str(_speedMode);
-	[_veh] spawn _wpFunction;
-	sleep 5;
+	_vehPos = _vehSpawn findEmptyPosition [10, 300];            // [radius, distance] / IMPORTANT: if decrease these valius might result in explosions and vehicles not spawning.
+	sleep 0.1;
+	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, true, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+	_grpVeh deleteGroupWhenEmpty true;
+	
+	// Group behavior:
+	switch (_behavior) do {
+			case "SAFE": {
+				_grpVeh setBehaviourStrong "SAFE"; // calm.
+				_grpVeh setSpeedMode "LIMITED";  // half speed.
+				sleep 0.1;
+			};
+			case "AWARE": {
+				_grpVeh setBehaviourStrong "AWARE";  // consern.
+				_grpVeh setSpeedMode "LIMITED";  // half speed.
+				sleep 0.1;
+			};
+			case "COMBAT": {
+				_grpVeh setBehaviourStrong "COMBAT";
+				_grpVeh setSpeedMode "NORMAL";  // full speed, maintain formation.
+				sleep 0.1;
+			};
+			case "CHAOS": {
+				_grpVeh setBehaviourStrong "COMBAT";
+				_grpVeh setSpeedMode "FULL";  // do not wait for any other units in formation.
+				sleep 0.1;
+			};
+	};
+	
+	// Each unit behavior:
+	{ 
+		switch (_behavior) do {
+			case "SAFE": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "AWARE": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "COMBAT": { 
+				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "CHAOS": {
+				_x setUnitCombatMode "RED";  // Fire at will, engage at will/loose formation.
+				sleep 0.1;
+			};
+		};
+	} forEach units _grpVeh;
+	
+	[_grpVeh] spawn _wpFunction;
+	sleep 5;            // IMPORTANT: helps to avoid veh colissions and explosions at the beggining of the match.
 };
+
+
+// ----------------------------
 
 
 THY_fnc_CSWR_wpGoToAnywhere =
 { 
-	// This function: xxxxxxxxxxx
+	// This function: set the group to move any waypoint mark on the map.
 	
-	private ["_where","_wp"];
 	params ["_grp"];
+	private ["_where","_wp"];
 	
 	_where = getMarkerPos (selectRandom CSWR_destinationAnywhere);
 	_wp = _grp addWaypoint [_where, 0]; 
@@ -57,10 +155,10 @@ THY_fnc_CSWR_wpGoToAnywhere =
 
 THY_fnc_CSWR_wpGoToDestShared = 
 { 
-	// This function: xxxxxxxxxxx
+	// This function: set the group to move only shared waypoint marks on the map.
 	
-	private ["_where","_wp"];
 	params ["_grp"];
+	private ["_where","_wp"];
 	
 	_where = getMarkerPos (selectRandom CSWR_destinationShared);
 	_wp = _grp addWaypoint [_where, 0];
@@ -74,10 +172,10 @@ THY_fnc_CSWR_wpGoToDestShared =
 
 THY_fnc_CSWR_wpGoToDestBlu = 
 { 
-	// This function: xxxxxxxxxxx
+	// This function: set the group to move only BluFor waypoint marks on the map.
 	
-	private ["_where","_wp"];
 	params ["_grp"];
+	private ["_where","_wp"];
 	
 	_where = getMarkerPos (selectRandom CSWR_destinationBlu);
 	_wp = _grp addWaypoint [_where, 0]; 
@@ -91,10 +189,10 @@ THY_fnc_CSWR_wpGoToDestBlu =
 
 THY_fnc_CSWR_wpGoToDestOp = 
 { 
-	// This function: xxxxxxxxxxx
+	// This function: set the group to move only OpFor waypoint marks on the map.
 	
-	private ["_where","_wp"];
 	params ["_grp"];
+	private ["_where","_wp"];
 	
 	_where = getMarkerPos (selectRandom CSWR_destinationOp);
 	_wp = _grp addWaypoint [_where, 0]; 
@@ -108,10 +206,10 @@ THY_fnc_CSWR_wpGoToDestOp =
 
 THY_fnc_CSWR_wpGoToDestInd = 
 {	
-	// This function: xxxxxxxxxxx
+	// This function: set the group to move only Independent waypoint marks on the map.
 	
-	private ["_where","_wp"];
 	params ["_grp"];
+	private ["_where","_wp"];
 	
 	_where = getMarkerPos (selectRandom CSWR_destinationInd);
 	_wp = _grp addWaypoint [_where, 0]; 

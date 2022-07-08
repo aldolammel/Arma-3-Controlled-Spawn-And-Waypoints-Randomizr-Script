@@ -7,11 +7,13 @@ if (!isServer) exitWith {};
 
 // EDITOR'S OPTIONS:
 
-	CSWR_debug = true;                // true = xxxxxxxxxxxxxxx (available only on hosted server player) / false = xxxxxxxxxxxxxxxxxxxxxxxx.
-	CSWR_spawnBlu = true;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx.
-	CSWR_spawnOp  = true;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx.
-	CSWR_spawnInd = true;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx.
-	CSWR_spawnCiv = true;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx.
+	CSWR_debug = true;                // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
+	CSWR_spawnBlu = true;                // true = if you wanna spawn BluFor through CSWR / false = no spawn.
+	CSWR_spawnOp  = true;                // true = if you wanna spawn OpFor through CSWR / false = no spawn.
+	CSWR_spawnInd = true;                // true = if you wanna spawn Indepdentents through CSWR / false = no spawn.
+	CSWR_spawnCiv = true;                // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+	CSWR_unlimitedFuel = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+	CSWR_unlimitedAmmo = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
 
 
 // ..............................................................................................................................
@@ -21,11 +23,11 @@ if (!isServer) exitWith {};
 
 	if (CSWR_spawnBlu) then {
 		
-		// GROUP MEMBERS: BLUFOR
+		// DEFINING GROUPS: BLUFOR
 		// Define the number of soldiers and who is who in each type of group.
 
 			// Vehicles
-			private _bluVehLight   = ["B_Quadbike_01_F"];
+			private _bluVehLight   = ["B_G_Offroad_01_armed_F"];
 			private _bluVehRegular = ["B_MRAP_01_hmg_F"];
 			private _bluVehHeavy   = ["B_MBT_01_TUSK_F"];
 			
@@ -34,46 +36,45 @@ if (!isServer) exitWith {};
 			private _bluSquadRegular = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_F", "B_soldier_AR_F"];
 			private _bluSquadHeavy   = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_F", "B_soldier_AR_F", "B_soldier_M_F", "B_soldier_AT_F"];
 
-		// AMOUNT OF GROUPS: BLUFOR 
+		// SPAWNING GROUPS: BLUFOR 
 		// Define each group and their features and destination.
 		
 			// Vehicles Groups
-			// [ faction, faction's spawnpoints, faction's vehicle, crew behaviour at the start, crew combat mode at the start, crew speed at the start, vehicle waypoints ]
+			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), vehicle waypoints ]
 			
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-				
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			
+			
 			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's squad size, squad behaviour at the start, squad combat mode at the start, squad speed at the start, squad waypoints ]
+			// [ faction, faction's spawnpoints, faction's squad size, initial squad behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), squad waypoints ]
 			
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
 		
 		
 	}; // blufor ends.
@@ -84,11 +85,11 @@ if (!isServer) exitWith {};
 
 	if (CSWR_spawnOp) then {
 
-		// GROUP MEMBERS: OPFOR 
+		// DEFINING GROUPS: OPFOR 
 		// Define the number of soldiers and who is who in each type of group.
 
 			// Vehicles
-			private _opVehLight   = ["O_Quadbike_01_F"];
+			private _opVehLight   = ["O_G_Offroad_01_armed_F"];
 			private _opVehRegular = ["O_MRAP_02_hmg_F"];
 			private _opVehHeavy   = ["O_MBT_02_cannon_F"];
 			
@@ -97,46 +98,44 @@ if (!isServer) exitWith {};
 			private _opSquadRegular	= ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_F", "O_soldier_AR_F"];
 			private _opSquadHeavy   = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_F", "O_soldier_AR_F", "O_soldier_M_F", "O_soldier_AT_F"];
 
-		// AMOUNT OF GROUPS: OPFOR
+		// SPAWNING GROUPS: OPFOR
 		// Define each group and their features and destination.
 
 			// Vehicles Groups
-			// [ faction, faction's spawnpoints, faction's vehicle, crew behaviour at the start, crew combat mode at the start, crew speed at the start, vehicle waypoints ]
+			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), vehicle waypoints ]
 			
-			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 
 			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's squad size, squad behaviour at the start, squad combat mode at the start, squad speed at the start, squad waypoints ]
+			// [ faction, faction's spawnpoints, faction's squad size, initial squad behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), squad waypoints ]
 			
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_opSpawnPoints, _opSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
 			
 			
 	}; // opfor ends.
@@ -147,11 +146,11 @@ if (!isServer) exitWith {};
 	
 	if (CSWR_spawnInd) then {
 
-		// GROUP MEMBERS: INDEPENDENT 
+		// DEFINING GROUPS: INDEPENDENT 
 		// Define the number of soldiers and who is who in each type of group.
 
 			// Vehicles
-			private _indVehLight   = ["I_Quadbike_01_F"];
+			private _indVehLight   = ["I_G_Offroad_01_armed_F"];
 			private _indVehRegular = ["I_MRAP_03_hmg_F"];
 			private _indVehHeavy   = ["I_MBT_03_cannon_F"];
 			
@@ -160,46 +159,44 @@ if (!isServer) exitWith {};
 			private _indSquadRegular = ["I_Soldier_TL_F", "I_soldier_F", "I_soldier_F", "I_Soldier_AR_F"];
 			private _indSquadHeavy	 = ["I_Soldier_TL_F", "I_soldier_F", "I_soldier_F", "I_Soldier_AR_F", "I_Soldier_M_F", "I_Soldier_AT_F"];
 		
-		// AMOUNT OF GROUPS: INDEPENDENT
+		// SPAWNING GROUPS: INDEPENDENT
 		// Define each group and their features and destination.
 
 			// Vehicles Groups
-			// [ faction, faction's spawnpoints, faction's vehicle, crew behaviour at the start, crew combat mode at the start, crew speed at the start, vehicle waypoints ]
+			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), vehicle waypoints ]
 			
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehRegular, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehHeavy, "SAFE", "YELLOW", "LIMITED", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			
 			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's squad size, squad behaviour at the start, squad combat mode at the start, squad speed at the start, squad waypoints ]
+			// [ faction, faction's spawnpoints, faction's squad size, initial squad behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), squad waypoints ]
 			
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", "YELLOW", "NORMAL", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "CHAOS", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "COMBAT", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indSquadHeavy, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_people;
 			
 			
 	}; // ind ends.
@@ -210,7 +207,7 @@ if (!isServer) exitWith {};
 	
 	if (CSWR_spawnCiv) then {
 	
-		// GROUP MEMBERS: CIVILIAN
+		// DEFINING GROUPS: CIVILIAN
 		// Define the number of soldiers and who is who in each type of group.
 
 			// Vehicles
@@ -223,46 +220,48 @@ if (!isServer) exitWith {};
 			private _civCouple = ["C_man_polo_1_F", "C_man_polo_2_F"];
 			private _civGang   = ["C_man_polo_1_F", "C_man_polo_2_F", "C_man_polo_3_F", "C_man_polo_4_F"];
 		
-		// AMOUNT OF GROUPS: CIVILIAN
+		// SPAWNING GROUPS: CIVILIAN
 		// Define each group and their features and destination.
 
 			// Vehicles Groups
-			// [ faction, faction's spawnpoints, faction's vehicle, crew behaviour at the start, crew combat mode at the start, crew speed at the start, vehicle waypoints ]
+			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "CHAOS"), vehicle waypoints ]
 							
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehRegular, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehRegular, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehHeavy, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, CSWR_civSpawnPoints, _civVehHeavy, "SAFE", "RED", "LIMITED", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehLight, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehRegular, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehRegular, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_civSpawnPoints, _civVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_vehicle;
 			
 			// People Groups
 			// [ faction, faction's spawnpoints, faction's group size, group behaviour at the start, group combat mode at the start, group speed at the start, group waypoints ]
 			
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", "RED", "NORMAL", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civAlone, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civCouple, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
 				
 				
 	}; // civ ends.	
