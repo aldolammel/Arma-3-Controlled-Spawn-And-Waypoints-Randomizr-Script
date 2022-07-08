@@ -7,7 +7,7 @@ Controlled Spawn and Waypoint Randomizr (CSWR) is an Arma 3 script that's a simp
 
 video demo: soon.
 
-Doc: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing 
+Doc: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.VR/CSWRandomizr/_CSWR_Script_Documentation.pdf
 
 __
 
