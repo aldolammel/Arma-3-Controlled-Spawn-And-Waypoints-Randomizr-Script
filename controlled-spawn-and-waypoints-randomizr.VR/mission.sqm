@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=59;
+		nextID=63;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=9;
+		nextID=17;
 	};
 	class Camera
 	{
-		pos[]={1867.1888,32.599964,5666.7896};
-		dir[]={0.85205555,-0.44216457,0.28017008};
-		up[]={0.42004138,0.89693356,0.13811688};
-		aside[]={0.31236476,1.2567034e-007,-0.94996458};
+		pos[]={1810.5752,36.103554,5682.2397};
+		dir[]={0.9899599,-0.13065538,0.054850742};
+		up[]={0.1305061,0.99142069,0.0072311498};
+		aside[]={0.05532676,9.9515728e-007,-0.99851656};
 	};
 };
 binarizationWanted=0;
@@ -401,7 +401,7 @@ class Mission
 			position[]={1907.933,19.656975,5714.4282};
 			class Attributes
 			{
-				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in CSWR files. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
+				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in fn_CSWR_population.sqf file. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
 				sizeA=3;
 				sizeB=3;
 				sizeC=1.3940001;
@@ -431,11 +431,12 @@ class Mission
 				class Item1
 				{
 					dataType="Marker";
-					position[]={3756.5366,164.14433,5033.8931};
+					position[]={3756.5371,164.144,5033.8931};
 					name="bluSpwn01";
 					type="Select";
 					colorName="ColorBlue";
 					id=0;
+					atlOffset=-0.00038146973;
 				};
 				class Item2
 				{
@@ -622,15 +623,15 @@ class Mission
 				class Item9
 				{
 					dataType="Marker";
-					position[]={2768.9949,137.67725,3453.9666};
+					position[]={2768.9951,137.677,3453.967};
 					name="destShared10";
 					type="Empty";
 					id=26;
-					atlOffset=-8.1448822;
+					atlOffset=-8.14505;
 				};
 			};
 			id=51;
-			atlOffset=95.98735;
+			atlOffset=95.987213;
 		};
 		class Item5
 		{

@@ -23,7 +23,7 @@ class Header
 	// Performance
 	DisabledAI				= 1;
 	corpseManagerMode 		= 1;
-	corpseLimit 			= 30;
+	corpseLimit 			= 5;
 	corpseRemovalMinTime	= 1200;
 	corpseRemovalMaxTime 	= 3600;
 	wreckManagerMode 		= 1;
