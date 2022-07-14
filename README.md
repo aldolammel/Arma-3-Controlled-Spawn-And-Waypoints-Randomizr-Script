@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v2
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v2.1
 >*Dependencies: none.*
 
 Controlled Spawn and Waypoint Randomizr (CSWR) is an Arma 3 script that's a simple and limited spawn and waypoints solution where groups of units and ground vehicles will be randomized through marks in your mission, moving among them forever in life. 
@@ -34,6 +34,12 @@ Known issues: https://forums.bohemia.net/forums/topic/237504-release-controlled-
 __
 
 ## CHANGELONG
+
+**Jul, 14th 2022 | v2.1**
+- Added "Stealth" as an option for spawned units/vehicles;
+- Improved the vehicle creation, now each vehicle has its electronics/signals configured when available;
+- Improved the Editor option to turn On and Off a faction;
+- Documentation has been updated;
 
 **Jul, 8th 2022 | v2**
 - Fixed vehicles spawn problems when a lot of them;
