@@ -43,5 +43,5 @@ cba_settings_hasSettingsFile = 0;
 class cfgFunctions 
 {
 	// CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
-	#include "CSWRandomizr\THY_functions.hpp"
+	#include "CSWRandomizr\THY_CSWR_functions.hpp"
 };
