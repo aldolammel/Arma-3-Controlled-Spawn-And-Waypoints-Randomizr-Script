@@ -1,44 +1,69 @@
+// CSWR v2.1
 // File: your_mission\CSWRandomizr\fn_CSWR_spawnsAndWaypoints.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
 
 if (!isServer) exitWith {};
 
+
+// PARAMETERS OF EDITOR'S OPTIONS:
+
+	CSWR_debug = true;                // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
+	CSWR_spawnBlu = true;                // true = if you wanna spawn BluFor through CSWR / false = no spawn.
+	CSWR_spawnOp  = true;                // true = if you wanna spawn OpFor through CSWR / false = no spawn.
+	CSWR_spawnInd = true;                // true = if you wanna spawn Indepdentents through CSWR / false = no spawn.
+	CSWR_spawnCiv = true;                // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+	CSWR_unlimitedFuel = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+	CSWR_unlimitedAmmo = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+
+
+// CSWR CORE / TRY TO CHANGE NOTHING in the line below:
+CSWR_bluSpawnPoints=[]; CSWR_opSpawnPoints=[]; CSWR_indSpawnPoints=[]; CSWR_civSpawnPoints=[]; CSWR_destinationBlu=[]; CSWR_destinationOp=[]; CSWR_destinationInd=[];
+
+
 // FACTION SPAWNPOINTS:
 // Define where each faction in-game will spawn randomly.
 // For new spawnpoints, add a new "empty marker" on Eden, set its name and add the new marker down below:
 
 	// BluFor spawnpoints:
-	CSWR_bluSpawnPoints = 
-	[
-		"bluSpwn01",
-		"bluSpwn02",
-		"bluSpwn03"
-	]; 
-
+	if ( CSWR_spawnBlu ) then {
+		CSWR_bluSpawnPoints = 
+		[
+			"bluSpwn01",
+			"bluSpwn02",
+			"bluSpwn03"
+		]; 
+	};
+	
 	// OpFor spawnpoints:
-	CSWR_opSpawnPoints = 
-	[
-		"opSpwn01",
-		"opSpwn02",
-		"opSpwn03"
-	]; 
-
+	if ( CSWR_spawnOp ) then {
+		CSWR_opSpawnPoints = 
+		[
+			"opSpwn01",
+			"opSpwn02",
+			"opSpwn03"
+		]; 
+	};
+	
 	// Independent spawnpoints:
-	CSWR_indSpawnPoints = 
-	[
-		"indSpwn01",
-		"indSpwn02",
-		"indSpwn03"
-	];
-
+	if ( CSWR_spawnInd ) then {
+		CSWR_indSpawnPoints = 
+		[
+			"indSpwn01",
+			"indSpwn02",
+			"indSpwn03"
+		];
+	};
+	
 	// Civilian spawnpoints:
-	CSWR_civSpawnPoints = 
-	[
-		"civSpwn01",
-		"civSpwn02",
-		"civSpwn03"
-	];
+	if ( CSWR_spawnCiv ) then {
+		CSWR_civSpawnPoints = 
+		[
+			"civSpwn01",
+			"civSpwn02",
+			"civSpwn03"
+		];
+	};
 
 
 // WAYPOINTS: SHARED
@@ -59,30 +84,37 @@ if (!isServer) exitWith {};
 		"destShared10"
 	]; 
 
+
 // WAYPOINTS: BY FACTION
 // Define where each faction in-game will move randomly.
 // For new destination, add a new "empty marker" on Eden, set its name and add the new marker down below:
 
 	// BluFor destination:
-	CSWR_destinationBlu = 
-	[
-		//"destBlu01",
-		//"destBlu02"
-	];
+	if ( CSWR_spawnBlu ) then {
+		CSWR_destinationBlu = 
+		[
+			//"destBlu01",
+			//"destBlu02"
+		];
+	};
 	
 	// OpFor destination:
-	CSWR_destinationOp = 
-	[
-		//"destOp01",
-		//"destOp02"
-	];
+	if ( CSWR_spawnOp ) then {
+		CSWR_destinationOp = 
+		[
+			//"destOp01",
+			//"destOp02"
+		];
+	};
 
 	// Independent destination:
-	CSWR_destinationInd = 
-	[
-		//"destInd01",
-		//"destInd02"
-	];
+	if ( CSWR_spawnInd ) then {
+		CSWR_destinationInd = 
+		[
+			//"destInd01",
+			//"destInd02"
+		];
+	};
 
 
 // WAYPOINTS TIMEOUT

@@ -1,12 +1,14 @@
+// CSWR v2.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
-// CSWR CORE / TRY TO CHANGE NOTHING:
+// CSWR CORE / TRY TO CHANGE NOTHING ON THIS FILE!!!
 
 
 THY_fnc_CSWR_people = 
 {
 	// This function: generates a group of people. 
+	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	
 	params ["_faction","_spwnPnts","_grpType","_behavior","_wpFunction"];
 	private ["_grp"];
@@ -31,6 +33,11 @@ THY_fnc_CSWR_people =
 				_grp setSpeedMode "NORMAL";  // full speed, maintain formation.
 				sleep 0.1;
 			};
+			case "STEALTH": {
+				_grp setBehaviourStrong "STEALTH";  // will cause a group to behave in a very cautious manner. 
+				_grp setSpeedMode "NORMAL";  // full speed, maintain formation.
+				sleep 0.1;
+			};
 			case "CHAOS": {
 				_grp setBehaviourStrong "AWARE";   // Dont set "COMBAT" here coz the bevarior will make the group to prone and stuff over and over again.
 				_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
@@ -38,12 +45,15 @@ THY_fnc_CSWR_people =
 			};
 	};
 	
+	// Group leader behavior:
+	// not yet.
+	
 	// Each unit behavior:
 	{ 
 		switch (_behavior) do {
 			case "SAFE": { 
 				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
-				weaponLowered _x;
+				weaponLowered _x;  // stay the gun low.
 				sleep 0.1;
 			};
 			case "AWARE": { 
@@ -52,6 +62,10 @@ THY_fnc_CSWR_people =
 			};
 			case "COMBAT": { 
 				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "STEALTH": {
+				_x setUnitCombatMode "GREEN";  // Hold Fire, Disengage.
 				sleep 0.1;
 			};
 			case "CHAOS": {
@@ -72,6 +86,7 @@ THY_fnc_CSWR_people =
 THY_fnc_CSWR_vehicle = 
 {
 	// This function: generates a vehicle. Its crew is created automatically.
+	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	
 	params ["_faction","_spwnPnts","_vehType","_behavior","_wpFunction"];
 	private ["_vehSpawn","_vehPos","_grpVeh"];
@@ -81,6 +96,16 @@ THY_fnc_CSWR_vehicle =
 	sleep 0.1;
 	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, true, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 	_grpVeh deleteGroupWhenEmpty true;
+	
+	// Vehicle behavior:
+	vehicle leader _grpVeh setVehicleReportOwnPosition true;
+	vehicle leader _grpVeh setVehicleReceiveRemoteTargets true;
+	vehicle leader _grpVeh setVehicleReportRemoteTargets true;
+	_faction reportRemoteTarget [vehicle leader _grpVeh, 60];
+	//vehicle leader _grpVeh setVehicleRadar 1;
+	//_enemy = "";
+	//if (_faction == blufor) then { _enemy = opfor} else { _enemy = blufor };
+	//vehicle leader _grpVeh  confirmSensorTarget [_enemy, true];
 	
 	// Group behavior:
 	switch (_behavior) do {
@@ -95,7 +120,12 @@ THY_fnc_CSWR_vehicle =
 				sleep 0.1;
 			};
 			case "COMBAT": {
-				_grpVeh setBehaviourStrong "COMBAT";
+				_grpVeh setBehaviourStrong "COMBAT";  // much higher combat performance than Aware.
+				_grpVeh setSpeedMode "NORMAL";  // full speed, maintain formation.
+				sleep 0.1;
+			};
+			case "STEALTH": {
+				_grpVeh setBehaviourStrong "STEALTH";  // will cause a group to behave in a very cautious manner. 
 				_grpVeh setSpeedMode "NORMAL";  // full speed, maintain formation.
 				sleep 0.1;
 			};
@@ -119,6 +149,10 @@ THY_fnc_CSWR_vehicle =
 			};
 			case "COMBAT": { 
 				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
+				sleep 0.1;
+			};
+			case "STEALTH": { 
+				_x setUnitCombatMode "GREEN";  // Hold Fire, Disengage.
 				sleep 0.1;
 			};
 			case "CHAOS": {
