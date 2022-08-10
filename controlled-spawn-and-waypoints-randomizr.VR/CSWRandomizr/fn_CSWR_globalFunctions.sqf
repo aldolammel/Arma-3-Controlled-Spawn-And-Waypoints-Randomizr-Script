@@ -1,8 +1,65 @@
-// CSWR v2.1
+// CSWR v2.5
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
-// CSWR CORE / TRY TO CHANGE NOTHING ON THIS FILE!!!
+THY_fnc_CSWR_loadout = 
+{
+	// This function: define the faction loadout details for each unit spawned by CSWR. 
+	
+	params ["_faction", "_unit"];
+	
+	switch (_faction) do {
+		case BLUFOR: {
+			//_unit unlinkItem "NVGoggles";
+			_unit unlinkItem "FirstAidKit";
+			_unit unlinkItem "ItemWatch";
+			_unit unlinkItem "ItemCompass";
+			_unit unlinkItem "ItemRadio";
+			_unit unlinkItem "ItemGPS";
+			_unit unlinkItem "ItemMap";
+			_unit removeWeapon "Binocular";
+			//removeUniform _unit;          // removes the uniform from everyone in the faction.
+			//removeVest _unit;          // removes the vest from everyone in the faction.
+			//removeBackpack _unit;          // removes the backpack from everyone in the faction.
+			//removeHeadgear _unit;          // removes the helmet and facewear from everyone in the faction.
+			//_unit addUniform "U_B_CombatUniform_mcam";          // add the same uniform to everyone in the faction.
+			//_unit addVest "V_TacVest_blk_POLICE";          // add the same vest to everyone in the faction.
+			//_unit addBackpack "TK_RPG_Backpack_EP1";          // add the same backpack to everyone in the faction.
+			//_unit addHeadgear "H_HelmetB";          // add the same helmet or facewear to everyone in the faction.
+			//_unit addItemToBackpack "arifle_MXM_Hamr_pointer_F";          // create new item and store it to soldier's backpack. The item can also be a weapon or a magazine.
+			//_unit linkItem "ItemGPS";          // create and assign item to the correct slot. If there is an item in the targeted slot, it gets replaced.
+			//_unit addItem "FirstAidKit";          // creates new item and tries to add it into inventory. Inventory must have enough space to accomodate new item or command will fail.The item can also be a weapon or a magazine.
+			// removeAllWeapons _unit;          // removes all weapons and magazines from the given unit.
+		};
+		case OPFOR: {
+			//_unit unlinkItem "NVGoggles_OPFOR";
+			_unit unlinkItem "FirstAidKit";
+			_unit unlinkItem "ItemWatch";
+			_unit unlinkItem "ItemCompass";
+			_unit unlinkItem "ItemRadio";
+			_unit unlinkItem "ItemGPS";
+			_unit unlinkItem "ItemMap";
+			_unit removeWeapon "Binocular";
+		};
+		case INDEPENDENT: {
+			//_unit unlinkItem "NVGoggles_INDEP";
+			_unit unlinkItem "FirstAidKit";
+			_unit unlinkItem "ItemWatch";
+			_unit unlinkItem "ItemCompass";
+			_unit unlinkItem "ItemRadio";
+			_unit unlinkItem "ItemGPS";
+			_unit unlinkItem "ItemMap";
+			_unit removeWeapon "Binocular";
+		};
+		case CIVILIAN: {
+			// even in civilians you can add or remove something. 
+		};
+	};
+};
+
+
+// ----------------------------
+// CSWR CORE / TRY TO CHANGE NOTHING BELOW!!!
 
 
 THY_fnc_CSWR_people = 
@@ -16,8 +73,8 @@ THY_fnc_CSWR_people =
 	_grp = [getMarkerPos (selectRandom _spwnPnts), _faction, _grpType,[],[],[],[],[],180, false, 0] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 	_grp deleteGroupWhenEmpty true;
 	
-	// Group behavior:
-	switch (_behavior) do {
+	// Group config:
+	switch (_behavior) do { 
 			case "SAFE": {
 				_grp setBehaviourStrong "SAFE"; // calm.
 				_grp setSpeedMode "LIMITED";  // walk.
@@ -45,10 +102,10 @@ THY_fnc_CSWR_people =
 			};
 	};
 	
-	// Group leader behavior:
+	// Group leader config:
 	// not yet.
 	
-	// Each unit behavior:
+	// Each unit config:
 	{ 
 		switch (_behavior) do {
 			case "SAFE": { 
@@ -73,6 +130,9 @@ THY_fnc_CSWR_people =
 				sleep 0.1;
 			};
 		};
+		
+		[_faction, _x] call THY_fnc_CSWR_loadout;
+		
 	} forEach units _grp;
 
 	[_grp] spawn _wpFunction; 
