@@ -20,8 +20,8 @@ __
 - Manually define which marks will be used as waypoints.
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly.
-- Manually set the number of soldiers, who they are, who belongs in each squad, even vehicles.
-- There are 3 infantry and 3 vehicle templates to customize: light squad; regular squad; heavy squad; light vehicle; regular vehicle; and heavy vehicle. 
+- Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad, even vehicles.
+- There are 3 infantry and 3 vehicle templates to customize for each faction: light squad; regular squad; heavy squad; light vehicle; regular vehicle; and heavy vehicle. 
 - Manually define how many groups, what type of groups, if they will spawn chill or already aware, running etc.
 - It does important you as editor set the movements through the field each group can consider randomly. 
 
@@ -34,6 +34,10 @@ Known issues: https://forums.bohemia.net/forums/topic/237504-release-controlled-
 __
 
 ## CHANGELONG
+
+**Aug, 10th 2022 | v2.5**
+- Now it's possible to customize the loadout for each spawned faction;
+- Documentation has been updated.
 
 **Jul, 14th 2022 | v2.1**
 - Added "Stealth" as an option for spawned units/vehicles;
