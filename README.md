@@ -29,7 +29,7 @@ __
 
 ## IDEA AND FIX?
 
-Known issues: https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-waypoints-randomizr/
+Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-waypoints-randomizr/
 
 __
 
