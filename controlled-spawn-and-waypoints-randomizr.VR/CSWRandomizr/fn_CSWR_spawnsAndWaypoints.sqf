@@ -1,20 +1,21 @@
-// CSWR v2.1
+// CSWR v2.6
 // File: your_mission\CSWRandomizr\fn_CSWR_spawnsAndWaypoints.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
 
 if (!isServer) exitWith {};
 
-
 // PARAMETERS OF EDITOR'S OPTIONS:
-
-	CSWR_debug = true;                // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
-	CSWR_spawnBlu = true;                // true = if you wanna spawn BluFor through CSWR / false = no spawn.
-	CSWR_spawnOp  = true;                // true = if you wanna spawn OpFor through CSWR / false = no spawn.
-	CSWR_spawnInd = true;                // true = if you wanna spawn Indepdentents through CSWR / false = no spawn.
-	CSWR_spawnCiv = true;                // true = if you wanna spawn Civilians through CSWR / false = no spawn.
-	CSWR_unlimitedFuel = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
-	CSWR_unlimitedAmmo = false;                // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+CSWR_debug = true;              // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
+CSWR_spawnBlu = true;           // true = if you wanna spawn BluFor through CSWR / false = no spawn.
+CSWR_spawnOp  = true;          // true = if you wanna spawn OpFor through CSWR / false = no spawn.
+CSWR_spawnInd = true;          // true = if you wanna spawn Indepdentents through CSWR / false = no spawn.
+CSWR_spawnCiv = true;          // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+CSWR_backpackForAll = false;     // true = if editor sets a custom backpack, all units will get it / false = only units originally with backpack will get it. Detault: false.
+CSWR_vestForAll = false;        // true = if editor sets a custom vest, all units will get it / false = only units originally with vest will get it. Detault: false.
+CSWR_unlimitedFuel = false;     // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+CSWR_unlimitedAmmo = false;     // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
+CSWR_editableByZeus = true;     // true = units and vehicles can be manipulated by Zeus when available / false = no editable. Detault: true.
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING in the line below:
@@ -23,7 +24,7 @@ CSWR_bluSpawnPoints=[]; CSWR_opSpawnPoints=[]; CSWR_indSpawnPoints=[]; CSWR_civS
 
 // FACTION SPAWNPOINTS:
 // Define where each faction in-game will spawn randomly.
-// For new spawnpoints, add a new "empty marker" on Eden, set its name and add the new marker down below:
+// For new spawnpoints, add a new "select marker" on Eden, set its name and add the new marker down below:
 
 	// BluFor spawnpoints:
 	if ( CSWR_spawnBlu ) then {

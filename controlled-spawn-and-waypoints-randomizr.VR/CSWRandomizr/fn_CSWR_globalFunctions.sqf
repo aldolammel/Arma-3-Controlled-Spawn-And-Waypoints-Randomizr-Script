@@ -1,71 +1,225 @@
-// CSWR v2.5
+// CSWR v2.6
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
+// Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
 
-THY_fnc_CSWR_loadout = 
-{
+
+THY_fnc_CSWR_loadout = {
 	// This function: define the faction loadout details for each unit spawned by CSWR. 
+	// Returns nothing.
 	
 	params ["_faction", "_unit"];
 	
 	switch (_faction) do {
+
 		case BLUFOR: {
-			//_unit unlinkItem "NVGoggles";
-			_unit unlinkItem "FirstAidKit";
-			_unit unlinkItem "ItemWatch";
-			_unit unlinkItem "ItemCompass";
-			_unit unlinkItem "ItemRadio";
-			_unit unlinkItem "ItemGPS";
-			_unit unlinkItem "ItemMap";
-			_unit removeWeapon "Binocular";
-			//removeUniform _unit;          // removes the uniform from everyone in the faction.
-			//removeVest _unit;          // removes the vest from everyone in the faction.
-			//removeBackpack _unit;          // removes the backpack from everyone in the faction.
-			//removeHeadgear _unit;          // removes the helmet and facewear from everyone in the faction.
-			//_unit addUniform "U_B_CombatUniform_mcam";          // add the same uniform to everyone in the faction.
-			//_unit addVest "V_TacVest_blk_POLICE";          // add the same vest to everyone in the faction.
-			//_unit addBackpack "TK_RPG_Backpack_EP1";          // add the same backpack to everyone in the faction.
-			//_unit addHeadgear "H_HelmetB";          // add the same helmet or facewear to everyone in the faction.
-			//_unit addItemToBackpack "arifle_MXM_Hamr_pointer_F";          // create new item and store it to soldier's backpack. The item can also be a weapon or a magazine.
-			//_unit linkItem "ItemGPS";          // create and assign item to the correct slot. If there is an item in the targeted slot, it gets replaced.
-			//_unit addItem "FirstAidKit";          // creates new item and tries to add it into inventory. Inventory must have enough space to accomodate new item or command will fail.The item can also be a weapon or a magazine.
-			// removeAllWeapons _unit;          // removes all weapons and magazines from the given unit.
+			// Exclusively Uniform replacement when needed:
+				[_unit, "U_C_Driver_2"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
+			
+			// Exclusively Vest replacement when needed:
+				[_unit, "V_TacVest_blk_POLICE"] call THY_fnc_CSWR_vestRepacker;  // add a new vest to the unit.
+			
+			// Exclusively Backpack replacement when needed:
+				[_unit, "B_Bergen_mcamo_F"] call THY_fnc_CSWR_backpackRepacker;  // add a new backpack to the unit.
+			
+			// All other things in unit loadout:
+				//_unit unlinkItem "NVGoggles";          // removes the night vision;
+				//_unit unlinkItem "FirstAidKit";
+				_unit unlinkItem "ItemWatch";
+				_unit unlinkItem "ItemCompass";
+				_unit unlinkItem "ItemRadio";
+				_unit unlinkItem "ItemGPS";
+				_unit unlinkItem "ItemMap";
+				_unit removeWeapon "Binocular";
+				//removeHeadgear _unit;          // removes the helmet and facewear from everyone in the faction.
+				//_unit addHeadgear "H_HelmetB";          // add the same helmet or facewear to everyone in the faction.
+				//_unit addItem "arifle_MXM_Hamr_pointer_F";          // create new item and store it somewhere with space in the unit. The item can also be a weapon or a magazine.
+				//_unit addItem "FirstAidKit";          // create new item and store it somewhere with space in the unit. The item can also be a weapon or a magazine.
+				//_unit linkItem "ItemGPS";          // create and assign item to the correct slot. If there is an item in the targeted slot, that gets replaced.
+				// removeAllWeapons _unit;          // removes all weapons and magazines from the given unit.
 		};
+
 		case OPFOR: {
-			//_unit unlinkItem "NVGoggles_OPFOR";
-			_unit unlinkItem "FirstAidKit";
-			_unit unlinkItem "ItemWatch";
-			_unit unlinkItem "ItemCompass";
-			_unit unlinkItem "ItemRadio";
-			_unit unlinkItem "ItemGPS";
-			_unit unlinkItem "ItemMap";
-			_unit removeWeapon "Binocular";
+			// Exclusively Uniform replacement when needed:
+				//[_unit, "U_C_Driver_1_red"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
+			
+			// Exclusively Vest replacement when needed:
+				//[_unit, "V_TacVest_brn"] call THY_fnc_CSWR_vestRepacker;  // add a new vest to the unit.
+			
+			// Exclusively Backpack replacement when needed:
+				//[_unit, "B_Kitbag_rgr"] call THY_fnc_CSWR_backpackRepacker;  // add a new backpack to the unit.
+
+			// All other things in unit loadout:
+				//_unit unlinkItem "NVGoggles_OPFOR";
+				//_unit unlinkItem "FirstAidKit";
+				_unit unlinkItem "ItemWatch";
+				_unit unlinkItem "ItemCompass";
+				_unit unlinkItem "ItemRadio";
+				_unit unlinkItem "ItemGPS";
+				_unit unlinkItem "ItemMap";
+				_unit removeWeapon "Binocular";
 		};
+
 		case INDEPENDENT: {
-			//_unit unlinkItem "NVGoggles_INDEP";
-			_unit unlinkItem "FirstAidKit";
-			_unit unlinkItem "ItemWatch";
-			_unit unlinkItem "ItemCompass";
-			_unit unlinkItem "ItemRadio";
-			_unit unlinkItem "ItemGPS";
-			_unit unlinkItem "ItemMap";
-			_unit removeWeapon "Binocular";
+			// Exclusively Uniform replacement when needed:
+				//[_unit, "U_C_Driver_1"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
+			
+			// Exclusively Vest replacement when needed:
+				//[_unit, "V_TacVest_camo"] call THY_fnc_CSWR_vestRepacker;  // add a new vest to the unit.
+			
+			// Exclusively Backpack replacement when needed:
+				//[_unit, "B_Kitbag_sgg"] call THY_fnc_CSWR_backpackRepacker;  // add a new backpack to the unit.
+			
+			// All other things in unit loadout:
+				//_unit unlinkItem "NVGoggles_INDEP";
+				//_unit unlinkItem "FirstAidKit";
+				_unit unlinkItem "ItemWatch";
+				_unit unlinkItem "ItemCompass";
+				_unit unlinkItem "ItemRadio";
+				_unit unlinkItem "ItemGPS";
+				_unit unlinkItem "ItemMap";
+				_unit removeWeapon "Binocular";
 		};
+
 		case CIVILIAN: {
-			// even in civilians you can add or remove something. 
+			// Exclusively Uniform replacement when needed:
+				//[_unit, "U_C_Poloshirt_stripped"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
+
+			// All other things in unit loadout:
+				_unit unlinkItem "ItemWatch";
+				_unit unlinkItem "ItemCompass";
+				_unit unlinkItem "ItemMap";
 		};
 	};
+
+	true
 };
 
 
-// ----------------------------
-// CSWR CORE / TRY TO CHANGE NOTHING BELOW!!!
+// CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
 
 
-THY_fnc_CSWR_people = 
-{
+THY_fnc_CSWR_uniformScanner = {
+	// This function checks the unit's uniform to understand its current contents in case the mission editor chooses to replace the uniform by a new one.
+	// Returns _uniformContent.
+
+	params ["_unit"];
+	private ["_uniform", "_uniformContent"];
+
+	_uniform = uniform _unit;
+	_uniformContent = [];
+
+	// if there's an uniform, then save all its original content:
+	if ( _uniform != "" ) then { _uniformContent = uniformItems _unit };
+
+	_uniformContent  //Returning.
+};
+
+
+THY_fnc_CSWR_vestScanner = {
+	// This function checks the unit's vest to understand its current contents in case the mission editor chooses to replace the vest by a new one.
+	// Returns _vestContent.
+
+	params ["_unit"];
+	private ["_vest", "_vestContent"];
+
+	_vest = vest _unit;
+	_vestContent = [];
+
+	// if there's a backpack, then save all its original content:
+	if ( _vest != "" ) then { _vestContent = vestItems _unit };
+
+	_vestContent  //Returning.
+};
+
+
+THY_fnc_CSWR_backpackScanner = {
+	// This function checks the unit's backpack to understand its current contents in case the mission editor chooses to replace the backpack by a new one.
+	// Returns _backpackContent.
+
+	params ["_unit"];
+	private ["_backpack", "_backpackContent"];
+
+	_backpack = backpack _unit;
+	_backpackContent = [];
+
+	// if there's a backpack, then save all its original content:
+	if ( _backpack != "" ) then { _backpackContent = backpackItems _unit };
+
+	_backpackContent  //Returning.
+};
+
+
+THY_fnc_CSWR_uniformRepacker = {
+	// This function add to the new uniform all the old unit's uniform original content.
+	// Returns nothing.
+
+	params ["_unit", "_newUniform"];
+	private ["_oldUniform", "_oldUniformContent"];
+
+	_oldUniform = uniform _unit;
+	_oldUniformContent = [_unit] call THY_fnc_CSWR_uniformScanner;
+
+	// if there's an uniform, then...
+	if ( _oldUniform != "" ) then 
+	{
+		removeUniform _unit;
+		_unit forceAddUniform _newUniform;
+		{ _unit addItemToUniform _x } forEach _oldUniformContent;
+	};
+
+	true
+};
+
+
+THY_fnc_CSWR_vestRepacker = {
+	// This function add to the new vest all the old unit's vest original content.
+	// Returns nothing.
+
+	params ["_unit", "_newVest"];
+	private ["_oldVest", "_oldVestContent"];
+
+	_oldVest = vest _unit;
+	_oldVestContent = [_unit] call THY_fnc_CSWR_vestScanner;
+
+	// if there's a vest, then...
+	if ( _oldVest != "" OR CSWR_vestForAll ) then 
+	{
+		removeVest _unit;
+		_unit addVest _newVest;
+		{ _unit addItemToVest _x } forEach _oldVestContent;
+	};
+
+	true
+};
+
+
+THY_fnc_CSWR_backpackRepacker = {
+	// This function add to the new backpack all the old unit's backpack original content.
+	// Returns nothing.
+
+	params ["_unit", "_newBackpack"];
+	private ["_oldBackpack", "_oldBackpackContent"];
+
+	_oldBackpack = backpack _unit;
+	_oldBackpackContent = [_unit] call THY_fnc_CSWR_backpackScanner;
+
+	// if there's a backpack, then...
+	if ( _oldBackpack != "" OR CSWR_backpackForAll ) then 
+	{
+		removeBackpack _unit;
+		_unit addBackpack _newBackpack;
+		{ _unit addItemToBackpack _x } forEach _oldBackpackContent;
+	};
+
+	true
+};
+
+
+THY_fnc_CSWR_people = {
 	// This function: generates a group of people. 
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
+	// Returns nothing.
 	
 	params ["_faction","_spwnPnts","_grpType","_behavior","_wpFunction"];
 	private ["_grp"];
@@ -136,36 +290,39 @@ THY_fnc_CSWR_people =
 	} forEach units _grp;
 
 	[_grp] spawn _wpFunction; 
+	
+	if ( CSWR_editableByZeus ) then {{_x addCuratorEditableObjects [units _grp, true]} forEach allCurators};
+	
 	sleep 1;
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_vehicle = 
-{
+THY_fnc_CSWR_vehicle = {
 	// This function: generates a vehicle. Its crew is created automatically.
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
+	// Returns nothing.
 	
 	params ["_faction","_spwnPnts","_vehType","_behavior","_wpFunction"];
 	private ["_vehSpawn","_vehPos","_grpVeh"];
 	
 	_vehSpawn = getMarkerPos (selectRandom _spwnPnts);
-	_vehPos = _vehSpawn findEmptyPosition [10, 300];            // [radius, distance] / IMPORTANT: if decrease these valius might result in explosions and vehicles not spawning.
+	_vehPos = _vehSpawn findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in explosions and vehicles not spawning.
 	sleep 0.1;
 	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, true, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 	_grpVeh deleteGroupWhenEmpty true;
 	
 	// Vehicle behavior:
-	vehicle leader _grpVeh setVehicleReportOwnPosition true;
-	vehicle leader _grpVeh setVehicleReceiveRemoteTargets true;
-	vehicle leader _grpVeh setVehicleReportRemoteTargets true;
+	(vehicle leader _grpVeh) setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners never will leave the their vehicle.
+	(vehicle leader _grpVeh) setVehicleReportOwnPosition true;
+	(vehicle leader _grpVeh) setVehicleReceiveRemoteTargets true;
+	(vehicle leader _grpVeh) setVehicleReportRemoteTargets true;
 	_faction reportRemoteTarget [vehicle leader _grpVeh, 60];
-	//vehicle leader _grpVeh setVehicleRadar 1;
+	//(vehicle leader _grpVeh) setVehicleRadar 1;
 	//_enemy = "";
 	//if (_faction == blufor) then { _enemy = opfor} else { _enemy = blufor };
-	//vehicle leader _grpVeh  confirmSensorTarget [_enemy, true];
+	//(vehicle leader _grpVeh) confirmSensorTarget [_enemy, true];
 	
 	// Group behavior:
 	switch (_behavior) do {
@@ -223,16 +380,18 @@ THY_fnc_CSWR_vehicle =
 	} forEach units _grpVeh;
 	
 	[_grpVeh] spawn _wpFunction;
-	sleep 5;            // IMPORTANT: helps to avoid veh colissions and explosions at the beggining of the match.
+	
+	if ( CSWR_editableByZeus ) then {{_x addCuratorEditableObjects [units _grpVeh, true]; _x addCuratorEditableObjects [[vehicle leader _grpVeh], true]} forEach allCurators};
+	
+	sleep 5;  // IMPORTANT: helps to avoid veh colissions and explosions at the beggining of the match.
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_wpGoToAnywhere =
-{ 
+THY_fnc_CSWR_wpGoToAnywhere = { 
 	// This function: set the group to move any waypoint mark on the map.
+	// Returns nothing.
 	
 	params ["_grp"];
 	private ["_where","_wp"];
@@ -241,15 +400,14 @@ THY_fnc_CSWR_wpGoToAnywhere =
 	_wp = _grp addWaypoint [_where, 0]; 
 	_wp setWaypointTimeout CSWR_wpTimeOut;  
 	_wp setWaypointStatements ["true", "[group this] spawn THY_fnc_CSWR_wpGoToAnywhere"];
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_wpGoToDestShared = 
-{ 
+THY_fnc_CSWR_wpGoToDestShared = { 
 	// This function: set the group to move only shared waypoint marks on the map.
+	// Returns nothing.
 	
 	params ["_grp"];
 	private ["_where","_wp"];
@@ -258,15 +416,14 @@ THY_fnc_CSWR_wpGoToDestShared =
 	_wp = _grp addWaypoint [_where, 0];
 	_wp setWaypointTimeout CSWR_wpTimeOut; 
 	_wp setWaypointStatements ["true", "[group this] spawn THY_fnc_CSWR_wpGoToDestShared"];
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_wpGoToDestBlu = 
-{ 
+THY_fnc_CSWR_wpGoToDestBlu = { 
 	// This function: set the group to move only BluFor waypoint marks on the map.
+	// Returns nothing.
 	
 	params ["_grp"];
 	private ["_where","_wp"];
@@ -275,15 +432,14 @@ THY_fnc_CSWR_wpGoToDestBlu =
 	_wp = _grp addWaypoint [_where, 0]; 
 	_wp setWaypointTimeout CSWR_wpTimeOut;
 	_wp setWaypointStatements ["true", "[group this] spawn THY_fnc_CSWR_wpGoToDestBlu"];
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_wpGoToDestOp = 
-{ 
+THY_fnc_CSWR_wpGoToDestOp = { 
 	// This function: set the group to move only OpFor waypoint marks on the map.
+	// Returns nothing.
 	
 	params ["_grp"];
 	private ["_where","_wp"];
@@ -292,15 +448,14 @@ THY_fnc_CSWR_wpGoToDestOp =
 	_wp = _grp addWaypoint [_where, 0]; 
 	_wp setWaypointTimeout CSWR_wpTimeOut; 
 	_wp setWaypointStatements ["true", "[group this] spawn THY_fnc_CSWR_wpGoToDestOp"];
+
+	true
 };
 
 
-// ----------------------------
-
-
-THY_fnc_CSWR_wpGoToDestInd = 
-{	
+THY_fnc_CSWR_wpGoToDestInd = {
 	// This function: set the group to move only Independent waypoint marks on the map.
+	// Returns nothing.
 	
 	params ["_grp"];
 	private ["_where","_wp"];
@@ -309,5 +464,6 @@ THY_fnc_CSWR_wpGoToDestInd =
 	_wp = _grp addWaypoint [_where, 0]; 
 	_wp setWaypointTimeout CSWR_wpTimeOut; 
 	_wp setWaypointStatements ["true", "[group this] spawn THY_fnc_CSWR_wpGoToDestInd"];
-};
 
+	true
+};

@@ -1,4 +1,4 @@
-// CSWR v2.1
+// CSWR v2.6
 // File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
@@ -20,8 +20,8 @@ if (!isServer) exitWith {};
 			
 			// Soldiers
 			private _bluSquadLight   = ["B_Soldier_TL_F", "B_Soldier_F"];
-			private _bluSquadRegular = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_F", "B_soldier_AR_F"];
-			private _bluSquadHeavy   = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_F", "B_soldier_AR_F", "B_soldier_M_F", "B_soldier_AT_F"];
+			private _bluSquadRegular = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F"];
+			private _bluSquadHeavy   = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F", "B_soldier_M_F", "B_soldier_AT_F"];
 
 		// SPAWNING GROUPS: BLUFOR 
 		// Define each group and their features and destination.
@@ -82,8 +82,8 @@ if (!isServer) exitWith {};
 			
 			// Soldiers
 			private _opSquadLight   = ["O_Soldier_TL_F", "O_Soldier_F"];
-			private _opSquadRegular	= ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_F", "O_soldier_AR_F"];
-			private _opSquadHeavy   = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_F", "O_soldier_AR_F", "O_soldier_M_F", "O_soldier_AT_F"];
+			private _opSquadRegular	= ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F"];
+			private _opSquadHeavy   = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F", "O_soldier_M_F", "O_soldier_AT_F"];
 
 		// SPAWNING GROUPS: OPFOR
 		// Define each group and their features and destination.
@@ -143,8 +143,8 @@ if (!isServer) exitWith {};
 			
 			// Soldiers
 			private _indSquadLight	 = ["I_Soldier_TL_F", "I_soldier_F"];
-			private _indSquadRegular = ["I_Soldier_TL_F", "I_soldier_F", "I_soldier_F", "I_Soldier_AR_F"];
-			private _indSquadHeavy	 = ["I_Soldier_TL_F", "I_soldier_F", "I_soldier_F", "I_Soldier_AR_F", "I_Soldier_M_F", "I_Soldier_AT_F"];
+			private _indSquadRegular = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F"];
+			private _indSquadHeavy	 = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F", "I_Soldier_M_F", "I_Soldier_AT_F"];
 		
 		// SPAWNING GROUPS: INDEPENDENT
 		// Define each group and their features and destination.
@@ -249,7 +249,7 @@ if (!isServer) exitWith {};
 			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
 			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
 			[CIVILIAN, CSWR_civSpawnPoints, _civGang, "SAFE", THY_fnc_CSWR_wpGoToDestShared] call THY_fnc_CSWR_people;
-				
-				
-	}; // civ ends.	
-};	// spawn ends.	
+			
+			
+	}; // civ ends.
+};	// spawn ends.
