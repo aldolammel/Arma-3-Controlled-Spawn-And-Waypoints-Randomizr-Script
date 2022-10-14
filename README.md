@@ -36,7 +36,7 @@ __
 ## CHANGELONG
 
 **Oct, 14th 2022 | v2.6**
-- New > Now you also can customize the vest and backpack of each faction spawned throught the CSWR Script;
+- New > Now you also can customize the vest and backpack of each faction spawned through the CSWR Script;
 - New > Vehicles with turrets spawned by CSWR, when damaged, its gunners never leave the vehicle, staying in combat until the death;
 - New > All units and vehicles spawned by CSWR now are editable by Zeus in-game when Zeus is allowed in the mission;
 - Documentation has been updated.
