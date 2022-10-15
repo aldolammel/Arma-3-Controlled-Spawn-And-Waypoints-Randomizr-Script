@@ -17,7 +17,7 @@ __
 - You can create a lot of spawn points for one or more factions.
 - Once the spawn points are created, the script will spawn the groups randomly through the faction spawns.
 - There is no re-spawn. Death is death. 
-- All vehicles with turrets spawned by CSWR, their gunners will combat until death, never leaving the vehicle, no matter the vehicle's condition.
+- Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until the death.
 - Manually define which marks will be used as waypoints.
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to.
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly.
