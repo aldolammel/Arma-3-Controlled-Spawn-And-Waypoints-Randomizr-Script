@@ -1,4 +1,4 @@
-// CSWR v2.6
+// CSWR v2.7
 // File: your_mission\CSWRandomizr\fn_CSWR_spawnsAndWaypoints.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
@@ -6,7 +6,7 @@
 if (!isServer) exitWith {};
 
 // PARAMETERS OF EDITOR'S OPTIONS:
-CSWR_debug = true;              // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
+CSWR_debug = false;              // true = shows some infos to Mission Editor (available only on hosted server player) / false = turn it off. Detault: false.
 CSWR_spawnBlu = true;           // true = if you wanna spawn BluFor through CSWR / false = no spawn.
 CSWR_spawnOp  = true;          // true = if you wanna spawn OpFor through CSWR / false = no spawn.
 CSWR_spawnInd = true;          // true = if you wanna spawn Indepdentents through CSWR / false = no spawn.
@@ -132,4 +132,17 @@ CSWR_bluSpawnPoints=[]; CSWR_opSpawnPoints=[]; CSWR_indSpawnPoints=[]; CSWR_civS
 	{ _x setMarkerAlpha 0 } forEach CSWR_allSpawnPoints; // hiding the spawn markers.
 	CSWR_destinationAnywhere = CSWR_destinationShared + CSWR_destinationBlu + CSWR_destinationOp + CSWR_destinationInd;
 	{ _x setMarkerAlpha 0 } forEach CSWR_destinationAnywhere; // hiding the destination markers.
+
+	while { CSWR_debug } do
+	{		
+		private _allUnitsAlive = {alive _x} count (allUnits - playableUnits);
+		private _bluUnitsAlive = {alive _x} count (units BLUFOR);
+		private _opUnitsAlive  = {alive _x} count (units OPFOR);
+		private _indUnitsAlive = {alive _x} count (units INDEPENDENT);
+		private _civUnitsAlive = {alive _x} count (units CIVILIAN);
+		
+		format ["\n\n--- CSWR DEBUG MONITOR ---\n\nAI's units alive right now: %1\nBlufor units: %2\nOpfor units: %3\nInd units: %4\nCiv units: %5\n\n", _allUnitsAlive, _bluUnitsAlive, _opUnitsAlive, _indUnitsAlive, _civUnitsAlive] remoteExec ["hintSilent"];
+		
+		sleep 5;
+	};
 };
