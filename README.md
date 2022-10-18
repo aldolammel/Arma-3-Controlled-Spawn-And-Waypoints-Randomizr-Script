@@ -42,6 +42,7 @@ __
 
 **Oct, 18th 2022 | v2.7**
 - Fixed > Crewmen were not getting customized loadout;
+- Improvement > fn_CSWR_debug.sqf file has been merged with fn_CSWR_spawnsAndWaypoints.sqf one;
 - Improvement > Now, mission editor has a specific file to customize their AI units: fn_CSWR_loadout.sqf;
 - Improvement > Loadout function is much more reliable to custom;
 - Documentation has been updated.
