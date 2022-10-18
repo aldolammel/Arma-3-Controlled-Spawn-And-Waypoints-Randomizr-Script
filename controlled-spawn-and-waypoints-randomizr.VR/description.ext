@@ -7,7 +7,7 @@ class Header
 };
 
 	// About
-	onLoadName 			= "CSWRandomizr";
+	onLoadName 			= "CSWR";
 	author 				= "thy"; 						
 	overviewPicture 	= "images\thumb.jpg"; 			
 	onLoadMission 		= "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to set life faster on your mission map."; 
