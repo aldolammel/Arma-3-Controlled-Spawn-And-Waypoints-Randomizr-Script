@@ -95,9 +95,10 @@ switch (_faction) do {
 			_unit unlinkItem "ItemMap";
 			_unit removeItem "ItemMap";
 			_unit removeWeapon "Binocular";
+			removeHeadgear _unit;
 
 		// Exclusively for Uniform replacement:
-			//[_unit, "U_C_Driver_1"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
+			[_unit, "U_BG_Guerrilla_6_1"] call THY_fnc_CSWR_uniformRepacker;  // add a new uniform to the unit.
 		
 		// Exclusively for Vest replacement:
 			//[_unit, "V_TacVest_camo"] call THY_fnc_CSWR_vestRepacker;  // add a new vest to the unit.
@@ -106,7 +107,7 @@ switch (_faction) do {
 			//[_unit, "B_Kitbag_sgg"] call THY_fnc_CSWR_backpackRepacker;  // add a new backpack to the unit.
 		
 		// Exclusively for things to add or link:
-			// xxxxxxx
+			_unit addHeadgear "H_Watchcap_camo";
 	};
 
 	case CIVILIAN: {

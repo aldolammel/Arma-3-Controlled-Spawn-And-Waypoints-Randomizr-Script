@@ -212,24 +212,25 @@ THY_fnc_CSWR_vehicle = {
 	// Returns nothing.
 	
 	params ["_faction","_spwnPnts","_vehType","_behavior","_wpFunction"];
-	private ["_vehSpawn","_vehPos","_grpVeh"];
+	private ["_vehSpawn","_vehPos","_grpVeh", "_veh"];
 	
 	_vehSpawn = getMarkerPos (selectRandom _spwnPnts);
 	_vehPos = _vehSpawn findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in explosions and vehicles not spawning.
 	sleep 0.1;
 	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, true, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 	_grpVeh deleteGroupWhenEmpty true;
+	_veh = vehicle leader _grpVeh;
 	
 	// Vehicle behavior:
-	(vehicle leader _grpVeh) setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners never will leave the their vehicle.
-	(vehicle leader _grpVeh) setVehicleReportOwnPosition true;
-	(vehicle leader _grpVeh) setVehicleReceiveRemoteTargets true;
-	(vehicle leader _grpVeh) setVehicleReportRemoteTargets true;
-	_faction reportRemoteTarget [vehicle leader _grpVeh, 60];
-	//(vehicle leader _grpVeh) setVehicleRadar 1;
+	_veh setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners never will leave the their vehicle.
+	_veh setVehicleReportOwnPosition true;
+	_veh setVehicleReceiveRemoteTargets true;
+	_veh setVehicleReportRemoteTargets true;
+	//_faction reportRemoteTarget [<enemy vehicle>, 60];
+	//_veh setVehicleRadar 1;
 	//_enemy = "";
 	//if (_faction == blufor) then { _enemy = opfor} else { _enemy = blufor };
-	//(vehicle leader _grpVeh) confirmSensorTarget [_enemy, true];
+	//_veh confirmSensorTarget [_enemy, true];
 	
 	// Group behavior:
 	switch (_behavior) do {
