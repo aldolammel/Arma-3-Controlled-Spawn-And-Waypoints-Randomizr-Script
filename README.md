@@ -8,7 +8,7 @@ CSWR doesn't change any original AI behavior after the spawn*.
 
 ## HOW TO INSTALL / DOCUMENTATION
 
-video demo: soon.
+video demo: https://www.youtube.com/watch?v=rpzIr0r03ZQ
 
 Doc: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.VR/CSWRandomizr/_CSWR_Script_Documentation.pdf
 
