@@ -1,9 +1,57 @@
-// CSWR v2.7
+// CSWR v2.8
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
+
+
+THY_fnc_CSWR_helmetReplacement = {
+	// This function replace the old unit's helmet for the new one.
+	// Returns nothing.
+
+	params ["_unit", "_newHelmetInfantry", "_newHelmetCrew"];
+	private ["_veh", "_driver", "_gunner", "_commander"];
+
+	removeHeadgear _unit;    // removes the helmet/hat/cap/beret if it exists.
+
+	// Crew: if the unit is inside a vehicle, they are a crew, then...
+	if (!isNull objectParent _unit) then 
+	{
+		_veh = vehicle _unit;
+		_driver = driver _veh;
+		_gunner = gunner _veh;
+		_commander = commander _veh;
+
+		// if the crew is driver, gunner or commander of vehicle, then...
+		if ( _unit == _driver OR _unit == _gunner OR _unit == _commander ) then 
+		{
+			// if the vehicle's type is a heavy ground vehicle, then...
+			if ( _veh isKindOf "Tank" OR _veh isKindOf "WheeledAPC" OR _veh isKindOf "TrackedAPC" ) then 
+			{
+				// it will add the new crew helmet if it exists, otherwise the crew will have no helmet:
+				if (_newHelmetCrew != "") then { _unit addHeadgear _newHelmetCrew };
+			
+			// if the vehicle's type is other one...
+			} else {
+				// the crew will get the same helmet of infantry if it exists:
+				if (_newHelmetInfantry != "") then { _unit addHeadgear _newHelmetInfantry };
+			};
+		
+		// if the crew actually is just a infantry spawned inside the vehicle...
+		} else {
+			// the unit will get the infantry helmet if it exists:
+			if (_newHelmetInfantry != "") then { _unit addHeadgear _newHelmetInfantry };
+		};
+
+	// Infantry: if the unit is NOT in a vehicle, do it:
+	} else {
+		// if you set an infantry helmet, it will add the new gear to the unit, otherwise they will have no helmet:
+		if (_newHelmetInfantry != "") then { _unit addHeadgear _newHelmetInfantry };
+	};
+
+	true
+};
 
 
 THY_fnc_CSWR_uniformScanner = {
@@ -14,6 +62,8 @@ THY_fnc_CSWR_uniformScanner = {
 	private ["_uniform", "_uniformContent"];
 
 	_uniform = uniform _unit;
+	if ( _uniform == "" ) exitWith {};
+	
 	_uniformContent = [];
 
 	// if there's an uniform, then save all its original content:
@@ -65,14 +115,26 @@ THY_fnc_CSWR_uniformRepacker = {
 	private ["_oldUniform", "_oldUniformContent"];
 
 	_oldUniform = uniform _unit;
-	_oldUniformContent = [_unit] call THY_fnc_CSWR_uniformScanner;
-
-	// if there's an uniform, then...
+	_oldUniformContent = [];
+	
+	// if the unit has an uniform:
 	if ( _oldUniform != "" ) then 
 	{
+		// check if there's something inside the uniform:
+		_oldUniformContent = [_unit] call THY_fnc_CSWR_uniformScanner;
 		removeUniform _unit;
+	};
+
+	// if there is a new uniform configured:
+	if ( _newUniform != "" ) then 
+	{
 		_unit forceAddUniform _newUniform;
-		{ _unit addItemToUniform _x } forEach _oldUniformContent;
+
+		// if there's an old uniform and old items, repack the items into the new one:
+		if ( _oldUniform != "" AND (count _oldUniformContent > 0) ) then 
+		{ 
+			{ _unit addItemToUniform _x } forEach _oldUniformContent;
+		};
 	};
 
 	true
@@ -87,14 +149,27 @@ THY_fnc_CSWR_vestRepacker = {
 	private ["_oldVest", "_oldVestContent"];
 
 	_oldVest = vest _unit;
-	_oldVestContent = [_unit] call THY_fnc_CSWR_vestScanner;
+	_oldVestContent = [];
 
-	// if there's a vest, then...
-	if ( _oldVest != "" OR CSWR_vestForAll ) then 
+	// if the unit has a vest:
+	if ( _oldVest != "") then
 	{
+		// check if there's something inside the vest:
+		_oldVestContent = [_unit] call THY_fnc_CSWR_vestScanner;
 		removeVest _unit;
-		_unit addVest _newVest;
-		{ _unit addItemToVest _x } forEach _oldVestContent;
+	};
+
+	// if there is a new vest configured:
+	if ( _newVest != "" ) then 
+	{
+		// if the unit had an old vest OR the CSWR is been forced to add vest for each unit, including those ones originally with no vest, do it:
+		if ( _oldVest != "" OR CSWR_vestForAll ) then 
+		{
+			_unit addVest _newVest;
+
+			// if there is one or more items from old vest, repack them to the new one:
+			if ( count _oldVestContent > 0 ) then { { _unit addItemToVest _x } forEach _oldVestContent };
+		};
 	};
 
 	true
@@ -109,14 +184,27 @@ THY_fnc_CSWR_backpackRepacker = {
 	private ["_oldBackpack", "_oldBackpackContent"];
 
 	_oldBackpack = backpack _unit;
-	_oldBackpackContent = [_unit] call THY_fnc_CSWR_backpackScanner;
+	_oldBackpackContent = [];
 
-	// if there's a backpack, then...
-	if ( _oldBackpack != "" OR CSWR_backpackForAll ) then 
+	// if the unit has a backpack:
+	if ( _oldBackpack != "") then 
 	{
+		// check if there's something inside the backpack:
+		_oldBackpackContent = [_unit] call THY_fnc_CSWR_backpackScanner;
 		removeBackpack _unit;
-		_unit addBackpack _newBackpack;
-		{ _unit addItemToBackpack _x } forEach _oldBackpackContent;
+	};
+
+	// if there is a new backpack configured:
+	if ( _newBackpack != "" ) then 
+	{
+		// if the unit had an old backpack OR the CSWR is been forced to add backpack for each unit, including those ones originally with no backpack, do it:
+		if ( _oldBackpack != "" OR CSWR_backpackForAll ) then 
+		{
+			_unit addBackpack _newBackpack;
+
+			// if there is one or more items from old backpack, repack them to the new one:
+			if ( count _oldBackpackContent > 0 ) then { { _unit addItemToBackpack _x } forEach _oldBackpackContent };
+		};
 	};
 
 	true
@@ -217,7 +305,7 @@ THY_fnc_CSWR_vehicle = {
 	_vehSpawn = getMarkerPos (selectRandom _spwnPnts);
 	_vehPos = _vehSpawn findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in explosions and vehicles not spawning.
 	sleep 0.1;
-	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, true, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+	_grpVeh = [_vehPos, _faction, _vehType,[],[],[],[],[],180, false, 1] call BIS_fnc_spawnGroup;  // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 	_grpVeh deleteGroupWhenEmpty true;
 	_veh = vehicle leader _grpVeh;
 	
@@ -294,7 +382,7 @@ THY_fnc_CSWR_vehicle = {
 	
 	if ( CSWR_editableByZeus ) then {{_x addCuratorEditableObjects [units _grpVeh, true]; _x addCuratorEditableObjects [[vehicle leader _grpVeh], true]} forEach allCurators};
 	
-	sleep 5;  // IMPORTANT: helps to avoid veh colissions and explosions at the beggining of the match.
+	sleep 10;  // CRITICAL: helps to avoid veh colissions and explosions at the beggining of the match. Less than 10, heavy vehicles can blow up in spawn. Less than 5, any vehicle can blow up in spawn.
 
 	true
 };

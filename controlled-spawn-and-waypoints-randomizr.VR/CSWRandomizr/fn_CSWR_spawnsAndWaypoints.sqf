@@ -1,4 +1,4 @@
-// CSWR v2.7
+// CSWR v2.8
 // File: your_mission\CSWRandomizr\fn_CSWR_spawnsAndWaypoints.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
@@ -15,7 +15,7 @@ CSWR_backpackForAll = false;     // true = if editor sets a custom backpack, all
 CSWR_vestForAll = false;        // true = if editor sets a custom vest, all units will get it / false = only units originally with vest will get it. Detault: false.
 CSWR_unlimitedFuel = false;     // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
 CSWR_unlimitedAmmo = false;     // true = xxxxxxxxxxxxxxxxxxx / false = xxxxxxxxxxxxxxxxxxxxxxxx. <-------------- WIP
-CSWR_editableByZeus = true;     // true = units and vehicles can be manipulated by Zeus when available / false = no editable. Detault: true.
+CSWR_editableByZeus = true;     // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Detault: true.
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING in the line below:
@@ -129,9 +129,10 @@ CSWR_bluSpawnPoints=[]; CSWR_opSpawnPoints=[]; CSWR_indSpawnPoints=[]; CSWR_civS
 [] spawn
 {
 	CSWR_allSpawnPoints = CSWR_bluSpawnPoints + CSWR_opSpawnPoints + CSWR_indSpawnPoints + CSWR_civSpawnPoints;
-	{ _x setMarkerAlpha 0 } forEach CSWR_allSpawnPoints; // hiding the spawn markers.
 	CSWR_destinationAnywhere = CSWR_destinationShared + CSWR_destinationBlu + CSWR_destinationOp + CSWR_destinationInd;
-	{ _x setMarkerAlpha 0 } forEach CSWR_destinationAnywhere; // hiding the destination markers.
+	if ( !CSWR_debug ) then {
+		{ _x setMarkerAlpha 0 } forEach CSWR_allSpawnPoints + CSWR_destinationAnywhere; // hiding the spawn and destination markers.
+	};
 
 	while { CSWR_debug } do
 	{		

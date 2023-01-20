@@ -1,4 +1,4 @@
-// CSWR v2.6
+// CSWR v2.8
 // File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
 // Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
@@ -29,9 +29,9 @@ if (!isServer) exitWith {};
 			// Vehicles Groups
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle waypoints ]
 			
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehLight, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[BLUFOR, CSWR_bluSpawnPoints, _bluVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_bluSpawnPoints, _bluVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[BLUFOR, CSWR_bluSpawnPoints, _bluVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			
 			
@@ -91,9 +91,9 @@ if (!isServer) exitWith {};
 			// Vehicles Groups
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle waypoints ]
 			
-			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehLight, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[OPFOR, CSWR_opSpawnPoints, _opVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_opSpawnPoints, _opVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[OPFOR, CSWR_opSpawnPoints, _opVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 
 			// Soldiers Groups
@@ -152,9 +152,9 @@ if (!isServer) exitWith {};
 			// Vehicles Groups
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle waypoints ]
 			
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehLight, "AWARE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[INDEPENDENT, CSWR_indSpawnPoints, _indVehRegular, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_indSpawnPoints, _indVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			[INDEPENDENT, CSWR_indSpawnPoints, _indVehHeavy, "SAFE", THY_fnc_CSWR_wpGoToAnywhere] call THY_fnc_CSWR_vehicle;
 			
 			// Soldiers Groups
