@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v2.7
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v2.8
 >*Dependencies: none.*
 
 CSWR is a simple and limited script that spawns AI units once right before the mission starts and makes those units move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
@@ -39,6 +39,10 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELONG
+
+**Jan, 20th 2023 | v2.8**
+- Improvement > You can define through fn_CSWR_loadout.sqf file a custom helmet for infantry and other only for heavy armored crewmen;
+- Documentation has been updated.
 
 **Oct, 18th 2022 | v2.7**
 - Fixed > Crewmen were not getting customized loadout;
