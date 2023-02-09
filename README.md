@@ -46,9 +46,10 @@ __
 
 **Feb, 9th 2023 | v3.0**
 - Added > Added an option that the mission editor sets a timer before the CSWR starts to run;
-- Added > Included more options to customization infantry composition (from 3 to 6 options);
-- Fixed > Spawnpoint markers were visible even with debug mode off;
-- Improvement > Added friendly error handling messages;
+- Added > Included more options to customization infantry composition (from 3 templates to 6);
+- Fixed > A huge server performance killer has been fixed (script was running on background without spawnpoints on map);
+- Fixed > Spawnpoint markers are not visible anymore when debug mode if off;
+- Improvement > Added a massive, friendly and automatic errors handling to CSWR, helping a lot the mission editor;
 - Improvement > Lot of code reviewing;
 - Documentation has been updated.
 
