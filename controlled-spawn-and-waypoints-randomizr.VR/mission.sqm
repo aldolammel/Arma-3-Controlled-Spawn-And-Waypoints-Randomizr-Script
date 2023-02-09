@@ -8,22 +8,22 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=107;
+		nextID=143;
 	};
 	class MarkerIDProvider
 	{
-		nextID=5;
+		nextID=8;
 	};
 	class LayerIndexProvider
 	{
-		nextID=43;
+		nextID=66;
 	};
 	class Camera
 	{
-		pos[]={4193.7808,325.92468,4787.1963};
-		dir[]={0.45343935,-0.39945987,-0.79682159};
-		up[]={0.1975759,0.9167344,-0.34719634};
-		aside[]={-0.86917621,2.8320937e-007,-0.49461225};
+		pos[]={1851.9106,36.6702,5652.6392};
+		dir[]={0.76113093,-0.2707327,0.58939248};
+		up[]={0.21405707,0.96265453,0.16575812};
+		aside[]={0.61225748,0,-0.79065835};
 	};
 };
 binarizationWanted=0;
@@ -139,7 +139,7 @@ class Mission
 		month=7;
 		day=6;
 		hour=19;
-		minute=-28;
+		minute=10;
 		startFogDecay=0.014;
 		forecastFogDecay=0.014;
 	};
@@ -322,7 +322,7 @@ class Mission
 						class data
 						{
 							singleType="SCALAR";
-							value=2;
+							value=3;
 						};
 					};
 				};
@@ -330,23 +330,6 @@ class Mission
 			};
 		};
 		class Item2
-		{
-			dataType="Trigger";
-			position[]={1907.933,19.656975,5714.4282};
-			class Attributes
-			{
-				onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in fn_CSWR_population.sqf file. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
-				sizeA=3;
-				sizeB=3;
-				sizeC=1.3940001;
-				interuptable=1;
-				activationBy="ANYPLAYER";
-			};
-			id=36;
-			type="EmptyDetector";
-			atlOffset=3.1389008;
-		};
-		class Item3
 		{
 			dataType="Layer";
 			name="CSWR Spawnpoints";
@@ -356,119 +339,124 @@ class Mission
 				class Item0
 				{
 					dataType="Marker";
-					position[]={1756.7717,5.5,5856.897};
-					name="civSpwn03";
+					position[]={3540.6279,47.759411,6212.3726};
+					name="spwn_blu_1";
 					type="Select";
-					colorName="ColorCIV";
-					id=12;
+					colorName="ColorBlue";
+					id=128;
 				};
 				class Item1
 				{
 					dataType="Marker";
-					position[]={3756.5371,164.144,5033.8931};
-					name="bluSpwn01";
+					position[]={3122.0466,26.559814,5745.9443};
+					name="spwn_blu_2";
 					type="Select";
 					colorName="ColorBlue";
-					id=0;
-					atlOffset=-0.00038146973;
+					id=129;
+					atlOffset=-3.4962769;
 				};
 				class Item2
 				{
 					dataType="Marker";
-					position[]={3023.7349,3.3514893,6028.8608};
-					name="bluSpwn02";
+					position[]={4394.6646,124.94709,6763.9131};
+					name="spwn_blu_3";
 					type="Select";
 					colorName="ColorBlue";
-					id=1;
+					id=130;
+					atlOffset=-3.4498062;
 				};
 				class Item3
 				{
 					dataType="Marker";
-					position[]={4392.3301,128.58299,6767.917};
-					name="bluSpwn03";
+					position[]={5944.8276,34.166016,5457.3311};
+					name="spwn_ind_1";
 					type="Select";
-					colorName="ColorBlue";
-					id=2;
-					atlOffset=-0.00039672852;
+					colorName="ColorGreen";
+					id=125;
+					atlOffset=-5.1092224;
 				};
 				class Item4
 				{
 					dataType="Marker";
-					position[]={1657.1339,5.5,5525.521};
-					name="civSpwn01";
+					position[]={6310.377,36.190807,5133.9092};
+					name="spwn_ind_2";
 					type="Select";
-					colorName="ColorCIV";
-					id=10;
+					colorName="ColorGreen";
+					id=126;
 				};
 				class Item5
 				{
 					dataType="Marker";
-					position[]={1718.5227,5.5,5712.9971};
-					name="civSpwn02";
+					position[]={5239.1675,150.6167,5812.978};
+					name="spwn_ind_3";
 					type="Select";
-					colorName="ColorCIV";
-					id=11;
+					colorName="ColorGreen";
+					id=127;
+					atlOffset=-5.3515778;
 				};
 				class Item6
 				{
 					dataType="Marker";
-					position[]={6460.9282,12.667,5306.2788};
-					name="indSpwn01";
+					position[]={4209.6611,203.424,3930.303};
+					name="spwn_opf_1";
 					type="Select";
-					colorName="ColorGreen";
-					id=7;
-					atlOffset=-2.0790968;
+					colorName="ColorRed";
+					id=131;
+					atlOffset=-3.7976379;
 				};
 				class Item7
 				{
 					dataType="Marker";
-					position[]={5019.2959,2056.8997,5909.1953};
-					name="indSpwn02";
+					position[]={3411.72,127.143,3842.4041};
+					name="spwn_opf_3";
 					type="Select";
-					colorName="ColorGreen";
-					id=8;
-					atlOffset=1848.3207;
+					colorName="ColorRed";
+					id=133;
+					atlOffset=0.00051116943;
 				};
 				class Item8
 				{
 					dataType="Marker";
-					position[]={4319.5342,114.549,4489.6758};
-					name="indSpwn03";
+					position[]={2180.1223,2.5709465,4703.2544};
+					name="spwn_civ_1";
 					type="Select";
-					colorName="ColorGreen";
-					id=9;
-					atlOffset=-88.280663;
+					colorName="ColorCIV";
+					id=134;
 				};
 				class Item9
 				{
 					dataType="Marker";
-					position[]={3505.7903,164.07867,4489.0337};
-					name="opSpwn01";
+					position[]={1809.9795,1.9789429,5917.6045};
+					name="spwn_civ_2";
 					type="Select";
-					id=6;
+					colorName="ColorCIV";
+					id=135;
+					atlOffset=-3.5210571;
 				};
 				class Item10
 				{
 					dataType="Marker";
-					position[]={1585.8281,5.5,5034.2866};
-					name="opSpwn02";
+					position[]={3998.168,192.783,3452.343};
+					name="spwn_opf_2";
 					type="Select";
-					id=4;
+					colorName="ColorRed";
+					id=137;
+					atlOffset=-5.8663788;
 				};
 				class Item11
 				{
 					dataType="Marker";
-					position[]={2954.4768,157.59424,1952.2476};
-					name="opSpwn03";
+					position[]={1591.8641,5.5,5136.2236};
+					name="spwn_civ_3";
 					type="Select";
-					id=5;
-					atlOffset=-3.6920013;
+					colorName="ColorCIV";
+					id=138;
 				};
 			};
 			id=49;
-			atlOffset=30.845779;
+			atlOffset=38.277699;
 		};
-		class Item4
+		class Item3
 		{
 			dataType="Layer";
 			name="CSWR Destinations";
@@ -478,8 +466,8 @@ class Mission
 				class Item0
 				{
 					dataType="Marker";
-					position[]={1819.3661,5.5,5740.499};
-					name="destShared01";
+					position[]={1872.2573,5.5,5701.8169};
+					name="dest_public_1";
 					type="Empty";
 					id=16;
 				};
@@ -487,7 +475,7 @@ class Mission
 				{
 					dataType="Marker";
 					position[]={4090.1799,221.22701,4595.8091};
-					name="destShared02";
+					name="dest_public_2";
 					type="Empty";
 					id=18;
 					atlOffset=0.00035095215;
@@ -495,34 +483,33 @@ class Mission
 				class Item2
 				{
 					dataType="Marker";
-					position[]={3456.6563,143.36395,2642.4983};
-					name="destShared03";
+					position[]={4787.1841,116.94995,6549.646};
+					name="dest_public_3";
 					type="Empty";
 					id=19;
+					atlOffset=-5.7925186;
 				};
 				class Item3
 				{
 					dataType="Marker";
-					position[]={3350.531,222.23399,2981.187};
-					name="destShared04";
+					position[]={3280.4668,119.39878,3811.8516};
+					name="dest_public_4";
 					type="Empty";
 					id=20;
-					atlOffset=0.00042724609;
 				};
 				class Item4
 				{
 					dataType="Marker";
-					position[]={4208.0391,37.93,5332.2021};
-					name="destShared05";
+					position[]={4204.4907,38.105465,5332.5801};
+					name="dest_public_5";
 					type="Empty";
 					id=21;
-					atlOffset=0.0005531311;
 				};
 				class Item5
 				{
 					dataType="Marker";
 					position[]={2566.262,7.8629999,4645.8232};
-					name="destShared06";
+					name="dest_public_6";
 					type="Empty";
 					id=22;
 					atlOffset=0.00026845932;
@@ -530,26 +517,26 @@ class Mission
 				class Item6
 				{
 					dataType="Marker";
-					position[]={5290.3662,201.84229,5157.1294};
-					name="destShared07";
+					position[]={4933.936,157.70654,5111.2598};
+					name="dest_public_7";
 					type="Empty";
 					id=23;
-					atlOffset=-10.791092;
+					atlOffset=-16.214783;
 				};
 				class Item7
 				{
 					dataType="Marker";
-					position[]={4066.6858,116.0354,6337.4868};
-					name="destShared08";
+					position[]={4066.686,116.035,6337.4868};
+					name="dest_public_8";
 					type="Empty";
 					id=24;
-					atlOffset=-6.3200531;
+					atlOffset=-6.320488;
 				};
 				class Item8
 				{
 					dataType="Marker";
 					position[]={4365.7212,227.06,3828.0439};
-					name="destShared09";
+					name="dest_public_9";
 					type="Empty";
 					id=25;
 					atlOffset=0.00054931641;
@@ -557,62 +544,100 @@ class Mission
 				class Item9
 				{
 					dataType="Marker";
-					position[]={2768.9951,137.677,3453.967};
-					name="destShared10";
+					position[]={5762.5337,44.602783,5170.5684};
+					name="dest_public_10";
 					type="Empty";
 					id=26;
-					atlOffset=-8.14505;
+					atlOffset=-49.087234;
 				};
 			};
 			id=51;
-			atlOffset=95.987213;
+			atlOffset=-68.917992;
+		};
+		class Item4
+		{
+			dataType="Marker";
+			position[]={319.957,0.278,7954.585};
+			name="markerVersion";
+			text="    VERSION FEB 9th 2023";
+			type="mil_box";
+			id=123;
+			atlOffset=134.95154;
 		};
 		class Item5
 		{
-			dataType="Object";
-			class PositionInfo
+			dataType="Layer";
+			name="IGNORE";
+			state=1;
+			class Entities
 			{
-				position[]={1915.0477,7.1602941,5703.4937};
-				angles[]={0.022495884,1.9187458,6.2806959};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-			};
-			id=58;
-			type="C_Quadbike_01_F";
-			atlOffset=-0.00018358231;
-			class CustomAttributes
-			{
-				class Attribute0
+				items=2;
+				class Item0
 				{
-					property="ammoBox";
-					expression="[_this,_value] call bis_fnc_initAmmoBox;";
-					class Value
+					dataType="Object";
+					class PositionInfo
 					{
-						class data
+						position[]={1915.0477,7.1602941,5703.4937};
+						angles[]={0.022495884,1.9187458,6.2806959};
+					};
+					side="Empty";
+					flags=4;
+					class Attributes
+					{
+					};
+					id=58;
+					type="C_Quadbike_01_F";
+					atlOffset=-0.00018358231;
+					class CustomAttributes
+					{
+						class Attribute0
 						{
-							singleType="STRING";
-							value="[[[[],[]],[[],[]],[[],[]],[[],[]]],false]";
+							property="ammoBox";
+							expression="[_this,_value] call bis_fnc_initAmmoBox;";
+							class Value
+							{
+								class data
+								{
+									singleType="STRING";
+									value="[[[[],[]],[[],[]],[[],[]],[[],[]]],false]";
+								};
+							};
 						};
+						class Attribute1
+						{
+							property="allowDamage";
+							expression="_this allowdamage _value;";
+							class Value
+							{
+								class data
+								{
+									singleType="BOOL";
+									value=0;
+								};
+							};
+						};
+						nAttributes=2;
 					};
 				};
-				class Attribute1
+				class Item1
 				{
-					property="allowDamage";
-					expression="_this allowdamage _value;";
-					class Value
+					dataType="Trigger";
+					position[]={1910.1665,5.533844,5713.6855};
+					class Attributes
 					{
-						class data
-						{
-							singleType="BOOL";
-							value=0;
-						};
+						onActivation="systemChat ""Press Y for go to Zeus view and, after that, press M to check the map and see all units with the config made in fn_CSWR_population.sqf file. If you drop lot of unit groups, it will take a while to show all of them on Zeus map.""";
+						sizeA=17.223206;
+						sizeB=17.223206;
+						sizeC=2.947794;
+						interuptable=1;
+						activationBy="ANYPLAYER";
 					};
+					id=36;
+					type="EmptyDetector";
 				};
-				nAttributes=2;
 			};
+			id=141;
+			atlOffset=0.012705803;
 		};
 	};
 };
