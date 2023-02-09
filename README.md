@@ -40,8 +40,9 @@ __
 
 ## CHANGELONG
 
-**Feb, 8th 2023 | v3.0**
+**Feb, 9th 2023 | v3.0**
 - Added > Added an option that the mission editor sets a timer before the CSWR starts to run;
+- Added > Included more options to customization infantry composition (from 3 to 6 options);
 - Fixed > Spawnpoint markers were visible even with debug mode off;
 - Improvement > Added friendly error handling messages;
 - Improvement > Lot of code reviewing;
