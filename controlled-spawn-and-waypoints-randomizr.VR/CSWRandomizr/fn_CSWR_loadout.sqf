@@ -1,10 +1,9 @@
 // CSWR v2.8
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
-// Documentation: https://docs.google.com/document/d/1uFOSXVuf2w_BZxTRIbmuRTrcf5b07Nu2SEGSfdDlXfI/edit?usp=sharing
 // by thy (@aldolammel)
 
 
-// This function: define the faction loadout details for each unit spawned by CSWR. 
+// This function defines the faction loadout details for each unit spawned by CSWR. 
 // Returns nothing.
 
 params ["_faction", "_unit"];
@@ -150,5 +149,5 @@ switch (_faction) do {
 			//_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.
 	};
 };
-
-true
+// Return:
+true;

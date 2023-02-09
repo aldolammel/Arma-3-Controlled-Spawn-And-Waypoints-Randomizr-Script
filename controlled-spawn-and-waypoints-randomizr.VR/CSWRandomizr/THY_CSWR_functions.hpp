@@ -1,4 +1,4 @@
-// CSWR v2.7
+// CSWR v3.0
 // File: your_mission\CSWRandomizr\THY_CSWR_functions.hpp
 // by thy (@aldolammel)
 
@@ -10,7 +10,11 @@ class THY_CSWR_functions
 	{
 		file = "CSWRandomizr";
 		
-		class CSWR_loadout
+		class CSWR_spawnsAndWaypoints
+		{ 
+			preInit = 1;
+		};
+		class CSWR_population
 		{ 
 			preInit = 1;
 		};
@@ -18,11 +22,7 @@ class THY_CSWR_functions
 		{ 
 			preInit = 1;
 		};
-		class CSWR_spawnsAndWaypoints
-		{ 
-			preInit = 1;
-		};
-		class CSWR_population
+		class CSWR_loadout
 		{ 
 			preInit = 1;
 		};
