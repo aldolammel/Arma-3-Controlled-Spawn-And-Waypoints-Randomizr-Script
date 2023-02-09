@@ -17,20 +17,20 @@ __
 ## SCRIPT DETAILS
 
 - No dependencies from other mods or scripts;
-- Manually define which marks the faction can use as spawn point;
-- You might create ilimited spawn points for one or more factions;
+- Manually define which marks the faction can use as spawn points;
+- You might create unlimited spawn points for one or more factions;
 - Once the spawn points are created, the script will spawn the groups randomly through the faction spawns;
 - There is no re-spawn. Death is death for those units; 
-- Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until the death;
+- Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until death;
 - Manually define which markers will be used as destinations (waypoints);
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to;
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles;
 - There are 6 infantry and 3 vehicle templates to customize for each faction; 
-- Define easily how many AI groups in-game, what squad type are them, and their initial behavior: safe, aware, stealth, combat, chaos;
+- Define easily how many AI groups are in-game, what squad types are, and their initial behavior: safe, aware, stealth, combat, chaos;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
-- Set if the script should wait another script load first on server;
-- Debugging: friendly errors handling;
+- Set if the script should wait for another script load first on the server;
+- Debugging: friendly error handling;
 - Debugging: hint monitor to control some numbers;
 - Debugging: full documentation available.
 
