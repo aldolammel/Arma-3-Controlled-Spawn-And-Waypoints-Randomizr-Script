@@ -10,12 +10,12 @@ CSWR_isOnBLU = true;                 // true = if you wanna spawn BluFor/West th
 CSWR_isOnOPF = true;                // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 CSWR_isOnIND = true;                 // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 CSWR_isOnCIV = true;                 // true = if you wanna spawn Civilians through CSWR / false = no spawn.
-CSWR_isBackpackForAll = true;       // true = if editor sets a custom backpack, all units will get it / false = only units originally with backpack will get it. Detault: false.
-CSWR_isVestForAll = true;           // true = if editor sets a custom vest, all units will get it / false = only units originally with vest will get it. Detault: false.
+CSWR_isBackpackForAll = false;       // true = if editor sets a custom backpack, all units will get it / false = only units originally with backpack will get it. Detault: false.
+CSWR_isVestForAll = false;           // true = if editor sets a custom vest, all units will get it / false = only units originally with vest will get it. Detault: false.
 CSWR_isUnlimitedFuel = false;        // WIP
 CSWR_isUnlimitedAmmo = false;        // WIP
 CSWR_isEditableByZeus = true;        // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Detault: true.
-CSWR_wait = 15;                       // If you need to make CSWR waits for other scripts load first, set a delay in seconds. Default: 0.
+CSWR_wait = 0;                       // If you need to make CSWR waits for other scripts load first, set a delay in seconds. Default: 0.
 
 
 // SPAWNPOINTS:
