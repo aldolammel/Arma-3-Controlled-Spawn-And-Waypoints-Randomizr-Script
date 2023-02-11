@@ -1,4 +1,4 @@
-// CSWR v3.0
+// CSWR v3.2
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
@@ -6,44 +6,88 @@
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
 
 
+THY_fnc_CSWR_marker_checker = {
+	// This function checks if the marker (spawn or destination) exists and if it's inside map borders.
+	// Return _isValidMarker: bool.
+
+	params ["_marker"];
+	private ["_txtWarningHeader", "_isValidMarker", "_markerPos", "_markerPosA", "_markerPosB"];
+
+	// Debug txts:
+	_txtWarningHeader = "CSWR WARNING >";
+	// Initial values:
+	_isValidMarker = false;
+	_markerPos = [];
+	_markerPosA = nil;
+	_markerPosB = nil;
+	// If the marker has a color, it's because the marker exists LOL:
+	if ( (getMarkerColor _marker) != "" ) then {
+		_markerPos = getMarkerPos _marker;
+		_markerPosA = _markerPos select 0;
+		_markerPosB = _markerPos select 1;
+		// Check if the marker is out of the map edges:
+		if ( (_markerPosA >= 0) AND (_markerPosB >= 0) AND (_markerPosA <= worldSize) AND (_markerPosB <= worldSize) ) then {
+			// Update to return:
+			_isValidMarker = true;
+		// Otherwise, if not on map area:
+		} else {
+			// Warning message:
+			systemChat format ["%1 Marker '%2' > This is in an invalid position and will be ignored until its position is within the map borders.", _txtWarningHeader, _marker];
+		};
+	// Otherwise, if not exists:
+	} else {
+		// Warning message:
+		systemChat format ["%1 Marker '%2' > This is registered in 'fn_CSWR_spawnsAndWaypoints.sqf' but not dropped as marker on the map. It will be ignored.", _txtWarningHeader, _marker];
+	};
+	// Return:
+	_isValidMarker;
+};
+
+
 THY_fnc_CSWR_is_there_spawn = {
 	// This function validates if the earlier spawnpoints configure exist in-game.
-	// Return _isThereSpawn: bool.
+	// Return _spawnsConfirmed: array of markers.
 
 	params ["_faction", "_spawns"];
-	private ["_txtDebugHeader", "_txtWarningHeader", "_txtMsg_1", "_counterExpected", "_counterExist", "_isThereSpawn"];
+	private ["_txtDebugHeader", "_txtWarningHeader", "_txtMsg_1", "_spawnsConfirmed", "_counterSpawnsExpected", "_counterSpawnsReality", "_isValidMarker"];
 
 	// Debug txts:
 	_txtDebugHeader = "CSWR DEBUG >";
 	_txtWarningHeader = "CSWR WARNING >";
 	_txtMsg_1 = "There's no any spawnpoint for the faction";
-	// Declarations:
-	_counterExpected = count _spawns;
 	// Initial values:
-	_counterExist = 0;
-	_isThereSpawn = false;
+	_spawnsConfirmed = [];
 	// Looking for at least one existent spawn:
-	{ 
-		// If the marker has a color, it's because the marker exists LOL:
-		if ( (getMarkerColor _x) != "" ) then {  // For some reason, 'isNil' or 'isNull' or 'alive' doesn't work to make a marker existence validation.
-			_isThereSpawn = true; 
-			_counterExist = _counterExist + 1;
+	{  // forEach _spawns:
+		// Checking marker existence and position:
+		_isValidMarker = [_x] call THY_fnc_CSWR_marker_checker;
+		// If valid marker:
+		if ( _isValidMarker ) then { 
+			// Adding the validated spawn to the new list that will return:
+			_spawnsConfirmed append [_x];
+		// NOT valid marker:
+		} else { 
+			// If exists, for security, remove the marker from the map:
+			deleteMarker _x;
 		};
 	} forEach _spawns;
+	// Declarations:
+	_counterSpawnsExpected = count _spawns;
+	_counterSpawnsReality = count _spawnsConfirmed;
 	// Error handling > If debug true and number of expected spawns are different of existent spawns, do it:
-	if ( CSWR_isOnDebug AND (_counterExpected != _counterExist) ) then {
-		systemChat format ["%1 '%2' > From %3 spawn(s) expected, %4 of them are available in-game. Add the missing ones to the mission through Eden Editor.", _txtDebugHeader, _faction, _counterExpected, _counterExist];
+	if ( CSWR_isOnDebug AND (_counterSpawnsExpected != _counterSpawnsReality) ) then {
+		systemChat format ["%1 '%2' > From %3 spawn(s) expected, %4 of them are available in-game. Add the missing ones to the mission through Eden Editor.", _txtDebugHeader, _faction, _counterSpawnsExpected, _counterSpawnsReality];
 	};
 	// Error handling > if no spawns registered in file:
-	if ( _counterExpected == 0 ) then {
+	if ( _counterSpawnsExpected == 0 ) then {
 		systemChat format ["%1 '%2' > %3 in 'fn_CSWR_spawnsAndWaypoints.sqf' file. Turn %2 faction as 'false' in there or register at least one %2 spawnpoint in there.", _txtWarningHeader, _faction, _txtMsg_1];
 	// Error handling > if at least one spawn registered in file:
 	} else {
 		// if no spawns markers on map:
-		if ( _counterExist == 0 ) then { systemChat format ["%1 '%2' > %3 in-game. The 'fn_CSWR_spawnsAndWaypoints.sqf' file has %4 %2 spawns registered. Add all of them as markers through Eden Editor.", _txtWarningHeader, _faction, _txtMsg_1, _counterExpected]};
+		if ( _counterSpawnsReality == 0 ) then { systemChat format ["%1 '%2' > %3 in-game. The 'fn_CSWR_spawnsAndWaypoints.sqf' file has %4 %2 spawns registered. Add all of them as markers through Eden Editor.", _txtWarningHeader, _faction, _txtMsg_1, _counterSpawnsExpected]};
 	};
 	// Return:
-	_isThereSpawn;
+	_spawnsConfirmed;
 };
 
 
@@ -87,53 +131,88 @@ THY_fnc_CSWR_behavior_checker = {
 
 
 THY_fnc_CSWR_destination_checker = {
-	// This function just validates if there is at least two destinations to go for further validations.
+	// This function just validates if there is at least two valid destinations for further validations.
 	// Return _areThereDestinations: bool.
 
 	params ["_destinationType"];
-	private ["_areThereDestinations", "_counterExist"];
+	private ["_txtWarningHeader", "_areThereDestinations", "_counterSpawnsReality", "_isValidMarkerPos"];
 
+	// Debug txts:
+	_txtWarningHeader = "CSWR WARNING >";
 	// Initial value:
 	_areThereDestinations = false;
-	_counterExist = 0;
+	_counterSpawnsReality = 0;
+	_isValidMarkerPos = false;
 	// Error handling:
 	_destinationType = toUpper _destinationType;
 	// Main validation:
 	switch ( _destinationType ) do {
-		case "ANYWHERE": { 	
+		case "ANYWHERE": {
 			{  // Looking for at least one existent destination:
-				// If the marker has a color, it's because the marker exists LOL:
-				if ( (getMarkerColor _x) != "" ) then { _counterExist = _counterExist + 1 };
+				// Checking marker existence and postion:
+				_isValidMarkerPos = [_x] call THY_fnc_CSWR_marker_checker;
+				// If Valid marker position:
+				if ( _isValidMarkerPos ) then {
+					// Update:
+					_counterSpawnsReality = _counterSpawnsReality + 1;
+				// NOT Valid the marker position:
+				} else {
+					// If exists, for security it removes the marker from the map:
+					deleteMarker _x;
+					// And remove the marker from the destination list:
+					CSWR_destANYWHERE deleteAt (CSWR_destANYWHERE find _x);
+				};
 			} forEach CSWR_destANYWHERE;
-			if ( _counterExist >= 2 ) then { _areThereDestinations = true }; 
+			// If everything alright, update to return:
+			if ( _counterSpawnsReality >= 2 ) then { _areThereDestinations = true }; 
 		};
 		case "PUBLIC": { 
-			{  // Looking for at least one existent destination:
-				// If the marker has a color, it's because the marker exists LOL:
-				if ( (getMarkerColor _x) != "" ) then { _counterExist = _counterExist + 1 };
+			{
+				_isValidMarkerPos = [_x] call THY_fnc_CSWR_marker_checker;
+				if ( _isValidMarkerPos ) then {
+					_counterSpawnsReality = _counterSpawnsReality + 1;
+				} else {
+					deleteMarker _x;
+					CSWR_destPUBLIC deleteAt (CSWR_destPUBLIC find _x);
+				};
 			} forEach CSWR_destPUBLIC;
-			if ( _counterExist >= 2 ) then { _areThereDestinations = true }; 
+			if ( _counterSpawnsReality >= 2 ) then { _areThereDestinations = true };
 		};
 		case "ONLY_BLU": { 
-			{  // Looking for at least one existent destination:
-				// If the marker has a color, it's because the marker exists LOL:
-				if ( (getMarkerColor _x) != "" ) then { _counterExist = _counterExist + 1 };
+			{
+				_isValidMarkerPos = [_x] call THY_fnc_CSWR_marker_checker;
+				if ( _isValidMarkerPos ) then {
+					_counterSpawnsReality = _counterSpawnsReality + 1;
+				} else {
+					deleteMarker _x;
+					CSWR_destOnlyBLU deleteAt (CSWR_destOnlyBLU find _x);
+				};
 			} forEach CSWR_destOnlyBLU;
-			if ( _counterExist >= 2 ) then { _areThereDestinations = true };
+			if ( _counterSpawnsReality >= 2 ) then { _areThereDestinations = true };
 		};
 		case "ONLY_OPF": { 
-			{  // Looking for at least one existent destination:
-				// If the marker has a color, it's because the marker exists LOL:
-				if ( (getMarkerColor _x) != "" ) then { _counterExist = _counterExist + 1 };
+			{
+				_isValidMarkerPos = [_x] call THY_fnc_CSWR_marker_checker;
+				if ( _isValidMarkerPos ) then {
+					_counterSpawnsReality = _counterSpawnsReality + 1;
+				} else {
+					deleteMarker _x;
+					CSWR_destOnlyOPF deleteAt (CSWR_destOnlyOPF find _x);
+				};
 			} forEach CSWR_destOnlyOPF;
-			if ( _counterExist >= 2 ) then { _areThereDestinations = true };
+			if ( _counterSpawnsReality >= 2 ) then { _areThereDestinations = true };
 		};
 		case "ONLY_IND": { 
-			{  // Looking for at least one existent destination:
-				// If the marker has a color, it's because the marker exists LOL:
-				if ( (getMarkerColor _x) != "" ) then { _counterExist = _counterExist + 1 };
+			{
+				_isValidMarkerPos = [_x] call THY_fnc_CSWR_marker_checker;
+				if ( _isValidMarkerPos ) then {
+					_counterSpawnsReality = _counterSpawnsReality + 1;
+				} else {
+					deleteMarker _x;
+					CSWR_destOnlyIND deleteAt (CSWR_destOnlyIND find _x);
+				};
 			} forEach CSWR_destOnlyIND;
-			if ( _counterExist >= 2 ) then { _areThereDestinations = true };
+			if ( _counterSpawnsReality >= 2 ) then { _areThereDestinations = true };
 		};
 	};  // switch ends.
 	// Return:
