@@ -26,7 +26,7 @@ __
 - There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to;
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles;
-- There are 6 infantry and 3 vehicle templates to customize for each faction; 
+- There are 6 infantry and 6 vehicle templates to customize for each faction; 
 - Define easily how many AI groups are in-game, what squad types are, and their initial behavior: safe, aware, stealth, combat, chaos;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
 - Set if the script should wait for another script load first on the server;
@@ -44,8 +44,9 @@ __
 
 ## CHANGELONG
 
-**Feb, 11th 2023 | v3.2**
+**Feb, 12th 2023 | v3.2**
 - Improvement > If the mission editor sets spawnpoint markers or destination markers out of the map, they get a warning and the marker is ignored;
+- Added > Included more options to customization vehicle composition (from 3 types to 6);
 
 **Feb, 9th 2023 | v3.0**
 - Added > Added an option that the mission editor sets a timer before the CSWR starts to run;
