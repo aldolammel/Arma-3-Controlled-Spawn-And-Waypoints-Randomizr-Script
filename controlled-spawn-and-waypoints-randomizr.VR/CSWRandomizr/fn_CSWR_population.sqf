@@ -8,11 +8,22 @@ if (!isServer) exitWith {};
 	// CSWR CORE > DONT TOUCH > Wait if needed:
 	waitUntil { time >= CSWR_wait };
 	// CSWR CORE > DONT TOUCH > Object declarations:
-	private ["_spawnsBLU", "_spawnsOPF", "_spawnsIND", "_spawnsCIV", "_vehLightBLU", "_vehRegularBLU", "_vehHeavyBLU", "_squadLightBLU", "_squadRegularBLU", "_squadHeavyBLU", "_squadCustomOneBLU", "_squadCustomTwoBLU", "_squadCustomThreeBLU", "_vehLightOPF", "_vehRegularOPF", "_vehHeavyOPF", "_squadLightOPF", "_squadRegularOPF", "_squadHeavyOPF", "_squadCustomOneOPF", "_squadCustomTwoOPF", "_squadCustomThreeOPF", "_vehLightIND", "_vehRegularIND", "_vehHeavyIND", "_squadLightIND", "_squadRegularIND", "_squadHeavyIND", "_squadCustomOneIND", "_squadCustomTwoIND", "_squadCustomThreeIND", "_vehLightCIV", "_vehRegularCIV", "_vehHeavyCIV", "_aloneCIV", "_coupleCIV", "_gangCIV", "_customOneCIV", "_customTwoCIV", "_customThreeCIV"];
+	private ["_spawnsBLU", "_spawnsOPF", "_spawnsIND", "_spawnsCIV", "_vehLightBLU", "_vehRegularBLU", "_vehHeavyBLU", "_vehCustomOneBLU", "_vehCustomTwoBLU", "_vehCustomThreeBLU", "_vehCustomOneOPF", "_vehCustomTwoOPF", "_vehCustomThreeOPF", "_vehCustomOneIND", "_vehCustomTwoIND", "_vehCustomThreeIND", "_vehCustomOneCIV", "_vehCustomTwoCIV", "_vehCustomThreeCIV", "_squadLightBLU", "_squadRegularBLU", "_squadHeavyBLU", "_squadCustomOneBLU", "_squadCustomTwoBLU", "_squadCustomThreeBLU", "_vehLightOPF", "_vehRegularOPF", "_vehHeavyOPF", "_squadLightOPF", "_squadRegularOPF", "_squadHeavyOPF", "_squadCustomOneOPF", "_squadCustomTwoOPF", "_squadCustomThreeOPF", "_vehLightIND", "_vehRegularIND", "_vehHeavyIND", "_squadLightIND", "_squadRegularIND", "_squadHeavyIND", "_squadCustomOneIND", "_squadCustomTwoIND", "_squadCustomThreeIND", "_vehLightCIV", "_vehRegularCIV", "_vehHeavyCIV", "_aloneCIV", "_coupleCIV", "_gangCIV", "_customOneCIV", "_customTwoCIV", "_customThreeCIV"];
 	// CSWR CORE > DONT TOUCH > Initial values:
-	_spawnsBLU=[]; _spawnsOPF=[]; _spawnsIND=[]; _spawnsCIV=[]; _vehLightBLU=[]; _vehRegularBLU=[]; _vehHeavyBLU=[]; _squadLightBLU=[]; _squadRegularBLU=[]; _squadHeavyBLU=[]; _squadCustomOneBLU=[]; _squadCustomTwoBLU=[]; _squadCustomThreeBLU=[]; _vehLightOPF=[]; _vehRegularOPF=[]; _vehHeavyOPF=[]; _squadLightOPF=[]; _squadRegularOPF=[]; _squadHeavyOPF=[]; _squadCustomOneOPF=[]; _squadCustomTwoOPF=[]; _squadCustomThreeOPF=[]; _vehLightIND=[]; _vehRegularIND=[]; _vehHeavyIND=[]; _squadLightIND=[]; _squadRegularIND=[]; _squadHeavyIND=[]; _squadCustomOneIND=[]; _squadCustomTwoIND=[]; _squadCustomThreeIND=[]; _vehLightCIV=[]; _vehRegularCIV=[]; _vehHeavyCIV=[]; _aloneCIV=[]; _coupleCIV=[]; _gangCIV=[]; _customOneCIV=[]; _customTwoCIV=[]; _customThreeCIV=[];
+	_spawnsBLU=[]; _spawnsOPF=[]; _spawnsIND=[]; _spawnsCIV=[];
+	_vehLightBLU=""; _vehRegularBLU=""; _vehHeavyBLU=""; _vehCustomOneBLU=""; _vehCustomTwoBLU=""; _vehCustomThreeBLU="";
+	_vehLightOPF=""; _vehRegularOPF=""; _vehHeavyOPF=""; _vehCustomOneOPF=""; _vehCustomTwoOPF=""; _vehCustomThreeOPF="";
+	_vehLightIND=""; _vehRegularIND=""; _vehHeavyIND=""; _vehCustomOneIND=""; _vehCustomTwoIND=""; _vehCustomThreeIND="";
+	_vehLightCIV=""; _vehRegularCIV=""; _vehHeavyCIV=""; _vehCustomOneCIV=""; _vehCustomTwoCIV=""; _vehCustomThreeCIV="";
+	_squadLightBLU=[]; _squadRegularBLU=[]; _squadHeavyBLU=[]; _squadCustomOneBLU=[]; _squadCustomTwoBLU=[]; _squadCustomThreeBLU=[];
+	_squadLightOPF=[]; _squadRegularOPF=[]; _squadHeavyOPF=[]; _squadCustomOneOPF=[]; _squadCustomTwoOPF=[]; _squadCustomThreeOPF=[];
+	_squadLightIND=[]; _squadRegularIND=[]; _squadHeavyIND=[]; _squadCustomOneIND=[]; _squadCustomTwoIND=[]; _squadCustomThreeIND=[];
+	_aloneCIV=[]; _coupleCIV=[]; _gangCIV=[]; _customOneCIV=[]; _customTwoCIV=[]; _customThreeCIV=[];
 	// CSWR CORE > DONT TOUCH > Check the spawns options:
-	if (CSWR_isOnBLU) then { _spawnsBLU = ["BLU", CSWR_spawnsBLU] call THY_fnc_CSWR_is_there_spawn }; if (CSWR_isOnOPF) then { _spawnsOPF = ["OPF", CSWR_spawnsOPF] call THY_fnc_CSWR_is_there_spawn }; if (CSWR_isOnIND) then { _spawnsIND = ["IND", CSWR_spawnsIND] call THY_fnc_CSWR_is_there_spawn }; if (CSWR_isOnCIV) then { _spawnsCIV = ["CIV", CSWR_spawnsCIV] call THY_fnc_CSWR_is_there_spawn };
+	if (CSWR_isOnBLU) then { _spawnsBLU = ["BLU", CSWR_spawnsBLU] call THY_fnc_CSWR_is_there_spawn };
+	if (CSWR_isOnOPF) then { _spawnsOPF = ["OPF", CSWR_spawnsOPF] call THY_fnc_CSWR_is_there_spawn };
+	if (CSWR_isOnIND) then { _spawnsIND = ["IND", CSWR_spawnsIND] call THY_fnc_CSWR_is_there_spawn };
+	if (CSWR_isOnCIV) then { _spawnsCIV = ["CIV", CSWR_spawnsCIV] call THY_fnc_CSWR_is_there_spawn };
 	
 
 	// ..............................................................................................................................
@@ -27,6 +38,9 @@ if (!isServer) exitWith {};
 			_vehLightBLU   = "B_G_Offroad_01_armed_F";
 			_vehRegularBLU = "B_MRAP_01_hmg_F";
 			_vehHeavyBLU   = "B_MBT_01_TUSK_F";
+			_vehCustomOneBLU   = "";
+			_vehCustomTwoBLU   = "";
+			_vehCustomThreeBLU = "";
 
 			// Soldiers
 			_squadLightBLU   = ["B_Soldier_TL_F", "B_Soldier_F"];
@@ -39,7 +53,7 @@ if (!isServer) exitWith {};
 		// SPAWNING GROUPS: BLUFOR:
 		// Define each group and their features and destination.
 		
-			// Vehicles Groups
+			// Vehicles
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
 			
 			[BLUFOR, _spawnsBLU, _vehLightBLU, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
@@ -91,6 +105,9 @@ if (!isServer) exitWith {};
 			_vehLightOPF   = "O_G_Offroad_01_armed_F";
 			_vehRegularOPF = "O_MRAP_02_hmg_F";
 			_vehHeavyOPF   = "O_MBT_02_cannon_F";
+			_vehCustomOneOPF   = "";
+			_vehCustomTwoOPF   = "";
+			_vehCustomThreeOPF = "";
 			
 			// Soldiers
 			_squadLightOPF   = ["O_Soldier_TL_F", "O_Soldier_F"];
@@ -103,7 +120,7 @@ if (!isServer) exitWith {};
 		// SPAWNING GROUPS: OPFOR:
 		// Define each group and their features and destination.
 
-			// Vehicles Groups
+			// Vehicles
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
 			
 			[OPFOR, _spawnsOPF, _vehLightOPF, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
@@ -154,6 +171,9 @@ if (!isServer) exitWith {};
 			_vehLightIND   = "I_G_Offroad_01_armed_F";
 			_vehRegularIND = "I_MRAP_03_hmg_F";
 			_vehHeavyIND   = "I_MBT_03_cannon_F";
+			_vehCustomOneIND   = "";
+			_vehCustomTwoIND   = "";
+			_vehCustomThreeIND = "";
 			
 			// Soldiers
 			_squadLightIND	 = ["I_Soldier_TL_F", "I_soldier_F"];
@@ -166,7 +186,7 @@ if (!isServer) exitWith {};
 		// SPAWNING GROUPS: INDEPENDENT:
 		// Define each group and their features and destination.
 
-			// Vehicles Groups
+			// Vehicles
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
 			
 			[INDEPENDENT, _spawnsIND, _vehLightIND, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
@@ -217,6 +237,9 @@ if (!isServer) exitWith {};
 			_vehLightCIV   = "C_Hatchback_01_F";
 			_vehRegularCIV = "C_Offroad_01_repair_F";
 			_vehHeavyCIV   = "C_Van_01_transport_F";
+			_vehCustomOneCIV   = "";
+			_vehCustomTwoCIV   = "";
+			_vehCustomThreeCIV = "";
 			
 			// People
 			_aloneCIV  = ["C_man_polo_1_F"];
@@ -229,7 +252,7 @@ if (!isServer) exitWith {};
 		// SPAWNING GROUPS: CIVILIAN
 		// Define each group and their features and destination.
 
-			// Vehicles Groups
+			// Vehicles
 			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
 							
 			[CIVILIAN, _spawnsCIV, _vehLightCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
