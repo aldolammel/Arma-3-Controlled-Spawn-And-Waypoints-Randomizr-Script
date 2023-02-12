@@ -44,7 +44,7 @@ __
 
 ## CHANGELONG
 
-**Feb, 12th 2023 | v3.2**
+**Feb, 11th 2023 | v3.2**
 - Improvement > If the mission editor sets spawnpoint markers or destination markers out of the map, they get a warning and the marker is ignored;
 - Added > Included more options to customization vehicle composition (from 3 types to 6);
 
