@@ -1,94 +1,91 @@
-// CSWR v3.2
+// CSWR v4.0
 // File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
 // by thy (@aldolammel)
 
 if (!isServer) exitWith {};
 
 [] spawn {
+	
 	// CSWR CORE > DONT TOUCH > Wait if needed:
 	waitUntil { time >= CSWR_wait };
 	// CSWR CORE > DONT TOUCH > Object declarations:
-	private ["_spawnsBLU", "_spawnsOPF", "_spawnsIND", "_spawnsCIV", "_vehLightBLU", "_vehRegularBLU", "_vehHeavyBLU", "_vehCustomOneBLU", "_vehCustomTwoBLU", "_vehCustomThreeBLU", "_vehCustomOneOPF", "_vehCustomTwoOPF", "_vehCustomThreeOPF", "_vehCustomOneIND", "_vehCustomTwoIND", "_vehCustomThreeIND", "_vehCustomOneCIV", "_vehCustomTwoCIV", "_vehCustomThreeCIV", "_squadLightBLU", "_squadRegularBLU", "_squadHeavyBLU", "_squadCustomOneBLU", "_squadCustomTwoBLU", "_squadCustomThreeBLU", "_vehLightOPF", "_vehRegularOPF", "_vehHeavyOPF", "_squadLightOPF", "_squadRegularOPF", "_squadHeavyOPF", "_squadCustomOneOPF", "_squadCustomTwoOPF", "_squadCustomThreeOPF", "_vehLightIND", "_vehRegularIND", "_vehHeavyIND", "_squadLightIND", "_squadRegularIND", "_squadHeavyIND", "_squadCustomOneIND", "_squadCustomTwoIND", "_squadCustomThreeIND", "_vehLightCIV", "_vehRegularCIV", "_vehHeavyCIV", "_aloneCIV", "_coupleCIV", "_gangCIV", "_customOneCIV", "_customTwoCIV", "_customThreeCIV"];
+	private ["_form_BLU_1", "_form_OPF_1", "_form_IND_1", "_form_CIV_1", "_form_BLU_2", "_form_OPF_2", "_form_IND_2", "_form_CIV_2", "_be_SAFE", "_be_AWARE", "_be_COMBAT", "_be_STEALTH", "_be_CHAOS", "_move_ANY", "_move_PUBLIC", "_move_RESTRICTED", "_move_WATCH", "_move_OCCUPY", "_move_HOLD"];
 	// CSWR CORE > DONT TOUCH > Initial values:
-	_spawnsBLU=[]; _spawnsOPF=[]; _spawnsIND=[]; _spawnsCIV=[];
-	_vehLightBLU=""; _vehRegularBLU=""; _vehHeavyBLU=""; _vehCustomOneBLU=""; _vehCustomTwoBLU=""; _vehCustomThreeBLU="";
-	_vehLightOPF=""; _vehRegularOPF=""; _vehHeavyOPF=""; _vehCustomOneOPF=""; _vehCustomTwoOPF=""; _vehCustomThreeOPF="";
-	_vehLightIND=""; _vehRegularIND=""; _vehHeavyIND=""; _vehCustomOneIND=""; _vehCustomTwoIND=""; _vehCustomThreeIND="";
-	_vehLightCIV=""; _vehRegularCIV=""; _vehHeavyCIV=""; _vehCustomOneCIV=""; _vehCustomTwoCIV=""; _vehCustomThreeCIV="";
-	_squadLightBLU=[]; _squadRegularBLU=[]; _squadHeavyBLU=[]; _squadCustomOneBLU=[]; _squadCustomTwoBLU=[]; _squadCustomThreeBLU=[];
-	_squadLightOPF=[]; _squadRegularOPF=[]; _squadHeavyOPF=[]; _squadCustomOneOPF=[]; _squadCustomTwoOPF=[]; _squadCustomThreeOPF=[];
-	_squadLightIND=[]; _squadRegularIND=[]; _squadHeavyIND=[]; _squadCustomOneIND=[]; _squadCustomTwoIND=[]; _squadCustomThreeIND=[];
-	_aloneCIV=[]; _coupleCIV=[]; _gangCIV=[]; _customOneCIV=[]; _customTwoCIV=[]; _customThreeCIV=[];
-	// CSWR CORE > DONT TOUCH > Check the spawns options:
-	if (CSWR_isOnBLU) then { _spawnsBLU = ["BLU", CSWR_spawnsBLU] call THY_fnc_CSWR_is_there_spawn };
-	if (CSWR_isOnOPF) then { _spawnsOPF = ["OPF", CSWR_spawnsOPF] call THY_fnc_CSWR_is_there_spawn };
-	if (CSWR_isOnIND) then { _spawnsIND = ["IND", CSWR_spawnsIND] call THY_fnc_CSWR_is_there_spawn };
-	if (CSWR_isOnCIV) then { _spawnsCIV = ["CIV", CSWR_spawnsCIV] call THY_fnc_CSWR_is_there_spawn };
+	_form_BLU_1=""; _form_OPF_1=""; _form_IND_1=""; _form_CIV_1=""; _form_BLU_2=""; _form_OPF_2=""; _form_IND_2=""; _form_CIV_2=""; _be_SAFE = "BE_SAFE"; _be_AWARE = "BE_AWARE"; _be_COMBAT = "BE_COMBAT"; _be_STEALTH = "BE_STEALTH"; _be_CHAOS = "BE_CHAOS"; _move_ANY = "MOVE_ANY"; _move_PUBLIC = "MOVE_PUBLIC"; _move_RESTRICTED = "MOVE_RESTRICTED"; _move_WATCH = "MOVE_WATCH"; _move_OCCUPY = "MOVE_OCCUPY"; _move_HOLD = "MOVE_HOLD";
 	
 
 	// ..............................................................................................................................
 
 
-	if ((count _spawnsBLU) > 0) then {
+	if ( CSWR_isOnBLU AND ((count CSWR_spwnsAllBLU) > 0) ) then {
 		
-		// DEFINING GROUPS: BLUFOR:
-		// Define the number of soldiers and who is who in each type of group.
+		// DEFINING FACTION: BLUFOR
+		// Define the number of soldiers and vehicles of BluFor side.
 
 			// Vehicles
-			_vehLightBLU   = "B_G_Offroad_01_armed_F";
-			_vehRegularBLU = "B_MRAP_01_hmg_F";
-			_vehHeavyBLU   = "B_MBT_01_TUSK_F";
-			_vehCustomOneBLU   = "";
-			_vehCustomTwoBLU   = "";
-			_vehCustomThreeBLU = "";
+			CSWR_vehicle_BLU_light    = "B_G_Offroad_01_armed_F";
+			CSWR_vehicle_BLU_medium   = "B_MRAP_01_hmg_F";
+			CSWR_vehicle_BLU_heavy    = "B_MBT_01_TUSK_F";
+			CSWR_vehicle_BLU_custom_1 = "";
+			CSWR_vehicle_BLU_custom_2 = "";
+			CSWR_vehicle_BLU_custom_3 = "";
 
-			// Soldiers
-			_squadLightBLU   = ["B_Soldier_TL_F", "B_Soldier_F"];
-			_squadRegularBLU = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F"];
-			_squadHeavyBLU   = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F", "B_soldier_M_F", "B_soldier_AT_F"];
-			_squadCustomOneBLU   = [];
-			_squadCustomTwoBLU   = [];
-			_squadCustomThreeBLU = [];
+			// Soldiers groups
+			CSWR_team_BLU_light    = ["B_Soldier_TL_F", "B_Soldier_F"];
+			CSWR_team_BLU_medium   = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F"];
+			CSWR_team_BLU_heavy    = ["B_Soldier_TL_F", "B_Soldier_F", "B_Soldier_A_F", "B_soldier_AR_F", "B_soldier_M_F", "B_soldier_AT_F"];
+			CSWR_team_BLU_custom_1 = [];
+			CSWR_team_BLU_custom_2 = [];
+			CSWR_team_BLU_custom_3 = [];
+			CSWR_team_BLU_sniper   = ["B_ghillie_ard_F", "B_sniper_F"];  // Max 2 units.
 
-		// SPAWNING GROUPS: BLUFOR:
+			// Groups formation
+			// Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND"
+			_form_BLU_1 = "COLUMN";
+			_form_BLU_2 = "FILE";
+
+			// CSWR CORE > DONT TOUCH > Public variables:
+			publicVariable "CSWR_vehicle_BLU_light"; publicVariable "CSWR_vehicle_BLU_medium"; publicVariable "CSWR_vehicle_BLU_heavy"; publicVariable "CSWR_vehicle_BLU_custom_1"; publicVariable "CSWR_vehicle_BLU_custom_2"; publicVariable "CSWR_vehicle_BLU_custom_3"; publicVariable "CSWR_team_BLU_light"; publicVariable "CSWR_team_BLU_medium"; publicVariable "CSWR_team_BLU_heavy"; publicVariable "CSWR_team_BLU_custom_1"; publicVariable "CSWR_team_BLU_custom_2"; publicVariable "CSWR_team_BLU_custom_3"; publicVariable "CSWR_team_BLU_sniper";
+			
+		// SPAWNING GROUPS: BLUFOR
 		// Define each group and their features and destination.
 		
 			// Vehicles
-			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			// [ owner, spawns (CSWR_spwnsBLU, CSWR_spwnsVehBLU), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD) ]
 			
-			[BLUFOR, _spawnsBLU, _vehLightBLU, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, _spawnsBLU, _vehRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, _spawnsBLU, _vehHeavyBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[BLUFOR, _spawnsBLU, _vehHeavyBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_light, _be_AWARE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_light, _be_SAFE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_medium, _be_SAFE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_heavy, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_vehicle;
+			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_heavy, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_vehicle;
 			
+			// Soldier groups
+			// [ owner, spawns (CSWR_spwnsBLU, CSWR_spwnsVehBLU), team type, team formation (_form_BLU_1, _form_BLU_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD) ]
 			
-			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's 'squad type', initial squad behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), squad destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
-			
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadRegularBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[BLUFOR, _spawnsBLU, _squadLightBLU, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_sniper, _form_BLU_1, _be_COMBAT, _move_WATCH] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_2, _be_COMBAT, _move_OCCUPY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_2, _be_COMBAT, _move_OCCUPY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_COMBAT, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_heavy, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_heavy, _form_BLU_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_heavy, _form_BLU_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_team_BLU_heavy, _form_BLU_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
 
 	}; // blufor ends.
 
@@ -96,65 +93,75 @@ if (!isServer) exitWith {};
 	// ..............................................................................................................................
 
 
-	if ((count _spawnsOPF) > 0) then {
+	if ( CSWR_isOnOPF AND ((count CSWR_spwnsAllOPF) > 0) ) then {
 
-		// DEFINING GROUPS: OPFOR:
-		// Define the number of soldiers and who is who in each type of group.
+		// DEFINING FACTION: OPFOR
+		// Define the number of soldiers and vehicles of OpFor side.
 
 			// Vehicles
-			_vehLightOPF   = "O_G_Offroad_01_armed_F";
-			_vehRegularOPF = "O_MRAP_02_hmg_F";
-			_vehHeavyOPF   = "O_MBT_02_cannon_F";
-			_vehCustomOneOPF   = "";
-			_vehCustomTwoOPF   = "";
-			_vehCustomThreeOPF = "";
+			CSWR_vehicle_OPF_light    = "O_G_Offroad_01_armed_F";
+			CSWR_vehicle_OPF_medium   = "O_MRAP_02_hmg_F";
+			CSWR_vehicle_OPF_heavy    = "O_MBT_02_cannon_F";
+			CSWR_vehicle_OPF_custom_1 = "";
+			CSWR_vehicle_OPF_custom_2 = "";
+			CSWR_vehicle_OPF_custom_3 = "";
 			
-			// Soldiers
-			_squadLightOPF   = ["O_Soldier_TL_F", "O_Soldier_F"];
-			_squadRegularOPF = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F"];
-			_squadHeavyOPF   = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F", "O_soldier_M_F", "O_soldier_AT_F"];
-			_squadCustomOneOPF   = [];
-			_squadCustomTwoOPF   = [];
-			_squadCustomThreeOPF = [];
+			// Soldiers groups
+			CSWR_team_OPF_light    = ["O_Soldier_TL_F", "O_Soldier_F"];
+			CSWR_team_OPF_medium   = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F"];
+			CSWR_team_OPF_heavy    = ["O_Soldier_TL_F", "O_Soldier_F", "O_Soldier_A_F", "O_soldier_AR_F", "O_soldier_M_F", "O_soldier_AT_F"];
+			CSWR_team_OPF_custom_1 = [];
+			CSWR_team_OPF_custom_2 = [];
+			CSWR_team_OPF_custom_3 = [];
+			CSWR_team_OPF_sniper   = ["O_ghillie_ard_F", "O_sniper_F"];  // Max 2 units.
 
-		// SPAWNING GROUPS: OPFOR:
+			// Groups formation
+			// Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND"
+			_form_OPF_1 = "WEDGE";
+			_form_OPF_2 = "FILE";
+
+			// CSWR CORE > DONT TOUCH > Public variables:
+			publicVariable "CSWR_vehicle_OPF_light"; publicVariable "CSWR_vehicle_OPF_medium"; publicVariable "CSWR_vehicle_OPF_heavy"; publicVariable "CSWR_vehicle_OPF_custom_1"; publicVariable "CSWR_vehicle_OPF_custom_2"; publicVariable "CSWR_vehicle_OPF_custom_3"; publicVariable "CSWR_team_OPF_light"; publicVariable "CSWR_team_OPF_medium"; publicVariable "CSWR_team_OPF_heavy"; publicVariable "CSWR_team_OPF_custom_1"; publicVariable "CSWR_team_OPF_custom_2"; publicVariable "CSWR_team_OPF_custom_3"; publicVariable "CSWR_team_OPF_sniper";
+
+		// SPAWNING GROUPS: OPFOR
 		// Define each group and their features and destination.
 
 			// Vehicles
-			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			// [ owner, spawns (CSWR_spwnsOPF, CSWR_spwnsVehOPF), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD) ]
 			
-			[OPFOR, _spawnsOPF, _vehLightOPF, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[OPFOR, _spawnsOPF, _vehRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[OPFOR, _spawnsOPF, _vehHeavyOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[OPFOR, _spawnsOPF, _vehHeavyOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_spwnsOPF, CSWR_vehicle_OPF_light, _be_AWARE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_spwnsOPF, CSWR_vehicle_OPF_light, _be_AWARE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_spwnsOPF, CSWR_vehicle_OPF_medium, _be_SAFE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_spwnsOPF, CSWR_vehicle_OPF_heavy, _be_AWARE, _move_HOLD] call THY_fnc_CSWR_vehicle;
+			[OPFOR, CSWR_spwnsOPF, CSWR_vehicle_OPF_heavy, _be_SAFE, _move_HOLD] call THY_fnc_CSWR_vehicle;
 
-			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's squad type, initial squad behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), squad destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			// Soldier groups
+			// [ owner, spawns (CSWR_spwnsOPF, CSWR_spwnsVehOPF), team type, team formation (_form_OPF_1, _form_OPF_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD) ]
 			
-			[OPFOR, _spawnsOPF, _squadLightOPF, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadLightOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadRegularOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadHeavyOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadHeavyOPF, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadHeavyOPF, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[OPFOR, _spawnsOPF, _squadHeavyOPF, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_sniper, _form_OPF_1, _be_COMBAT, _move_WATCH] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_CHAOS, _move_HOLD] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_COMBAT, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_STEALTH, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_STEALTH, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_light, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_medium, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_heavy, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_heavy, _form_OPF_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_heavy, _form_OPF_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
+			[OPFOR, CSWR_spwnsOPF, CSWR_team_OPF_heavy, _form_OPF_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
 			
 	}; // opfor ends.
 
@@ -162,65 +169,75 @@ if (!isServer) exitWith {};
 	// ..............................................................................................................................
 
 
-	if ((count _spawnsIND) > 0) then {
+	if ( CSWR_isOnIND AND ((count CSWR_spwnsAllIND) > 0) ) then {
 
-		// DEFINING GROUPS: INDEPENDENT:
-		// Define the number of soldiers and who is who in each type of group.
+		// DEFINING FACTION: INDEPENDENT
+		// Define the number of soldiers and vehicles of Independent side.
 
 			// Vehicles
-			_vehLightIND   = "I_G_Offroad_01_armed_F";
-			_vehRegularIND = "I_MRAP_03_hmg_F";
-			_vehHeavyIND   = "I_MBT_03_cannon_F";
-			_vehCustomOneIND   = "";
-			_vehCustomTwoIND   = "";
-			_vehCustomThreeIND = "";
+			CSWR_vehicle_IND_light    = "I_G_Offroad_01_armed_F";
+			CSWR_vehicle_IND_medium   = "I_MRAP_03_hmg_F";
+			CSWR_vehicle_IND_heavy    = "I_MBT_03_cannon_F";
+			CSWR_vehicle_IND_custom_1 = "";
+			CSWR_vehicle_IND_custom_2 = "";
+			CSWR_vehicle_IND_custom_3 = "";
 			
-			// Soldiers
-			_squadLightIND	 = ["I_Soldier_TL_F", "I_soldier_F"];
-			_squadRegularIND = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F"];
-			_squadHeavyIND	 = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F", "I_Soldier_M_F", "I_Soldier_AT_F"];
-			_squadCustomOneIND   = [];
-			_squadCustomTwoIND   = [];
-			_squadCustomThreeIND = [];
-		
-		// SPAWNING GROUPS: INDEPENDENT:
+			// Soldiers groups
+			CSWR_team_IND_light	   = ["I_Soldier_TL_F", "I_soldier_F"];
+			CSWR_team_IND_medium   = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F"];
+			CSWR_team_IND_heavy	   = ["I_Soldier_TL_F", "I_soldier_F", "I_Soldier_A_F", "I_Soldier_AR_F", "I_Soldier_M_F", "I_Soldier_AT_F"];
+			CSWR_team_IND_custom_1 = [];
+			CSWR_team_IND_custom_2 = [];
+			CSWR_team_IND_custom_3 = [];
+			CSWR_team_IND_sniper   = ["I_ghillie_ard_F", "I_Sniper_F"];  // Max 2 units.
+
+			// Groups formation
+			// Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND"
+			_form_IND_1 = "WEDGE";
+			_form_IND_2 = "FILE";
+
+			// CSWR CORE > DONT TOUCH > Public variables:
+			publicVariable "CSWR_vehicle_IND_light"; publicVariable "CSWR_vehicle_IND_medium"; publicVariable "CSWR_vehicle_IND_heavy"; publicVariable "CSWR_vehicle_IND_custom_1"; publicVariable "CSWR_vehicle_IND_custom_2"; publicVariable "CSWR_vehicle_IND_custom_3"; publicVariable "CSWR_team_IND_light"; publicVariable "CSWR_team_IND_medium"; publicVariable "CSWR_team_IND_heavy"; publicVariable "CSWR_team_IND_custom_1"; publicVariable "CSWR_team_IND_custom_2"; publicVariable "CSWR_team_IND_custom_3"; publicVariable "CSWR_team_IND_sniper";
+
+		// SPAWNING GROUPS: INDEPENDENT
 		// Define each group and their features and destination.
 
 			// Vehicles
-			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			// [ owner, spawns (CSWR_spwnsIND, CSWR_spwnsVehIND), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD) ]
 			
-			[INDEPENDENT, _spawnsIND, _vehLightIND, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, _spawnsIND, _vehRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, _spawnsIND, _vehHeavyIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
-			[INDEPENDENT, _spawnsIND, _vehHeavyIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_light, _be_SAFE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_light, _be_AWARE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_medium, _be_AWARE, _move_ANY] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_heavy, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_heavy, _be_COMBAT, _move_HOLD] call THY_fnc_CSWR_vehicle;
 			
-			// Soldiers Groups
-			// [ faction, faction's spawnpoints, faction's squad type, initial squad behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), squad destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			// Soldier groups
+			// [ owner, spawns (CSWR_spwnsIND, CSWR_spwnsVehIND), team type, team formation (_form_IND_1, _form_IND_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD) ]
 			
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "CHAOS", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "COMBAT", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "STEALTH", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadLightIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadRegularIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadHeavyIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadHeavyIND, "SAFE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadHeavyIND, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
-			[INDEPENDENT, _spawnsIND, _squadHeavyIND, "AWARE", "ANYWHERE"] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_sniper, _form_IND_1, _be_COMBAT, _move_WATCH] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_HOLD] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_HOLD] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_light, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_medium, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_heavy, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_heavy, _form_IND_1, _be_SAFE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_heavy, _form_IND_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_team_IND_heavy, _form_IND_1, _be_AWARE, _move_ANY] call THY_fnc_CSWR_people;
 			
 	}; // ind ends.
 
@@ -228,71 +245,61 @@ if (!isServer) exitWith {};
 	// ..............................................................................................................................
 
 
-	if ((count _spawnsCIV) > 0) then {
+	if ( CSWR_isOnCIV AND ((count CSWR_spwnsAllCIV) > 0) ) then {
 
-		// DEFINING GROUPS: CIVILIAN
-		// Define the number of soldiers and who is who in each type of group.
+		// DEFINING FACTION: CIVILIAN
+		// Define the number of people and vehicles of Civilian side.
 
 			// Vehicles
-			_vehLightCIV   = "C_Hatchback_01_F";
-			_vehRegularCIV = "C_Offroad_01_repair_F";
-			_vehHeavyCIV   = "C_Van_01_transport_F";
-			_vehCustomOneCIV   = "";
-			_vehCustomTwoCIV   = "";
-			_vehCustomThreeCIV = "";
+			CSWR_vehicle_CIV_light    = "C_Hatchback_01_F";
+			CSWR_vehicle_CIV_medium   = "C_Offroad_01_repair_F";
+			CSWR_vehicle_CIV_heavy    = "C_Van_01_transport_F";
+			CSWR_vehicle_CIV_custom_1 = "";
+			CSWR_vehicle_CIV_custom_2 = "";
+			CSWR_vehicle_CIV_custom_3 = "";
 			
-			// People
-			_aloneCIV  = ["C_man_polo_1_F"];
-			_coupleCIV = ["C_man_polo_1_F", "C_man_polo_2_F"];
-			_gangCIV   = ["C_man_polo_1_F", "C_man_polo_2_F", "C_man_polo_3_F", "C_man_polo_4_F"];
-			_customOneCIV   = [];
-			_customTwoCIV   = [];
-			_customThreeCIV = [];
+			// People groups
+			CSWR_team_CIV_lone     = ["C_man_polo_1_F"];
+			CSWR_team_CIV_couple   = ["C_man_polo_1_F", "C_man_polo_2_F"];
+			CSWR_team_CIV_gang     = ["C_man_polo_1_F", "C_man_polo_2_F", "C_man_polo_3_F", "C_man_polo_4_F"];
+			CSWR_team_CIV_custom_1 = [];
+			CSWR_team_CIV_custom_2 = [];
+			CSWR_team_CIV_custom_3 = [];
+
+			// Groups formation
+			// Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND"
+			_form_CIV_1 = "DIAMOND";
+			_form_CIV_2 = "FILE";
+
+			// CSWR CORE > DONT TOUCH > Public variables:
+			publicVariable "CSWR_vehicle_CIV_light"; publicVariable "CSWR_vehicle_CIV_medium"; publicVariable "CSWR_vehicle_CIV_heavy"; publicVariable "CSWR_vehicle_CIV_custom_1"; publicVariable "CSWR_vehicle_CIV_custom_2"; publicVariable "CSWR_vehicle_CIV_custom_3"; publicVariable "CSWR_team_CIV_lone"; publicVariable "CSWR_team_CIV_couple"; publicVariable "CSWR_team_CIV_gang"; publicVariable "CSWR_team_CIV_custom_1"; publicVariable "CSWR_team_CIV_custom_2"; publicVariable "CSWR_team_CIV_custom_3";
 		
 		// SPAWNING GROUPS: CIVILIAN
 		// Define each group and their features and destination.
 
 			// Vehicles
-			// [ faction, faction's spawnpoints, faction's vehicle size, initial crew behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), vehicle destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
-							
-			[CIVILIAN, _spawnsCIV, _vehLightCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehLightCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehLightCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehLightCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehRegularCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehRegularCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehHeavyCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
-			[CIVILIAN, _spawnsCIV, _vehHeavyCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_vehicle;
+			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_HOLD) ]
 			
-			// People Groups
-			// [ faction, faction's spawnpoints, faction's group size, initial group behaviour ("SAFE", "AWARE", "COMBAT", "STEALTH", "CHAOS"), group destination ("ANYWHERE", "PUBLIC", "ONLY_BLU", "ONLY_OPF", "ONLY_IND") ]
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_vehicle_CIV_light, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_vehicle_CIV_medium, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_vehicle;
+			[CIVILIAN, CSWR_spwnsVehCIV, CSWR_vehicle_CIV_heavy, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_vehicle;
 			
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _aloneCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _coupleCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
-			[CIVILIAN, _spawnsCIV, _gangCIV, "SAFE", "PUBLIC"] call THY_fnc_CSWR_people;
+			// People groups
+			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV), team type, team formation (_form_CIV_1, _form_CIV_2), initial team behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD) ]
+			
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_couple, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+			[CIVILIAN, CSWR_spwnsCIV, CSWR_team_CIV_couple, _form_CIV_1, _be_SAFE, _move_PUBLIC] call THY_fnc_CSWR_people;
+
 			
 	}; // civ ends.
+
 };  // spawn ends.
 // Return:
 true;
