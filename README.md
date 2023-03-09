@@ -33,6 +33,7 @@ __
 - Debugging: friendly error handling;
 - Debugging: hint monitor to control some numbers;
 - Debugging: full documentation available.
+- Documentation has been updated (huge changes).
 
 __
 
