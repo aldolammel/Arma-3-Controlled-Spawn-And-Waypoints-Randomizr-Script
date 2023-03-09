@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v3.2
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v4.0
 >*Dependencies: none.*
 
 CSWR is a simple and limited script that spawns AI units once right before the mission starts and makes those units move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
@@ -43,6 +43,19 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELONG
+
+**Mar, 9th 2023 | v4.0**
+- Improved > Not needed to syncronize manually spawns and destination marker between script file and Eden anymore;
+- Improved > Each group (troops and vehicles) restores the initial behavior configured by the Editor each new waypoint/destine reached;
+- Improved > Uniform, vest and backpack has a new function called "REMOVED" that allow the editor, for any reason, spawn all their units with no those things;
+- Improved > Groups (troops and vehicles) set as "be_STEALTH" now are operation on "White" combat mode (Hold Fire but Engage At Will) and not "Green" anymore (Hold Fire and disengage);
+- Improved > The file fn_CSWR_spawnsAndWaypoints.sqf has been renamed to fn_CSWR_management.sqf;
+- Added > Vehicles and soldiers can (or not) spawn separately with specific spawn points for faction vehicles;  
+- Added > Sniper teams have their own loadout customization (uniform, vest, rifle, ammo, optics and its attachments); 
+- Added > Watch moviment exclusively for sniper teams (_move_WATCH) makes the team associated looks for high spots to stay overwatching the markers on map until the mission ends, with no new moves;
+- Added > Occupy moviment for troops (_move_OCCUPY) makes the team associated occupies some building in a range, moving to the next one after a pre-defined time by editor;
+- Added > Occupy moviment has a blacklist of building types and locations that troops must ignore;
+- Added > Each faction in game can got their global formation easily customized. There are 2 presets for each faction. 
 
 **Feb, 11th 2023 | v3.2**
 - Improvement > If the mission editor sets spawnpoint markers or destination markers out of the map, they get a warning and the marker is ignored;
