@@ -1,14 +1,14 @@
 # Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v4.0
 >*Dependencies: none.*
 
-CSWR is a simple and limited script that spawns AI units once right before the mission starts and makes those units move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
+CSWR is a script that spawns AI units once right before the mission starts and makes those units move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
 CSWR doesn't change any original AI behavior after the spawn*.
 
 (*) Except in the case of vehicles with turrets, the CSWR forces its gunners to stay in the turrets, shooting to death, without ever disembarking.
 
 ## HOW TO INSTALL / DOCUMENTATION
 
-video demo: https://www.youtube.com/watch?v=rpzIr0r03ZQ
+video demo: https://www.youtube.com/watch?v=rpzIr0r03ZQ (old version)
 
 Doc: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.VR/CSWRandomizr/_CSWR_Script_Documentation.pdf
 
@@ -23,11 +23,11 @@ __
 - There is no re-spawn. Death is death for those units; 
 - Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until death;
 - Manually define which markers will be used as destinations (waypoints);
-- There are 2 types of destinations: those that can be visited by everyone; and those that only a specific faction can go to;
+- There are 4 types of destinations: move, watch, hold and occupy. Full details of each of them, check the manual.
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles;
-- There are 6 infantry and 6 vehicle templates to customize for each faction; 
-- Define easily how many AI groups are in-game, what squad types are, and their initial behavior: safe, aware, stealth, combat, chaos;
+- There are 7 infantry templates and 6 vehicle templates to customize for each faction; 
+- Define easily how many AI groups are in-game, what squad types are, and their behavior: safe, aware, stealth, combat, chaos;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
 - Set if the script should wait for another script load first on the server;
 - Debugging: friendly error handling;
