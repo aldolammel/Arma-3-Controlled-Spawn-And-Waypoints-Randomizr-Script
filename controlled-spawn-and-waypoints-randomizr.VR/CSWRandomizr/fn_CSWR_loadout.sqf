@@ -1,4 +1,4 @@
-// CSWR v4.0
+// CSWR v4.0.1
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
 // by thy (@aldolammel)
 
@@ -36,7 +36,7 @@ switch (_faction) do {
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
 			[_unit, "U_B_CTRG_3"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for Uniform replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
+		// Exclusively for loadout replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
 			[_type, _unit, "U_B_T_FullGhillie_tna_F", "", "srifle_EBR_F", "20Rnd_762x51_Mag", "optic_DMS", "acc_pointer_IR", "muzzle_snds_B", "", "Rangefinder"] call THY_fnc_CSWR_loadout_team_sniper;  // empty ("") will result no changes. to remove type "removed".
 		
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
@@ -80,7 +80,7 @@ switch (_faction) do {
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
 			[_unit, "U_BG_Guerilla2_1"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for Uniform replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
+		// Exclusively for loadout replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
 			[_type, _unit, "U_O_GhillieSuit", "", "", "", "optic_NVS", "", "", "", "Rangefinder"] call THY_fnc_CSWR_loadout_team_sniper;  // empty ("") will result no changes. to remove type "removed".
 		
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
@@ -119,7 +119,7 @@ switch (_faction) do {
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
 			[_unit, "U_BG_Guerrilla_6_1"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for Uniform replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
+		// Exclusively for loadout replacement of sniper team [_type, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
 			[_type, _unit, "U_O_T_FullGhillie_tna_F", "", "", "", "", "", "", "", "Binocular"] call THY_fnc_CSWR_loadout_team_sniper;  // empty ("") will result no changes. to remove type "removed".
 		
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
