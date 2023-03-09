@@ -18,7 +18,10 @@ class Header
 	respawnDialog 		= 0;
 	debriefing 			= 0;
 	saving 				= 0;
-	enableDebugConsole 	= 1;
+	
+	// Debug
+	enableDebugConsole  = 1;
+	allowFunctionsLog   = 1;
 	
 	// Performance
 	DisabledAI				= 1;
