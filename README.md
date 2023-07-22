@@ -46,7 +46,7 @@ __
 ## CHANGELONG
 
 **Jul, 22nd 2023 | v4.0.1**
-- Fixed > Old backpacks were been dropped on the ground if that was replaced with new one by the editor.
+- Fixed > Old backpacks were been dropped on the ground if that was replaced with new one by the editor (fn_CSWR_globalFunctions.sqf file updated).
 
 **Mar, 9th 2023 | v4.0**
 - Improved > Not needed to syncronize manually spawns and destination marker between script file and Eden anymore;
