@@ -1,4 +1,4 @@
-// CSWR v4.0
+// CSWR v4.0.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
@@ -1059,7 +1059,7 @@ THY_fnc_CSWR_loadout_backpack = {
 				// check the backpack original content:
 				_oldBackpackContent = [_unit] call THY_fnc_CSWR_loadout_scanner_backpack;
 				// Remove the old backpack:
-				removeVest _unit;
+				removeBackpack _unit;
 				// Add the new backpack:
 				_unit addBackpack _newBackpack;
 				// if there is one or more items from old backpack, repack them to the new one:
