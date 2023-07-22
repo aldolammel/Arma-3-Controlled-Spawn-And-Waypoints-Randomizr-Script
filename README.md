@@ -45,6 +45,9 @@ __
 
 ## CHANGELONG
 
+**Jul, 22nd 2023 | v4.0.1**
+- Fixed > Old backpacks were been dropped on the ground if that was replaced with new one by the editor.
+
 **Mar, 9th 2023 | v4.0**
 - Improved > Not needed to syncronize manually spawns and destination marker between script file and Eden anymore;
 - Improved > Each group (troops and vehicles) restores the preset behavior configured by the Editor after each new destination is reached;
