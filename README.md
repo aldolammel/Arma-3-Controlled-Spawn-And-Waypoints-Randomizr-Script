@@ -1,7 +1,7 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v4.0.1
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v4.5
 >*Dependencies: none.*
 
-CSWR is a script that spawns AI units once right before the mission starts and makes those units move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
+CSWR is an Arma 3 script that spawns AI units and makes those units (with vehicle or not) move randomly to waypoints forever in life, where spawn points and waypoints are pre-defined by Mission Editor through Eden marker's positions. CSWR is able to spawn also ground vehicles with their crewmen, and accept pretty well unit loadout customization.
 CSWR doesn't change any original AI behavior after the spawn*.
 
 (*) Except in the case of vehicles with turrets, the CSWR forces its gunners to stay in the turrets, shooting to death, without ever disembarking.
@@ -45,32 +45,39 @@ __
 
 ## CHANGELONG
 
+**Sep, 5th 2023 | v4.5**
+- Added > Now the spawn points can be triggered by Timer delay, Trigger delay, and Target delay;
+- Fixed > Occupy and Hold debug messages had a wrong trigger for the minimal value message alert;
+- Fixed > When using Occupy-move the units had their speed behaviors badly replaced by the waypoint speed (always as "normal" instead of editor choices);
+- Improved > If Occupy or Watch moves are used with vehicles (not allowed), now the vehicles and their crewmen are correctly deleted, leaving a warning message for the editor;
+- Improved > Many debug improvements to fn_CSWR_population.sqf feedbacks and auto-fixing.
+
 **Jul, 22nd 2023 | v4.0.1**
 - Fixed > Old backpacks were been dropped on the ground if those were replaced with a new one by the editor (fn_CSWR_globalFunctions.sqf file updated).
 
 **Mar, 9th 2023 | v4.0**
-- Improved > Not needed to syncronize manually spawns and destination marker between script file and Eden anymore;
+- Improved > Not needed to synchronize manually spawns and destination markers between script file and Eden anymore;
 - Improved > Each group (troops and vehicles) restores the preset behavior configured by the Editor after each new destination is reached;
-- Improved > Uniform, vest and backpack has a new function called "REMOVED" that allows the editor, for any reason, to spawn all their units with no those things;
-- Improved > Groups (troops and vehicles) set as "be_STEALTH" now are operation on "White" combat mode (Hold Fire but Engage At Will) and not "Green" anymore (Hold Fire and disengage);
+- Improved > Uniform, vest and backpack have a new function called "REMOVED" that allows the editor, for any reason, to spawn all their units with no those things;
+- Improved > Groups (troops and vehicles) set as "be_STEALTH" now operate on "White" combat mode (Hold Fire but Engage At Will) and not "Green" anymore (Hold Fire and disengage);
 - Improved > The file fn_CSWR_spawnsAndWaypoints.sqf has been renamed to fn_CSWR_management.sqf;
 - Added > Vehicles and soldiers can (or not) spawn separately with specific spawn points for faction vehicles;  
-- Added > Sniper teams have their own loadout customization (uniform, vest, rifle, ammo, optics and its attachments); 
-- Added > Watch moviment exclusively for sniper teams (_move_WATCH) makes the team associated look for high spots to stay overwatching the markers on the map until the mission ends, with no new moves;
-- Added > Occupy moviment for troops (_move_OCCUPY) makes the team associated occupy some building in a range, moving to the next one after a pre-defined time by the editor;
-- Added > Occupy moviment has a blacklist of building types and locations that troops must ignore;
+- Added > Sniper teams have their own loadout customization (uniform, vest, rifle, ammo, optics, and its attachments); 
+- Added > Watch movement exclusively for sniper teams (_move_WATCH) makes the team associated look for high spots to stay overwatching the markers on the map until the mission ends, with no new moves;
+- Added > Occupy movement for troops (_move_OCCUPY) makes the team associated occupy some building in a range, moving to the next one after a pre-defined time by the editor;
+- Added > Occupy movement has a blacklist of building types and locations that troops must ignore;
 - Added > Hold movement allows troops and vehicles to hold their position for a long time. Tracked vehicles have priority, staying in the center of the marker, looking almost exactly to the marker direction configured by the editor;
 - Added > Each faction in the game can get its global formation easily customized. There are 2 presets for each faction. 
 
 **Feb, 11th 2023 | v3.2**
-- Improvement > If the mission editor sets spawnpoint markers or destination markers out of the map, they get a warning and the marker is ignored;
+- Improvement > If the mission editor sets spawn point markers or destination markers out of the map, they get a warning and the marker is ignored;
 - Added > Included more options to customization vehicle composition (from 3 types to 6);
 
 **Feb, 9th 2023 | v3.0**
 - Added > Added an option that the mission editor sets a timer before the CSWR starts to run;
 - Added > Included more options to customization infantry composition (from 3 templates to 6);
-- Fixed > A huge server performance killer has been fixed (script was running on background without spawnpoints on map);
-- Fixed > Spawnpoint markers are not visible anymore when debug mode if off;
+- Fixed > A huge server performance killer has been fixed (the script was running in background without spawn points on map);
+- Fixed > Spawnpoint markers are not visible anymore when debugging mode if off;
 - Improvement > Added a massive, friendly and automatic errors handling to CSWR, helping a lot the mission editor;
 - Improvement > Lot of code reviewing;
 - Documentation has been updated.
