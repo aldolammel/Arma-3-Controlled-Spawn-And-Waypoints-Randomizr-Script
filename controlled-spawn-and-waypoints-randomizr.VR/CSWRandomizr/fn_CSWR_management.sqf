@@ -1,4 +1,4 @@
-// CSWR v4.0
+// CSWR v4.5
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
 // by thy (@aldolammel)
 
@@ -30,7 +30,7 @@ if (!isServer) exitWith {};
 		CSWR_destOccupyTakeabreak = [300, 600, 1200];  // In seconds, how long each group can stay on its Occupy-markers. Default: 5min (300), 10min (600), 20min (1200)
 		CSWR_destHoldTakeabreak   = [1800, 3600, 7200];   // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200)
 	// Ranges:
-		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper team. Default: 500.
+		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 500.
 		CSWR_occupyMarkerRange = 200;  // In meters, size of marker range used to find buildings to occupy. Default: 200.
 		
 	// Exceptions management:
@@ -53,6 +53,7 @@ if (!isServer) exitWith {};
 	// Initial values:
 	CSWR_watchReservedLocation = [[],[],[]];  // [[blu],[opf],[ind]]
 	CSWR_holdReservedLocation = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_spwnDelayQueueAmount = 0;
 	// Declarations:
 	CSWR_prefix = "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
 	CSWR_spacer = "_";  // CAUTION: try do not change it!
@@ -60,12 +61,12 @@ if (!isServer) exitWith {};
 	CSWR_confirmedMarkers = [CSWR_prefix, CSWR_spacer] call THY_fnc_CSWR_marker_scanner;
 	// Errors handling:
 	if ( CSWR_wait < 1 ) then { CSWR_wait = 1 };  // Important to hold some functions and make their warning (if has) to show only in-game for mission editor.
-	if ( CSWR_isOnDebugGlobal ) then {
+	if CSWR_isOnDebugGlobal then {
 		if ( CSWR_wait >= 5 ) then { systemChat format ["%1 Don't forget the CSWR is configurated to delay %2 seconds before to starts its tasks.", CSWR_txtDebugHeader, CSWR_wait] };
 	};
 	if ( !CSWR_isOnDebugGlobal ) then {
-		if ( ((CSWR_destOccupyTakeabreak select 0) < 600) OR ((CSWR_destOccupyTakeabreak select 1) < 600) OR ((CSWR_destOccupyTakeabreak select 2) < 600)) then { systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_destOccupyTakeabreak' values less than 5min (600secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destOccupyTakeabreak=[300,600,1200] };
-		if ( ((CSWR_destHoldTakeabreak select 0) < 600) OR ((CSWR_destHoldTakeabreak select 1) < 600) OR ((CSWR_destHoldTakeabreak select 2) < 600)) then { systemChat format ["%1 HOLD > For good combat experince, don't use 'CSWR_destHoldTakeabreak' values less than 5min (600secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destHoldTakeabreak=[1800,7200,10800] };
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 300 OR CSWR_destOccupyTakeabreak # 2 < 300 ) then { systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_destOccupyTakeabreak' values less than 5min (300secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destOccupyTakeabreak=[300,600,1200] };
+		if ( CSWR_destHoldTakeabreak # 0 < 300 OR CSWR_destHoldTakeabreak # 1 < 300 OR CSWR_destHoldTakeabreak # 2 < 300 ) then { systemChat format ["%1 HOLD > For good combat experince, don't use 'CSWR_destHoldTakeabreak' values less than 5min (300secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destHoldTakeabreak=[1800,7200,10800] };
 		if ( CSWR_watchMarkerRange < 100 ) then { systemChat format ["%1 WATCH > For good combat experince, don't use 'CSWR_watchMarkerRange' value less than 100 meters out of debug mode. Default value has been restored.", CSWR_txtWarningHeader]; CSWR_watchMarkerRange=500 };
 		if ( CSWR_occupyMarkerRange < 100 ) then { systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_occupyMarkerRange' value less than 100 meters out of debug mode. Default value has been restored.", CSWR_txtWarningHeader]; CSWR_occupyMarkerRange=200 };
 	};
@@ -74,20 +75,20 @@ if (!isServer) exitWith {};
 	// Where each faction in-game will spawn randomly.
 	// [ [ [ [spwblu],[spwbluV] ], [ [spwopf],[spwopfV] ], [ [spwind],[spwindV] ], [ [spwciv],[spwcivV] ] ], [dests] ];
 	// BluFor spawns:
-	CSWR_spwnsBLU     = ((CSWR_confirmedMarkers select 0) select 0) select 0;
-	CSWR_spwnsVehBLU  = ((CSWR_confirmedMarkers select 0) select 0) select 1;
+	CSWR_spwnsBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 0;
+	CSWR_spwnsVehBLU  = ((CSWR_confirmedMarkers # 0) # 0) # 1;
 	CSWR_spwnsAllBLU  = CSWR_spwnsBLU + CSWR_spwnsVehBLU;
 	// OpFor spawns:
-	CSWR_spwnsOPF     = ((CSWR_confirmedMarkers select 0) select 1) select 0;
-	CSWR_spwnsVehOPF  = ((CSWR_confirmedMarkers select 0) select 1) select 1;
+	CSWR_spwnsOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 0;
+	CSWR_spwnsVehOPF  = ((CSWR_confirmedMarkers # 0) # 1) # 1;
 	CSWR_spwnsAllOPF  = CSWR_spwnsOPF + CSWR_spwnsVehOPF;
 	// Independent spawns:
-	CSWR_spwnsIND     = ((CSWR_confirmedMarkers select 0) select 2) select 0;
-	CSWR_spwnsVehIND  = ((CSWR_confirmedMarkers select 0) select 2) select 1;
+	CSWR_spwnsIND     = ((CSWR_confirmedMarkers # 0) # 2) # 0;
+	CSWR_spwnsVehIND  = ((CSWR_confirmedMarkers # 0) # 2) # 1;
 	CSWR_spwnsAllIND  = CSWR_spwnsIND + CSWR_spwnsVehIND;
 	// Civilian spawns:
-	CSWR_spwnsCIV     = ((CSWR_confirmedMarkers select 0) select 3) select 0;
-	CSWR_spwnsVehCIV  = ((CSWR_confirmedMarkers select 0) select 3) select 1;
+	CSWR_spwnsCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 0;
+	CSWR_spwnsVehCIV  = ((CSWR_confirmedMarkers # 0) # 3) # 1;
 	CSWR_spwnsAllCIV  = CSWR_spwnsCIV + CSWR_spwnsVehCIV;
 	// All spawns:
 	CSWR_spwnsAll     = CSWR_spwnsAllBLU + CSWR_spwnsAllOPF + CSWR_spwnsAllIND + CSWR_spwnsAllCIV;
@@ -96,31 +97,31 @@ if (!isServer) exitWith {};
 	// Where each faction in-game will move randomly.
 	// [ [spw], [ [ [moveBlu],[watchBlu],[occupyBlu],[holdBlu] ], [ [moveOpf],[watchOpf],[occupyOpf],[holdOpf] ], [ [moveInd],[watchInd],[occupyInd],[holdInd] ], [ [moveCiv],[watchCiv],[occupyCiv],[holdCiv] ], [ [movePublic] ] ] ];
 	// Only BluFor destinations:
-	CSWR_destsBLU         = ((CSWR_confirmedMarkers select 1) select 0) select 0;
-	CSWR_destsWatchBLU    = ((CSWR_confirmedMarkers select 1) select 0) select 1;
-	CSWR_destsOccupyBLU   = ((CSWR_confirmedMarkers select 1) select 0) select 2;
-	CSWR_destsHoldBLU     = ((CSWR_confirmedMarkers select 1) select 0) select 3;
+	CSWR_destsBLU         = ((CSWR_confirmedMarkers # 1) # 0) # 0;
+	CSWR_destsWatchBLU    = ((CSWR_confirmedMarkers # 1) # 0) # 1;
+	CSWR_destsOccupyBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 2;
+	CSWR_destsHoldBLU     = ((CSWR_confirmedMarkers # 1) # 0) # 3;
 	CSWR_destsAllBLU      =  CSWR_destsBLU + CSWR_destsWatchBLU + CSWR_destsOccupyBLU + CSWR_destsHoldBLU;  // NEVER include PUBLICs in this calc!
 	// Only OpFor destinations:
-	CSWR_destsOPF         = ((CSWR_confirmedMarkers select 1) select 1) select 0;
-	CSWR_destsWatchOPF    = ((CSWR_confirmedMarkers select 1) select 1) select 1;
-	CSWR_destsOccupyOPF   = ((CSWR_confirmedMarkers select 1) select 1) select 2;
-	CSWR_destsHoldOPF     = ((CSWR_confirmedMarkers select 1) select 1) select 3;
+	CSWR_destsOPF         = ((CSWR_confirmedMarkers # 1) # 1) # 0;
+	CSWR_destsWatchOPF    = ((CSWR_confirmedMarkers # 1) # 1) # 1;
+	CSWR_destsOccupyOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 2;
+	CSWR_destsHoldOPF     = ((CSWR_confirmedMarkers # 1) # 1) # 3;
 	CSWR_destsAllOPF      =  CSWR_destsOPF + CSWR_destsWatchOPF + CSWR_destsOccupyOPF + CSWR_destsHoldOPF;  // NEVER include PUBLICs in this calc!
 	// Only Independent destinations:
-	CSWR_destsIND         = ((CSWR_confirmedMarkers select 1) select 2) select 0;
-	CSWR_destsWatchIND    = ((CSWR_confirmedMarkers select 1) select 2) select 1;
-	CSWR_destsOccupyIND   = ((CSWR_confirmedMarkers select 1) select 2) select 2;
-	CSWR_destsHoldIND     = ((CSWR_confirmedMarkers select 1) select 2) select 3;
+	CSWR_destsIND         = ((CSWR_confirmedMarkers # 1) # 2) # 0;
+	CSWR_destsWatchIND    = ((CSWR_confirmedMarkers # 1) # 2) # 1;
+	CSWR_destsOccupyIND   = ((CSWR_confirmedMarkers # 1) # 2) # 2;
+	CSWR_destsHoldIND     = ((CSWR_confirmedMarkers # 1) # 2) # 3;
 	CSWR_destsAllIND      =  CSWR_destsIND + CSWR_destsWatchIND + CSWR_destsOccupyIND + CSWR_destsHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
-	CSWR_destsCIV         = ((CSWR_confirmedMarkers select 1) select 3) select 0;
-	CSWR_destsWatchCIV    = ((CSWR_confirmedMarkers select 1) select 3) select 1;
-	CSWR_destsOccupyCIV   = ((CSWR_confirmedMarkers select 1) select 3) select 2;
-	CSWR_destsHoldCIV     = ((CSWR_confirmedMarkers select 1) select 3) select 3;
+	CSWR_destsCIV         = ((CSWR_confirmedMarkers # 1) # 3) # 0;
+	CSWR_destsWatchCIV    = ((CSWR_confirmedMarkers # 1) # 3) # 1;
+	CSWR_destsOccupyCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 2;
+	CSWR_destsHoldCIV     = ((CSWR_confirmedMarkers # 1) # 3) # 3;
 	CSWR_destsAllCIV      =  CSWR_destsCIV + CSWR_destsWatchCIV + CSWR_destsOccupyCIV + CSWR_destsHoldCIV;  // NEVER include PUBLICs in this calc!
 	// Civilian and soldier destinations:
-	CSWR_destsPUBLIC       = ((CSWR_confirmedMarkers select 1) select 4) select 0;
+	CSWR_destsPUBLIC       = ((CSWR_confirmedMarkers # 1) # 4) # 0;
 	// Specialized destinations:
 	CSWR_destsSpecial     = CSWR_destsWatchBLU + CSWR_destsWatchOPF + CSWR_destsWatchIND + CSWR_destsWatchCIV + 
 							CSWR_destsOccupyBLU + CSWR_destsOccupyOPF + CSWR_destsOccupyIND + CSWR_destsOccupyCIV + 
@@ -133,22 +134,29 @@ if (!isServer) exitWith {};
 	CSWR_bldgsAvailableIND = [CSWR_isOnIND, CSWR_destsOccupyIND, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
 	CSWR_bldgsAvailableCIV = [CSWR_isOnCIV, CSWR_destsOccupyCIV, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
 	// Debug markers stylish:
-	if ( CSWR_isOnDebugGlobal ) then {
-		{ _x setMarkerColor "colorBLUFOR"      } forEach (CSWR_spwnsAllBLU + CSWR_destsAllBLU);
-		{ _x setMarkerColor "colorOPFOR"       } forEach (CSWR_spwnsAllOPF + CSWR_destsAllOPF);
-		{ _x setMarkerColor "colorIndependent" } forEach (CSWR_spwnsAllIND + CSWR_destsAllIND);
-		{ _x setMarkerColor "colorCivilian"    } forEach (CSWR_spwnsAllCIV + CSWR_destsAllCIV);
+	if CSWR_isOnDebugGlobal then {
+		{ _x setMarkerColor "colorBLUFOR"      } forEach CSWR_spwnsAllBLU + CSWR_destsAllBLU;
+		{ _x setMarkerColor "colorOPFOR"       } forEach CSWR_spwnsAllOPF + CSWR_destsAllOPF;
+		{ _x setMarkerColor "colorIndependent" } forEach CSWR_spwnsAllIND + CSWR_destsAllIND;
+		{ _x setMarkerColor "colorCivilian"    } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV;
 		{ _x setMarkerColor "colorUNKNOWN"     } forEach CSWR_destsPUBLIC;
 	// Otherwise, hiding the spawn and destination markers:
-	} else { {_x setMarkerAlpha 0} forEach (CSWR_spwnsAll + CSWR_destsANYWHERE + CSWR_destsSpecial) };
+	} else { {_x setMarkerAlpha 0} forEach CSWR_spwnsAll + CSWR_destsANYWHERE + CSWR_destsSpecial };
 	// Delete the useless spawn markers only, preserving the destines:
-	if ( !CSWR_isOnBLU ) then { { deleteMarker _x } forEach (CSWR_spwnsAllBLU + CSWR_destsAllBLU) };
-	if ( !CSWR_isOnOPF ) then { { deleteMarker _x } forEach (CSWR_spwnsAllOPF + CSWR_destsAllOPF) };
-	if ( !CSWR_isOnIND ) then { { deleteMarker _x } forEach (CSWR_spwnsAllIND + CSWR_destsAllIND) };
-	if ( !CSWR_isOnCIV ) then { { deleteMarker _x } forEach (CSWR_spwnsAllCIV + CSWR_destsAllCIV) };
+	if ( !CSWR_isOnBLU ) then { { deleteMarker _x } forEach CSWR_spwnsAllBLU + CSWR_destsAllBLU };
+	if ( !CSWR_isOnOPF ) then { { deleteMarker _x } forEach CSWR_spwnsAllOPF + CSWR_destsAllOPF };
+	if ( !CSWR_isOnIND ) then { { deleteMarker _x } forEach CSWR_spwnsAllIND + CSWR_destsAllIND };
+	if ( !CSWR_isOnCIV ) then { { deleteMarker _x } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV };
 	// Destroying useless things:
 	CSWR_spwnsAll = nil;
 	CSWR_destsSpecial = nil;
+	// Minimal amount of each type of destination by faction for a correctly script execution:
+	CSWR_minDestAny = 2;
+	CSWR_minDestRestricted = 2; 
+	CSWR_minDestWatch = 1; 
+	CSWR_minDestOccupy = 1; 
+	CSWR_minDestHold = 2; 
+	CSWR_minDestPublic = 2;
 	// Global object declarations:
 	publicVariable "CSWR_isOnDebugGlobal";
 	publicVariable "CSWR_isOnDebugOccupy";
@@ -177,6 +185,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_txtWarningHeader";
 	publicVariable "CSWR_watchReservedLocation";
 	publicVariable "CSWR_holdReservedLocation";
+	publicVariable "CSWR_spwnDelayQueueAmount";
 	publicVariable "CSWR_prefix";
 	publicVariable "CSWR_spacer";
 	publicVariable "CSWR_confirmedMarkers";
@@ -220,40 +229,45 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_bldgsAvailableOPF"; 
 	publicVariable "CSWR_bldgsAvailableIND"; 
 	publicVariable "CSWR_bldgsAvailableCIV"; 
+	publicVariable "CSWR_minDestAny";
+	publicVariable "CSWR_minDestRestricted"; 
+	publicVariable "CSWR_minDestWatch"; 
+	publicVariable "CSWR_minDestOccupy"; 
+	publicVariable "CSWR_minDestHold"; 
+	publicVariable "CSWR_minDestPublic";
 	// Debug messages:
-	if ( CSWR_isOnDebugGlobal ) then {
+	if CSWR_isOnDebugGlobal then {
 		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
-		if ( CSWR_isOnBLU AND ((count CSWR_spwnsAllBLU) > 0) ) then {
+		if ( CSWR_isOnBLU AND count CSWR_spwnsAllBLU > 0 ) then {
 			// If one of each faction destination type has at least 2 destination points, show the debug message:
-			if ( ((count CSWR_destsBLU) >= 2) OR ((count CSWR_destsWatchBLU) >= 1) OR ((count CSWR_destsOccupyBLU) >= 1) OR ((count CSWR_destsHoldBLU) >= 2) OR ((count CSWR_destsPUBLIC) >= 2) ) then {
-				systemChat format ["%1 FACTION 'BLU' > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count CSWR_destsAllBLU, count CSWR_destsPUBLIC];
+			if ( count CSWR_destsBLU >= CSWR_minDestRestricted OR count CSWR_destsWatchBLU >= CSWR_minDestWatch OR count CSWR_destsOccupyBLU >= CSWR_minDestOccupy OR count CSWR_destsHoldBLU >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
+				systemChat format ["%1 FACTION BLU > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count CSWR_destsAllBLU, count CSWR_destsPUBLIC];
 			};
 		};
 		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
-		if ( CSWR_isOnOPF AND ((count CSWR_spwnsAllOPF) > 0) ) then {
+		if ( CSWR_isOnOPF AND count CSWR_spwnsAllOPF > 0 ) then {
 			// If one of each faction destination type has at least 2 destination points, show the debug message:
-			if ( ((count CSWR_destsOPF) >= 2) OR ((count CSWR_destsWatchOPF) >= 1) OR ((count CSWR_destsOccupyOPF) >= 1) OR ((count CSWR_destsHoldOPF) >= 2) OR ((count CSWR_destsPUBLIC) >= 2) ) then {
-				systemChat format ["%1 FACTION 'OPF' > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count CSWR_destsAllOPF, count CSWR_destsPUBLIC];
+			if ( count CSWR_destsOPF >= CSWR_minDestRestricted OR count CSWR_destsWatchOPF >= CSWR_minDestWatch OR count CSWR_destsOccupyOPF >= CSWR_minDestOccupy OR count CSWR_destsHoldOPF >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
+				systemChat format ["%1 FACTION OPF > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count CSWR_destsAllOPF, count CSWR_destsPUBLIC];
 			};
 		};
 		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
-		if ( CSWR_isOnIND AND ((count CSWR_spwnsAllIND) > 0) ) then {
+		if ( CSWR_isOnIND AND count CSWR_spwnsAllIND > 0 ) then {
 			// If one of each faction destination type has at least 2 destination points, show the debug message:
-			if ( ((count CSWR_destsIND) >= 2) OR ((count CSWR_destsWatchIND) >= 1) OR ((count CSWR_destsOccupyIND) >= 1) OR ((count CSWR_destsHoldIND) >= 2) OR ((count CSWR_destsPUBLIC) >= 2) ) then {
-				systemChat format ["%1 FACTION 'IND' > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count CSWR_destsAllIND, count CSWR_destsPUBLIC];
+			if ( count CSWR_destsIND >= CSWR_minDestRestricted OR count CSWR_destsWatchIND >= CSWR_minDestWatch OR count CSWR_destsOccupyIND >= CSWR_minDestOccupy OR count CSWR_destsHoldIND >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
+				systemChat format ["%1 FACTION IND > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count CSWR_destsAllIND, count CSWR_destsPUBLIC];
 			};
 		};
 		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
-		if ( CSWR_isOnCIV AND ((count CSWR_spwnsAllCIV) > 0) ) then {
+		if ( CSWR_isOnCIV AND count CSWR_spwnsAllCIV > 0 ) then {
 			// If one of each faction destination type has at least 2 destination points, show the debug message:
-			if ( ((count CSWR_destsCIV) >= 2) OR ((count CSWR_destsWatchCIV) >= 1) OR ((count CSWR_destsOccupyCIV) >= 1) OR ((count CSWR_destsHoldCIV) >= 2) OR ((count CSWR_destsPUBLIC) >= 2) ) then {
-				systemChat format ["%1 FACTION 'CIV' > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count CSWR_destsAllCIV, count CSWR_destsPUBLIC];
+			if ( count CSWR_destsCIV >= CSWR_minDestRestricted OR count CSWR_destsWatchCIV >= CSWR_minDestWatch OR count CSWR_destsOccupyCIV >= CSWR_minDestOccupy OR count CSWR_destsHoldCIV >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
+				systemChat format ["%1 FACTION CIV > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count CSWR_destsAllCIV, count CSWR_destsPUBLIC];
 			};
 		};
 	};
 	// Debug monitor looping:
 	while { CSWR_isOnDebugGlobal } do { call THY_fnc_CSWR_debug };
 };
-	
 // Return:
 true;
