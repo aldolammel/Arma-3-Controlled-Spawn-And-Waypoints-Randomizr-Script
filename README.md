@@ -19,11 +19,12 @@ __
 - No dependencies from other mods or scripts;
 - Manually define which marks the faction can use as spawn points;
 - You might create unlimited spawn points for one or more factions;
+- Spawn points can be triggered by mission starts, Timer delay (down count), Trigger delay (trigger activation), and Target delay (unit killed or building destroyed);
 - Once the spawn points are created, the script will spawn the groups randomly through the faction spawns;
 - There is no re-spawn. Death is death for those units; 
 - Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until death;
 - Manually define which markers will be used as destinations (waypoints);
-- There are 4 types of destinations: move, watch, hold and occupy. Full details of each of them, check the manual.
+- There are 4 types of destinations: move, watch, hold, and occupy. For full details of each of them, check the documentation;
 - Once the destinations are created, the script will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles;
 - There are 7 infantry templates and 6 vehicle templates to customize for each faction; 
@@ -32,8 +33,8 @@ __
 - Set if the script should wait for another script load first on the server;
 - Debugging: friendly error handling;
 - Debugging: hint monitor to control some numbers;
-- Debugging: full documentation available.
-- Documentation has been updated (huge changes).
+- Debugging: full documentation available;
+- Documentation may be updated with each new script version.
 
 __
 
