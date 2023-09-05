@@ -51,7 +51,8 @@ __
 - Fixed > Occupy and Hold debug messages had a wrong trigger for the minimal value message alert;
 - Fixed > When using Occupy-move the units had their speed behaviors badly replaced by the waypoint speed (always as "normal" instead of editor choices);
 - Improved > If Occupy or Watch moves are used with vehicles (not allowed), now the vehicles and their crewmen are correctly deleted, leaving a warning message for the editor;
-- Improved > Many debug improvements to fn_CSWR_population.sqf feedbacks and auto-fixing.
+- Improved > Many debug improvements to fn_CSWR_population.sqf feedbacks and auto-fixing;
+- Documentation has been updated.
 
 **Jul, 22nd 2023 | v4.0.1**
 - Fixed > Old backpacks were been dropped on the ground if those were replaced with a new one by the editor (fn_CSWR_globalFunctions.sqf file updated).
