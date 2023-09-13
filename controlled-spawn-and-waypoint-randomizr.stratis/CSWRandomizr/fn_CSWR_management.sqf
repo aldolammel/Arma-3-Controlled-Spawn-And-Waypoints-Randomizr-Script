@@ -13,7 +13,7 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 // Factions:
 	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnOPF = true;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Others:
@@ -34,7 +34,7 @@ if (!isServer) exitWith {};
 		CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
 		CSWR_heliTakeoffDelay     = [10, 20, 30];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 20 sec, 30 sec.
 	// Ranges:
-		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 500.
+		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
 		CSWR_occupyMarkerRange = 200;  // In meters, size of marker range used to find buildings to occupy. Default: 200.
 	// Altitudes:
 		CSWR_spwnsParadropAlt = 1000;  // In meters, the initial paradrop altitude. Default: 1000.
