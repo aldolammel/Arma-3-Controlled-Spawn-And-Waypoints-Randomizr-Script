@@ -28,7 +28,7 @@
 
 	// Return:
 	true;
-}; */
+};  xxx */
 
 
 THY_fnc_CSWR_marker_name_splitter = {
