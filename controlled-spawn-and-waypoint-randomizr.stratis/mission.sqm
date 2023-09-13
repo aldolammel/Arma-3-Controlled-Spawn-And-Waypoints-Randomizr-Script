@@ -20,10 +20,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={3493.3442,80.255882,7327.5547};
-		dir[]={0.24036793,-0.17118977,0.9554711};
-		up[]={0.041765779,0.9852376,0.16602121};
-		aside[]={0.96978605,2.5006011e-007,-0.24396965};
+		pos[]={1849.1481,25.5,5710.082};
+		dir[]={0.90427554,-0.17118876,0.39112678};
+		up[]={0.15712118,0.98523825,0.067959711};
+		aside[]={0.39698699,0,-0.91782421};
 	};
 };
 binarizationWanted=0;
@@ -476,7 +476,7 @@ class Mission
 				class Item12
 				{
 					dataType="Marker";
-					position[]={3582.8376,3.0093639,7488.0742};
+					position[]={3788.7686,108.30666,7146.6206};
 					name="cswr_spawnparadrop_blu_1";
 					text="  BLU spawn point";
 					type="Select";
@@ -486,7 +486,7 @@ class Mission
 				};
 			};
 			id=49;
-			atlOffset=4.2942963;
+			atlOffset=-0.41420746;
 		};
 		class Item3
 		{

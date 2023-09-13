@@ -37,7 +37,8 @@ if (!isServer) exitWith {};
 		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
 		CSWR_occupyMarkerRange = 200;  // In meters, size of marker range used to find buildings to occupy. Default: 200.
 	// Altitudes:
-		CSWR_spwnsParadropAlt = 1000;  // In meters, the initial paradrop altitude. Default: 1000.
+		CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
+		CSWR_spwnsParadropVehAlt = 300;  // In meters, the initial vehicle paradrop altitude. Default: 300.
 		CSWR_heliLightAlt = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
 		CSWR_heliHeavyAlt = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
 	// Exceptions management:
@@ -73,11 +74,14 @@ if (!isServer) exitWith {};
 		if ( CSWR_wait >= 5 ) then { systemChat format ["%1 Don't forget the CSWR is configurated to delay %2 seconds before to starts its tasks.", CSWR_txtDebugHeader, CSWR_wait] };
 	};
 	if !CSWR_isOnDebugGlobal then {
-		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 300 OR CSWR_destOccupyTakeabreak # 2 < 300 ) then { systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_destOccupyTakeabreak' values less than 5min (300secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destOccupyTakeabreak=[300,600,1200] };
-		if ( CSWR_destHoldTakeabreak # 0 < 300 OR CSWR_destHoldTakeabreak # 1 < 300 OR CSWR_destHoldTakeabreak # 2 < 300 ) then { systemChat format ["%1 HOLD > For good combat experince, don't use 'CSWR_destHoldTakeabreak' values less than 5min (300secs) out of debug mode. Default values have been restored.", CSWR_txtWarningHeader]; CSWR_destHoldTakeabreak=[1800,3600,7200] };
-		if ( CSWR_watchMarkerRange < 100 ) then { systemChat format ["%1 WATCH > For good combat experince, don't use 'CSWR_watchMarkerRange' value less than 100 meters out of debug mode. Default value has been restored.", CSWR_txtWarningHeader]; CSWR_watchMarkerRange=1000 };
-		if ( CSWR_occupyMarkerRange < 100 ) then { systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_occupyMarkerRange' value less than 100 meters out of debug mode. Default value has been restored.", CSWR_txtWarningHeader]; CSWR_occupyMarkerRange=200 };
-		if ( CSWR_spwnsParadropAlt < 500 ) then { systemChat format ["%1 SPAWN PARADROP > For good experince, don't use 'CSWR_spwnsParadropAlt' value less than 500 meters of altitude out of debug mode. Default value has been restored.", CSWR_txtWarningHeader]; CSWR_spwnsParadropAlt=1000 };
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_destOccupyTakeabreak' values less than [%2 secs, %3 secs, %4 secs] out of debug mode. Minimal values have been applied.", CSWR_txtWarningHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2] };
+		if ( CSWR_destHoldTakeabreak # 0 < 600 OR CSWR_destHoldTakeabreak # 1 < 1200 OR CSWR_destHoldTakeabreak # 2 < 1800 ) then { CSWR_destHoldTakeabreak=[600,1200,1800]; systemChat format ["%1 HOLD > For good combat experince, don't use 'CSWR_destHoldTakeabreak' values less than [%2 secs, %3 secs, %4 secs] out of debug mode. Minimal values have been applied.", CSWR_txtWarningHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2] };
+		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > For good combat experince, don't use 'CSWR_watchMarkerRange' value less than %2 meters out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_watchMarkerRange] };
+		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_occupyMarkerRange' value less than %2 meters out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_occupyMarkerRange] };
+		if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 SPAWN PARADROP > For good experince, don't use 'CSWR_spwnsParadropUnitAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropUnitAlt] };
+		if ( CSWR_spwnsParadropVehAlt < 200 ) then { CSWR_spwnsParadropVehAlt=200; systemChat format ["%1 SPAWN PARADROP > For good experince, don't use 'CSWR_spwnsParadropVehAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropVehAlt] };
+		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > For good experince, don't use 'CSWR_heliLightAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt] };
+		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > For good experince, don't use 'CSWR_heliHeavyAlt' value less than 100 meters of altitude higher than 'CSWR_heliLightAlt' out of debug mode. Minimal value (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt] };
 	};
 	
 	// SPAWNPOINTS:
@@ -223,7 +227,8 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_heliTakeoffDelay";
 	publicVariable "CSWR_watchMarkerRange";
 	publicVariable "CSWR_occupyMarkerRange";
-	publicVariable "CSWR_spwnsParadropAlt";
+	publicVariable "CSWR_spwnsParadropUnitAlt";
+	publicVariable "CSWR_spwnsParadropVehAlt";
 	publicVariable "CSWR_heliLightAlt";
 	publicVariable "CSWR_heliHeavyAlt";
 	publicVariable "CSWR_occupyIgnoredBuildings";

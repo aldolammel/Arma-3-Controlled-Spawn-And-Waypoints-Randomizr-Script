@@ -1960,7 +1960,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Select a spawn:
 		_spwn = selectRandom _spwns;
 		// Check if they will be paratroopers/parachuters:
-		_paradrop = [_spwns, markerPos _spwn, _isVehAir] call THY_fnc_CSWR_is_spawn_paradrop;
+		_paradrop = [_spwns, markerPos _spwn, _isVeh, _isVehAir] call THY_fnc_CSWR_is_spawn_paradrop;
 		_isSpwnParadrop = _paradrop # 0;
 		_spwnPos = _paradrop # 1;
 
@@ -2272,7 +2272,7 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 	// This function checks if the spawn-points are paradrop type, and it updates the _spwnPos with the right drop altitude.
 	// Returns _return. Array: [bool, [y,x,z]].
 
-	params ["_spwns", "_spwnPos", "_isVehAir"];
+	params ["_spwns", "_spwnPos", "_isVeh", "_isVehAir"];
 	private ["_return", "_isSpwnParadrop"];
 
 	// Initial values:
@@ -2289,7 +2289,11 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 		// Update the validation flag:
 		_isSpwnParadrop = true;
 		// Update the altitude of _spwnPos:
-		_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropAlt];
+		if !_isVeh then {
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropUnitAlt];
+		} else {
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropVehAlt];
+		};
 	};
 	// Preparing to return:
 	_return = [_isSpwnParadrop, _spwnPos];
