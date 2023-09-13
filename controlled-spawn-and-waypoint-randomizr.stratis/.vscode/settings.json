@@ -1,6 +1,0 @@
-{
-    "[sqf]": {
-        "editor.defaultFormatter": "blackfisch.sqf-language",
-        "editor.formatOnPaste": true
-    }
-}
