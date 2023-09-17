@@ -1,4 +1,4 @@
-// CSWR v5.0
+// CSWR v5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
 // by thy (@aldolammel)
 
@@ -32,19 +32,19 @@ switch _faction do {
 			_unit removeWeapon "hgun_P07_F";
 
 		// Exclusively for Helmet replacement [_unit, "regular helmet classname", "heavy crew helmet classname"]:
-		    [_unit, "", "H_HelmetCrew_I"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "H_Booniehat_tan", "H_HelmetCrew_I"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
-		    [_unit, ""] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "U_B_CombatUniform_mcam"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of sniper group [_grpType, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
-		    [_grpType, _unit, "", "", "", "", "", "", "", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
+		    [_grpType, _unit, "U_B_FullGhillie_lsh", "", "srifle_EBR_F", "20Rnd_762x51_Mag", "optic_SOS", "", "muzzle_snds_B", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
-		    [_unit, ""] call THY_fnc_CSWR_loadout_vest;  // add a new vest to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "V_Chestrig_khk"] call THY_fnc_CSWR_loadout_vest;  // add a new vest to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
-		    [_unit, "", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "B_Carryall_cbr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
 		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
@@ -79,19 +79,19 @@ switch _faction do {
 			_unit removeWeapon "hgun_Rook40_F";
 
 		// Exclusively for Helmet replacement [_unit, "regular helmet classname", "heavy crew helmet classname"]:
-		    [_unit, "", "H_Tank_black_F"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "H_HelmetB_camo", "H_Tank_black_F"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
-		    [_unit, ""] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "U_O_CombatUniform_ocamo"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of sniper group [_grpType, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
-		    [_grpType, _unit, "", "", "", "", "", "", "", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
+		    [_grpType, _unit, "U_O_FullGhillie_ard", "", "srifle_DMR_01_F", "10Rnd_762x54_Mag", "optic_LRPS", "", "muzzle_snds_B", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
 		    [_unit, ""] call THY_fnc_CSWR_loadout_vest;  // add a new vest to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
-		    [_unit, "", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "B_Kitbag_cbr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
 		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
@@ -121,19 +121,19 @@ switch _faction do {
 			_unit removeWeapon "hgun_ACPC2_F";
 
 		// Exclusively for Helmet replacement [_unit, "regular helmet classname", "heavy crew helmet classname"]:
-		    [_unit, "", "H_Beret_Colonel"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "H_Watchcap_khk", "H_Beret_Colonel"] call THY_fnc_CSWR_loadout_helmet;  // add a new helmet to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for Uniform replacement of infantry and crewmen [_unit, "uniform classname"]:
-		    [_unit, ""] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "U_BG_Guerrilla_6_1"] call THY_fnc_CSWR_loadout_uniform;  // add a new uniform to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of sniper group [_grpType, _unit, "uniform", "vest", "rifle", "rifle magazine", "rifle sight/optics", "rifle rail", "rifle muzzle/supressor", "rifle bipod", "binoculars"]:
-		    [_grpType, _unit, "", "", "", "", "", "", "", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
+		    [_grpType, _unit, "U_I_GhillieSuit", "", "srifle_GM6_F", "5Rnd_127x108_Mag", "optic_LRPS", "", "", "", "Rangefinder"] call THY_fnc_CSWR_loadout_sniper;  // empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Vest replacement of infantry and crewmen [_unit, "vest classname"]:
-		    [_unit, ""] call THY_fnc_CSWR_loadout_vest;  // add a new vest to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "V_BandollierB_rgr"] call THY_fnc_CSWR_loadout_vest;  // add a new vest to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
-		    [_unit, "", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "B_AssaultPack_rgr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
 		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
