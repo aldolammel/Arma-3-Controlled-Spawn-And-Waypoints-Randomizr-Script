@@ -1,4 +1,4 @@
-// CSWR v5.0
+// CSWR v5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
 // by thy (@aldolammel)
 
