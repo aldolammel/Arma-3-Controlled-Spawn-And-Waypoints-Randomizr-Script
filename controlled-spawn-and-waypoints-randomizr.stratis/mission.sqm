@@ -16,7 +16,7 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=255;
+		nextID=258;
 	};
 	class Camera
 	{
@@ -27,7 +27,7 @@ class EditorData
 	};
 };
 binarizationWanted=0;
-sourceName="controlled-spawn-and-waypoint-randomizr";
+sourceName="controlled-spawn-and-waypoints-randomizr";
 addons[]=
 {
 	"A3_Characters_F",
