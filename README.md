@@ -40,7 +40,7 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 
 __
 
-## CHANGELONG
+## CHANGELOG
 
 **Sep, 13th 2023 | v5.0**
 - Added > All factions can spawn helicopters (cswr_spawnheli_faction_1);
