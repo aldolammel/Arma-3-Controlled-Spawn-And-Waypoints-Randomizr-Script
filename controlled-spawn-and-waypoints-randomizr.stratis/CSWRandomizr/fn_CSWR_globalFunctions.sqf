@@ -1662,7 +1662,8 @@ THY_fnc_CSWR_loadout_paratrooper = {
 		[_unit, _vest, true] call THY_fnc_CSWR_loadout_vest;
 	};
 	// Backpack:
-	if ( _parachute isNotEqualTo "" ) then {
+	// if has no parachute bag classname declared, and the unit is not in a vehicle:
+	if ( _parachute isNotEqualTo "" && isNull (objectParent _unit) ) then {
 		[_unit, _parachute, true, false] call THY_fnc_CSWR_loadout_backpack;  // Always set mandatory as true in this case coz the parachuter will always reach here with no backpack.
 	};
 	// Return:
