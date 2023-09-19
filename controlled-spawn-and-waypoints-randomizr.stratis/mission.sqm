@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=446;
+		nextID=449;
 	};
 	class MarkerIDProvider
 	{
@@ -16,18 +16,18 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=255;
+		nextID=261;
 	};
 	class Camera
 	{
-		pos[]={1849.1481,25.5,5710.082};
-		dir[]={0.90427554,-0.17118876,0.39112678};
-		up[]={0.15712118,0.98523825,0.067959711};
-		aside[]={0.39698699,0,-0.91782421};
+		pos[]={4272.564,198.39754,6504.9751};
+		dir[]={0.88452703,-0.046955511,0.46411964};
+		up[]={0.04157928,0.99889696,0.02181704};
+		aside[]={0.46463212,1.8626451e-009,-0.88550371};
 	};
 };
 binarizationWanted=0;
-sourceName="controlled-spawn-and-waypoint-randomizr";
+sourceName="controlled-spawn-and-waypoints-randomizr";
 addons[]=
 {
 	"A3_Characters_F",
@@ -386,12 +386,12 @@ class Mission
 				class Item4
 				{
 					dataType="Marker";
-					position[]={3224.2388,4.7260666,6831.936};
+					position[]={3232.0479,4.5706053,6830.748};
 					name="cswr_spawnveh_blu_1";
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=104.47568;
+					angle=105.86257;
 					id=177;
 				};
 				class Item5
@@ -486,7 +486,7 @@ class Mission
 				};
 			};
 			id=49;
-			atlOffset=-0.41420746;
+			atlOffset=-0.41553497;
 		};
 		class Item3
 		{
@@ -722,12 +722,12 @@ class Mission
 				class Item21
 				{
 					dataType="Marker";
-					position[]={4568.958,168.79054,6637.2583};
+					position[]={4535.3042,172.01083,6623.6074};
 					name="cswr_hold_blu_2";
 					text="BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=138.95113;
+					angle=152.66475;
 					id=340;
 				};
 				class Item22
@@ -794,7 +794,7 @@ class Mission
 					text="BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=132.59793;
+					angle=132.59795;
 					id=370;
 					atlOffset=3.0517578e-005;
 				};
@@ -870,14 +870,14 @@ class Mission
 				};
 			};
 			id=51;
-			atlOffset=9.0674286;
+			atlOffset=9.0678215;
 		};
 		class Item4
 		{
 			dataType="Marker";
 			position[]={320,0,7936};
 			name="markerVersion";
-			text="    VERSION 5.0";
+			text="    VERSION 5.1";
 			type="mil_box";
 			id=123;
 			atlOffset=134.21001;

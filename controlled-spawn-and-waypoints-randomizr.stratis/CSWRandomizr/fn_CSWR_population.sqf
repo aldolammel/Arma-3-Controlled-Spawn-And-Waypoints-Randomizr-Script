@@ -1,4 +1,4 @@
-// CSWR v5.0
+// CSWR v5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
 // by thy (@aldolammel)
 
@@ -59,7 +59,7 @@ if (!isServer) exitWith {};
 			[BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_light, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_medium, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_heavy, _be_SAFE, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle;
-			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_vehicle_BLU_heavy, _be_COMBAT, _move_HOLD, [600, trigger_1, target_2]] call THY_fnc_CSWR_add_vehicle;
+			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_vehicle_BLU_heavy, _be_COMBAT, _move_HOLD, [600]] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsHeliBLU, CSWR_vehicle_BLU_heli_light, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle; 
 			[BLUFOR, CSWR_spwnsHeliBLU, CSWR_vehicle_BLU_heli_heavy, _be_COMBAT, _move_ANY, [600]] call THY_fnc_CSWR_add_vehicle;
 			
@@ -88,8 +88,8 @@ if (!isServer) exitWith {};
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_SAFE, _move_ANY, [target_1]] call THY_fnc_CSWR_add_group;
-			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [300]] call THY_fnc_CSWR_add_group;
-			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [300]] call THY_fnc_CSWR_add_group;
+			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [300]] call THY_fnc_CSWR_add_group;
+			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [300]] call THY_fnc_CSWR_add_group;
 
 	}; // blufor ends.
 
