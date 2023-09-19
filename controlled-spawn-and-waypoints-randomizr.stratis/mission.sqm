@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=264;
+		nextID=267;
 	};
 	class Camera
 	{
-		pos[]={1829.6599,39.09206,5695.5171};
-		dir[]={0.84082812,-0.16505639,0.51554352};
-		up[]={0.14071518,0.98628443,0.086278096};
-		aside[]={0.5227142,7.3072442e-008,-0.85252076};
+		pos[]={1880.0332,197.10612,5694.6089};
+		dir[]={0.9220199,-0.2654022,-0.2819224};
+		up[]={0.25380629,0.96413624,-0.077604972};
+		aside[]={-0.29240835,-2.4686597e-007,-0.95631814};
 	};
 };
 binarizationWanted=0;
@@ -391,7 +391,7 @@ class Mission
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=105.86255;
+					angle=105.86254;
 					id=177;
 				};
 				class Item5
