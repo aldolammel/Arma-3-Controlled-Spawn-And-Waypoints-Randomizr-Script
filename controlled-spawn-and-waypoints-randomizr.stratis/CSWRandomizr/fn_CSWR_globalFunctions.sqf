@@ -1,4 +1,4 @@
-// CSWR v5.0
+// CSWR v5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
@@ -1174,7 +1174,7 @@ THY_fnc_CSWR_unit_behavior = {
 	// Debug texts:
 		// reserved space.
 	// 
-	{  // forEach (units _grp):
+	{  // forEach units _grp;:
 		switch _behavior do {
 			case "BE_SAFE": { 
 				_x setUnitCombatMode "YELLOW";  // Fire at will, keep formation.
@@ -1313,6 +1313,81 @@ THY_fnc_CSWR_unit_skills = {
 		sleep 0.1;
 
 	} forEach units _grp;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_vehicle_electronic_warfare = {
+	// This function sets the electronic warfare resources for vehicles.
+	// Returns nothing.
+
+	params ["_faction", "_veh", "_isVehAir"];
+	private ["_isOn"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_isOn = true;
+	// Declarations:
+	switch _faction do {
+		case BLUFOR:      { _isOn = CSWR_isElectroWarForBLU };
+		case OPFOR:       { _isOn = CSWR_isElectroWarForOPF };
+		case INDEPENDENT: { _isOn = CSWR_isElectroWarForIND };
+		case CIVILIAN:    { /* this faction has no this option */ };
+	};
+	// Debug texts:
+		// reserved space.
+	// Main functionality:
+	_veh setVehicleReportOwnPosition _isOn;
+	if _isVehAir then { _veh setVehicleReceiveRemoteTargets true } else { _veh setVehicleReceiveRemoteTargets _isOn };
+	_veh setVehicleReportRemoteTargets _isOn;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_vehicle_paradrop = {
+	// This function creates the paradrop system for one vehicle, including multiples parachutes attached on it.
+	// About the original author: it's a lighter/modificated version of KK_fnc_paraDrop function: http://killzonekid.com/arma-scripting-tutorials-epic-armour-drop/
+	// Returns nothing.
+
+	params ["_veh", "_grp"];
+	private ["_eachPara", "_parachutes", "_i", "_velocity", "_time"];
+
+	// Escape part 1/2:
+		// reserved space.
+	// Creating the parachute:
+	_eachPara = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
+	[_eachPara, getDir _veh] remoteExec ["setDir"];
+	_eachPara setPos (getPos _veh);
+	_parachutes = [_eachPara];
+	_veh attachTo [_eachPara, [0,2,0]];
+
+	// Open the parachute system:
+	{  // Four parachutes for vehicle:
+		_i = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
+		_parachutes set [count _parachutes, _i];
+		_i attachTo [_eachPara, [0,0,0]];
+		_i setVectorUp _x;
+	} count [ [0.5,0.4,0.6], [-0.5,0.4,0.6], [0.5,-0.4,0.6], [-0.5,-0.4,0.6] ];
+	// Force the crewmen to hold-fire if they see an enemy (hehehe):
+	{ _x disableAI "all" } forEach units _grp;
+	// Waiting the vechile get closer to the ground:
+	waitUntil { sleep 0.1; ((getPos _veh) # 2) < 4 || !alive _veh };
+	// Adjust to vehicle velocity after the parachutes detachment:
+	_velocity = velocity _veh;  // [x,y,z]
+	detach _veh;
+	_veh setVelocity _velocity;
+	// Detachment of parachutes from the vehicle:
+	playSound3D ["a3\sounds_f\weapons\Flare_Gun\flaregun_1_shoot.wss", _veh];
+	{ detach _x; _x disableCollisionWith _veh } forEach _parachutes;
+	// Restore the crewmen capability to engage:
+	{ _x enableAI "all" } forEach units _grp;
+	// Animations breath:
+	_time = time + 5; waitUntil { sleep 0.3; time > _time };
+	// Delete the parachutes:
+	{ if ( !isNull _x ) then { deleteVehicle _x } } forEach _parachutes;
 	// Return:
 	true;
 };
@@ -1644,13 +1719,21 @@ THY_fnc_CSWR_loadout_paratrooper = {
 	// This function organizes exclusively the paratrooper group loadout.
 	// Returns nothing.
 
-	params ["_unit", "_uniform", "_vest", "_parachute", "_isParadrop"];
+	params ["_unit", "_uniform", "_vest", "_helmet", "_nightVision", "_parachute", "_isParadrop", "_grpType"];
 	//private [];
 
-	// Escape:
+	// Escape - part 1/2:
 	if !_isParadrop exitWith {};
 	// Initial values:
 		// Reserved space.
+	// Backpack:
+	// if has no parachute bag classname declared, and the unit is not in a vehicle:
+	if ( _parachute isNotEqualTo "" && isNull (objectParent _unit) ) then {
+		[_unit, _parachute, true, false] call THY_fnc_CSWR_loadout_backpack;  // Always set mandatory as true in this case coz the parachuter will always reach here with no backpack.
+	};
+	// Escape - part 2/2:
+	if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
+
 	// Uniform:
 	if ( _uniform isNotEqualTo "" ) then {
 		// New uniform replacement:
@@ -1661,10 +1744,16 @@ THY_fnc_CSWR_loadout_paratrooper = {
 		// New vest replacement:
 		[_unit, _vest, true] call THY_fnc_CSWR_loadout_vest;
 	};
-	// Backpack:
-	// if has no parachute bag classname declared, and the unit is not in a vehicle:
-	if ( _parachute isNotEqualTo "" && isNull (objectParent _unit) ) then {
-		[_unit, _parachute, true, false] call THY_fnc_CSWR_loadout_backpack;  // Always set mandatory as true in this case coz the parachuter will always reach here with no backpack.
+	// Helmet:
+	if ( _helmet isNotEqualTo "" ) then {
+		// New helmet replacement:
+		[_unit, _helmet, ""] call THY_fnc_CSWR_loadout_helmet;
+	};
+	// Night-Vision:
+	if ( _nightVision isNotEqualTo "" ) then {
+		// New NV replacement:
+		_unit addItem _nightVision;
+		_unit linkItem _nightVision;
 	};
 	// Return:
 	true;
@@ -1832,7 +1921,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Returns nothing.
 
 	params ["_spwns", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destType"];
-	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPos", "_paradrop", "_isSpwnParadrop", "_vehDict", "_counter", "_blockers", "_time", "_faction", "_tag", "_grp", "_grpType", "_grpClassnames", "_isVehAir", "_grpSize", "_requester", "_txt1", "_txt2", "_txt3"];
+	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPos", "_paradrop", "_isSpwnParadrop", "_serverBreath", "_counter", "_blockers", "_time", "_faction", "_tag", "_grp", "_grpType", "_grpClassnames", "_isVehAir", "_grpSize", "_requester", "_txt1", "_txt2", "_txt3"];
 
 	// Escape:
 	if ( _grpInfo isEqualTo [] ) exitWith {};
@@ -1844,7 +1933,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	_spwnPos = [];
 	_paradrop = [];
 	_isSpwnParadrop = false;
-	_vehDict = [];
+	_serverBreath = 0;
 	_counter = 0;
 	_blockers = [];
 	_time = 0;
@@ -1960,7 +2049,9 @@ THY_fnc_CSWR_spawn_and_go = {
 	if _canSpawn then {
 		// Select a spawn:
 		_spwn = selectRandom _spwns;
-		// Check if they will be paratroopers/parachuters:
+		// Check current server performance:
+		_serverBreath = ((abs(CSWR_serverMaxFPS-diag_fps) / (CSWR_serverMaxFPS-CSWR_serverMinFPS)) ^ 2) * 2;  // ((abs(FPSMAX-diag_fps)/(FPSMAX-FPSLIMIT))^2)*MAXDELAY;
+		// Check if they will be parachuters:
 		_paradrop = [_spwns, markerPos _spwn, _isVeh, _isVehAir] call THY_fnc_CSWR_is_spawn_paradrop;
 		_isSpwnParadrop = _paradrop # 0;
 		_spwnPos = _paradrop # 1;
@@ -1969,21 +2060,38 @@ THY_fnc_CSWR_spawn_and_go = {
 		if !_isVeh then {
 			// SPAWNING GROUP OF PEOPLE:
 			// Create the group:
-			_grp = [_spwnPos, _faction, _grpClassnames, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+			_grp = createGroup _faction;
+			// Create the group units:
+			if !_isSpwnParadrop then {
+				// People on ground:
+				{ _grp createUnit [_x, _spwnPos, [], 20, "NONE"]; sleep _serverBreath } forEach _grpClassnames;
+			} else {
+				// Parachuters:
+				{ _grp createUnit [_x, _spwnPos, [], 200, "NONE"]; sleep _serverBreath } forEach _grpClassnames;
+			};
+			// Not a good performance solution at all (by GOM, 2014 July):
+				//_grp = [_spwnPos, _faction, _grpClassnames, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+			
 		// Otherwise, if vehicle:
 		} else {
 			// SPAWNING THE GROUND VEHICLE:
 			if !_isVehAir then {
-				// If the vehicle will spawn on ground:
+				// If the ground vehicle will spawn on ground:
 				if !_isSpwnParadrop then {
 					// Find an empty place near to the ground spawn-point:
 					_spwnPos = _spwnPos findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in vehicle explosions.
+					// Creating the vehicle on ground:
+					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 0, "NONE"];
+				// Otherwise, if the ground vehicle will spawn in air (paradrop):
+				} else {
+					// Creating the vehicle in air:
+					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 200, "NONE"];
 				};
-				// Create the vehicle and its crewmen:
-				_vehDict = [_spwnPos, markerDir _spwn, _grpClassnames # 0, _faction] call BIS_fnc_spawnVehicle;  // https://community.bistudio.com/wiki/BIS_fnc_spawnVehicle
-				_grp = _vehDict # 2;  // _vehDict content: [createdVehicle, crew, group]
-				_veh = vehicle leader _grp;
-				// Vehicle config > Features:
+				// Setting the ground vehicle direction:
+				[_veh, markerDir _spwn] remoteExec ["setDir"];
+				// Not a good performance solution at all (by GOM, 2014 July):
+					// Horrible for server performance: BIS_fnc_spawnVehicle;  // https://community.bistudio.com/wiki/BIS_fnc_spawnVehicle
+				// Ground vehicle config > Features:
 				_veh setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners never will leave the their vehicle.
 			// Otherwise, if the vehicle is a helicopter:
 			} else {
@@ -1991,7 +2099,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				// Looping until to find an unblocked spawn-point exclusive for:
 				while { true } do {
 					// Check if something relevant is blocking the _spwn position:
-					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "Ship", "Submarine"], 20];
+					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Ship", "Submarine"], 20];
 					// If there's a blocker:
 					if ( count _blockers isNotEqualTo 0 ) then { _counter = _counter + 1 } else { break };
 					// Select a new spawn option:
@@ -2008,21 +2116,22 @@ THY_fnc_CSWR_spawn_and_go = {
 					sleep 5;  // IMPORTANT: leave this command in the final of this scope/loop, never in the beginning.
 				};  // While loop ends.
 				// If Helicopter must spawn already in air:
-				if CSWR_shouldHeliSpwnAir then {
-					_veh = createVehicle [_grpClassnames # 0, markerPos _spwn, [], 0, "FLY"];
+				if CSWR_shouldHeliSpwnInAir then {
+					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 0, "FLY"];
 				// Otherwise, Helicopter must spawn landed:
 				} else {
-					_veh = createVehicle [_grpClassnames # 0, markerPos _spwn, [], 0, "NONE"];
+					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 0, "NONE"];
 				};
-				_grp = createVehicleCrew _veh;
 				// Helicopter config > Features:
-					if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight abs CSWR_heliLightAlt };
-					if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight abs CSWR_heliHeavyAlt };
+				if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight abs CSWR_heliLightAlt };
+				if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight abs CSWR_heliHeavyAlt };
 			};
+			// Creating the group and its ground vehicle crew:
+			_grp = _faction createVehicleCrew _veh;  // CRITICAL: never remove _faction to avoid inconscistences when mission editor to use vehicles from another faction.
+			// Additional CPU Breath for all vehicles:
+			sleep _serverBreath;
 			// Any vehicle config > Features:
-			_veh setVehicleReportOwnPosition true;
-			_veh setVehicleReceiveRemoteTargets true;
-			_veh setVehicleReportRemoteTargets true;
+			[_faction, _veh, _isVehAir] call THY_fnc_CSWR_vehicle_electronic_warfare;
 		};
 		// Update the _grpInfo:
 		_grpInfo set [2, _grp];
@@ -2046,14 +2155,54 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Helicopter config > Takeoff delay:
 		if _isVehAir then {
 			// Wait a bit:
-			_time = time + (random CSWR_heliTakeoffDelay);
-			waitUntil { sleep 1; time >= _time };
+			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
 			// Debug message:
-			if CSWR_isOnDebugGlobal then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
+			if ( CSWR_isOnDebugGlobal && !CSWR_shouldHeliSpwnInAir ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
 		};
-
-		// If the spawn is a Spawn Paradrop:
-		if _isSpwnParadrop then { [_veh] call THY_fnc_CSWR_paradrop; sleep 10 };
+		// If Spawn Paradrop:
+		if _isSpwnParadrop then {
+			// If group of people:
+			if !_isVeh then {
+				// If the group has more than one unit alive:
+				if ( {alive _x} count (units _grp) > 1 ) then {
+					// Wait the leader touch the ground:
+					waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 };
+					// Regroup with leader:
+					{  // forEach units _grp:
+						// If a group member gets unconscious:
+						if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { 
+							// Kills the unit:
+							_x setDamage 1;
+							// Debug message:
+							if CSWR_isOnDebugGlobal then { systemChat format ["%1 PARADROP > A %2 '%3' gets unconscious. The CSWR kills them to preverse the group plans.", CSWR_txtDebugHeader, _tag, str _grp] };
+						};
+						// if leader:
+						if ( _x isEqualTo (leader _grp) ) then {
+							// Set a safe body position to wait group members:
+							_x setUnitPos "MIDDLE";
+						// Otherwise, if another group member:
+						} else {
+							// Wait the own unit (_x) touch the ground if not yet:
+							waitUntil { sleep 3; (getPos _x # 2) < 0.2 };
+							// Wait the parachute detachment animation get finished:
+							sleep 1;
+							// Regroup at leader position:
+							_x doFollow (leader _grp);
+						};
+					} forEach units _grp;
+					// Wait the group members regroup for the first mission move after paradrop landing:
+					_time = time + (10 * count (units _grp)); waitUntil { sleep 1; time > _time };
+					// Restore the leader body position:
+					leader _grp setUnitPos "UP";
+				};
+			// Otherwise, if vehicle:
+			} else {
+				// Paradrop things:
+				[_veh, _grp] call THY_fnc_CSWR_vehicle_paradrop;
+				// Time before the vehicle start to move right after the paradrop landing:
+				_time = time + 5; waitUntil { sleep 1; time > _time };
+			};
+		};
 
 		// WAYPOINTS SECTION:
 		// Group/Vehicle config > Move:
@@ -2308,12 +2457,12 @@ THY_fnc_CSWR_base_service_station = {
 	// Returns nothing.
 
 	params ["_spwns", "_tag", "_grpType", "_grp", "_veh", "_isHeli", "_destType", "_behavior"];
-	private ["_wait"];
+	private ["_time", "_wait"];
 
 	// Escape:
 	if ( isNull _grp || !alive _veh ) exitWith {};
 	// Initial values:
-		// reserved space.
+	_time = 0;
 	// Declarations:
 	_wait = 30;
 	// Debug texts:
@@ -2346,7 +2495,7 @@ THY_fnc_CSWR_base_service_station = {
 	// If helicopter:
 	if _isHeli then {
 		// Dramatization breath:
-		sleep (random CSWR_heliTakeoffDelay);
+		_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 10; time > _time };
 		// Debug message:
 		if CSWR_isOnDebugGlobal then { systemChat format ["%1 After maintenance services, %2 '%3' helicopter's BACK TO DUTY!", CSWR_txtDebugHeader, _tag, str _grp] };
 	// Otherwise:
@@ -2488,6 +2637,8 @@ THY_fnc_CSWR_go_RTB = {
 	_closestStationPos = [_spwns, _veh] call THY_fnc_CSWR_go_RTB_closest_station;
 	// Escape:
 	if ( isNull _grp || !alive _veh || !alive leader _grp ) exitWith {};
+	// Forcing to return and not re-engage:
+	_grp setBehaviourStrong "CARELESS";
 	// Creating the waypoint to the _closestStationPos:
 	_wp = _grp addWaypoint [_closestStationPos, 0];
 	_wp setWaypointCombatMode "GREEN";  // Hold fire, disengage, don't fire unless fired upon. Keep in formation.
@@ -2589,12 +2740,12 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	// Returns nothing.
 	
 	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_areaToPass","_wp", "_shouldRTB"];
+	private ["_time", "_areaToPass","_wp", "_shouldRTB"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Initial values:
-		// reserved space.
+	_time = 0;
 	// Declarations:
 	_areaToPass = markerPos (selectRandom CSWR_destsANYWHERE);
 	// If everything is alright wih helicopter, go to right altitude:
@@ -2611,13 +2762,23 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	_wp = _grp addWaypoint [_areaToPass, 0]; 
 	_wp setWaypointType "MOVE";
 	_grp setCurrentWaypoint _wp;
-	// Check if the group is already on their destine:
+	// Check if the group is already on their destination:
 	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
 	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_ANY", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Next planned move cooldown:
-	// If it's not a helicopter, so it's a ground vehicle or a group:
-	if ( !_isHeli && !isNull _grp) then { sleep (random CSWR_destCommonTakeabreak) };
+	// If ground vehicle or a group of people:
+	if !_isHeli then {
+		// waiting the group gets close enough of the waypoint position:
+		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
+		// When there, cooldown:
+		_time = time + (random CSWR_destCommonTakeabreak); 
+		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
+	// Otherwise, if helicopter:
+	} else {
+		// waiting the heli gets close enough of the waypoint position:
+		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
+	};
 	// Restart the movement:
 	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_ANYWHERE;
 	// Return:
@@ -2630,12 +2791,12 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 	// Returns nothing.
 	
 	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_areaToPass","_wp", "_shouldRTB"];
+	private ["_time", "_areaToPass","_wp", "_shouldRTB"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Initial values:
-		// Reserved space.
+	_time = 0;
 	// Declarations:
 	_areaToPass = markerPos (selectRandom CSWR_destsPUBLIC);
 	// If everything is alright wih helicopter, go to right altitude:
@@ -2652,13 +2813,23 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 	_wp = _grp addWaypoint [_areaToPass, 0];
 	_wp setWaypointType "MOVE";
 	_grp setCurrentWaypoint _wp;
-	// Check if the group is already on their destine:
+	// Check if the group is already on their destination:
 	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
 	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_PUBLIC", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Next planned move cooldown:
-	// If it's not a helicopter, so it's a ground vehicle or a group:
-	if ( !_isHeli && !isNull _grp) then { sleep (random CSWR_destCommonTakeabreak) };
+	// If ground vehicle or a group of people:
+	if !_isHeli then {
+		// waiting the group gets close enough of the waypoint position:
+		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
+		// When there, cooldown:
+		_time = time + (random CSWR_destCommonTakeabreak);
+		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
+	// Otherwise, if helicopter:
+	} else {
+		// waiting the heli gets close enough of the waypoint position:
+		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
+	};
 	// Restart the movement:
 	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_dest_PUBLIC;
 	// Return:
@@ -2671,12 +2842,13 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Returns nothing.
 	
 	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_destMarkers", "_areaToPass","_wp", "_shouldRTB"];
+	private ["_time", "_destMarkers", "_areaToPass","_wp", "_shouldRTB"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
 	_destMarkers = [];
+	_time = 0;
 	// Defining the group markers to be considered:
 	switch ( side (leader _grp) ) do {
 		case BLUFOR:      { _destMarkers = CSWR_destBLU };
@@ -2700,13 +2872,23 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	_wp = _grp addWaypoint [_areaToPass, 0]; 
 	_wp setWaypointType "MOVE";
 	_grp setCurrentWaypoint _wp;
-	// Check if the group is already on their destine:
+	// Check if the group is already on their destination:
 	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
 	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_RESTRICTED", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Next planned move cooldown:
-	// If it's not a helicopter, so it's a ground vehicle or a group:
-	if ( !_isHeli && !isNull _grp) then { sleep (random CSWR_destCommonTakeabreak) };
+	// If ground vehicle or a group of people:
+	if !_isHeli then {
+		// waiting the group gets close enough of the waypoint position:
+		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
+		// When there, cooldown:
+		_time = time + (random CSWR_destCommonTakeabreak);
+		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
+	// Otherwise, if helicopter:
+	} else {
+		// waiting the heli gets close enough of the waypoint position:
+		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
+	};
 	// Restart the movement:
 	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
 	// Return:
@@ -2755,7 +2937,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		} forEach units _grp;
 	};
 	// LAST 100 METERS 'TIL THE SPOT:
-	waitUntil {sleep 5; ((leader _grp) distance _sniperSpot) < 100 };
+	waitUntil {sleep 5; leader _grp distance _sniperSpot < 100 };
 	// From here, keep stealth to make sure the spot is clear:
 	_grp setBehaviourStrong "STEALTH";  // Every unit in the group, and the group itself.
 	_grp setSpeedMode "LIMITED";
@@ -2766,7 +2948,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		_x setSpeaker "NoVoice";
 	} forEach units _grp;
 	// Wait the arrival:
-	waitUntil { sleep 5; (leader _grp) distance _sniperSpot < 3 };
+	waitUntil { sleep 5; leader _grp distance _sniperSpot < 3 };
 	// Make the arrival smooth:
 	sleep 1;
 	// Go to the next WATCH stage:
@@ -2948,7 +3130,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	} forEach units _grp;  // reset the movement.
 	// Force awareness on group and units:
 	_grp setBehaviourStrong "AWARE";
-	{  // forEach (units _grp):
+	{  // forEach units _grp;:
 		// If member is the SNIPER:
 		if ( _x == (leader _grp) ) then {
 			// Forcing this approach:
@@ -2984,7 +3166,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 Sniper in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
 	// Seek looping:
 	while { behaviour (leader _grp) isNotEqualTo "COMBAT" } do {
-		{  // forEach (units _grp):
+		{  // forEach units _grp;:
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x == (leader _grp))] call BIS_fnc_error; sleep 1 };
 			// Forcing the sniper/leader 
@@ -3010,7 +3192,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 Sniper leader in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
 	// Combat looping:
 	while { behaviour (leader _grp) isEqualTo "COMBAT" } do {
-		{  // forEach (units _grp):
+		{  // forEach units _grp;:
 			// Error handling:
 			if ( !alive _x || incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { break };
 			// Debug message:
@@ -3386,7 +3568,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// Returns nothing.
 
 	params ["_building", "_bldgPos", "_grpType", "_grp", "_tag", "_behavior", "_distLimiterFromBldg", "_distLimiterEnemy", "_distLimiterFriendPlayer", "_wait"];
-	private ["_spots", "_spot", "_isFriendPlayerClose", "_isEnemyClose", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_grpSize", "_compass"];
+	private ["_spots", "_spot", "_isFriendPlayerClose", "_isEnemyClose", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_time", "_grpSize", "_compass"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -3399,6 +3581,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	_canTeleport = true;
 	_alreadySheltered = [];
 	_orderCounter = nil;
+	_time = 0;
 	// Declarations:
 	_grpSize = count (units _grp);
 	_compass = [0, 45, 90, 135, 180, 225, 270, 315];  // Better final-result than 'random 360'.
@@ -3620,7 +3803,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 				};
 			};
 			// Next planned move cooldown:
-			sleep (random CSWR_destOccupyTakeabreak);
+			_time = time + (random CSWR_destOccupyTakeabreak); waitUntil { sleep 60; time > _time };
 		// Otherwise:
 		} else {
 			// Debug message:
@@ -3744,7 +3927,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh"];
-	private ["_destMarkers", "_isReservedToAnother", "_areaToHoldPos", "_isVehicleTracked", "_areaToHold", "_isReservedNow", "_grpPos", "_wpDisTolerance", "_wp", "_holdReservedAmount", "_attemptCounter", "_attemptTolerance", "_wait"];
+	private ["_destMarkers", "_isReservedToAnother", "_areaToHoldPos", "_isVehicleTracked", "_areaToHold", "_isReservedNow", "_grpPos", "_wpDisTolerance", "_wp", "_holdReservedAmount", "_time", "_attemptCounter", "_attemptTolerance", "_wait"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -3759,6 +3942,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_wpDisTolerance = nil;
 	_wp = [];
 	_holdReservedAmount = nil;
+	_time = 0;
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
@@ -3806,7 +3990,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 				// Escape:
 				if ( _attemptCounter >= _attemptTolerance ) exitWith {
 					// Warning handling:
-					["%1 HOLD > Looks it's working with less hold-markers than %2 tracked vehicles using it. ADD MORE %2 HOLD-MARKERS!", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+					["%1 HOLD > Looks it's working with more %2 tracked-vehicles than hold-markers available. It could be good add more %2 HOLD-MARKERS options.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 				};
 			};
 			// Super short CPU breath to avoid crazy loopings (but it's too dangerous leave vehicles in spawn point stuck, without move. This should be fast!):
@@ -3826,7 +4010,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// CREATING WAYPOINT > IF TRACKED VEHICLE:
 	if ( _isVeh && _isVehicleTracked ) then {
 		// How closer to complete the waypoint:
-		_wpDisTolerance = 20;  // Important: below 15, tanks in combat mode brakes before and dont reach the waypoint distance.
+		_wpDisTolerance = 20;  // Critical: From 19m, the risk of the tank doesn't reach the waypoint is critical and the hold-move won't work.
 		// Finally creating the vehicle waypoint:
 		_wp = _grp addWaypoint [_grpPos, 0]; 
 		_wp setWaypointType "HOLD";
@@ -3854,9 +4038,13 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		_grp setCurrentWaypoint _wp;
 		if ( !_isVeh ) then { _wp setWaypointFormation "DIAMOND" };  // better formation for this case!
 	};
-	// Check if the group is already on their destine:
+	// Wait the tracked-vehicle get closer to the waypoint:
+	waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < (_wpDisTolerance + 30) };
+	// Force the crew to get as closer as possible the waypoint position:
+	(leader _grp) doMove _grpPos;
+	// Check if the group is already on their destination:
 	waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < _wpDisTolerance };
-	// Error handling:
+	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// AFTER THE ARRIVAL, IF ANY VEHICLE TYPE:
 	if _isVeh then {
@@ -3869,7 +4057,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// Reserved code block for infantry after its arrival.
 	};
 	// Next planned move cooldown:
-	sleep (random CSWR_destHoldTakeabreak);
+	_time = time + (random CSWR_destHoldTakeabreak); waitUntil { sleep 10; time > _time };
 	// If the group had reserved the position:
 	if _isReservedNow then {
 		// For each case, remove the current hold-marker as reserved from the reservation list:
@@ -3949,14 +4137,14 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	_attemptLimiter = 5;
 	_veh = vehicle (leader _grp);
 	_directionToHold = markerDir _mkr; 
-	// Force the vehicle doest start to turn when still moving (rare, but happens):
+	// Force the vehicle stop before get the hold-direction:
 	_veh sendSimpleCommand "STOP";
 	// Wait the vehicle to brakes:
 	sleep 2;
 	// Check if there is some blocker around the vehicle. A simple unit around can make a tank get to fly like a rocket if too much close during the setDir command:
 	while { alive _veh && _attemptCounter < _attemptLimiter } do {
 		// Check if something relevant is blocking the Hold-marker position:
-		_blockers = (getPos _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC"], 10];
+		_blockers = (getPos _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Helicopter", "Plane"], 10];
 		// Removing the group vehicle itself from the calc as blocker:
 		_blockers deleteAt (_blockers find _veh);
 		// If no blockers, leave the verification loop:
@@ -3964,7 +4152,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 		// Counter to avoid crazy loopings:
 		_attemptCounter = _attemptCounter + 1;
 		// Debug:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then {
+		if CSWR_isOnDebugGlobal then {
 			// Warning messages:
 			if ( _attemptCounter < _attemptLimiter ) then {
 				["%1 HOLD > %2 '%3' tracked-vehicle is WAITING NO BLOCKERS to execute the 'setDir' Hold-move! Current blockers: %4", CSWR_txtWarningHeader, _tag, str _grp, str _blockers] call BIS_fnc_error;
@@ -3986,48 +4174,6 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 		// Debug message:
 		systemChat format ["%1 HOLD > %2 '%3' tracked-vehicle hold [Desired: %4º | Executed: %5º].", CSWR_txtDebugHeader, _tag, str _grp, _directionToHold, getDir _veh];
 	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_paradrop = {
-	// This function creates the paradrop system for one vehicle, including multiples parachutes attached on it.
-	// About the original author: it's a lighter/modificated version of KK_fnc_paraDrop function: http://killzonekid.com/arma-scripting-tutorials-epic-armour-drop/
-	// Returns nothing.
-
-	params ["_veh"];
-	private ["_eachPara", "_parachutes", "_i", "_velocity", "_time"];
-
-	// Escape:
-		// reserved space.
-	// Creating the parachute:
-	_eachPara = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
-	[_eachPara, getDir _veh] remoteExec ["setDir"];
-	_eachPara setPos (getPos _veh);
-	_parachutes = [_eachPara];
-	_veh attachTo [_eachPara, [0,2,0]];
-
-	{
-		_i = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
-		_parachutes set [count _parachutes, _i];
-		_i attachTo [_eachPara, [0,0,0]];
-		_i setVectorUp _x;
-
-	} count [ [0.5,0.4,0.6], [-0.5,0.4,0.6], [0.5,-0.4,0.6], [-0.5,-0.4,0.6] ];
-
-	// Waiting the vechile get closer to the ground:
-	waitUntil { sleep 0.1; ((getPos _veh) # 2) < 4 };
-	// Adjust to vehicle velocity after the parachutes detachment:
-	_velocity = velocity _veh;  // [x,y,z]
-	detach _veh;
-	_veh setVelocity _velocity;
-	// Detachment of parachutes from the vehicle:
-	playSound3D ["a3\sounds_f\weapons\Flare_Gun\flaregun_1_shoot.wss", _veh];
-	{ detach _x; _x disableCollisionWith _veh } forEach _parachutes;
-	_time = time + 5;
-	waitUntil { sleep 0.3; time > _time };
-	{ if ( !isNull _x ) then { deleteVehicle _x } } forEach _parachutes;
 	// Return:
 	true;
 };

@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.0
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.1
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -24,7 +24,7 @@ __
 - There are 4 types of destinations: move, watch, hold, and occupy. For more details, check the documentation;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
-- There are 7 infantry templates and 8 vehicle templates to customize (with modded or vanilla things) for each faction; 
+- There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
 - Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos. For more details, check the documentation;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
 - Set if the CSWR should wait for another script load first on the server;
@@ -41,6 +41,18 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Sep, 18th 2023 | v5.1**
+- Fixed > CRITICAL > In CSWR v5.0, all AI groups were stuck after the first waypoint to be completed;
+- Fixed > Hold > In CSWR v5.0 the tracked-vehicles accidentaly stopped to execute correctly the hold-maneuver;
+- Improved > Performance > BIS_fnc_spawnGroup method has been replaced by a saver server performance method;
+- Improved > Performance > BIS_fnc_spawnVehicle method has been replaced by a saver server performance method;
+- Improved > Paradrop > Paratroopers are executing the paradrop with much more space among each other (visual realistic);
+- Improved > Paradrop > Paratroopers are regrouping with their leaders after the landing and before the first mission move on the field;
+- Improved > Loadout > Paratroopers can receive helmet and nightvision customization separately from the regular faction loadout;
+- Improved > Vehicles > Now it's possible turn off the Electronic Warfare Resources for vehicles of each faction in fn_CSWR_management.sqf file;
+- Improved > Vehicles > UAV vehicles are blockers too if around the helipads if some helicopter will spawn; 
+- Documentation has been updated.
 
 **Sep, 13th 2023 | v5.0**
 - Added > All factions can spawn helicopters (cswr_spawnheli_faction_1);

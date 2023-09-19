@@ -46,8 +46,8 @@ switch _faction do {
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
 		    [_unit, "B_Carryall_cbr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
-		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
+		    [_unit, "", "V_HarnessO_brn", "H_HelmetB_light_desert", "NVGoggles", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for things to add or link:
 			//_unit addItem "arifle_MXM_Hamr_pointer_F";    // create the item and store it somewhere in the unit inventory.
@@ -93,8 +93,8 @@ switch _faction do {
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
 		    [_unit, "B_Kitbag_cbr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
-		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
+		    [_unit, "", "", "", "", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for things to add or link:
 		    //_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.
@@ -135,8 +135,8 @@ switch _faction do {
 		// Exclusively for Backpack replacement of infantry and crewmen [_unit, "backpack classname"]:
 		    [_unit, "B_AssaultPack_rgr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
-		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
+		    [_unit, "", "", "", "", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for things to add or link:
 		    //_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.
@@ -164,8 +164,8 @@ switch _faction do {
 		// Exclusively for Backpack replacement [_unit, "backpack classname"]:
 		    [_unit, "", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
-		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "Parachute classname"]:
-		    [_unit, "", "", "B_Parachute", _isParadrop] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		// Exclusively for loadout replacement of parachuter group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
+		    [_unit, "", "", "", "", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for things to add or link:
 		    //_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.

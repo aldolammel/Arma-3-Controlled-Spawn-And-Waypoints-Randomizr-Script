@@ -13,19 +13,27 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 // Factions:
 	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnOPF = true;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
-// Others:
+// Global loadout:
 	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
 	CSWR_isVestForAll = false;        // true = if a custom vest, almost all units will get it / false = only units originally with vest will get it. Default: false.
+// Global vehicles:
 	CSWR_isHoldVehLightsOff = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
 	CSWR_isUnlimitedFuel = false;     // WIP
 	CSWR_isUnlimitedAmmo = false;     // WIP
-	CSWR_shouldHeliSpwnAir = false;   // WIP - true = helicopter will spawn already on air / false = they spawn on the group. Default: false.
+	CSWR_shouldHeliSpwnInAir  = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
 	CSWR_shouldAddHelipadSpwn = false;  // true = add a visible helipad in each heli spawnpoint / false = a invisible helipad is added. Default: false.
-	CSWR_isEditableByZeus = true;     // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
-	CSWR_wait = 1;                    // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
+	CSWR_isElectroWarForBLU = true;  // true = vehicles of BLU will use Electronic Warfare Resources / false = they don't. Default: true.
+	CSWR_isElectroWarForOPF = true;  // true = vehicles of OPF will use Electronic Warfare Resources / false = they don't. Default: true.
+	CSWR_isElectroWarForIND = true;  // true = vehicles of IND will use Electronic Warfare Resources / false = they don't. Default: true.
+// Others:
+	CSWR_isEditableByZeus = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
+// Server:
+	CSWR_serverMaxFPS = 50.0;  // Be advised: extremely recommended do not change this value. Default; 50.0
+	CSWR_serverMinFPS = 20.0;  // Be advised: extremely recommended do not change this value. Default: 20.0
+	CSWR_wait = 1;  // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
 
 	// MOVEMENT ADVANCED SETTINGS:
 	// Time:
@@ -34,11 +42,11 @@ if (!isServer) exitWith {};
 		CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
 		CSWR_heliTakeoffDelay     = [10, 20, 30];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 20 sec, 30 sec.
 	// Ranges:
-		CSWR_watchMarkerRange = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
-		CSWR_occupyMarkerRange = 200;  // In meters, size of marker range used to find buildings to occupy. Default: 200.
+		CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
+		CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
 	// Altitudes:
 		CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
-		CSWR_spwnsParadropVehAlt = 300;  // In meters, the initial vehicle paradrop altitude. Default: 300.
+		CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
 		CSWR_heliLightAlt = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
 		CSWR_heliHeavyAlt = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
 	// Exceptions management:
@@ -218,8 +226,13 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isHoldVehLightsOff";
 	publicVariable "CSWR_isUnlimitedFuel";
 	publicVariable "CSWR_isUnlimitedAmmo";
-	publicVariable "CSWR_shouldHeliSpwnAir";
+	publicVariable "CSWR_shouldHeliSpwnInAir";
 	publicVariable "CSWR_shouldAddHelipadSpwn";
+	publicVariable "CSWR_isElectroWarForBLU";
+	publicVariable "CSWR_isElectroWarForOPF";
+	publicVariable "CSWR_isElectroWarForIND";
+	publicVariable "CSWR_serverMaxFPS";
+	publicVariable "CSWR_serverMinFPS";
 	publicVariable "CSWR_isEditableByZeus";
 	publicVariable "CSWR_destCommonTakeabreak";
 	publicVariable "CSWR_destOccupyTakeabreak";
