@@ -3,6 +3,9 @@
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
 
+Creation concept: bring life to the mission through non-stop units' movements with some level of unpredictability without losing control of server performance and what AI units can do.
+Special thanks: To the old (but gold) "T8 Units" script for the inspiration over the years.
+
 ## HOW TO INSTALL / DOCUMENTATION
 
 video demo (old version): https://www.youtube.com/watch?v=rpzIr0r03ZQ

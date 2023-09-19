@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=261;
+		nextID=264;
 	};
 	class Camera
 	{
-		pos[]={4272.564,198.39754,6504.9751};
-		dir[]={0.88452703,-0.046955511,0.46411964};
-		up[]={0.04157928,0.99889696,0.02181704};
-		aside[]={0.46463212,1.8626451e-009,-0.88550371};
+		pos[]={1829.6599,39.09206,5695.5171};
+		dir[]={0.84082812,-0.16505639,0.51554352};
+		up[]={0.14071518,0.98628443,0.086278096};
+		aside[]={0.5227142,7.3072442e-008,-0.85252076};
 	};
 };
 binarizationWanted=0;
@@ -391,7 +391,7 @@ class Mission
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=105.86257;
+					angle=105.86255;
 					id=177;
 				};
 				class Item5
@@ -794,7 +794,7 @@ class Mission
 					text="BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=132.59795;
+					angle=132.59793;
 					id=370;
 					atlOffset=3.0517578e-005;
 				};
@@ -877,7 +877,7 @@ class Mission
 			dataType="Marker";
 			position[]={320,0,7936};
 			name="markerVersion";
-			text="    VERSION 5.1";
+			text="    VERSION 5.3";
 			type="mil_box";
 			id=123;
 			atlOffset=134.21001;

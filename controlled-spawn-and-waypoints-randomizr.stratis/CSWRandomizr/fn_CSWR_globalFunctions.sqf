@@ -1358,7 +1358,7 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	// Escape part 1/2:
 		// reserved space.
 	// Creating the parachute:
-	_eachPara = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
+	_eachPara = createVehicle ["SSL_DefaultParachute", [0,0,0], [], 0, "FLY"];  // Steerable_Parachute_F
 	[_eachPara, getDir _veh] remoteExec ["setDir"];
 	_eachPara setPos (getPos _veh);
 	_parachutes = [_eachPara];
