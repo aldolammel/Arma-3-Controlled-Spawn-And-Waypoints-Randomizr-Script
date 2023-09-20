@@ -12,9 +12,9 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 // Factions:
-	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+	CSWR_isOnBLU = false;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
 	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
-	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
+	CSWR_isOnIND = true;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Global loadout:
 	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
@@ -30,6 +30,7 @@ if (!isServer) exitWith {};
 	CSWR_isElectroWarForIND = true;  // true = vehicles of IND will use Electronic Warfare Resources / false = they don't. Default: true.
 // Others:
 	CSWR_isEditableByZeus = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
+	CSWR_spwnHeliOnShipFloor = 25;  // WIP - If needed, set how many meters above the sea leval is the ship floor where the spawn of helicopters will be.
 // Server:
 	CSWR_serverMaxFPS = 50.0;  // Be advised: extremely recommended do not change this value. Default; 50.0
 	CSWR_serverMinFPS = 20.0;  // Be advised: extremely recommended do not change this value. Default: 20.0
@@ -67,8 +68,9 @@ if (!isServer) exitWith {};
 	CSWR_txtDebugHeader = "CSWR DEBUG >";
 	CSWR_txtWarningHeader = "CSWR WARNING >";
 	// Initial values:
-	CSWR_watchReservedLocation = [[],[],[]];  // [[blu],[opf],[ind]]
-	CSWR_holdReservedLocation = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocWatch = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocHold  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocSpwnHeli = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
 	_helipad="";
 	// Declarations:
@@ -142,7 +144,7 @@ if (!isServer) exitWith {};
 	{ _helipad createVehicle markerPos _x } forEach CSWR_spwnsHeliBLU + CSWR_spwnsHeliOPF + CSWR_spwnsHeliIND + CSWR_spwnsHeliCIV;
 
 
-	// DESTINATION POINTS:
+	// DESTINATION MARKERS:
 	// Where each faction in-game will move randomly.
 	// [ [spw], [ [ [moveBlu],[watchBlu],[occupyBlu],[holdBlu] ], [ [moveOpf],[watchOpf],[occupyOpf],[holdOpf] ], [ [moveInd],[watchInd],[occupyInd],[holdInd] ], [ [moveCiv],[watchCiv],[occupyCiv],[holdCiv] ], [ [movePublic] ] ] ];
 	// Only BluFor destinations:
@@ -165,7 +167,7 @@ if (!isServer) exitWith {};
 	CSWR_destsAllIND   = CSWR_destIND + CSWR_destWatchIND + CSWR_destOccupyIND + CSWR_destHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
 	CSWR_destCIV       = ((CSWR_confirmedMarkers # 1) # 3) # 0;
-	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;
+	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually.Reserved space only.
 	CSWR_destOccupyCIV = ((CSWR_confirmedMarkers # 1) # 3) # 2;
 	CSWR_destHoldCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 3;
 	CSWR_destsAllCIV   = CSWR_destCIV + CSWR_destWatchCIV + CSWR_destOccupyCIV + CSWR_destHoldCIV;  // NEVER include PUBLICs in this calc!
@@ -231,6 +233,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isElectroWarForBLU";
 	publicVariable "CSWR_isElectroWarForOPF";
 	publicVariable "CSWR_isElectroWarForIND";
+	publicVariable "CSWR_spwnHeliOnShipFloor";
 	publicVariable "CSWR_serverMaxFPS";
 	publicVariable "CSWR_serverMinFPS";
 	publicVariable "CSWR_isEditableByZeus";
@@ -250,8 +253,9 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_wait";
 	publicVariable "CSWR_txtDebugHeader";
 	publicVariable "CSWR_txtWarningHeader";
-	publicVariable "CSWR_watchReservedLocation";
-	publicVariable "CSWR_holdReservedLocation";
+	publicVariable "CSWR_bookedLocWatch";
+	publicVariable "CSWR_bookedLocHold";
+	publicVariable "CSWR_bookedLocSpwnHeli";
 	publicVariable "CSWR_spwnDelayQueueAmount";
 	publicVariable "CSWR_prefix";
 	publicVariable "CSWR_spacer";

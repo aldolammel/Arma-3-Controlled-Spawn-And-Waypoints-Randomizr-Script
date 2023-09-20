@@ -46,9 +46,10 @@ __
 ## CHANGELOG
 
 **Xxx, XXth 2023 | v5.3**
-- XXXXXXXXXXXXXXXXXXXXXXXX
-- XXXXXXXXXXXXXXXXXXXXXXXX
-- XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+- Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation (WIP);
+- Improved > New method (more feasible to performance) to check if destinations and spawns are busy before accept new groups/vehicles;
+- Improved > Hold > new method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
+- Removed > Civilian faction cannot move to anywhere (any marker) like a soldier, been limited to public markers;
 
 **Sep, 18th 2023 | v5.1**
 - Fixed > CRITICAL > In CSWR v5.0, all AI groups were stuck after the first waypoint to be completed;

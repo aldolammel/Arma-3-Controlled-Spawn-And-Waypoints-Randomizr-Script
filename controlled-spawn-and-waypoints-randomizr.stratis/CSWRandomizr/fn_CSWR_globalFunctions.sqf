@@ -1,4 +1,4 @@
-// CSWR v5.1
+// CSWR v5.3
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // by thy (@aldolammel)
 
@@ -495,6 +495,119 @@ THY_fnc_CSWR_marker_scanner = {
 };
 
 
+THY_fnc_CSWR_marker_booking = {
+	// This function makes the booking of a marker (destination or spawn-point) when it's available.
+	// Param > _mkrType > string: which type of spawn-point (for infantry, for vehicle, for heli) or type of destination marker ( watch, hold, occupy, etc).
+	// Param > _markers > array: all markers must be checked.
+	// Returns _bookingInfo. Array [string, bool].
+
+	params ["_mkrType", "_grp", "_markers", "_attemptLimit"];
+	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_counter"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_mkr = "";
+	_isBooked = false;
+	_bookingInfo = [_mkr, _isBooked];
+	_bookedLoc = [];
+	// Declarations:
+	_counter = 0;
+	switch ( _mkrType ) do {
+		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
+		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
+		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
+	};
+	// Debug texts:
+		// reserved space.
+	// Looping for select the marker:
+	while { !isNull _grp && _counter <= _attemptLimit } do {
+		// Counter to prevent crazy loops:
+		_counter = _counter + 1;
+		// Pick a marker:
+		_mkr = selectRandom _markers;
+		// For each case, check which booked-list the marker should be included:
+		switch ( side (leader _grp) ) do {
+			// If _mkr is NOT in the booked-list yet, include it:
+			case BLUFOR:      { if ( !(_mkr in (_bookedLoc # 0)) ) then { (_bookedLoc # 0) pushBackUnique _mkr; _isBooked = true } };
+			case OPFOR:       { if ( !(_mkr in (_bookedLoc # 1)) ) then { (_bookedLoc # 1) pushBackUnique _mkr; _isBooked = true } };
+			case INDEPENDENT: { if ( !(_mkr in (_bookedLoc # 2)) ) then { (_bookedLoc # 2) pushBackUnique _mkr; _isBooked = true } };
+			case CIVILIAN:    { if ( !(_mkr in (_bookedLoc # 3)) ) then { (_bookedLoc # 3) pushBackUnique _mkr; _isBooked = true } };
+		};
+		// if booked, update the public variable:
+		if _isBooked then {
+			switch ( _mkrType ) do {
+				case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch" };
+				case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
+				case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
+			};
+			// Stop the looping;
+			break;
+		};
+		// Super short CPU breath to avoid crazy loopings (but it's too dangerous leave, for example, vehicles in spawn-point stuck, without move. This should be fast!):
+		sleep 0.25;
+	};  // While-loop ends.
+	// Preparing to return:
+	_bookingInfo = [_mkr, _isBooked];
+	// Return:
+	_bookingInfo;
+};
+
+
+THY_fnc_CSWR_marker_booking_undo = {
+	// This function undo the booking of a marker (destination or spawn-point) when it becomes available.
+	// Returns nothing.
+
+	params ["_mkrType", "_grp", "_mkr", "_isBooked"];
+	private ["_bookedLoc", "_bookedAmount"];
+
+	// Escape:
+	if !_isBooked exitWith {};
+	// Initial values:
+	_bookedLoc = [];
+	_bookedAmount = 0;  // debug purposes.
+	// All cases where booking can be applied:
+	switch ( _mkrType ) do {
+		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
+		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
+		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
+	};
+	// Debug texts:
+		// reserved space.
+	// Main functionality:
+	// For each case, remove the current hold-marker as reserved from the reservation list:
+	switch ( side (leader _grp) ) do {
+		case BLUFOR:      { (_bookedLoc # 0) deleteAt ((_bookedLoc # 0) find _mkr); _bookedAmount = count (_bookedLoc # 0) };
+		case OPFOR:       { (_bookedLoc # 1) deleteAt ((_bookedLoc # 1) find _mkr); _bookedAmount = count (_bookedLoc # 1) };
+		case INDEPENDENT: { (_bookedLoc # 2) deleteAt ((_bookedLoc # 2) find _mkr); _bookedAmount = count (_bookedLoc # 2) };
+		case CIVILIAN:    { (_bookedLoc # 3) deleteAt ((_bookedLoc # 3) find _mkr); _bookedAmount = count (_bookedLoc # 3) };
+	};
+	// After that, update the public variable with the new reservation:
+	switch ( _mkrType ) do {
+		case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch" };
+		case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
+		case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
+	};
+	// Debug:
+	if CSWR_isOnDebugGlobal then {
+		// Hold message 1:
+		if ( _mkrType isEqualTo "BOOKING_HOLD" ) then {
+			systemChat format ["%1 HOLD > %2 '%3' tracked vehicle's changing position.", CSWR_txtDebugHeader, _tag, str _grp];
+			// Breath:
+			sleep 5;
+		};
+		// Hold message 2:
+		if CSWR_isOnDebugHold then {
+			systemChat format ["%1 HOLD > %2 > There is/are %3 tracked vehicle(s) in perfect HOLDING right now.", CSWR_txtDebugHeader, _tag, _bookedAmount];
+			// Breath:
+			sleep 5;
+		};
+	};
+	// Return:
+	true;
+};
+
+
 THY_fnc_CSWR_convertion_faction_to_tag = {
 	// This function converts the faction name to the owner tag for further validations.
 	// Returns _tag: string of faction abbreviation.
@@ -743,14 +856,20 @@ THY_fnc_CSWR_is_valid_destination = {
 	// Main validation:
 	switch _destType do {
 		case "MOVE_ANY": {
-			// if at least X destinations of this type:
-			if ( count CSWR_destsANYWHERE >= CSWR_minDestAny ) then { 
+			// if at least X destinations of this type, and the faction IS NOT civilian:
+			if ( count CSWR_destsANYWHERE >= CSWR_minDestAny && _tag isNotEqualTo "CIV" ) then { 
 				// Prepare to return, saying there are available destinations:
 				_isThereDest = true;
 			// Otherwise:
 			} else {
-				// Warning message:
-				["%1 %2", CSWR_txtWarningHeader, _txt1] call BIS_fnc_error; sleep 5;
+				// If civilian:
+				if ( _tag isEqualTo "CIV" ) then {
+					// Warning message:
+					["%1 %2", CSWR_txtWarningHeader, _txt4] call BIS_fnc_error; sleep 5;
+				} else {
+					// Warning message:
+					["%1 %2", CSWR_txtWarningHeader, _txt1] call BIS_fnc_error; sleep 5;
+				};
 			}; 
 		};
 		case "MOVE_PUBLIC": { 
@@ -1917,7 +2036,7 @@ THY_fnc_CSWR_spawn_type_checker = {
 
 
 THY_fnc_CSWR_spawn_and_go = {
-	// This function checks if the group/vehicle needs to wait to spawn or if it's been granted to do its first move in game.
+	// This function checks if the group or the vehicle needs to wait to spawn or if it's been granted to do its first pre-defined move now.
 	// Returns nothing.
 
 	params ["_spwns", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destType"];
@@ -2059,9 +2178,9 @@ THY_fnc_CSWR_spawn_and_go = {
 		// If NOT vehicle:
 		if !_isVeh then {
 			// SPAWNING GROUP OF PEOPLE:
-			// Create the group:
+			// Create the group id:
 			_grp = createGroup _faction;
-			// Create the group units:
+			// Create the units:
 			if !_isSpwnParadrop then {
 				// People on ground:
 				{ _grp createUnit [_x, _spwnPos, [], 20, "NONE"]; sleep _serverBreath } forEach _grpClassnames;
@@ -2099,7 +2218,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				// Looping until to find an unblocked spawn-point exclusive for:
 				while { true } do {
 					// Check if something relevant is blocking the _spwn position:
-					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Ship", "Submarine"], 20];
+					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV"], 20];
 					// If there's a blocker:
 					if ( count _blockers isNotEqualTo 0 ) then { _counter = _counter + 1 } else { break };
 					// Select a new spawn option:
@@ -2117,10 +2236,14 @@ THY_fnc_CSWR_spawn_and_go = {
 				};  // While loop ends.
 				// If Helicopter must spawn already in air:
 				if CSWR_shouldHeliSpwnInAir then {
+					// Create the helicopter:
 					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 0, "FLY"];
 				// Otherwise, Helicopter must spawn landed:
 				} else {
+					// Create the helicopter:
 					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 0, "NONE"];
+					// WIP : find a way to calc the height of the solid surface right over the Sea level...
+					if ( underwater _veh ) then { _veh setPosASL [_spwnPos # 0, _spwnPos # 1, CSWR_spwnHeliOnShipFloor] };
 				};
 				// Helicopter config > Features:
 				if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight abs CSWR_heliLightAlt };
@@ -2138,7 +2261,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Group/Vehicle config > Server performance:
 		_grp deleteGroupWhenEmpty true;
 		// Group/Ground vehicle config > Loadout customization:
-		if !_isVehAir then { { [_faction, _grpType, _x, _isSpwnParadrop] call THY_fnc_CSWR_loadout; sleep 0.1 } forEach units _grp };
+		if !_isVehAir then { { [_faction, _grpType, _x, _isSpwnParadrop] call THY_fnc_CSWR_loadout; sleep 0.3 } forEach units _grp };
 		// Group/Vehicle config > Units skills:
 		[_grpType, _grp, _destType] call THY_fnc_CSWR_unit_skills;
 		// Group config > Formation:
@@ -2150,6 +2273,8 @@ THY_fnc_CSWR_spawn_and_go = {
 				_x addCuratorEditableObjects [units _grp, true];
 				// Vehicle itself:
 				if _isVeh then { _x addCuratorEditableObjects [[vehicle (leader _grp)], true] };
+				// Breath:
+				sleep 1;
 			} forEach allCurators;
 		};
 		// Helicopter config > Takeoff delay:
@@ -2364,7 +2489,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Debug texts:
 	_txt0 = "For script integraty, the vehicle WON'T SPAWN!";
 	_txt1 = format ["%1 > There IS NO SPAWNPOINT to create a vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwns%1' is spelled correctly and make sure there's at least 1 %1 spawn marker of this faction on Eden.", _tag];
-	_txt2 = format ["A %1 HELICOPTER HAS NO SPAWNPOINT. Each heli needs its own SPAWN-MARKER on Eden, e.g. 'cswr_spawnheli_%2_aNumber'.", _tag, toLower _tag];
+	_txt2 = format ["%1 > A HELICOPTER HAS NO SPAWNPOINT. Add at least one SPAWN-MARKER for helicopters on Eden, e.g. 'cswr_spawnheli_%2_aNumber'.", _tag, toLower _tag];
 	_txt3 = format ["%1 > At least one type of vehicle configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script get to know which vehicle should be created. FIX IT!", _tag];
 	_txt4 = format ["IMPOSSIBLE TO SPAWN a %1 vehicle in spawn-points from another faction. Check 'fn_CSWR_population.sqf' file and make sure all %1 vehicle lines have the spawn-point assigned to 'CSWR_spwns%1' or 'CSWR_spwnsVeh%1' or 'CSWR_spwnsHeli%1'.", _tag];
 	// Escape:
@@ -2574,8 +2699,8 @@ THY_fnc_CSWR_go = {
 		case "MOVE_PUBLIC":     { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, false] spawn THY_fnc_CSWR_go_dest_PUBLIC };
 		case "MOVE_RESTRICTED": { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED };
 		case "MOVE_WATCH":      { [_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH };  // Vehicles and Civilian faction are not able to do this.
-		case "MOVE_OCCUPY":     { [_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY };  // Vehicles are not able to do this.
-		case "MOVE_HOLD":       { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD };  // Helicopters are not able to do this.
+		case "MOVE_OCCUPY":     { [_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY };  // Vehicles are not able to do this.
+		case "MOVE_HOLD":       { [_tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD };  // Helicopters are not able to do this.
 		// And if something wrong:
 		default { ["%1 %2 '%3' group has an UNKNOWN DESTINATION. Check the 'fn_CSWR_population.sqf' file.", CSWR_txtWarningHeader, _tag, str _grp] call BIS_fnc_error; sleep 5 };
 	};
@@ -2638,7 +2763,7 @@ THY_fnc_CSWR_go_RTB = {
 	// Escape:
 	if ( isNull _grp || !alive _veh || !alive leader _grp ) exitWith {};
 	// Forcing to return and not re-engage:
-	_grp setBehaviourStrong "CARELESS";
+	_grp setBehaviourStrong "CARELESS";  // WIP need to test more!
 	// Creating the waypoint to the _closestStationPos:
 	_wp = _grp addWaypoint [_closestStationPos, 0];
 	_wp setWaypointCombatMode "GREEN";  // Hold fire, disengage, don't fire unless fired upon. Keep in formation.
@@ -2744,6 +2869,8 @@ THY_fnc_CSWR_go_ANYWHERE = {
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
+	// Error handling:
+	if ( side (leader _grp) == CIVILIAN ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integraty, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_time = 0;
 	// Declarations:
@@ -2906,7 +3033,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Error handling:
-	if ( side (leader _grp) == CIVILIAN ) exitWith { ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_population.sqf' file. For script integraty, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
+	if ( _grpType isNotEqualTo "teamS" ) exitWith { ["%1 WATCH > A non-sniper-group tried to use the '_move_WATCH'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integraty, the group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
+	if ( side (leader _grp) isEqualTo CIVILIAN ) exitWith { ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_population.sqf' file. For script integraty, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_destMarkers = [];
 	// Defining the group markers to be considered:
@@ -3011,11 +3139,11 @@ THY_fnc_CSWR_WATCH_find_spot = {
 		switch ( side (leader _grp) ) do {
 			case BLUFOR: {
 				// If selected location is not reserved yet:
-				if ( !(_location in (CSWR_watchReservedLocation # 0)) ) then {
+				if ( !(_location in (CSWR_bookedLocWatch # 0)) ) then {
 					// Add it:
-					(CSWR_watchReservedLocation # 0) pushBackUnique _location;
+					(CSWR_bookedLocWatch # 0) pushBackUnique _location;
 					// And update the public variable:
-					publicVariable "CSWR_watchReservedLocation";
+					publicVariable "CSWR_bookedLocWatch";
 				// If selected location is already reserved for another group:
 				} else {
 					// flag:
@@ -3024,11 +3152,11 @@ THY_fnc_CSWR_WATCH_find_spot = {
 			};
 			case OPFOR: {
 				// If selected location is not reserved yet:
-				if ( !(_location in (CSWR_watchReservedLocation # 1)) ) then {
+				if ( !(_location in (CSWR_bookedLocWatch # 1)) ) then {
 					// Add it:
-					(CSWR_watchReservedLocation # 1) pushBackUnique _location;
+					(CSWR_bookedLocWatch # 1) pushBackUnique _location;
 					// And update the public variable:
-					publicVariable "CSWR_watchReservedLocation";
+					publicVariable "CSWR_bookedLocWatch";
 				// If selected location is already reserved for another group:
 				} else {
 					// flag:
@@ -3037,11 +3165,11 @@ THY_fnc_CSWR_WATCH_find_spot = {
 			};
 			case INDEPENDENT: {
 				// If selected location is not reserved yet:
-				if ( !(_location in (CSWR_watchReservedLocation # 2)) ) then {
+				if ( !(_location in (CSWR_bookedLocWatch # 2)) ) then {
 					// Add it:
-					(CSWR_watchReservedLocation # 2) pushBackUnique _location;
+					(CSWR_bookedLocWatch # 2) pushBackUnique _location;
 					// And update the public variable:
-					publicVariable "CSWR_watchReservedLocation";
+					publicVariable "CSWR_bookedLocWatch";
 				// If selected location is already reserved for another group:
 				} else {
 					// flag:
@@ -3287,7 +3415,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// This function sets the group to move and occupy buildings in a certain marker range. It's a looping.
 	// Returns nothing.
 	
-	params ["_tag", "_grpType", "_grp", "_behavior"];
+	params ["_tag", "_grp", "_behavior"];
 	private ["_tag", "_destMarkers", "_bldgPos", "_spots", "_wp", "_grpLead", "_leadStuckCounter", "_getOutPos", "_distLimiterFromBldg", "_distLimiterFriendPlayer", "_distLimiterEnemy", "_wait", "_grpSize", "_regionToSearch", "_building"];
 	
 	// Escape:
@@ -3365,7 +3493,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 						// Small cooldown to prevent crazy loopings:
 						sleep 1;
 						// Restart the first OCCUPY step:
-						[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+						[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 						// Stop the while-looping:
 						break;
 					};
@@ -3373,7 +3501,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 				// if group leader is close enough to the chosen building:
 				if ( _grpLead distance _bldgPos < _distLimiterFromBldg ) then {
 					// When there, execute the occupy function:
-					[_building, _bldgPos, _grpType, _grp, _tag, _behavior, _distLimiterFromBldg, _distLimiterEnemy, _distLimiterFriendPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
+					[_building, _bldgPos, _grp, _tag, _behavior, _distLimiterFromBldg, _distLimiterEnemy, _distLimiterFriendPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
 					// Stop the while-looping:
 					break;
 				};
@@ -3384,7 +3512,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 					// Small cooldown to prevent crazy loopings:
 					sleep 3;
 					// Restart the first OCCUPY step:
-					[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+					[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 					// Stop the while-looping:
 					break;
 				};
@@ -3403,7 +3531,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 						// Destroying the position just in case:
 						_getOutPos = nil;
 						// Restart the first OCCUPY step:
-						[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+						[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 						// Stop the while-looping:
 						break;
 					};
@@ -3418,7 +3546,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 			// Cooldown to prevent crazy loopings:
 			sleep _wait;
 			// Restart the first OCCUPY step:
-			[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+			[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 		};
 	// If a building is NOT found:
 	} else {
@@ -3427,7 +3555,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		// Cooldown to prevent crazy loopings:
 		sleep _wait;
 		// Restart the first OCCUPY step:
-		[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+		[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	};
 	// Return:
 	true;
@@ -3523,7 +3651,7 @@ THY_fnc_CSWR_OCCUPY_remove_unit_from_group = {
 	// This function removes a specific unit left behind, and set them to a new group that is abled to execute also the occupy-movement by itself.
 	// Returns nothing.
 
-	params ["_unit", "_grpType", "_tag", "_behavior", "_wait"];
+	params ["_unit", "_tag", "_behavior", "_wait"];
 	private ["_newGrp"];
 
 	// Debug message:
@@ -3538,7 +3666,7 @@ THY_fnc_CSWR_OCCUPY_remove_unit_from_group = {
 	// Cooldown to prevent crazy loopings:
 	sleep _wait;
 	// Restart the first OCCUPY step:
-	[_tag, _grpType, _newGrp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+	[_tag, _newGrp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	// Return:
 	true;
 };
@@ -3567,7 +3695,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// This function will try to make the group get inside the chosen building to occupy it.
 	// Returns nothing.
 
-	params ["_building", "_bldgPos", "_grpType", "_grp", "_tag", "_behavior", "_distLimiterFromBldg", "_distLimiterEnemy", "_distLimiterFriendPlayer", "_wait"];
+	params ["_building", "_bldgPos", "_grp", "_tag", "_behavior", "_distLimiterFromBldg", "_distLimiterEnemy", "_distLimiterFriendPlayer", "_wait"];
 	private ["_spots", "_spot", "_isFriendPlayerClose", "_isEnemyClose", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_time", "_grpSize", "_compass"];
 
 	// Escape:
@@ -3625,7 +3753,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 									// Small cooldown to prevent crazy loopings:
 									sleep 1;
 									// Restart the first OCCUPY step:
-									[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+									[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 									// Stop the while-looping:
 									break;
 								};
@@ -3694,7 +3822,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 							// Cooldown to prevent crazy loopings:
 							sleep _wait;
 							// Restart the first OCCUPY step:
-							[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+							[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 							// Stop the while-loop:
 							break;
 						};
@@ -3722,7 +3850,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 					// if the unit is too far away from the leader:
 					if ( _x distance leader _grp > 120 ) then {
 						// Remove the unit from the current group:
-						[_x, _grpType, _tag, _behavior, _wait] spawn THY_fnc_CSWR_OCCUPY_remove_unit_from_group;
+						[_x, _tag, _behavior, _wait] spawn THY_fnc_CSWR_OCCUPY_remove_unit_from_group;
 						// Stop the while-looping:
 						break;
 					};
@@ -3810,13 +3938,13 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 			if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' leader would rather move to another building.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 3 };
 		};
 		// Starts the last stage of OCCUPY function:
-		[_grpType, _grp, _tag, _behavior, _distLimiterFromBldg, _distLimiterEnemy, _distLimiterFriendPlayer, _bldgPos, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetOut;
+		[_grp, _tag, _behavior, _distLimiterFromBldg, _distLimiterEnemy, _distLimiterFriendPlayer, _bldgPos, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetOut;
 	// If a building is NOT found:
 	} else {
 		// Warning message:
 		["%1 %2 > OCCUPY > The building doesn't exist anymore. New search in %4 secs.", CSWR_txtWarningHeader, _tag, str _grp, _wait] call BIS_fnc_error; sleep 5;
 		// Restart the first OCCUPY step:
-		[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+		[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	};
 	// Return:
 	true;
@@ -3827,7 +3955,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 	// This function is the last stage of Occupy function where it removes the group from inside the occupied building.
 	// Returns nothing.
 
-	params ["_grpType", "_grp", "_tag", "_behavior", "_distLimiterFromBldg", "_distLimiterEnemy", "_distLimiterFriendPlayer", "_bldgPos", "_wait"];
+	params ["_grp", "_tag", "_behavior", "_distLimiterFromBldg", "_distLimiterEnemy", "_distLimiterFriendPlayer", "_bldgPos", "_wait"];
 	private ["_isFriendPlayerClose", "_isEnemyClose", "_getOutPos", "_canTeleport"];
 
 	// Escape:
@@ -3916,7 +4044,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 	// Debug message:
 	if (CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 %2 > OCCUPY > %3 building(s) occupied currently.", CSWR_txtDebugHeader, _tag, count CSWR_occupyIgnoredPositions] };	
 	// Restart the first OCCUPY step:
-	[_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+	[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	// Return:
 	true;
 };
@@ -3926,29 +4054,28 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// This function sets the group to arrive in a place and make it doesn't move to another place for a long time. It's a looping.
 	// Returns nothing.
 	
-	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh"];
-	private ["_destMarkers", "_isReservedToAnother", "_areaToHoldPos", "_isVehicleTracked", "_areaToHold", "_isReservedNow", "_grpPos", "_wpDisTolerance", "_wp", "_holdReservedAmount", "_time", "_attemptCounter", "_attemptTolerance", "_wait"];
+	params ["_tag", "_grp", "_behavior", "_isVeh"];
+	private ["_isBooked", "_destMarkers", "_isReservedToAnother", "_isVehTracked", "_bookingInfo", "_grpPos", "_wp", "_holdReservedAmount", "_time", "_counter", "_wpDisLimit", "_wait", "_areaToHold"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
+	_isBooked = false;
 	_destMarkers = [];
 	_isReservedToAnother = false;
-	_areaToHoldPos = [];
-	_isVehicleTracked = false;
-	_areaToHold = "";
-	_isReservedNow = false;
+	_isVehTracked = false;
+	_bookingInfo = [];
 	_grpPos = [];
-	_wpDisTolerance = nil;
 	_wp = [];
 	_holdReservedAmount = nil;
 	_time = 0;
+	_counter = 0;
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
-	_attemptTolerance = 20;
+	_wpDisLimit = 20;  // Critical - from 19m, the risk of the vehicle doesn't reach the waypoint is too high.
 	_wait = 10;
 	// Defining the group markers to be considered:
 	switch ( side (leader _grp) ) do {
@@ -3957,139 +4084,100 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		case INDEPENDENT: { _destMarkers = CSWR_destHoldIND };
 		case CIVILIAN:    { _destMarkers = CSWR_destHoldCIV };
 	};
+	// Selecting a hold-marker:
+	_areaToHold = selectRandom _destMarkers;
 	// Check if it's a vehicle and which kind of them:
 	if _isVeh then {
 		// It's a tracked vehicle:
-		if ( vehicle (leader _grp) isKindOf "Tank" || vehicle (leader _grp) isKindOf "TrackedAPC" ) then { _isVehicleTracked = true };
+		if ( vehicle (leader _grp) isKindOf "Tank" || vehicle (leader _grp) isKindOf "TrackedAPC" ) then { _isVehTracked = true };
 	};
-	// Looping for select hold-marker:
-	_attemptCounter = 0;  // 1/2 usage.
-	while { !isNull _grp && _attemptCounter < _attemptTolerance } do {
-		// Counter to prevent crazy loops:
-		_attemptCounter = _attemptCounter + 1;
-		// Check the available HOLD faction markers on map:
-		_areaToHold = selectRandom _destMarkers;
-		// If tracked vehicle:
-		if ( _isVeh && _isVehicleTracked ) then {
-			// For each case, check which reserved list it should be included:
-			switch ( side (leader _grp) ) do {
-				// If _areaToHold is NOT inside the reserved list yet, include it:
-				case BLUFOR:      { if ( !(_areaToHold in CSWR_holdReservedLocation # 0) ) then { CSWR_holdReservedLocation # 0 pushBackUnique _areaToHold; _isReservedNow = true } };
-				case OPFOR:       { if ( !(_areaToHold in CSWR_holdReservedLocation # 1) ) then { CSWR_holdReservedLocation # 1 pushBackUnique _areaToHold; _isReservedNow = true } };
-				case INDEPENDENT: { if ( !(_areaToHold in CSWR_holdReservedLocation # 2) ) then { CSWR_holdReservedLocation # 2 pushBackUnique _areaToHold; _isReservedNow = true } };
-				case CIVILIAN:    { if ( !(_areaToHold in CSWR_holdReservedLocation # 3) ) then { CSWR_holdReservedLocation # 3 pushBackUnique _areaToHold; _isReservedNow = true } };
-			};
-			// if this vehicle was included as owner of the hold-marker, it is reserved:
-			if _isReservedNow then {
-				// Update the public variable with new reservation:
-				publicVariable "CSWR_holdReservedLocation";
-				// Stop the looping;
-				break;
-			// If still not reserved:
-			} else {
-				// Escape:
-				if ( _attemptCounter >= _attemptTolerance ) exitWith {
-					// Warning handling:
-					["%1 HOLD > Looks it's working with more %2 tracked-vehicles than hold-markers available. It could be good add more %2 HOLD-MARKERS options.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
-				};
-			};
-			// Super short CPU breath to avoid crazy loopings (but it's too dangerous leave vehicles in spawn point stuck, without move. This should be fast!):
-			sleep 0.25;
-		// If infantry or another kind of vehicle:
-		} else {
-			// Just take the _areaToHold and leave the looping:
-			break;
+
+	// BOOKING A MARKER:
+	// if tracked vehicle:
+	if _isVehTracked then { 
+		// Try to booking a marker:
+		_bookingInfo = ["BOOKING_HOLD", _grp, _destMarkers, 5] call THY_fnc_CSWR_marker_booking;
+		// Which marker to go:
+		_areaToHold = _bookingInfo # 0;
+		// Is booked?
+		_isBooked = _bookingInfo # 1;
+		// Debug message:
+		if ( CSWR_isOnDebugGlobal && !_isBooked ) then {
+			systemChat format ["%1 HOLD > %2 '%3' tracked-vehicle tried but failed to booking a HOLD-MARKER center. Moving to a secondary position.", CSWR_txtDebugHeader, _tag, str _grp];
 		};
-	};  // While-loop ends.
-	
-	// Taking the selected hold marker position (2D):
-	_areaToHoldPos = markerPos _areaToHold;  // [x, y]
-	// Converting the position to ATL format and defining this as the basic infantry/vehicle position:
-	_grpPos = [_areaToHoldPos # 0, _areaToHoldPos # 1, 0];  // converted to [x, y, z].
-	
-	// CREATING WAYPOINT > IF TRACKED VEHICLE:
-	if ( _isVeh && _isVehicleTracked ) then {
-		// How closer to complete the waypoint:
-		_wpDisTolerance = 20;  // Critical: From 19m, the risk of the tank doesn't reach the waypoint is critical and the hold-move won't work.
-		// Finally creating the vehicle waypoint:
-		_wp = _grp addWaypoint [_grpPos, 0]; 
-		_wp setWaypointType "HOLD";
-		_grp setCurrentWaypoint _wp;
-		
-	// CREATING WAYPOINT > IF INFANTRY OR NON-TRACKED VEHICLE:
+	};
+
+	// SETTING A POSITION:
+	// If booked:
+	if _isBooked then {
+		// Marker center position, taking the 2D pos and converting it to ATL format (3D):
+		_grpPos = [(markerPos _areaToHold) # 0, (markerPos _areaToHold) # 1, 0];  // [x, y, z]
+	// If not booked (people and non-tracked-vehicle never will booking, including tracked-vehicle that didn't find a hold-marker free):
 	} else {
-		// How closer to complete the waypoint:
-		_wpDisTolerance = 2;
-		// Looping to find a good spot, if it fails, the infantry will be sent to marker position with no safe position guarantees:
-		_attemptCounter = 0;  // 2/2 usage.
-		while { !isNull _grp && _attemptCounter < 20 } do {
+		// Looping to find a good spot in selected > if the group still exists:
+		while { !isNull _grp } do {
 			// Counter to prevent crazy loops:
-			_attemptCounter = _attemptCounter + 1;
-			// Find pos min 0m from center (_areaToHoldPos) but not further 30m, not closer 3m to other obj, not in water, max gradient 0.7, no (0) on shoreline:
-			_grpPos = [_grpPos, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;
+			_counter = _counter + 1;
+			// Find pos min 0m from center (_areaToHold) but not further 30m, not closer 3m to other obj, not in water, max gradient 0.7, no (0) on shoreline:
+			_grpPos = [markerPos _areaToHold, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;
 			// if troops are not over a road, good position and stop the while-loop:
 			if ( !isOnRoad _grpPos ) then { break };
+			// Warning message:
+			if ( _counter > 5 ) then {
+				// Restart the counter:
+				_counter = 0;
+				// Message:
+				["%1 HOLD > Looks %2 '%3' ISN'T finding a save spot to maneuver in '%4' position. They keep trying...", CSWR_txtWarningHeader, _tag, str _grp, _areaToHold] call BIS_fnc_error;
+			};
 			// Cooldown to prevent crazy loops:
 			if _isVeh then { sleep 0.25 } else { sleep _wait };
 		};  // While-loop ends.
-		// Finally creating the infantry / non-tracked vehicles waypoint:
-		_wp = _grp addWaypoint [_grpPos, 0]; 
-		_wp setWaypointType "HOLD";
-		_grp setCurrentWaypoint _wp;
-		if ( !_isVeh ) then { _wp setWaypointFormation "DIAMOND" };  // better formation for this case!
 	};
-	// Wait the tracked-vehicle get closer to the waypoint:
-	waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < (_wpDisTolerance + 30) };
-	// Force the crew to get as closer as possible the waypoint position:
-	(leader _grp) doMove _grpPos;
-	// Check if the group is already on their destination:
-	waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < _wpDisTolerance };
+	
+	// WAYPOINT AND GO:
+	_wp = _grp addWaypoint [_grpPos, 0]; 
+	_wp setWaypointType "HOLD";
+	_grp setCurrentWaypoint _wp;
+	// If infantry/people:
+	if !_isVeh then {
+		// Check if the group is already on their destination:
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < 2 };
+	// Otherwise, if vehicle:
+	} else {
+		// Wait 'til getting really closer:
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < (_wpDisLimit + 30) || !alive (vehicle (leader _grp)) };
+		// if crew still in vehicle:
+		if ( !isNull (objectParent leader _grp) ) then {
+			// it forces the crew order to drive as closer as possible the waypoint:
+			leader _grp doMove _grpPos;
+		};
+		// Wait 'til the vehicle is over the waypoint:
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _grpPos < _wpDisLimit || !alive (vehicle (leader _grp)) };
+	};
 	// Escape:
-	if ( isNull _grp ) exitWith {};
-	// AFTER THE ARRIVAL, IF ANY VEHICLE TYPE:
+	if ( isNull _grp || !alive (vehicle (leader _grp)) ) exitWith { ["BOOKING_HOLD", _grp, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
+
+	// ARRIVAL IN MARKER POSITION:
+	// If vehicle:
 	if _isVeh then {
-		// Adjust only trached vehicle direction:
+		// The function accepts only trached vehicle to adjust the vehicle direction:
 		[_areaToHold, _grp, _tag] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
 		// If editors choice was stealth all vehicles on hold, do it:
 		if CSWR_isHoldVehLightsOff then { _grp setBehaviourStrong "STEALTH" };
-	// AFTER THE ARRIVAL, IF INFANTRY:
+	// Otherwise, if infantry/people:
 	} else {
-		// Reserved code block for infantry after its arrival.
+		// Group always will change the formation for this (aesthetically better):
+		_wp setWaypointFormation "DIAMOND";
 	};
 	// Next planned move cooldown:
-	_time = time + (random CSWR_destHoldTakeabreak); waitUntil { sleep 10; time > _time };
-	// If the group had reserved the position:
-	if _isReservedNow then {
-		// For each case, remove the current hold-marker as reserved from the reservation list:
-		switch ( side (leader _grp) ) do {
-			case BLUFOR: { 
-				(CSWR_holdReservedLocation # 0) deleteAt ((CSWR_holdReservedLocation # 0) find _areaToHold);
-				// Debug purposes:
-				if CSWR_isOnDebugGlobal then { _holdReservedAmount = count (CSWR_holdReservedLocation # 0) };
-			};
-			case OPFOR: { 
-				(CSWR_holdReservedLocation # 1) deleteAt ((CSWR_holdReservedLocation # 1) find _areaToHold); 
-				// Debug purposes:
-				if CSWR_isOnDebugGlobal then { _holdReservedAmount = count (CSWR_holdReservedLocation # 1) };
-			};
-			case INDEPENDENT: { 
-				(CSWR_holdReservedLocation # 2) deleteAt ((CSWR_holdReservedLocation # 2) find _areaToHold); 
-				// Debug purposes:
-				if CSWR_isOnDebugGlobal then { _holdReservedAmount = count (CSWR_holdReservedLocation # 2) };
-			};
-			case CIVILIAN: { 
-				(CSWR_holdReservedLocation # 3) deleteAt ((CSWR_holdReservedLocation # 3) find _areaToHold); 
-				// Debug purposes:
-				if CSWR_isOnDebugGlobal then { _holdReservedAmount = count (CSWR_holdReservedLocation # 3) };
-			};
-		};
-		// After that, update the public variable with the new reservation:
-		publicVariable "CSWR_holdReservedLocation";
-		// Debug message:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then { systemChat format ["%1 HOLD > %3 position(s) got %2 TRACKED VEHICLES on tactical hold currently.", CSWR_txtDebugHeader, _tag, _holdReservedAmount] };
-	};
-	// Restart the movement:
-	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
+	_time = time + (random CSWR_destHoldTakeabreak); 
+	waitUntil { sleep _wait; time > _time || isNull _grp || !alive (vehicle (leader _grp)) };
+	
+	// UNDO IF BOOKED:
+	["BOOKING_HOLD", _grp, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	
+	// RESTART THE MOVEMENT:
+	[_tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
 	// Return:
 	true;
 };
@@ -4126,7 +4214,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// Returns nothing.
 
 	params ["_mkr", "_grp", "_tag"];
-	private ["_blockers", "_attemptCounter", "_attemptLimiter", "_veh", "_directionToHold"];
+	private ["_blockers", "_attemptCounter", "_attemptLimiter", "_veh", "_directionToHold", "_vehPos"];
 	
 	// Escape:
 	if ( !(vehicle (leader _grp) isKindOf "Tank") && !(vehicle (leader _grp) isKindOf "TrackedAPC") ) exitWith {};
@@ -4139,8 +4227,8 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	_directionToHold = markerDir _mkr; 
 	// Force the vehicle stop before get the hold-direction:
 	_veh sendSimpleCommand "STOP";
-	// Wait the vehicle to brakes:
-	sleep 2;
+	// Wait the vehicle to brake:
+	waitUntil { sleep 2; speed _veh <= 0.1 };
 	// Check if there is some blocker around the vehicle. A simple unit around can make a tank get to fly like a rocket if too much close during the setDir command:
 	while { alive _veh && _attemptCounter < _attemptLimiter } do {
 		// Check if something relevant is blocking the Hold-marker position:
@@ -4166,6 +4254,8 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// Escape:
 	if ( count _blockers > 0 ) exitWith {};
 	// Set the direction:
+	_vehPos = getPosATL _veh;
+	_veh setPosATL [_vehPos # 0, _vehPos # 1, (_vehPos # 2) + 0.5 ];  // This will lift the veh so, when redirected, it'll avoid wavy grounds that would cause the veh to bounce.
 	[_veh, _directionToHold] remoteExec ["setDir"];
 	// Debug:
 	if CSWR_isOnDebugGlobal then {
