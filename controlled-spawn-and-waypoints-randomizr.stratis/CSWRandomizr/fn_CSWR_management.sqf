@@ -144,7 +144,7 @@ if (!isServer) exitWith {};
 	{ _helipad createVehicle markerPos _x } forEach CSWR_spwnsHeliBLU + CSWR_spwnsHeliOPF + CSWR_spwnsHeliIND + CSWR_spwnsHeliCIV;
 
 
-	// DESTINATION MARKERS:
+	// DESTINATION:
 	// Where each faction in-game will move randomly.
 	// [ [spw], [ [ [moveBlu],[watchBlu],[occupyBlu],[holdBlu] ], [ [moveOpf],[watchOpf],[occupyOpf],[holdOpf] ], [ [moveInd],[watchInd],[occupyInd],[holdInd] ], [ [moveCiv],[watchCiv],[occupyCiv],[holdCiv] ], [ [movePublic] ] ] ];
 	// Only BluFor destinations:
