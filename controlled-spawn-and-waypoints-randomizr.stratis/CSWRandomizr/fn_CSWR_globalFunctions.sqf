@@ -508,7 +508,7 @@ THY_fnc_CSWR_marker_booking = {
 	// Escape:
 		// reserved space.
 	// Initial values:
-	_mkr = nil;
+	_mkr = "";
 	_isBooked = false;
 	_bookingInfo = [_mkr, _isBooked];
 	_bookedLoc = [];
@@ -1472,25 +1472,52 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	// About the original author: it's a lighter/modificated version of KK_fnc_paraDrop function: http://killzonekid.com/arma-scripting-tutorials-epic-armour-drop/
 	// Returns nothing.
 
-	params ["_veh", "_grp"];
-	private ["_eachPara", "_parachutes", "_i", "_velocity", "_time"];
+	params ["_tag", "_veh", "_grp"];
+	private ["_colorChute", "_vehTypesHeavy", "_vehTypesMedium", "_vehType", "_mainChute", "_allChutes", "_velocity", "_time"];
 
 	// Escape part 1/2:
-		// reserved space.
-	// Creating the parachute:
-	_eachPara = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
-	[_eachPara, getDir _veh] remoteExec ["setDir"];
-	_eachPara setPos (getPos _veh);
-	_parachutes = [_eachPara];
-	_veh attachTo [_eachPara, [0,2,0]];
+	_colorChute = "";
+	// Declarations:
+	_vehTypesHeavy  = ["Tank"];
+	_vehTypesMedium = ["WheeledAPC", "TrackedAPC"];
+	_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
+	switch ( _tag ) do {
+		case "BLU": { _colorChute = "B_Parachute_02_F" };
+		case "OPF": { _colorChute = "O_Parachute_02_F" };
+		case "IND": { _colorChute = "I_Parachute_02_F" };
+		//case "CIV": {  CIV has no paradrop for vehicles, nor parachute with specific color };
+	};
+	// Debug:
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugPara ) then {
+		systemChat format ["%1 PARADROP > %2 '%3' vehicle is a '%4' type.", CSWR_txtDebugHeader, _tag, _veh, _vehType];
+	};
+	// Creating the main vehicle parachute:
+	_mainChute = createVehicle [_colorChute, [0,0,0], [], 0, "FLY"];
+	[_mainChute, getDir _veh] remoteExec ["setDir"];
+	_mainChute setPos (getPos _veh);
+	_veh attachTo [_mainChute, [0,2,0]];
 
-	// Open the parachute system:
-	{  // Four parachutes for vehicle:
-		_i = createVehicle ["Steerable_Parachute_F", [0,0,0], [], 0, "FLY"];
-		_parachutes set [count _parachutes, _i];
-		_i attachTo [_eachPara, [0,0,0]];
-		_i setVectorUp _x;
-	} count [ [0.5,0.4,0.6], [-0.5,0.4,0.6], [0.5,-0.4,0.6], [-0.5,-0.4,0.6] ];
+	// Additionals if probably a heavy vehicle:
+	_allChutes = [_mainChute];
+	if ( _vehType in _vehTypesHeavy ) then {
+		{  // Multiple parachutes for vehicle:
+			_i = createVehicle [_colorChute, [0,0,0], [], 0, "FLY"];
+			_allChutes set [count _allChutes, _i];
+			_i attachTo [_mainChute, [0,0,0]];
+			_i setVectorUp _x;
+		} count [ [0.5,0.4,0.8], [-0.5,0.4,0.8], [0.5,-0.4,0.8], [-0.5,-0.4,0.8] ];
+	// Otherwise:
+	} else {
+		// Additionals if probably a medium vehicle:
+		if ( _vehType in _vehTypesMedium ) then {
+			{  // Multiple parachutes for vehicle:
+				_i = createVehicle [_colorChute, [0,0,0], [], 0, "FLY"];
+				_allChutes set [count _allChutes, _i];
+				_i attachTo [_mainChute, [0,0,0]];
+				_i setVectorUp _x;
+			} count [ [0.5,0.2,0.9], [-0.5,0.2,0.9] ];
+		};
+	};
 	// Force the crewmen to hold-fire if they see an enemy (hehehe):
 	{ _x disableAI "all" } forEach units _grp;
 	// Waiting the vechile get closer to the ground:
@@ -1501,13 +1528,13 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	_veh setVelocity _velocity;
 	// Detachment of parachutes from the vehicle:
 	playSound3D ["a3\sounds_f\weapons\Flare_Gun\flaregun_1_shoot.wss", _veh];
-	{ detach _x; _x disableCollisionWith _veh } forEach _parachutes;
+	{ detach _x; _x disableCollisionWith _veh } forEach _allChutes;
 	// Restore the crewmen capability to engage:
 	{ _x enableAI "all" } forEach units _grp;
 	// Animations breath:
 	_time = time + 5; waitUntil { sleep 0.3; time > _time };
 	// Delete the parachutes:
-	{ if ( !isNull _x ) then { deleteVehicle _x } } forEach _parachutes;
+	{ if ( !isNull _x ) then { deleteVehicle _x } } forEach _allChutes;
 	// Return:
 	true;
 };
@@ -1594,7 +1621,7 @@ THY_fnc_CSWR_loadout_helmet = {
 				// if the soldiers here are crewmen and not passagers:
 				if ( _unit == driver _veh || _unit == gunner _veh || _unit == commander _veh ) then {
 					// if the vehicle's type is a heavy ground vehicle:
-					if ( _veh isKindOf "Tank" || _veh isKindOf "WheeledAPC" || _veh isKindOf "TrackedAPC" ) then {
+					if ( _veh isKindOf "Tank" ) then {  // WIP check if including WheeledAPC and TrackedAPC like I thing so!
 						// if the editors registered a new crew headgear, && both are not the same:
 						if ( _newHelmetCrew isNotEqualTo "" && _oldHeadgear isNotEqualTo _newHelmetCrew ) then {
 							// Remove the headgear:
@@ -2324,7 +2351,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Otherwise, if vehicle:
 			} else {
 				// Paradrop things:
-				[_veh, _grp] call THY_fnc_CSWR_vehicle_paradrop;
+				[_tag, _veh, _grp] call THY_fnc_CSWR_vehicle_paradrop;
 				// Time before the vehicle start to move right after the paradrop landing:
 				_time = time + 5; waitUntil { sleep 1; time > _time };
 			};
@@ -3029,7 +3056,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_tag", "_grpType", "_grp", "_behavior"];
-	private ["_destMarkers", "_areaPos", "_location", "_locationPos", "_obj", "_disLocToArea", "_counter", "_attemptLimit", "_isBooked", "_roadsAround", "_mkrLocPos", "_wait", "_areaToWatch", "_locations", "_chosenSpotPosToATL", "_wp"];
+	private ["_destMarkers", "_areaPos", "_location", "_locationPos", "_obj", "_disLocToArea", "_counter", "_attemptLimit", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_wait", "_areaToWatch", "_locations", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -3047,7 +3074,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	_attemptLimit = 5;
 	_isBooked = false;
 	_roadsAround = [];
-	_mkrLocPos = objNull;
+	_mkrDebugWatch = "";  // Debug purposes.
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
@@ -3067,25 +3094,16 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	_locations = nearestLocations [_areaToWatch, ["RockArea", "Hill", "ViewPoint", "Flag"], CSWR_watchMarkerRange];
 	// If found at least one location:
 	if ( count _locations != 0 ) then {
-		// Debug markers:
+		// Debug watch-markers:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
 			{  // forEach _locations:
-				// Show me all locations found on the map with markers:
-				_mkrLocPos = createMarker [str _x + str (side leader _grp), locationPosition _x];
-				_mkrLocPos setMarkerType "hd_dot";
+				// Show me all locations found on the map with visible markers:
+				_mkrDebugWatch = createMarker ["debug_" + str _x, locationPosition _x];
+				_mkrDebugWatch setMarkerType "hd_dot";
 				switch ( side (leader _grp) ) do {
-					case BLUFOR: { 
-						_mkrLocPos setMarkerColor "colorBLUFOR"; 
-						str _x + str side (leader _grp) setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0];
-					};
-					case OPFOR: { 
-						_mkrLocPos setMarkerColor "colorOPFOR";
-						str _x + str side (leader _grp) setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0];
-					};
-					case INDEPENDENT: { 
-						_mkrLocPos setMarkerColor "colorIndependent"; 
-						str _x + str side (leader _grp) setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0];
-					};
+					case BLUFOR:      { _mkrDebugWatch setMarkerColor "colorBLUFOR"; _mkrDebugWatch setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0] };
+					case OPFOR:       { _mkrDebugWatch setMarkerColor "colorOPFOR"; _mkrDebugWatch setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0] };
+					case INDEPENDENT: { _mkrDebugWatch setMarkerColor "colorIndependent"; _mkrDebugWatch setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0] };
 					//case CIVILIAN: {}; // not appliable here!
 				};
 			} forEach _locations;
@@ -3105,7 +3123,9 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			// If not booked:
 			if !_isBooked then {
 				// Debug message:
-				if CSWR_isOnDebugGlobal then { ["%1 WATCH > %2 '%3' sniper group selected a location already booked for other group. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error };
+				if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
+					["%1 WATCH > %2 '%3' sniper group selected a location already booked for other group. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
+				};
 				// CPU breath to prevent craze loopings:
 				sleep _wait;
 			// Otherwise:
@@ -3121,7 +3141,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			// Delete the sniper group:
 			{ deleteVehicle _x } forEach units _grp;
 			// Warning message:
-			["%1 WATCH > All %2 watch-markers are been watched. A sniper group without watch-marker was deleted. CONSIDER TO ADD more watch-markers OR TO REMOVE a %2 sniper group in 'fn_CSWR_population.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+			["%1 WATCH > All locations found by %2 watch-markers look already watched. A sniper group without watch-marker was deleted. CONSIDER TO ADD more watch-markers OR TO REMOVE a %2 sniper group in 'fn_CSWR_population.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
 		};
 	
 		// SETTING A POSITION:
@@ -4021,15 +4041,16 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_isBooked", "_destMarkers", "_isVehTracked", "_bookingInfo", "_areaPos", "_wp", "_time", "_counter", "_wpDisLimit", "_wait", "_waitForVeh", "_areaToHold"];
+	private ["_destMarkers", "_isVehTracked", "_mkrDebugHold", "_bookingInfo", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh", "_areaToHold"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
-	_isBooked = false;
 	_destMarkers = [];
 	_isVehTracked = false;
+	_mkrDebugHold = "";  // debug purposes.
 	_bookingInfo = [];
+	_isBooked = false;
 	_areaPos = [];
 	_wp = [];
 	_time = 0;
@@ -4039,6 +4060,8 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
+	_trackedVehTypes = ["Tank", "TrackedAPC"];
+	_vehType = if _isVeh then { ((vehicle (leader _grp)) call BIS_fnc_objectType) # 1 /* Returns like ['vehicle','Tank'] */} else { "" };
 	_wpDisLimit = 20;  // Critical - from 19m, the risk of the vehicle doesn't reach the waypoint is too high.
 	_wait = 10;
 	_waitForVeh = 0.25;
@@ -4052,7 +4075,23 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Check if it's a vehicle and which kind of them:
 	if _isVeh then {
 		// It's a tracked vehicle:
-		if ( vehicle (leader _grp) isKindOf "Tank" || vehicle (leader _grp) isKindOf "TrackedAPC" ) then { _isVehTracked = true };
+		if ( _vehType in _trackedVehTypes ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
+	};
+	// Debug hold-markers:
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then {
+		{  // forEach _destMarkers:
+			// Show me all hold-markers found on the map with visible markers:
+			_mkrDebugHold = createMarker ["debug_" + _x, markerPos _x];
+			_mkrDebugHold setMarkerType "mil_start_noShadow";
+			_mkrDebugHold setMarkerDir (markerDir _x);
+
+			switch ( side (leader _grp) ) do {
+				case BLUFOR:      { _mkrDebugHold setMarkerColor "colorBLUFOR" };
+				case OPFOR:       { _mkrDebugHold setMarkerColor "colorOPFOR" };
+				case INDEPENDENT: { _mkrDebugHold setMarkerColor "colorIndependent" };
+				case CIVILIAN:    { _mkrDebugHold setMarkerColor "colorCivilian" };
+			};
+		} forEach _destMarkers;
 	};
 
 	// BOOKING A HOLD MARKER:
@@ -4128,7 +4167,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// If vehicle:
 	if _isVeh then {
 		// The function accepts only trached vehicle to adjust the vehicle direction:
-		[_areaToHold, _grp, _tag] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
+		[_areaToHold, _grp, _tag, _trackedVehTypes] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
 		// If editors choice was stealth all vehicles on hold, do it:
 		if CSWR_isHoldVehLightsOff then { _grp setBehaviourStrong "STEALTH" };
 	// Otherwise, if infantry/people:
@@ -4180,11 +4219,11 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// This function sets the tracked-vehicle as the same direction as the hold-marker placed by the mission editor.
 	// Returns nothing.
 
-	params ["_mkr", "_grp", "_tag"];
+	params ["_mkr", "_grp", "_tag", "_trackedVehTypes"];
 	private ["_blockers", "_attemptCounter", "_attemptLimiter", "_veh", "_directionToHold", "_vehPos"];
 	
 	// Escape:
-	if ( !(vehicle (leader _grp) isKindOf "Tank") && !(vehicle (leader _grp) isKindOf "TrackedAPC") ) exitWith {};
+	if ( !(vehicle (leader _grp) in _trackedVehTypes) ) exitWith {};
 	// Initial values:
 	_blockers = [];
 	_attemptCounter = 0;

@@ -11,10 +11,11 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugWatch = false;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugPara = false;  // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
 // Factions:
-	CSWR_isOnBLU = false;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
-	CSWR_isOnIND = true;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
+	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+	CSWR_isOnOPF = true;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Global loadout:
 	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
@@ -174,9 +175,9 @@ if (!isServer) exitWith {};
 	// Civilian and soldier destinations:
 	CSWR_destsPUBLIC   = ((CSWR_confirmedMarkers # 1) # 4) # 0;
 	// Specialized destinations:
-	CSWR_destsSpecial = CSWR_destWatchBLU + CSWR_destWatchOPF + CSWR_destWatchIND + CSWR_destWatchCIV + 
-						CSWR_destOccupyBLU + CSWR_destOccupyOPF + CSWR_destOccupyIND + CSWR_destOccupyCIV + 
-						CSWR_destHoldBLU + CSWR_destHoldOPF + CSWR_destHoldIND + CSWR_destHoldCIV;
+	CSWR_destsSpecial = CSWR_destWatchBLU + CSWR_destWatchOPF + CSWR_destWatchIND + CSWR_destWatchCIV +        // watch
+						CSWR_destOccupyBLU + CSWR_destOccupyOPF + CSWR_destOccupyIND + CSWR_destOccupyCIV +    // occupy
+						CSWR_destHoldBLU + CSWR_destHoldOPF + CSWR_destHoldIND + CSWR_destHoldCIV;             // hold
 	// All destinations, except the specialized/special ones:
 	CSWR_destsANYWHERE  = CSWR_destsPUBLIC + CSWR_destBLU + CSWR_destOPF + CSWR_destIND + CSWR_destCIV;
 	// Occupy-move validations:
@@ -191,11 +192,11 @@ if (!isServer) exitWith {};
 	if CSWR_isOnCIV then { [CSWR_destHoldCIV] call THY_fnc_CSWR_HOLD_ground_cleaner };
 	// Debug markers stylish:
 	if CSWR_isOnDebugGlobal then {
-		{ _x setMarkerColor "colorBLUFOR"      } forEach CSWR_spwnsAllBLU + CSWR_destsAllBLU;
-		{ _x setMarkerColor "colorOPFOR"       } forEach CSWR_spwnsAllOPF + CSWR_destsAllOPF;
-		{ _x setMarkerColor "colorIndependent" } forEach CSWR_spwnsAllIND + CSWR_destsAllIND;
-		{ _x setMarkerColor "colorCivilian"    } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV;
-		{ _x setMarkerColor "colorUNKNOWN"     } forEach CSWR_destsPUBLIC;
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorBLUFOR"      } forEach CSWR_spwnsAllBLU + CSWR_destsAllBLU;
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorOPFOR"       } forEach CSWR_spwnsAllOPF + CSWR_destsAllOPF;
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorIndependent" } forEach CSWR_spwnsAllIND + CSWR_destsAllIND;
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorCivilian"    } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV;
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorUNKNOWN"     } forEach CSWR_destsPUBLIC;
 	// Otherwise, hiding the spawn and destination markers:
 	} else { {_x setMarkerAlpha 0} forEach CSWR_spwnsAll + CSWR_destsANYWHERE + CSWR_destsSpecial };
 	// Delete the useless spawn markers only, preserving the destinations:
@@ -218,6 +219,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isOnDebugOccupy";
 	publicVariable "CSWR_isOnDebugWatch";
 	publicVariable "CSWR_isOnDebugHeli";
+	publicVariable "CSWR_isOnDebugPara";
 	publicVariable "CSWR_isOnDebugHold";
 	publicVariable "CSWR_isOnBLU";
 	publicVariable "CSWR_isOnOPF";
