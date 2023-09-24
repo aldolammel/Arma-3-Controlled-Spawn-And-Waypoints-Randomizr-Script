@@ -9,12 +9,12 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugGlobal = true;  // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
 	CSWR_isOnDebugOccupy = false; // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugWatch = false;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHold = true;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugPara = false;  // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
 // Factions:
 	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = true;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Global loadout:
