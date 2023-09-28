@@ -4055,13 +4055,15 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_wp = [];
 	_time = 0;
 	_counter = 0;
+	_trackedVehTypes = [];
+	_vehType = "";
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
-	_trackedVehTypes = ["Tank", "TrackedAPC"];
-	_vehType = if _isVeh then { ((vehicle (leader _grp)) call BIS_fnc_objectType) # 1 /* Returns like ['vehicle','Tank'] */} else { "" };
+	
+	
 	_wpDisLimit = 20;  // Critical - from 19m, the risk of the vehicle doesn't reach the waypoint is too high.
 	_wait = 10;
 	_waitForVeh = 0.25;
@@ -4074,6 +4076,8 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	};
 	// Check if it's a vehicle and which kind of them:
 	if _isVeh then {
+		_trackedVehTypes = ["Tank", "TrackedAPC"];
+		_vehType = ((vehicle (leader _grp)) call BIS_fnc_objectType) # 1;  // Returns like ['vehicle','Tank']
 		// It's a tracked vehicle:
 		if ( _vehType in _trackedVehTypes ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
 	};
