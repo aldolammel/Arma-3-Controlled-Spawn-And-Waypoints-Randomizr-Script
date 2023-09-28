@@ -502,7 +502,7 @@ THY_fnc_CSWR_marker_booking = {
 	// Param > _attemptLimit > number: limit of times the function will try to find a free marker.
 	// Returns _bookingInfo. Array [string, bool].
 
-	params ["_mkrType", "_grp", "_markers", "_attemptLimit", "_cooldown"];
+	params ["_mkrType", "_tag", "_markers", "_attemptLimit", "_cooldown"];
 	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_counter"];
 
 	// Escape:
@@ -522,18 +522,18 @@ THY_fnc_CSWR_marker_booking = {
 	// Debug texts:
 		// reserved space.
 	// Looping for select the marker:
-	while { !isNull _grp && _counter <= _attemptLimit } do {
+	while { _counter <= _attemptLimit } do {
 		// Counter to prevent crazy loops:
 		_counter = _counter + 1;
 		// Pick a marker:
 		_mkr = selectRandom _markers;
 		// For each case, check which booked-list the marker should be included:
-		switch ( side (leader _grp) ) do {
+		switch ( _tag ) do {
 			// If _mkr is NOT in the booked-list yet, include it:
-			case BLUFOR:      { if ( !(_mkr in (_bookedLoc # 0)) ) then { (_bookedLoc # 0) pushBackUnique _mkr; _isBooked = true } };
-			case OPFOR:       { if ( !(_mkr in (_bookedLoc # 1)) ) then { (_bookedLoc # 1) pushBackUnique _mkr; _isBooked = true } };
-			case INDEPENDENT: { if ( !(_mkr in (_bookedLoc # 2)) ) then { (_bookedLoc # 2) pushBackUnique _mkr; _isBooked = true } };
-			case CIVILIAN:    { if ( !(_mkr in (_bookedLoc # 3)) ) then { (_bookedLoc # 3) pushBackUnique _mkr; _isBooked = true } };
+			case "BLU": { if ( !(_mkr in (_bookedLoc # 0)) ) then { (_bookedLoc # 0) pushBackUnique _mkr; _isBooked = true } };
+			case "OPF": { if ( !(_mkr in (_bookedLoc # 1)) ) then { (_bookedLoc # 1) pushBackUnique _mkr; _isBooked = true } };
+			case "IND": { if ( !(_mkr in (_bookedLoc # 2)) ) then { (_bookedLoc # 2) pushBackUnique _mkr; _isBooked = true } };
+			case "CIV": { if ( !(_mkr in (_bookedLoc # 3)) ) then { (_bookedLoc # 3) pushBackUnique _mkr; _isBooked = true } };
 		};
 		// if booked, update the public variable:
 		if _isBooked then {
@@ -559,7 +559,7 @@ THY_fnc_CSWR_marker_booking_undo = {
 	// This function undo the booking of a marker (destination or spawn-point) when it becomes available.
 	// Returns nothing.
 
-	params ["_mkrType", "_grp", "_mkr", "_isBooked"];
+	params ["_mkrType", "_tag", "_mkr", "_isBooked"];
 	private ["_bookedLoc", "_bookedAmount"];
 
 	// Escape:
@@ -577,11 +577,11 @@ THY_fnc_CSWR_marker_booking_undo = {
 		// reserved space.
 	// Main functionality:
 	// For each case, remove the current hold-marker as reserved from the reservation list:
-	switch ( side (leader _grp) ) do {
-		case BLUFOR:      { (_bookedLoc # 0) deleteAt ((_bookedLoc # 0) find _mkr); _bookedAmount = count (_bookedLoc # 0) };
-		case OPFOR:       { (_bookedLoc # 1) deleteAt ((_bookedLoc # 1) find _mkr); _bookedAmount = count (_bookedLoc # 1) };
-		case INDEPENDENT: { (_bookedLoc # 2) deleteAt ((_bookedLoc # 2) find _mkr); _bookedAmount = count (_bookedLoc # 2) };
-		case CIVILIAN:    { (_bookedLoc # 3) deleteAt ((_bookedLoc # 3) find _mkr); _bookedAmount = count (_bookedLoc # 3) };
+	switch ( _tag ) do {
+		case "BLU": { (_bookedLoc # 0) deleteAt ((_bookedLoc # 0) find _mkr); _bookedAmount = count (_bookedLoc # 0) };
+		case "OPF": { (_bookedLoc # 1) deleteAt ((_bookedLoc # 1) find _mkr); _bookedAmount = count (_bookedLoc # 1) };
+		case "IND": { (_bookedLoc # 2) deleteAt ((_bookedLoc # 2) find _mkr); _bookedAmount = count (_bookedLoc # 2) };
+		case "CIV": { (_bookedLoc # 3) deleteAt ((_bookedLoc # 3) find _mkr); _bookedAmount = count (_bookedLoc # 3) };
 	};
 	// After that, update the public variable with the new reservation:
 	switch ( _mkrType ) do {
@@ -593,7 +593,7 @@ THY_fnc_CSWR_marker_booking_undo = {
 	if CSWR_isOnDebugGlobal then {
 		// Hold message 1:
 		if ( _mkrType isEqualTo "BOOKING_HOLD" ) then {
-			systemChat format ["%1 HOLD > %2 '%3' tracked vehicle's changing position.", CSWR_txtDebugHeader, _tag, str _grp];
+			systemChat format ["%1 HOLD > A %2 tracked vehicle's changing position.", CSWR_txtDebugHeader, _tag];
 			// Breath:
 			sleep 5;
 		};
@@ -2068,7 +2068,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Returns nothing.
 
 	params ["_spwns", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destType"];
-	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPos", "_paradrop", "_isSpwnParadrop", "_serverBreath", "_counter", "_blockers", "_time", "_faction", "_tag", "_grp", "_grpType", "_grpClassnames", "_isVehAir", "_grpSize", "_requester", "_txt1", "_txt2", "_txt3"];
+	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPos", "_paradrop", "_isSpwnParadrop", "_bookingInfo", "_isBooked", "_serverBreath", "_blockers", "_time", "_faction", "_tag", "_grp", "_grpType", "_grpClassnames", "_isVehAir", "_grpSize", "_requester", "_txt1", "_txt2", "_txt3"];
 
 	// Escape:
 	if ( _grpInfo isEqualTo [] ) exitWith {};
@@ -2077,11 +2077,12 @@ THY_fnc_CSWR_spawn_and_go = {
 	_canSpawn = true;
 	_veh = objNull;
 	_spwn = "";
+	_bookingInfo = [];
+	_isBooked = false;
 	_spwnPos = [];
 	_paradrop = [];
 	_isSpwnParadrop = false;
 	_serverBreath = 0;
-	_counter = 0;
 	_blockers = [];
 	_time = 0;
 	// Errors handling:
@@ -2162,7 +2163,7 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Flag to abort the group/vehicle spawn:
 					_canSpawn = false;
 					// Warning message:
-					["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [300] or [varname_1] or [varname_1, varname_2] or [300, varname_1, varname_2]. %3", CSWR_txtWarningHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
+					["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [5] or [varname_1] or [varname_1, varname_2] or [5, varname_1, varname_2]. %3", CSWR_txtWarningHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 
@@ -2243,24 +2244,43 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Otherwise, if the vehicle is a helicopter:
 			} else {
 				// SPAWNING THE HELICOPTER:
-				// Looping until to find an unblocked spawn-point exclusive for:
+				// BOOKING A HELIPAD:
+				// Looping to booking (mandatory in spawnheli) a helipad:
 				while { true } do {
+					// Try to booking a marker:
+					_bookingInfo = ["BOOKING_SPAWNHELI", _tag, _spwns, 10, 0.25] call THY_fnc_CSWR_marker_booking;
+					// Which marker to spawn:
+					_spwn = _bookingInfo # 0;
+					// Is booked?
+					_isBooked = _bookingInfo # 1;
+					// If not booked:
+					if !_isBooked then {
+						// Debug message:
+						if CSWR_isOnDebugGlobal then {
+							["%1 HELICOPTER > A %2 helicopter selected a helipad already booked for another helicopter. Next try soon...", CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
+						};
+						// CPU breath to prevent crazy loopings:
+						sleep 20;
+					// Otherwise, it's booked:
+					} else {
+						// Stop the loop:
+						break;
+					};
+				};  // While-loop ends.
+
+				// Looping until to find an unblocked spawn-point exclusive for:
+				while { _isBooked && !CSWR_shouldHeliSpwnInAir } do {
 					// Check if something relevant is blocking the _spwn position:
 					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV"], 20];
-					// If there's a blocker:
-					if ( count _blockers isNotEqualTo 0 ) then { _counter = _counter + 1 } else { break };
-					// Select a new spawn option:
-					_spwn = selectRandom _spwns;
-					// Debug:
-					if ( CSWR_isOnDebugGlobal && _counter > 5 ) then {
-						// Restart the counter for the next tries:
-						_counter = 0;
-						// Messages:
-						systemChat format ["%1 HELICOPTER > A %2 helicopter waiting a HELIPAD to be clear. Next try soon...", CSWR_txtDebugHeader, _tag];
+					// If there's NO blockers:
+					if ( count _blockers isEqualTo 0 ) then { break };
+					// Debug messages:
+					if CSWR_isOnDebugGlobal then {
+						systemChat format ["%1 HELICOPTER > A %2 helicopter's waiting its HELIPAD (%3) to be clear. Next try soon...", CSWR_txtDebugHeader, _tag, _spwn];
 						if CSWR_isOnDebugHeli then { { systemChat format ["HELIPAD BLOCKER is:   %1", typeOf _x] } forEach _blockers };
 					};
 					// Breath for the next loop check:
-					sleep 5;  // IMPORTANT: leave this command in the final of this scope/loop, never in the beginning.
+					sleep 20;  // IMPORTANT: leave this command in the final of this scope/loop, never in the beginning.
 				};  // While loop ends.
 				// If Helicopter must spawn already in air:
 				if CSWR_shouldHeliSpwnInAir then {
@@ -2309,6 +2329,8 @@ THY_fnc_CSWR_spawn_and_go = {
 		if _isVehAir then {
 			// Wait a bit:
 			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
+			// UNDO THE BOOKING:
+			["BOOKING_SPAWNHELI", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && !CSWR_shouldHeliSpwnInAir ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
 		};
@@ -2371,7 +2393,7 @@ THY_fnc_CSWR_spawn_delay = {
 	// Returns nothing.
 
 	params ["_tag", "_spwnDelayMethods", "_isVeh", "_grpSize"];
-	private ["_isReadyToSpwn", "_counter", "_wait", "_requester", "_txt1"];
+	private ["_isReadyToSpwn", "_timeLoop", "_time", "_counter", "_wait", "_requester", "_txt1"];
 
 	// Escape:
 		// reserved space.
@@ -2379,17 +2401,21 @@ THY_fnc_CSWR_spawn_delay = {
 		// reserved space.
 	// Initial values:
 	_isReadyToSpwn = false;
-	_counter = 0;
+	_timeLoop = 0;
 	// Declarations:
+	_time = time;
+	_counter = _time;
 	_wait = 10;  // CAUTION: this number is used to calcs the TIMER too.
 	_requester = if _isVeh then {"vehicle"} else {"group"};
+	
 	// Debug texts:
 	_txt1 = format ["A %1 %2 was granted TO SPAWN", _tag, _requester];
 
 	// Spawn Delay conditions > Stay checking if the group ISN'T ready to spawn:
 	while { !_isReadyToSpwn } do {
+		_timeLoop = time;
 		// Delay for each loop check:
-		sleep _wait;
+		waitUntil { sleep _wait; time >= _timeLoop + _wait };
 		// Escape:
 			// reserved space.
 
@@ -2400,12 +2426,12 @@ THY_fnc_CSWR_spawn_delay = {
 				// Counter increase:
 				_counter = _counter + _wait;
 				// Timer checker:
-				if ( _counter >= abs _x ) exitWith {  // (abs command avoid negative numbers).
+				if ( _counter >= _time + ((abs _x) * 60) ) exitWith {
 					// Function completed:
 					_isReadyToSpwn = true;
 					// Debug message:
 					if CSWR_isOnDebugGlobal then {
-						systemChat format ["%1 SPAWN DELAY > %2 by TIMER (it was %3 secs).", CSWR_txtDebugHeader, _txt1, _counter];
+						systemChat format ["%1 SPAWN DELAY > %2 by TIMER (it was %3 minutes).", CSWR_txtDebugHeader, _txt1, _x];
 						// Message breath:
 						sleep 5;
 					};
@@ -3056,7 +3082,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_tag", "_grpType", "_grp", "_behavior"];
-	private ["_destMarkers", "_areaPos", "_location", "_locationPos", "_obj", "_disLocToArea", "_counter", "_attemptLimit", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_wait", "_areaToWatch", "_locations", "_wp"];
+	private ["_destMarkers", "_areaPos", "_locationPos", "_obj", "_disLocToArea", "_counter", "_attemptLimit", "_bookingInfo", "_location", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_wait", "_areaToWatch", "_locations", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -3066,12 +3092,13 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Initial values:
 	_destMarkers = [];
 	_areaPos = [];
-	_location = nil;
 	_locationPos = [];
 	_obj = objNull;
 	_disLocToArea = nil;
 	_counter = 0;
 	_attemptLimit = 5;
+	_bookingInfo = [];
+	_location = nil;
 	_isBooked = false;
 	_roadsAround = [];
 	_mkrDebugWatch = "";  // Debug purposes.
@@ -3115,7 +3142,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			// Counter to prevent crazy loops:
 			_counter = _counter + 1;
 			// Try to booking a marker:
-			_bookingInfo = ["BOOKING_WATCH", _grp, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
+			_bookingInfo = ["BOOKING_WATCH", _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
 			// Which marker to go:
 			_location = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
 			// Is booked?
@@ -3124,11 +3151,11 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			if !_isBooked then {
 				// Debug message:
 				if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
-					["%1 WATCH > %2 '%3' sniper group selected a location already booked for other group. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
+					["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
 				};
 				// CPU breath to prevent craze loopings:
 				sleep _wait;
-			// Otherwise:
+			// Otherwise, it's booked:
 			} else { 
 				// Clean counter:
 				_counter = 0;
@@ -3190,7 +3217,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		["%1 WATCH > A %2 WATCH-MARKER (%3) looks has no natural high locations to scan around. Change its position! A sniper group was deleted!", CSWR_txtWarningHeader, _tag, str _areaToWatch] call BIS_fnc_error;
 	};
 	// Escape:
-	if ( _areaPos isEqualTo [] ) exitWith {};
+	if ( isNull _grp || _areaPos isEqualTo [] ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
 
 	// WAYPOINT AND GO:
 	_wp = _grp addWaypoint [_areaPos, 0];
@@ -3204,7 +3231,9 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		} forEach units _grp;
 	};
 	// Wait the sniper group gets closer:
-	waitUntil {sleep 5; leader _grp distance _areaPos < 100 };
+	waitUntil {sleep 5; isNull _grp || leader _grp distance _areaPos < 100 };
+	// Escape:
+	if ( isNull _grp ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
 	// From here, keep stealth to make sure the spot is clear:
 	_grp setBehaviourStrong "STEALTH";  // Every unit in the group, and the group itself.
 	_grp setSpeedMode "LIMITED";
@@ -3215,7 +3244,9 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		_x setSpeaker "NoVoice";
 	} forEach units _grp;
 	// Wait the sniper group arrival in the area for to stay watching the marker direction:
-	waitUntil { sleep 5; leader _grp distance _areaPos < 3 };
+	waitUntil { sleep 5; isNull _grp || leader _grp distance _areaPos < 3 };
+	// Escape:
+	if ( isNull _grp ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
 	// Make the arrival smooth:
 	sleep 1;
 	// Go to the next WATCH stage:
@@ -4041,7 +4072,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_destMarkers", "_isVehTracked", "_mkrDebugHold", "_bookingInfo", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh", "_areaToHold"];
+	private ["_destMarkers", "_isVehTracked", "_mkrDebugHold", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -4050,6 +4081,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_isVehTracked = false;
 	_mkrDebugHold = "";  // debug purposes.
 	_bookingInfo = [];
+	_areaToHold = "";
 	_isBooked = false;
 	_areaPos = [];
 	_wp = [];
@@ -4062,8 +4094,6 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
-	
-	
 	_wpDisLimit = 20;  // Critical - from 19m, the risk of the vehicle doesn't reach the waypoint is too high.
 	_wait = 10;
 	_waitForVeh = 0.25;
@@ -4081,8 +4111,9 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// It's a tracked vehicle:
 		if ( _vehType in _trackedVehTypes ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
 	};
-	// Debug hold-markers:
+	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then {
+		// hold-markers:
 		{  // forEach _destMarkers:
 			// Show me all hold-markers found on the map with visible markers:
 			_mkrDebugHold = createMarker ["debug_" + _x, markerPos _x];
@@ -4096,13 +4127,15 @@ THY_fnc_CSWR_go_dest_HOLD = {
 				case CIVILIAN:    { _mkrDebugHold setMarkerColor "colorCivilian" };
 			};
 		} forEach _destMarkers;
+		// Message:
+		systemChat format ["%1 HOLD > %2 '%3' is a %4. %5", CSWR_txtDebugHeader, _tag, str _grp, if _isVeh then {"'"+_vehType+"'"} else {"group"}, if _isVehTracked then {""} else {"Only tracked vehicles can take the center pos of hold-markers."}];
 	};
 
 	// BOOKING A HOLD MARKER:
 	// if tracked vehicle:
 	if _isVehTracked then { 
 		// Try to booking a marker:
-		_bookingInfo = ["BOOKING_HOLD", _grp, _destMarkers, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
+		_bookingInfo = ["BOOKING_HOLD", _tag, _destMarkers, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
 		// Which marker to go:
 		_areaToHold = _bookingInfo # 0;
 		// Is booked?
@@ -4165,13 +4198,13 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < _wpDisLimit || !alive (vehicle (leader _grp)) };
 	};
 	// Escape:
-	if ( isNull _grp || !alive (vehicle (leader _grp)) ) exitWith { ["BOOKING_HOLD", _grp, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
+	if ( isNull _grp || !alive (vehicle (leader _grp)) ) exitWith { ["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
 
 	// ARRIVAL IN MARKER POSITION:
 	// If vehicle:
 	if _isVeh then {
 		// The function accepts only trached vehicle to adjust the vehicle direction:
-		[_areaToHold, _grp, _tag, _trackedVehTypes] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
+		[_areaToHold, _grp, _tag, _isVehTracked] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
 		// If editors choice was stealth all vehicles on hold, do it:
 		if CSWR_isHoldVehLightsOff then { _grp setBehaviourStrong "STEALTH" };
 	// Otherwise, if infantry/people:
@@ -4184,7 +4217,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	waitUntil { sleep _wait; time > _time || isNull _grp || !alive (vehicle (leader _grp)) };
 	
 	// UNDO IF BOOKED:
-	["BOOKING_HOLD", _grp, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 	
 	// RESTART THE MOVEMENT:
 	[_tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
@@ -4223,11 +4256,11 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// This function sets the tracked-vehicle as the same direction as the hold-marker placed by the mission editor.
 	// Returns nothing.
 
-	params ["_mkr", "_grp", "_tag", "_trackedVehTypes"];
+	params ["_mkr", "_grp", "_tag", "_isVehTracked"];
 	private ["_blockers", "_attemptCounter", "_attemptLimiter", "_veh", "_directionToHold", "_vehPos"];
 	
 	// Escape:
-	if ( !(vehicle (leader _grp) in _trackedVehTypes) ) exitWith {};
+	if !_isVehTracked exitWith {};
 	// Initial values:
 	_blockers = [];
 	_attemptCounter = 0;

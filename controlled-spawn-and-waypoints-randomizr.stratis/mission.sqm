@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=478;
+		nextID=490;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=288;
+		nextID=291;
 	};
 	class Camera
 	{
-		pos[]={6898.3921,43.547234,6697.6733};
-		dir[]={-0.58452547,-0.33593199,-0.73856598};
-		up[]={-0.20847614,0.94188631,-0.26341605};
-		aside[]={-0.7841351,0,0.62059033};
+		pos[]={6934.4819,69.624077,6343.0059};
+		dir[]={-0.32410347,-0.31254223,0.89290333};
+		up[]={-0.10663818,0.94990265,0.29378733};
+		aside[]={0.9399932,7.753988e-008,0.34119561};
 	};
 };
 binarizationWanted=0;
@@ -414,12 +414,12 @@ class Mission
 				class Item4
 				{
 					dataType="Marker";
-					position[]={4222.9131,123.98942,6464.7007};
+					position[]={3239.5752,4.2987013,6828.5542};
 					name="cswr_spawnveh_blu_1";
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=232.29366;
+					angle=106.80985;
 					id=177;
 				};
 				class Item5
@@ -482,26 +482,25 @@ class Mission
 				class Item10
 				{
 					dataType="Marker";
-					position[]={4271.9355,124.27708,6541.8779};
+					position[]={4394.4746,128.4304,6766.2441};
 					name="cswr_spawn_blu_1";
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=206.74269;
+					angle=204.87164;
 					id=296;
+					atlOffset=1.5258789e-005;
 				};
 				class Item11
 				{
 					dataType="Marker";
-					position[]={2993.135,6.0939999,5844.084};
+					position[]={2992.3875,6.3680015,5839.4121};
 					name="cswr_spawn_blu_2";
 					text="  BLU spawn point ";
 					type="Select";
 					colorName="ColorBlue";
-					alpha=0;
-					angle=141.325;
+					angle=116.4016;
 					id=297;
-					atlOffset=0.00038099289;
 				};
 				class Item12
 				{
@@ -511,12 +510,12 @@ class Mission
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=158.77335;
+					angle=142.56888;
 					id=445;
 				};
 			};
 			id=49;
-			atlOffset=-2.3415833;
+			atlOffset=3.9914398;
 		};
 		class Item3
 		{
@@ -745,7 +744,7 @@ class Mission
 					text="    BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=152.66492;
+					angle=152.66496;
 					id=340;
 					atlOffset=0.00018310547;
 				};
@@ -776,14 +775,13 @@ class Mission
 				class Item23
 				{
 					dataType="Marker";
-					position[]={4875.0679,198.965,4410.9111};
+					position[]={4994.1597,182.13338,4476.3252};
 					name="cswr_hold_opf_2";
 					text="    OPF Hold";
 					type="Empty";
 					colorName="ColorRed";
-					angle=340.84692;
+					angle=20.516024;
 					id=344;
-					atlOffset=-0.00032043457;
 				};
 				class Item24
 				{
@@ -813,7 +811,7 @@ class Mission
 					text="    BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=132.59793;
+					angle=132.59798;
 					id=370;
 					atlOffset=3.0517578e-005;
 				};
@@ -856,12 +854,12 @@ class Mission
 				class Item30
 				{
 					dataType="Marker";
-					position[]={2912.3547,3.49,5964.4307};
+					position[]={2912.355,3.49,5964.4312};
 					name="cswr_occupy_opf_1";
 					text="OPF Occupy";
 					type="Empty";
-					colorName="ColorEAST";
-					angle=358.72781;
+					colorName="ColorRed";
+					angle=358.72794;
 					id=380;
 				};
 				class Item31
@@ -901,7 +899,7 @@ class Mission
 				};
 			};
 			id=51;
-			atlOffset=17.393631;
+			atlOffset=17.383018;
 		};
 		class Item4
 		{
