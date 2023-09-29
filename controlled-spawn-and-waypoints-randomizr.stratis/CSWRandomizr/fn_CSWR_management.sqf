@@ -8,14 +8,14 @@ if (!isServer) exitWith {};
 // Debug:
 	CSWR_isOnDebugGlobal = true;  // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
 	CSWR_isOnDebugOccupy = false; // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugWatch = false;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHeli = true;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugWatch = true;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHold = true;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugPara = false;  // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
 // Factions:
-	CSWR_isOnBLU = false;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
 	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
-	CSWR_isOnIND = true;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
+	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Global loadout:
 	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
@@ -35,7 +35,7 @@ if (!isServer) exitWith {};
 // Server:
 	CSWR_serverMaxFPS = 50.0;  // Be advised: extremely recommended do not change this value. Default; 50.0
 	CSWR_serverMinFPS = 20.0;  // Be advised: extremely recommended do not change this value. Default: 20.0
-	CSWR_wait = 10;  // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
+	CSWR_wait = 1;  // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
 
 	// MOVEMENT ADVANCED SETTINGS:
 	// Time:

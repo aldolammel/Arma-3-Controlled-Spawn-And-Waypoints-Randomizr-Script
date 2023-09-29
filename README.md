@@ -53,6 +53,7 @@ __
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
 - Fixed > Watch > If sniper group's killed before to reach their spot to watch a location, CSWR keeps badly and forever waiting for them;
+- Fixed > Helicopters > They are not spawn in the same direction defined through the spawn-marker;
 - Removed > Civilian faction cannot move to anywhere (any marker) like a soldier, been limited to public markers;
 
 **Sep, 18th 2023 | v5.1**

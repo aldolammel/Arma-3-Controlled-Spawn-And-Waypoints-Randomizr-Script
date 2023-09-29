@@ -216,20 +216,18 @@ if (!isServer) exitWith {};
 			// Vehicles
 			// [ owner, spawns (CSWR_spwnsIND, CSWR_spwnsVehIND, CSWR_spwnsHeliIND, CSWR_spwnsParadropIND), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 			
-			/* [INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_light, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_light, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_light, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_medium, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_heavy, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle;
-			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_heavy, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle; */
-			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_light, _be_COMBAT, _move_ANY, [/* 1 */]] call THY_fnc_CSWR_add_vehicle;
-			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_heavy, _be_COMBAT, _move_ANY, [/* 2 */]] call THY_fnc_CSWR_add_vehicle;
-			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_light, _be_COMBAT, _move_ANY, [/* 1 */]] call THY_fnc_CSWR_add_vehicle;  // -------------------------- DELETAR
-			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_heavy, _be_COMBAT, _move_ANY, [/* 2 */]] call THY_fnc_CSWR_add_vehicle;  // -------------------------- DELETAR
+			[INDEPENDENT, CSWR_spwnsVehIND, CSWR_vehicle_IND_heavy, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle;
+			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_light, _be_COMBAT, _move_ANY, [1]] call THY_fnc_CSWR_add_vehicle;
+			[INDEPENDENT, CSWR_spwnsHeliIND, CSWR_vehicle_IND_heli_heavy, _be_COMBAT, _move_ANY, [2]] call THY_fnc_CSWR_add_vehicle;
 			
 			// Soldier groups
 			// [ owner, spawns (CSWR_spwnsIND, CSWR_spwnsVehIND, CSWR_spwnsParadropIND), team type, team formation (_form_IND_1, _form_IND_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 			
-			/* [INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_sniper, _form_IND_1, _be_COMBAT, _move_WATCH, []] call THY_fnc_CSWR_add_group;
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_sniper, _form_IND_1, _be_COMBAT, _move_WATCH, []] call THY_fnc_CSWR_add_group;
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_light, _form_IND_1, _be_SAFE, _move_HOLD, []] call THY_fnc_CSWR_add_group;
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_light, _form_IND_1, _be_SAFE, _move_HOLD, []] call THY_fnc_CSWR_add_group;
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_light, _form_IND_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
@@ -252,7 +250,7 @@ if (!isServer) exitWith {};
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_heavy, _form_IND_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_heavy, _form_IND_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_heavy, _form_IND_1, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;
-			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_heavy, _form_IND_1, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group; */
+			[INDEPENDENT, CSWR_spwnsIND, CSWR_group_IND_heavy, _form_IND_1, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			
 	}; // ind ends.
 

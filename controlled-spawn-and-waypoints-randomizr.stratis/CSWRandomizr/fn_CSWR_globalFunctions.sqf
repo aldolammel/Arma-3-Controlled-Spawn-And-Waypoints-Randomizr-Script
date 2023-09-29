@@ -503,14 +503,15 @@ THY_fnc_CSWR_marker_booking = {
 	// Returns _bookingInfo. Array [string, bool].
 
 	params ["_mkrType", "_tag", "_markers", "_attemptLimit", "_cooldown"];
-	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_counter"];
+	private ["_mkr", "_mkrPos", "_isBooked", "_bookingInfo", "_bookedLoc", "_counter"];
 
 	// Escape:
 		// reserved space.
 	// Initial values:
 	_mkr = "";
+	_mkrPos = [0,0,0];
 	_isBooked = false;
-	_bookingInfo = [_mkr, _isBooked];
+	_bookingInfo = [_mkr, _mkrPos, _isBooked];
 	_bookedLoc = [];
 	// Declarations:
 	_counter = 0;
@@ -523,8 +524,6 @@ THY_fnc_CSWR_marker_booking = {
 		// reserved space.
 	// Looping for select the marker:
 	while { _counter <= _attemptLimit } do {
-		// Counter to prevent crazy loops:
-		_counter = _counter + 1;
 		// Pick a marker:
 		_mkr = selectRandom _markers;
 		// For each case, check which booked-list the marker should be included:
@@ -542,14 +541,22 @@ THY_fnc_CSWR_marker_booking = {
 				case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
 				case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
 			};
+			// Update marker position (converting from 2D to 3D position > ATL):
+			_mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0];
 			// Stop the looping;
 			break;
+		// Otherwise:
+		} else {
+			// clean the _mkr to prevent fake booking in case of the while-loop reachs the attempt limit:
+			_mkr = "";
 		};
+		// Counter to prevent crazy loops:
+		_counter = _counter + 1;
 		// Important: if it's vehicles using the function right after spawn, be fast to avoid explosions:
 		sleep _cooldown;
 	};  // While-loop ends.
 	// Preparing to return:
-	_bookingInfo = [_mkr, _isBooked];
+	_bookingInfo = [_mkr, _mkrPos, _isBooked];
 	// Return:
 	_bookingInfo;
 };
@@ -2073,7 +2080,6 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Escape:
 	if ( _grpInfo isEqualTo [] ) exitWith {};
 	// Initial values:
-	_isValidToSpwnHere = false;
 	_canSpawn = true;
 	_veh = objNull;
 	_spwn = "";
@@ -2235,8 +2241,6 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Creating the vehicle in air:
 					_veh = createVehicle [_grpClassnames # 0, _spwnPos, [], 200, "NONE"];
 				};
-				// Setting the ground vehicle direction:
-				[_veh, markerDir _spwn] remoteExec ["setDir"];
 				// Not a good performance solution at all (by GOM, 2014 July):
 					// Horrible for server performance: BIS_fnc_spawnVehicle;  // https://community.bistudio.com/wiki/BIS_fnc_spawnVehicle
 				// Ground vehicle config > Features:
@@ -2248,11 +2252,13 @@ THY_fnc_CSWR_spawn_and_go = {
 				// Looping to booking (mandatory in spawnheli) a helipad:
 				while { true } do {
 					// Try to booking a marker:
-					_bookingInfo = ["BOOKING_SPAWNHELI", _tag, _spwns, 10, 0.25] call THY_fnc_CSWR_marker_booking;
+					_bookingInfo = ["BOOKING_SPAWNHELI", _tag, _spwns, 10, 20] call THY_fnc_CSWR_marker_booking;
 					// Which marker to spawn:
 					_spwn = _bookingInfo # 0;
+					// spawn position:
+					_spwnPos = _bookingInfo # 1;  // [x,y,z]
 					// Is booked?
-					_isBooked = _bookingInfo # 1;
+					_isBooked = _bookingInfo # 2;
 					// If not booked:
 					if !_isBooked then {
 						// Debug message:
@@ -2268,10 +2274,10 @@ THY_fnc_CSWR_spawn_and_go = {
 					};
 				};  // While-loop ends.
 
-				// Looping until to find an unblocked spawn-point exclusive for:
-				while { _isBooked && !CSWR_shouldHeliSpwnInAir } do {
+				// if heli will spawn landed, this looping manages if has no blockers over the booked helipad:
+				while { !CSWR_shouldHeliSpwnInAir } do {
 					// Check if something relevant is blocking the _spwn position:
-					_blockers = markerPos _spwn nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV"], 20];
+					_blockers = _spwnPos nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV"], 20];
 					// If there's NO blockers:
 					if ( count _blockers isEqualTo 0 ) then { break };
 					// Debug messages:
@@ -2297,6 +2303,8 @@ THY_fnc_CSWR_spawn_and_go = {
 				if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight abs CSWR_heliLightAlt };
 				if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight abs CSWR_heliHeavyAlt };
 			};
+			// Vehicle config > Setting the vehicle direction:
+			[_veh, markerDir _spwn] remoteExec ["setDir"];
 			// Creating the group and its ground vehicle crew:
 			_grp = _faction createVehicleCrew _veh;  // CRITICAL: never remove _faction to avoid inconscistences when mission editor to use vehicles from another faction.
 			// Additional CPU Breath for all vehicles:
@@ -2329,8 +2337,6 @@ THY_fnc_CSWR_spawn_and_go = {
 		if _isVehAir then {
 			// Wait a bit:
 			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
-			// UNDO THE BOOKING:
-			["BOOKING_SPAWNHELI", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && !CSWR_shouldHeliSpwnInAir ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
 		};
@@ -2382,6 +2388,14 @@ THY_fnc_CSWR_spawn_and_go = {
 		// WAYPOINTS SECTION:
 		// Group/Vehicle config > Move:
 		[_spwns, _destType, _tag, _grpType, _grp, _behavior, _isVeh, _isVehAir] spawn THY_fnc_CSWR_go;
+
+		// UNDO THE BOOKING:
+		// If helicopter:
+		if _isVehAir then {
+			// When the helicopter takeoff for real, undo the booking:
+			waitUntil { sleep 10; isNull _grp || !alive _veh || ((getPos _veh) # 2) > 5 };
+			["BOOKING_SPAWNHELI", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		};
 	};
 	// Return:
 	true;
@@ -2713,7 +2727,7 @@ THY_fnc_CSWR_vehicle_condition = {
 			// Breath for the next loop check:
 			sleep 10;
 			// Debug message > If helicopter is flighting (over 1 meter high):
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && _isHeli && getPos _veh # 2 > 1 ) then {
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && _isHeli && ((getPos _veh) # 2) > 1 ) then {
 				["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh] call BIS_fnc_error;
 			};
 			// Allows the heli to go to the next waypoint:
@@ -2905,7 +2919,7 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 		// Large breath to the next loop check:
 		sleep 30;
 		// Check the helicopter touch the ground:
-		(getPos _veh) # 2 < 0.2;
+		((getPos _veh) # 2) < 0.2;
 	};
 	// Helicopter needs service:
 	[_spwns, _tag, _grpType, _grp, _veh, true, _destType, _behavior] spawn THY_fnc_CSWR_base_service_station;
@@ -3145,8 +3159,10 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			_bookingInfo = ["BOOKING_WATCH", _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
 			// Which marker to go:
 			_location = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
+			// Marker position:
+			_locationPos = _bookingInfo # 1;  // [x,y,z]
 			// Is booked?
-			_isBooked = _bookingInfo # 1;
+			_isBooked = _bookingInfo # 2;
 			// If not booked:
 			if !_isBooked then {
 				// Debug message:
@@ -3174,8 +3190,6 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// SETTING A POSITION:
 		// If booked:
 		if _isBooked then {
-			// Location position, taking the 2D pos and converting it to ATL format (3D):
-			_locationPos = [(locationPosition _location) # 0, (locationPosition _location) # 1, 0];  // [x, y, z]
 			// Creating a generic asset on-the map to provide an object (and, next, check its position):
 			_obj = createSimpleObject ["Land_Canteen_F", _locationPos, false];  // false = global / true = local.
 			// Figuring out the distance between the location found (a hill peak, for example) and the area-target to watch:
@@ -4138,8 +4152,10 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		_bookingInfo = ["BOOKING_HOLD", _tag, _destMarkers, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
 		// Which marker to go:
 		_areaToHold = _bookingInfo # 0;
+		// Marker position:
+		_areaPos = _bookingInfo # 1;  // [x,y,z]
 		// Is booked?
-		_isBooked = _bookingInfo # 1;
+		_isBooked = _bookingInfo # 2;
 		// Debug message:
 		if ( CSWR_isOnDebugGlobal && !_isBooked ) then {
 			systemChat format ["%1 HOLD > %2 '%3' tracked-vehicle tried but failed to booking a HOLD-MARKER center. Moving to a secondary position.", CSWR_txtDebugHeader, _tag, str _grp];
@@ -4153,8 +4169,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// SETTING A POSITION:
 	// If booked:
 	if _isBooked then {
-		// Marker center position, taking the 2D pos and converting it to ATL format (3D):
-		_areaPos = [(markerPos _areaToHold) # 0, (markerPos _areaToHold) # 1, 0];  // [x, y, z]
+		// Reserved space.
 	// If not booked (people and non-tracked-vehicle never will booking, including tracked-vehicle that didn't find a hold-marker free):
 	} else {
 		// Looping to find a good spot in selected marker > if the group still exists:

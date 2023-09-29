@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=291;
+		nextID=294;
 	};
 	class Camera
 	{
-		pos[]={6934.4819,69.624077,6343.0059};
-		dir[]={-0.32410347,-0.31254223,0.89290333};
-		up[]={-0.10663818,0.94990265,0.29378733};
-		aside[]={0.9399932,7.753988e-008,0.34119561};
+		pos[]={7099.8828,103.06887,6670.8838};
+		dir[]={-0.92910981,-0.33340704,-0.15998352};
+		up[]={-0.32857165,0.942783,-0.056576788};
+		aside[]={-0.16969283,0,0.985497};
 	};
 };
 binarizationWanted=0;
@@ -419,7 +419,7 @@ class Mission
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=106.80985;
+					angle=106.80982;
 					id=177;
 				};
 				class Item5
@@ -510,7 +510,7 @@ class Mission
 					text="  BLU spawn point";
 					type="Select";
 					colorName="ColorBlue";
-					angle=142.56888;
+					angle=142.56883;
 					id=445;
 				};
 			};
@@ -744,7 +744,7 @@ class Mission
 					text="    BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=152.66496;
+					angle=152.66492;
 					id=340;
 					atlOffset=0.00018310547;
 				};
@@ -780,7 +780,7 @@ class Mission
 					text="    OPF Hold";
 					type="Empty";
 					colorName="ColorRed";
-					angle=20.516024;
+					angle=20.516022;
 					id=344;
 				};
 				class Item24
@@ -811,7 +811,7 @@ class Mission
 					text="    BLU Hold";
 					type="Empty";
 					colorName="ColorBlue";
-					angle=132.59798;
+					angle=132.59793;
 					id=370;
 					atlOffset=3.0517578e-005;
 				};
@@ -859,7 +859,7 @@ class Mission
 					text="OPF Occupy";
 					type="Empty";
 					colorName="ColorRed";
-					angle=358.72794;
+					angle=358.72781;
 					id=380;
 				};
 				class Item31
@@ -1247,7 +1247,7 @@ class Mission
 			text="  BLU spawn point";
 			type="Select";
 			colorName="ColorBlue";
-			angle=287.93295;
+			angle=284.73419;
 			id=417;
 		};
 		class Item12
@@ -1258,7 +1258,7 @@ class Mission
 			text="  BLU spawn point";
 			type="Select";
 			colorName="ColorBlue";
-			angle=285.27271;
+			angle=285.10669;
 			id=418;
 		};
 		class Item13
@@ -1292,7 +1292,7 @@ class Mission
 			text="  IND spawn point";
 			type="Select";
 			colorName="ColorGUER";
-			angle=86.058121;
+			angle=259.40198;
 			id=421;
 			atlOffset=52.889347;
 		};
@@ -1304,7 +1304,7 @@ class Mission
 			text="  IND spawn point";
 			type="Select";
 			colorName="ColorGUER";
-			angle=216.76144;
+			angle=171.84259;
 			id=422;
 			atlOffset=58.862553;
 		};
