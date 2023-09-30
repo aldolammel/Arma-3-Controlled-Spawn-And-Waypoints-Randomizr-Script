@@ -91,7 +91,7 @@ if (!isServer) exitWith {};
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_SAFE, _move_ANY, [target_1, target_2]] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [5]] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_heavy, _form_BLU_1, _be_COMBAT, _move_ANY, [5]] call THY_fnc_CSWR_add_group;
-
+			
 	}; // blufor ends.
 
 

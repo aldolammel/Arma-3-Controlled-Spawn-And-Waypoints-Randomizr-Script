@@ -54,7 +54,7 @@ THY_fnc_CSWR_marker_name_splitter = {
 	// spliting the object name to check its structure:
 	_mkrNameStructureRaw = _mkrName splitString _spacer;
 	// if the _spacer is NOT been used correctly:
-	if ( _spacerAmount != 3 ) then {
+	if ( _spacerAmount isNotEqualTo 3 ) then {
 		// Warning message:
 		["%1 MARKER '%2' > It's not using enough or using too much the spacer character '%3'. %4", CSWR_txtWarningHeader, toUpper _mkrName, _spacer, _txt1] call BIS_fnc_error; sleep 5;
 	};
@@ -212,7 +212,7 @@ THY_fnc_CSWR_marker_name_section_number = {
 	//if ( (count _mkrNameStructure) == 5 ) then { _index = 4 };
 	_itShouldBeNumeric = parseNumber (_mkrNameStructure # _index);  // result will be a number extracted from string OR ZERO if inside the string has no numbers.
 	// If is number (not zero), true:
-	if ( _itShouldBeNumeric != 0 ) then { 
+	if ( _itShouldBeNumeric isNotEqualTo 0 ) then { 
 		_isNumber = true;
 	// If is NOT a number (will be zero), warning message:
 	} else {
@@ -228,7 +228,7 @@ THY_fnc_CSWR_marker_scanner = {
 	// Return: _confirmedMarkers: array
 
 	params ["_prefix", "_spacer"];
-	private ["_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParadropBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParadropOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParadropIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParadropCIV", "_destMoveBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destMoveOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destMoveIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destMoveCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destMovePUBLIC", "_confirmedMarkers", "_spwns", "_spwnsVeh", "_spwnsHeli", "_spwnsParadrop", "_isValid", "_mkrType", "_mkrOwner", "_isNumber", "_realPrefix", "_txt0", "_txt1", "_possibleMarkers", "_mkrNameStructure"];
+	private ["_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParadropBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParadropOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParadropIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParadropCIV", "_destMoveBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destMoveOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destMoveIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destMoveCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destMovePUBLIC", "_confirmedMarkers", "_spwns", "_spwnsVeh", "_spwnsHeli", "_spwnsParadrop", "_isValid", "_mkrType", "_isValidShape", "_tag", "_isNumber", "_realPrefix", "_txt0", "_txt1", "_possibleMarkers", "_mkrNameStructure"];
 
 	// Initial values:
 	_spwnsBLU=[]; _spwnsVehBLU=[]; _spwnsHeliBLU=[]; _spwnsParadropBLU=[];
@@ -261,7 +261,8 @@ THY_fnc_CSWR_marker_scanner = {
 	_spwnsParadrop = 0;
 	_isValid = false;
 	_mkrType = "";
-	_mkrOwner = "";
+	_isValidShape = false;
+	_tag = "";
 	_isNumber = false;
 	// Errors handling:
 		// reserved space.
@@ -298,133 +299,157 @@ THY_fnc_CSWR_marker_scanner = {
 		switch _mkrType do {
 			// Case example: cswr_spawn_blu_1
 			case "SPAWN": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _spwnsBLU pushBack _x };
-						case "OPF": { _spwnsOPF pushBack _x };
-						case "IND": { _spwnsIND pushBack _x };
-						case "CIV": { _spwnsCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _spwnsBLU pushBack _x; _x setMarkerText "BLU Spawn" };
+						case "OPF": { _spwnsOPF pushBack _x; _x setMarkerText "OPF Spawn" };
+						case "IND": { _spwnsIND pushBack _x; _x setMarkerText "IND Spawn" };
+						case "CIV": { _spwnsCIV pushBack _x; _x setMarkerText "CIV Spawn" };
 					};
 				};
 			};
 			// Case example: cswr_spawnveh_blu_1
 			case "SPAWNVEH": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _spwnsVehBLU pushBack _x };
-						case "OPF": { _spwnsVehOPF pushBack _x };
-						case "IND": { _spwnsVehIND pushBack _x };
-						case "CIV": { _spwnsVehCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _spwnsVehBLU pushBack _x; _x setMarkerText "BLU Veh Spawn" };
+						case "OPF": { _spwnsVehOPF pushBack _x; _x setMarkerText "OPF Veh Spawn" };
+						case "IND": { _spwnsVehIND pushBack _x; _x setMarkerText "IND Veh Spawn" };
+						case "CIV": { _spwnsVehCIV pushBack _x; _x setMarkerText "CIV Veh Spawn" };
 					};
 				};
 			};
 			// Case example: cswr_spawnheli_blu_1
 			case "SPAWNHELI": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _spwnsHeliBLU pushBack _x };
-						case "OPF": { _spwnsHeliOPF pushBack _x };
-						case "IND": { _spwnsHeliIND pushBack _x };
-						case "CIV": { _spwnsHeliCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _spwnsHeliBLU pushBack _x; _x setMarkerText "BLU Heli Spawn" };
+						case "OPF": { _spwnsHeliOPF pushBack _x; _x setMarkerText "OPF Heli Spawn" };
+						case "IND": { _spwnsHeliIND pushBack _x; _x setMarkerText "IND Heli Spawn" };
+						case "CIV": { _spwnsHeliCIV pushBack _x; _x setMarkerText "CIV Heli Spawn" };
 					};
 				};
 			};
 			// Case example: cswr_spawnparadrop_blu_1
 			case "SPAWNPARADROP": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _spwnsParadropBLU pushBack _x };
-						case "OPF": { _spwnsParadropOPF pushBack _x };
-						case "IND": { _spwnsParadropIND pushBack _x };
-						case "CIV": { _spwnsParadropCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _spwnsParadropBLU pushBack _x; _x setMarkerText "BLU Spawn Paradrop" };
+						case "OPF": { _spwnsParadropOPF pushBack _x; _x setMarkerText "OPF Spawn Paradrop" };
+						case "IND": { _spwnsParadropIND pushBack _x; _x setMarkerText "IND Spawn Paradrop" };
+						case "CIV": { _spwnsParadropCIV pushBack _x; _x setMarkerText "CIV Spawn Paradrop" };
 					};
 				};
 			};
 			// Case example: cswr_move_blu_1
 			case "MOVE": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _destMoveBLU pushBack _x };
-						case "OPF": { _destMoveOPF pushBack _x };
-						case "IND": { _destMoveIND pushBack _x };
-						case "CIV": { _destMoveCIV pushBack _x };
-						case "PUBLIC": { _destMovePUBLIC pushBack _x };
+					switch _tag do {
+						case "BLU":    { _destMoveBLU pushBack _x;    _x setMarkerText "BLU Move" };
+						case "OPF":    { _destMoveOPF pushBack _x;    _x setMarkerText "OPF Move" };
+						case "IND":    { _destMoveIND pushBack _x;    _x setMarkerText "IND Move" };
+						case "CIV":    { _destMoveCIV pushBack _x;    _x setMarkerText "CIV Move" };
+						case "PUBLIC": { _destMovePUBLIC pushBack _x; _x setMarkerText "Move" };
 					};
 				};
 			};
 			// Case example: cswr_watch_blu_1
 			case "WATCH": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _destWatchBLU pushBack _x };
-						case "OPF": { _destWatchOPF pushBack _x };
-						case "IND": { _destWatchIND pushBack _x };
-						case "CIV": { _destWatchCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _destWatchBLU pushBack _x; _x setMarkerText "BLU To Watch zone" };
+						case "OPF": { _destWatchOPF pushBack _x; _x setMarkerText "OPF To Watch zone" };
+						case "IND": { _destWatchIND pushBack _x; _x setMarkerText "IND To Watch zone" };
+						case "CIV": { _destWatchCIV pushBack _x; _x setMarkerText "CIV To Watch zone" };
 					};
 				};
 			};
 			// Case example: cswr_occupy_blu_1
 			case "OCCUPY": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _destOccupyBLU pushBack _x };
-						case "OPF": { _destOccupyOPF pushBack _x };
-						case "IND": { _destOccupyIND pushBack _x };
-						case "CIV": { _destOccupyCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _destOccupyBLU pushBack _x; _x setMarkerText "BLU Occupy" };
+						case "OPF": { _destOccupyOPF pushBack _x; _x setMarkerText "OPF Occupy" };
+						case "IND": { _destOccupyIND pushBack _x; _x setMarkerText "IND Occupy" };
+						case "CIV": { _destOccupyCIV pushBack _x; _x setMarkerText "CIV Occupy" };
 					};
 				};
 			};
 			// Case example: cswr_hold_blu_1
 			case "HOLD": {
+				// Check the type of marker:
+				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner tag:
-				_mkrOwner = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if the last section of the area marker name is numeric:
 				_isNumber = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if ( _mkrType isNotEqualTo "" && _isNumber ) then {
-					switch _mkrOwner do {
-						case "BLU": { _destHoldBLU pushBack _x };
-						case "OPF": { _destHoldOPF pushBack _x };
-						case "IND": { _destHoldIND pushBack _x };
-						case "CIV": { _destHoldCIV pushBack _x };
+					switch _tag do {
+						case "BLU": { _destHoldBLU pushBack _x; _x setMarkerText "BLU Hold" };
+						case "OPF": { _destHoldOPF pushBack _x; _x setMarkerText "OPF Hold" };
+						case "IND": { _destHoldIND pushBack _x; _x setMarkerText "IND Hold" };
+						case "CIV": { _destHoldCIV pushBack _x; _x setMarkerText "CIV Hold" };
 					};
 				};
 			};
+		};
+		// Error handling:
+		if !_isValidShape then {
+			// Deleting the marker:
+			deleteMarker _x;
+			_possibleMarkers deleteAt (_possibleMarkers find _x);
+			// Warning message:
+			systemChat format ["%1 A %2 %3 marker DOESN'T HAVE the correct marker shape. For spawn, use 'Select' marker, and for destination, use 'Empty' marker.", CSWR_txtWarningHeader, _tag, _mkrType];
 		};
 	} forEach _possibleMarkers;
 	// Destroying unnecessary things:
@@ -515,7 +540,7 @@ THY_fnc_CSWR_marker_booking = {
 	_bookedLoc = [];
 	// Declarations:
 	_counter = 0;
-	switch ( _mkrType ) do {
+	switch _mkrType do {
 		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
@@ -527,22 +552,20 @@ THY_fnc_CSWR_marker_booking = {
 		// Pick a marker:
 		_mkr = selectRandom _markers;
 		// For each case, check which booked-list the marker should be included:
-		switch ( _tag ) do {
+		switch _tag do {
 			// If _mkr is NOT in the booked-list yet, include it:
 			case "BLU": { if ( !(_mkr in (_bookedLoc # 0)) ) then { (_bookedLoc # 0) pushBackUnique _mkr; _isBooked = true } };
 			case "OPF": { if ( !(_mkr in (_bookedLoc # 1)) ) then { (_bookedLoc # 1) pushBackUnique _mkr; _isBooked = true } };
 			case "IND": { if ( !(_mkr in (_bookedLoc # 2)) ) then { (_bookedLoc # 2) pushBackUnique _mkr; _isBooked = true } };
 			case "CIV": { if ( !(_mkr in (_bookedLoc # 3)) ) then { (_bookedLoc # 3) pushBackUnique _mkr; _isBooked = true } };
 		};
-		// if booked, update the public variable:
+		// if booked, update the public variable and marker position:
 		if _isBooked then {
-			switch ( _mkrType ) do {
-				case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch" };
-				case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
-				case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
+			switch _mkrType do {
+				case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch";    _mkrPos = [locationPosition _mkr # 0, locationPosition _mkr # 1, 0] };
+				case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold";     _mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0] };
+				case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli"; _mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0] };
 			};
-			// Update marker position (converting from 2D to 3D position > ATL):
-			_mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0];
 			// Stop the looping;
 			break;
 		// Otherwise:
@@ -575,7 +598,7 @@ THY_fnc_CSWR_marker_booking_undo = {
 	_bookedLoc = [];
 	_bookedAmount = 0;  // debug purposes.
 	// All cases where booking can be applied:
-	switch ( _mkrType ) do {
+	switch _mkrType do {
 		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
@@ -584,14 +607,14 @@ THY_fnc_CSWR_marker_booking_undo = {
 		// reserved space.
 	// Main functionality:
 	// For each case, remove the current hold-marker as reserved from the reservation list:
-	switch ( _tag ) do {
+	switch _tag do {
 		case "BLU": { (_bookedLoc # 0) deleteAt ((_bookedLoc # 0) find _mkr); _bookedAmount = count (_bookedLoc # 0) };
 		case "OPF": { (_bookedLoc # 1) deleteAt ((_bookedLoc # 1) find _mkr); _bookedAmount = count (_bookedLoc # 1) };
 		case "IND": { (_bookedLoc # 2) deleteAt ((_bookedLoc # 2) find _mkr); _bookedAmount = count (_bookedLoc # 2) };
 		case "CIV": { (_bookedLoc # 3) deleteAt ((_bookedLoc # 3) find _mkr); _bookedAmount = count (_bookedLoc # 3) };
 	};
 	// After that, update the public variable with the new reservation:
-	switch ( _mkrType ) do {
+	switch _mkrType do {
 		case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch" };
 		case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
 		case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
@@ -715,7 +738,7 @@ THY_fnc_CSWR_is_valid_classname = {
 		{  // forEach _classnames:
 			// If the classname is not empty string ("") and not a string called "REMOVE", keep going with the validation:
 			// Important: this is important to LOADOUT Customization settings in CSWR Script.
-			if ( _x isNotEqualTo "" && _x != "REMOVED" ) then {
+			if ( _x isNotEqualTo "" && _x isNotEqualTo "REMOVED" ) then {
 				// Checking if the each classname (_x) exists. If not, abort:
 				if ( !(isClass (configFile >> _cfgClass >> _x)) ) then {
 					// Update the validation flag:
@@ -751,10 +774,11 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 	// Returns _isValid. Bool.
 
 	params ["_tag", "_classnames", "_ableTypes", "_isVeh"];
-	private ["_isValid", "_classnamesOk", "_delta", "_classnamesAmount", "_whatIndividual", "_whatColletive", "_eachAbleType"];
+	private ["_isValid", "_classnameType", "_classnamesOk", "_delta", "_classnamesAmount", "_whatIndividual", "_whatColletive", "_eachAbleType"];
 
 	// Initial values:
 	_isValid = true;
+	_classnameType = [];
 	_classnamesOk = [];
 	_delta = 0;
 	// Declarations:
@@ -762,15 +786,24 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 	_whatIndividual = if _isVeh then { "VEHICLE" } else { "UNIT" };
 	_whatColletive = if _isVeh then { "VEHICLE" } else { "GROUP" };
 	// Escape:
-	if ( _classnamesAmount == 0 ) exitWith { _isValid = false; _isValid /* Returning... */ };
+	if ( _classnamesAmount isEqualTo 0 ) exitWith { _isValid = false; _isValid /* Returning... */ };
 	// Debug texts:
 		// reserved space.
 	
 	{  // forEach _ableTypes:
 		_eachAbleType = _x;
 		{  // forEach _classnames:
-			// If the classname is an abled type, include this valid classname in another array:
-			if ( _x isKindOf _eachAbleType ) then { _classnamesOk pushBack _x };
+			// if group members:
+			if !_isVeh then {
+				// If the classname is an abled type, include this valid classname in another array:
+				if ( _x isKindOf _eachAbleType ) then { _classnamesOk pushBack _x };
+			// otherwise, if vehicle:
+			} else {
+				// Using this method for vehicles to prevent the insertion of nautical vehicles or planes, etc:
+				_classnameType = (_x call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
+				// If the classname is an abled type, include this valid classname in another array:
+				if ( _classnameType in _eachAbleType ) then { _classnamesOk pushBack _x };
+			};
 		} forEach _classnames;
 		// CPU breath:
 		sleep 0.1;
@@ -782,7 +815,7 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 		//
 		_delta = (count _classnames) - (count _classnamesOk);
 		// Warning message:
-		if ( _delta == 1 ) then {
+		if ( _delta isEqualTo 1 ) then {
 			// singular message:
 			["%1 %2 > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarningHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
 		} else {
@@ -1480,7 +1513,7 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	// Returns nothing.
 
 	params ["_tag", "_veh", "_grp"];
-	private ["_colorChute", "_vehTypesHeavy", "_vehTypesMedium", "_vehType", "_mainChute", "_allChutes", "_velocity", "_time"];
+	private ["_colorChute", "_vehTypesHeavy", "_vehTypesMedium", "_vehType", "_mainChute", "_allChutes", "_velocity"];
 
 	// Escape part 1/2:
 	_colorChute = "";
@@ -1488,7 +1521,7 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	_vehTypesHeavy  = ["Tank"];
 	_vehTypesMedium = ["WheeledAPC", "TrackedAPC"];
 	_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
-	switch ( _tag ) do {
+	switch _tag do {
 		case "BLU": { _colorChute = "B_Parachute_02_F" };
 		case "OPF": { _colorChute = "O_Parachute_02_F" };
 		case "IND": { _colorChute = "I_Parachute_02_F" };
@@ -1539,7 +1572,7 @@ THY_fnc_CSWR_vehicle_paradrop = {
 	// Restore the crewmen capability to engage:
 	{ _x enableAI "all" } forEach units _grp;
 	// Animations breath:
-	_time = time + 5; waitUntil { sleep 0.3; time > _time };
+	sleep 5;
 	// Delete the parachutes:
 	{ if ( !isNull _x ) then { deleteVehicle _x } } forEach _allChutes;
 	// Return:
@@ -1608,11 +1641,13 @@ THY_fnc_CSWR_loadout_helmet = {
 	// Returns nothing.
 
 	params ["_unit", "_newHelmetInfantry", "_newHelmetCrew"];
-	private ["_oldHeadgear", "_veh", "_tag", "_isValidClassname"];
+	private ["_oldHeadgear", "_veh", "_tag", "_isValidClassname", "_vehTypesNeedCrewHelmet", "_vehType"];
 
 	// Initial values:
 	_oldHeadgear = "";
 	_veh = objNull;
+	_vehTypesNeedCrewHelmet = [];
+	_vehType = [];
 	// Declarations:
 	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
 	_isValidClassname = [_tag, "CfgWeapons", "helmet", "of custom helmets", [_newHelmetInfantry, _newHelmetCrew]] call THY_fnc_CSWR_is_valid_classname;
@@ -1621,14 +1656,16 @@ THY_fnc_CSWR_loadout_helmet = {
 		// Declarations:
 		_oldHeadgear = headgear _unit;  // if empty, returns "".
 		_veh = vehicle _unit;
+		_vehTypesNeedCrewHelmet = ["Tank", "TrackedAPC", "WheeledAPC"];
+		_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
 		// Units can use headgear:
-		if ( _newHelmetCrew != "REMOVED" && _isValidClassname ) then {
+		if ( _newHelmetCrew isNotEqualTo "REMOVED" && _isValidClassname ) then {
 			// if the unit had an old headgear:
 			if ( _oldHeadgear isNotEqualTo "" ) then {
 				// if the soldiers here are crewmen and not passagers:
-				if ( _unit == driver _veh || _unit == gunner _veh || _unit == commander _veh ) then {
+				if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
 					// if the vehicle's type is a heavy ground vehicle:
-					if ( _veh isKindOf "Tank" ) then {  // WIP check if including WheeledAPC and TrackedAPC like I thing so!
+					if ( _vehType in _vehTypesNeedCrewHelmet ) then {
 						// if the editors registered a new crew headgear, && both are not the same:
 						if ( _newHelmetCrew isNotEqualTo "" && _oldHeadgear isNotEqualTo _newHelmetCrew ) then {
 							// Remove the headgear:
@@ -1657,7 +1694,7 @@ THY_fnc_CSWR_loadout_helmet = {
 					};
 				};
 			};
-		// If headgear must be removed at all:
+		// If headgear must be removed at all or classname invalid:
 		} else {
 			// Remove the headgear:
 			removeHeadgear _unit;
@@ -1668,7 +1705,7 @@ THY_fnc_CSWR_loadout_helmet = {
 		// Declarations:
 		_oldHeadgear = headgear _unit;  // if empty, returns "".
 		// Units can use headgear:
-		if ( _newHelmetInfantry != "REMOVED" ) then {
+		if ( _newHelmetInfantry isNotEqualTo "REMOVED" ) then {
 			// if the unit had an old headgear:
 			if ( _oldHeadgear isNotEqualTo "" ) then {
 				// if the editors registered a new headgear, && both are not the same:
@@ -1704,7 +1741,7 @@ THY_fnc_CSWR_loadout_uniform = {
 	_isValidClassname = [_tag, "CfgWeapons", "uniform", "_newUniform", [_newUniform]] call THY_fnc_CSWR_is_valid_classname;
 	_oldUniform = uniform _unit;  // if empty, returns "".
 	// Units can use uniform:
-	if ( _newUniform != "REMOVED" && _isValidClassname ) then {
+	if ( _newUniform isNotEqualTo "REMOVED" && _isValidClassname ) then {
 		// if the unit had an old uniform:
 		if ( _oldUniform isNotEqualTo "" ) then {
 			// if the editors registered a new uniform, && both are not the same:
@@ -1743,7 +1780,7 @@ THY_fnc_CSWR_loadout_vest = {
 	_isValidClassname = [_tag, "CfgWeapons", "vest", "_newVest", [_newVest]] call THY_fnc_CSWR_is_valid_classname;
 	_oldVest = vest _unit;  // if empty, returns "".
 	// Units can use vest:
-	if ( _newVest != "REMOVED" && _isValidClassname ) then {
+	if ( _newVest isNotEqualTo "REMOVED" && _isValidClassname ) then {
 		// if the unit had an old vest OR the CSWR is been forced to add vest for each unit, including those ones originally with no vest:
 		if ( _oldVest isNotEqualTo "" || CSWR_isVestForAll ) then {
 			// if the editors registered a new vest, && both are not the same:
@@ -1784,7 +1821,7 @@ THY_fnc_CSWR_loadout_backpack = {
 	_isValidClassname = [_tag, "CfgVehicles", "backpack", "_newBackpack", [_newBackpack]] call THY_fnc_CSWR_is_valid_classname;
 	_oldBackpack = backpack _unit;  // if empty, returns "".
 	// Units can use backpack:
-	if ( _newBackpack != "REMOVED" && _isValidClassname ) then {
+	if ( _newBackpack isNotEqualTo "REMOVED" && _isValidClassname ) then {
 		// if the unit had an old backpack OR the CSWR is been forced to add backpack for each unit, including those ones originally with no backpack:
 		if ( _oldBackpack isNotEqualTo "" || _mandatory ) then {
 			// if the editors registered a new backpack, and both are not the same:
@@ -1841,7 +1878,7 @@ THY_fnc_CSWR_loadout_sniper = {
 	// Rifle:
 	[_unit, _rifle, _rifleMagazine, _rifleOptics, _rifleRail, _rifleMuzzle, _rifleBipod] call THY_fnc_CSWR_loadout_team_sniper_weapon;
 	// Binocular:
-	if ( _binoculars isNotEqualTo "" && _binoculars != "REMOVED" && _isValidClassname ) then {  // So the editor wants another binoculars.
+	if ( _binoculars isNotEqualTo "" && _binoculars isNotEqualTo "REMOVED" && _isValidClassname ) then {  // So the editor wants another binoculars.
 		// Remove the old one if it exists:
 		_unit removeWeapon (binocular _unit);
 		// New binoculars replacement:
@@ -1904,9 +1941,8 @@ THY_fnc_CSWR_loadout_paratrooper = {
 		[_unit, _helmet, ""] call THY_fnc_CSWR_loadout_helmet;
 	};
 	// Night-Vision:
-	if ( _nightVision isNotEqualTo "" ) then {
+	if ( _nightVision isNotEqualTo "" /* && hmd _unit isNotEqualTo _nightVision */ ) then {  // WIP should detect if there is NV, delete that and add the new one.
 		// New NV replacement:
-		_unit addItem _nightVision;
 		_unit linkItem _nightVision;
 	};
 	// Return:
@@ -1931,8 +1967,8 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 		//private _rifleOldMags = getArray (configFile >> "CfgWeapons" >> (primaryWeapon _unit) >> "magazines");  // collect all types of magazines from primary weapon.
 		_rifleOldMag = primaryWeaponMagazine _unit;  // old mag loaded on rifle.
 	// Magazine (Crucial: need to be first!)
-		if ( _rifle != "REMOVED" ) then {  // it's correct about rifle here in magazines!
-			if ( _rifleNewMag isNotEqualTo "" && _rifleNewMag != "REMOVED" && _isValidClassnameMags ) then {
+		if ( _rifle isNotEqualTo "REMOVED" ) then {  // it's correct about rifle here in magazines!
+			if ( _rifleNewMag isNotEqualTo "" && _rifleNewMag isNotEqualTo "REMOVED" && _isValidClassnameMags ) then {
 				// Removing all old rifle magazines from the loadout:
 				_unit removeMagazines (_rifleOldMag # 0); 
 				// Include new magazines in loadout containers (the old ones only will be removed if the rifle was replaced):
@@ -1956,7 +1992,7 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 			};
 		};
 	// Rifle:
-		if ( _rifle isNotEqualTo "" && _rifle != "REMOVED" ) then {  // Rifle is mandatory for sniper group.
+		if ( _rifle isNotEqualTo "" && _rifle isNotEqualTo "REMOVED" ) then {  // Rifle is mandatory for sniper group.
 			// removes primary weapon:
 			_unit removeWeapon (primaryWeapon _unit);
 			// Add the new rifle (without magazines and acessories):
@@ -1971,7 +2007,7 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 			};
 		};
 	// Optics:
-		if ( _rifle != "REMOVED" && _rifleNewOptics isNotEqualTo "" && _rifleNewOptics != "REMOVED" ) then {
+		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewOptics isNotEqualTo "" && _rifleNewOptics isNotEqualTo "REMOVED" ) then {
 			// removes old optics if there is one:
 			_unit removePrimaryWeaponItem (_rifleOldAccessories # 2);
 			// adds the new optics:
@@ -1983,7 +2019,7 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 			};
 		};
 	// Rail:
-		if ( _rifle != "REMOVED" && _rifleNewRail isNotEqualTo "" && _rifleNewRail != "REMOVED" ) then {
+		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewRail isNotEqualTo "" && _rifleNewRail isNotEqualTo "REMOVED" ) then {
 			// removes old rail item if there is one:
 			_unit removePrimaryWeaponItem (_rifleOldAccessories # 1);
 			// adds the new rail item:
@@ -1995,7 +2031,7 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 			};
 		};
 	// Muzzle:
-		if ( _rifle != "REMOVED" && _rifleNewMuzzle isNotEqualTo "" && _rifleNewMuzzle != "REMOVED" ) then {
+		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewMuzzle isNotEqualTo "" && _rifleNewMuzzle isNotEqualTo "REMOVED" ) then {
 			// removes old muzzle if there is one:
 			_unit removePrimaryWeaponItem (_rifleOldAccessories # 0);
 			// adds the new muzzle:
@@ -2007,7 +2043,7 @@ THY_fnc_CSWR_loadout_team_sniper_weapon = {
 			};
 		};
 	// Bipod:
-		if ( _rifle != "REMOVED" && _rifleNewBipod isNotEqualTo "" && _rifleNewBipod != "REMOVED" ) then {
+		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewBipod isNotEqualTo "" && _rifleNewBipod isNotEqualTo "REMOVED" ) then {
 			// removes old bipod if there is one:
 			_unit removePrimaryWeaponItem (_rifleOldAccessories # 3);
 			// adds the new bipod:
@@ -2347,7 +2383,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				// If the group has more than one unit alive:
 				if ( {alive _x} count (units _grp) > 1 ) then {
 					// Wait the leader touch the ground:
-					waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 };
+					waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 || !alive leader _grp };
 					// Regroup with leader:
 					{  // forEach units _grp:
 						// If a group member gets unconscious:
@@ -2364,7 +2400,7 @@ THY_fnc_CSWR_spawn_and_go = {
 						// Otherwise, if another group member:
 						} else {
 							// Wait the own unit (_x) touch the ground if not yet:
-							waitUntil { sleep 3; (getPos _x # 2) < 0.2 };
+							waitUntil { sleep 3; (getPos _x # 2) < 0.2 || !alive _x };
 							// Wait the parachute detachment animation get finished:
 							sleep 1;
 							// Regroup at leader position:
@@ -2372,7 +2408,7 @@ THY_fnc_CSWR_spawn_and_go = {
 						};
 					} forEach units _grp;
 					// Wait the group members regroup for the first mission move after paradrop landing:
-					_time = time + (10 * count (units _grp)); waitUntil { sleep 1; time > _time };
+					_time = time + (15 * count (units _grp)); waitUntil { sleep 5; time > _time };
 					// Restore the leader body position:
 					leader _grp setUnitPos "UP";
 				};
@@ -2731,14 +2767,14 @@ THY_fnc_CSWR_vehicle_condition = {
 				["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh] call BIS_fnc_error;
 			};
 			// Allows the heli to go to the next waypoint:
-			isNull _grp || _veh distance _areaToPass < 200 || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1;  // WIP ACE here!
+			isNull _grp || _veh distance _areaToPass < 200 || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1;
 		// Otherwise:
 		} else {
 			// Reserved space for other types of vehicles.
 		};
 	};
 	// If the vehicle or crew has some of these conditions, the next waypoint must be the base:
-	if ( damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 ) then { _shouldRTB = true };  // WIP ACE here: NOT SURE IF IT's WORKS WELL WITH ACE!
+	if ( damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 ) then { _shouldRTB = true };
 	// Return:
 	_shouldRTB;
 };
@@ -2919,7 +2955,7 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 		// Large breath to the next loop check:
 		sleep 30;
 		// Check the helicopter touch the ground:
-		((getPos _veh) # 2) < 0.2;
+		((getPos _veh) # 2) < 0.2 || !alive _veh || isNull _grp;
 	};
 	// Helicopter needs service:
 	[_spwns, _tag, _grpType, _grp, _veh, true, _destType, _behavior] spawn THY_fnc_CSWR_base_service_station;
@@ -3045,11 +3081,11 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	_destMarkers = [];
 	_time = 0;
 	// Defining the group markers to be considered:
-	switch ( side (leader _grp) ) do {
-		case BLUFOR:      { _destMarkers = CSWR_destBLU };
-		case OPFOR:       { _destMarkers = CSWR_destOPF };
-		case INDEPENDENT: { _destMarkers = CSWR_destIND };
-		case CIVILIAN:    { _destMarkers = CSWR_destCIV };
+	switch _tag do {
+		case "BLU": { _destMarkers = CSWR_destBLU };
+		case "OPF": { _destMarkers = CSWR_destOPF };
+		case "IND": { _destMarkers = CSWR_destIND };
+		case "CIV": { _destMarkers = CSWR_destCIV };
 	};
 	// Check the available RESTRICTED faction markers on map:
 	_areaToPass = markerPos (selectRandom _destMarkers);
@@ -3123,29 +3159,44 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Declarations:
 	_wait = 10;
 	// Defining the group markers to be considered:
-	switch ( side (leader _grp) ) do {
-		case BLUFOR:      { _destMarkers = CSWR_destWatchBLU };
-		case OPFOR:       { _destMarkers = CSWR_destWatchOPF };
-		case INDEPENDENT: { _destMarkers = CSWR_destWatchIND };
-		case CIVILIAN:    { _destMarkers = CSWR_destWatchCIV };
+	switch _tag do {
+		case "BLU": { _destMarkers = CSWR_destWatchBLU };
+		case "OPF": { _destMarkers = CSWR_destWatchOPF };
+		case "IND": { _destMarkers = CSWR_destWatchIND };
+		case "CIV": { _destMarkers = CSWR_destWatchCIV };
 	};
 	// Check the available WATCH faction markers on map:
 	_areaToWatch = markerPos (selectRandom _destMarkers);
 	// Finding out specific types of locations around:
 	_locations = nearestLocations [_areaToWatch, ["RockArea", "Hill", "ViewPoint", "Flag"], CSWR_watchMarkerRange];
 	// If found at least one location:
-	if ( count _locations != 0 ) then {
+	if ( count _locations isNotEqualTo 0 ) then {
 		// Debug watch-markers:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
 			{  // forEach _locations:
 				// Show me all locations found on the map with visible markers:
 				_mkrDebugWatch = createMarker ["debug_" + str _x, locationPosition _x];
 				_mkrDebugWatch setMarkerType "hd_dot";
-				switch ( side (leader _grp) ) do {
-					case BLUFOR:      { _mkrDebugWatch setMarkerColor "colorBLUFOR"; _mkrDebugWatch setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0] };
-					case OPFOR:       { _mkrDebugWatch setMarkerColor "colorOPFOR"; _mkrDebugWatch setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0] };
-					case INDEPENDENT: { _mkrDebugWatch setMarkerColor "colorIndependent"; _mkrDebugWatch setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0] };
-					//case CIVILIAN: {}; // not appliable here!
+				switch _tag do {
+					case "BLU": { 
+						_mkrDebugWatch setMarkerAlpha 0.7;
+						_mkrDebugWatch setMarkerColor "colorBLUFOR";
+						_mkrDebugWatch setMarkerText "BLU sniper pos";
+						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0];
+					};
+					case "OPF": {
+						_mkrDebugWatch setMarkerAlpha 0.7;
+						_mkrDebugWatch setMarkerColor "colorOPFOR";
+						_mkrDebugWatch setMarkerText "OPF sniper pos";
+						_mkrDebugWatch setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0];
+					};
+					case "IND": {
+						_mkrDebugWatch setMarkerAlpha 0.7;
+						_mkrDebugWatch setMarkerColor "colorIndependent";
+						_mkrDebugWatch setMarkerText "IND sniper pos";
+						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0];
+					};
+					//case "CIV": {}; // not appliable here!
 				};
 			} forEach _locations;
 		};
@@ -3247,7 +3298,14 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Wait the sniper group gets closer:
 	waitUntil {sleep 5; isNull _grp || leader _grp distance _areaPos < 100 };
 	// Escape:
-	if ( isNull _grp ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
+	if ( isNull _grp ) exitWith { 
+		// undo the booking:
+		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		// Debug message:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.", CSWR_txtDebugHeader, _tag];
+		};
+	};
 	// From here, keep stealth to make sure the spot is clear:
 	_grp setBehaviourStrong "STEALTH";  // Every unit in the group, and the group itself.
 	_grp setSpeedMode "LIMITED";
@@ -3260,7 +3318,14 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Wait the sniper group arrival in the area for to stay watching the marker direction:
 	waitUntil { sleep 5; isNull _grp || leader _grp distance _areaPos < 3 };
 	// Escape:
-	if ( isNull _grp ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
+	if ( isNull _grp ) exitWith {
+		// undo the booking:
+		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		// Debug message:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) almost in their watching position.", CSWR_txtDebugHeader, _tag];
+		};
+	};
 	// Make the arrival smooth:
 	sleep 1;
 	// Go to the next WATCH stage:
@@ -3291,7 +3356,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	_grp setBehaviourStrong "AWARE";
 	{  // forEach units _grp;:
 		// If member is the SNIPER:
-		if ( _x == (leader _grp) ) then {
+		if ( _x isEqualTo (leader _grp) ) then {
 			// Forcing this approach:
 			_x setUnitCombatMode "YELLOW";  // fire at will, keep formation.
 			// Make it smooth:
@@ -3305,7 +3370,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			// Forcing this approach:
 			_x setUnitCombatMode "GREEN";  // hold fire, keep formation.
 			// Wait the spotter get their position:
-			waitUntil { sleep 3; speed _x == 0 || !alive _x };
+			waitUntil { sleep 3; speed _x isEqualTo 0 || !alive _x };
 			// Stay focus on the target-area:
 			_x doWatch _areaToWatch;
 			// Spotter uses binoculars:
@@ -3478,11 +3543,11 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Defining the group markers to be considered:
-	switch ( side (leader _grp) ) do {
-		case BLUFOR:      { _destMarkers = CSWR_destOccupyBLU };
-		case OPFOR:       { _destMarkers = CSWR_destOccupyOPF };
-		case INDEPENDENT: { _destMarkers = CSWR_destOccupyIND };
-		case CIVILIAN:    { _destMarkers = CSWR_destOccupyCIV };
+	switch _tag do {
+		case "BLU": { _destMarkers = CSWR_destOccupyBLU };
+		case "OPF": { _destMarkers = CSWR_destOccupyOPF };
+		case "IND": { _destMarkers = CSWR_destOccupyIND };
+		case "CIV": { _destMarkers = CSWR_destOccupyCIV };
 	};
 	// Check the available OCCUPY faction markers on map:
 	_regionToSearch = markerPos (selectRandom _destMarkers);
@@ -3511,7 +3576,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 				// if the leader is NOT awake:
 				if ( incapacitatedState _grpLead isEqualTo "UNCONSCIOUS" ) then {
 					// Kill the AI leader to renew the group leadership:
-					_grpLead setDamage 1;  // WIP <------------------------- NOT SURE IF IT WILL RUN PROPER WITH ACE.
+					_grpLead setDamage 1;
 					// Stop the while-looping:
 					break;
 				};
@@ -3581,12 +3646,12 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		};
 	// If a building is NOT found:
 	} else {
+		// Delete the group:
+		//{ deleteVehicle _x } forEach units _grp;  // Dont delete the group coz maybe all buildings are destroyed during the game.
 		// Warning message:
-		["%1 OCCUPY > An OCCUPY marker looks not close enough or without good range set ('CSWR_occupyMarkerRange') to abled buildings for OCCUPY movement. New search in %2 secs.", CSWR_txtWarningHeader, _wait] call BIS_fnc_error;
-		// Cooldown to prevent crazy loopings:
+		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Breath:
 		sleep _wait;
-		// Restart the first OCCUPY step:
-		[_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	};
 	// Return:
 	true;
@@ -3659,7 +3724,7 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 	// Select only the buildings that were not destroyed yet or those ones included as exception (like specific ruins):
 	_bldgsStillExist = _bldgsAvailable select { alive _x || typeOf _x in CSWR_occupyAcceptableRuins };
 	// Error handling:
-	If ( count _bldgsStillExist == 0 ) exitWith { 
+	If ( count _bldgsStillExist isEqualTo 0 ) exitWith { 
 		// Debug message:
 		if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' has no buildings available.", CSWR_txtDebugHeader, _tag, str _grp] };
 		// Return:
@@ -3715,7 +3780,7 @@ THY_fnc_CSWR_OCCUPY_nearEnemies = {
 	_isEnemyClose = false;
 	// Searching:
 	_nearUnits = _unit nearEntities ["Man", _distLimiterEnemy];
-	_nearEnemies = _nearUnits select { side _unit != side _x && side _unit != CIVILIAN && alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" };
+	_nearEnemies = _nearUnits select { side _unit isNotEqualTo side _x && side _unit isNotEqualTo CIVILIAN && alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" };
 	if ( count _nearEnemies > 0 ) then { _isEnemyClose = true };
 	// Return:
 	_isEnemyClose;
@@ -3757,7 +3822,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 					// if the leader is NOT awake:
 					if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then {
 						// Kill the AI leader to renew the group leadership:
-						_x setDamage 1;  // WIP <------------------------- NOT SURE IF IT WILL RUN PROPER WITH ACE.
+						_x setDamage 1;
 						// Stop the while-looping:
 						break;
 					};
@@ -3836,7 +3901,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 								// Delete that occupied spot to avoid more than one man there:
 								if ( alive _x ) then { _spots deleteAt (_spots find _spot) };
 								// Wait the leader arrives inside the building or be killed:
-								waitUntil { moveToCompleted _x || moveToFailed _x || !alive _x };
+								waitUntil { sleep 1; moveToCompleted _x || moveToFailed _x || !alive _x };
 								// After the arrival on spot, it removes the man's movement capacible:
 								_x disableAI "PATH";
 								// Set the direction:
@@ -3874,7 +3939,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						// Debug message:
 						if CSWR_isOnDebugGlobal then { systemChat format ["%1 > OCCUPY > An incapacitated %2 unit has been killed to preserve the group mobility.", CSWR_txtDebugHeader, _tag] };
 						// Kill the AI unit:
-						_x setDamage 1;  // WIP <------------------------- NOT SURE IF IT WILL RUN PROPER WITH ACE.
+						_x setDamage 1;
 						// Stop the while-looping:
 						break;
 					};
@@ -3902,7 +3967,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 							// Move to spot:
 							_x doMove _spot;
 							// Wait the unit arrives inside the building or be killed:
-							waitUntil { moveToCompleted _x || moveToFailed _x || !alive _x };
+							waitUntil { sleep 1; moveToCompleted _x || moveToFailed _x || !alive _x };
 						};
 						// If still alive (because it has a waitUntil case above):
 						if ( alive _x ) then {
@@ -3927,7 +3992,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 				// If the unit or leader has no group anymore (anomaly), kill the former group member:
 				if ( isNull (group _x) ) then {
 					// Kill:
-					_x setDamage 1;  // WIP <------------------------- NOT SURE IF IT WILL RUN PROPER WITH ACE.
+					_x setDamage 1;
 					// Debug message:
 					if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > A %2 unit needed to be killed to preserve the game integraty (they lost the group ID).", CSWR_txtDebugHeader, _tag]};
 					// Stop the while-looping:
@@ -4009,7 +4074,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 				// if the leader is NOT awake:
 				if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then {
 					// Kill the AI leader to renew the group leadership:
-					_x setDamage 1;  // WIP <------------------------- NOT SURE IF IT WILL RUN PROPER WITH ACE.
+					_x setDamage 1;
 					// Stop the while-looping:
 					break;
 				};
@@ -4086,14 +4151,13 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_destMarkers", "_isVehTracked", "_mkrDebugHold", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh"];
+	private ["_destMarkers", "_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
 	_destMarkers = [];
 	_isVehTracked = false;
-	_mkrDebugHold = "";  // debug purposes.
 	_bookingInfo = [];
 	_areaToHold = "";
 	_isBooked = false;
@@ -4112,11 +4176,11 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_wait = 10;
 	_waitForVeh = 0.25;
 	// Defining the group markers to be considered:
-	switch ( side (leader _grp) ) do {
-		case BLUFOR:      { _destMarkers = CSWR_destHoldBLU };
-		case OPFOR:       { _destMarkers = CSWR_destHoldOPF };
-		case INDEPENDENT: { _destMarkers = CSWR_destHoldIND };
-		case CIVILIAN:    { _destMarkers = CSWR_destHoldCIV };
+	switch _tag do {
+		case "BLU": { _destMarkers = CSWR_destHoldBLU };
+		case "OPF": { _destMarkers = CSWR_destHoldOPF };
+		case "IND": { _destMarkers = CSWR_destHoldIND };
+		case "CIV": { _destMarkers = CSWR_destHoldCIV };
 	};
 	// Check if it's a vehicle and which kind of them:
 	if _isVeh then {
@@ -4125,23 +4189,8 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// It's a tracked vehicle:
 		if ( _vehType in _trackedVehTypes ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
 	};
-	// Debug:
+	// Debug message:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then {
-		// hold-markers:
-		{  // forEach _destMarkers:
-			// Show me all hold-markers found on the map with visible markers:
-			_mkrDebugHold = createMarker ["debug_" + _x, markerPos _x];
-			_mkrDebugHold setMarkerType "mil_start_noShadow";
-			_mkrDebugHold setMarkerDir (markerDir _x);
-
-			switch ( side (leader _grp) ) do {
-				case BLUFOR:      { _mkrDebugHold setMarkerColor "colorBLUFOR" };
-				case OPFOR:       { _mkrDebugHold setMarkerColor "colorOPFOR" };
-				case INDEPENDENT: { _mkrDebugHold setMarkerColor "colorIndependent" };
-				case CIVILIAN:    { _mkrDebugHold setMarkerColor "colorCivilian" };
-			};
-		} forEach _destMarkers;
-		// Message:
 		systemChat format ["%1 HOLD > %2 '%3' is a %4. %5", CSWR_txtDebugHeader, _tag, str _grp, if _isVeh then {"'"+_vehType+"'"} else {"group"}, if _isVehTracked then {""} else {"Only tracked vehicles can take the center pos of hold-markers."}];
 	};
 
@@ -4313,7 +4362,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	if ( count _blockers > 0 ) exitWith {};
 	// Set the direction:
 	_vehPos = getPosATL _veh;
-	_veh setPosATL [_vehPos # 0, _vehPos # 1, (_vehPos # 2) + 0.5 ];  // This will lift the veh so, when redirected, it'll avoid wavy grounds that would cause the veh to bounce.
+	_veh setPosATL [_vehPos # 0, _vehPos # 1, (_vehPos # 2) + 1 ];  // This will lift the veh so, when redirected, it'll avoid wavy grounds that would cause the veh to bounce.
 	[_veh, _directionToHold] remoteExec ["setDir"];
 	// Debug:
 	if CSWR_isOnDebugGlobal then {

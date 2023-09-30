@@ -8,13 +8,13 @@ if (!isServer) exitWith {};
 // Debug:
 	CSWR_isOnDebugGlobal = true;  // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
 	CSWR_isOnDebugOccupy = false; // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugWatch = true;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHold = true;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugWatch = false;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugPara = false;  // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
 // Factions:
 	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnOPF = true;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Global loadout:
@@ -192,11 +192,15 @@ if (!isServer) exitWith {};
 	if CSWR_isOnCIV then { [CSWR_destHoldCIV] call THY_fnc_CSWR_HOLD_ground_cleaner };
 	// Debug markers stylish:
 	if CSWR_isOnDebugGlobal then {
+		// Visibility and colors:
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorBLUFOR"      } forEach CSWR_spwnsAllBLU + CSWR_destsAllBLU;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorOPFOR"       } forEach CSWR_spwnsAllOPF + CSWR_destsAllOPF;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorIndependent" } forEach CSWR_spwnsAllIND + CSWR_destsAllIND;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorCivilian"    } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorUNKNOWN"     } forEach CSWR_destsPUBLIC;
+		// Shapes:
+		{ _x setMarkerType "mil_destroy";        _x setMarkerAlpha 0.5 } forEach CSWR_destWatchBLU + CSWR_destWatchOPF + CSWR_destWatchIND + CSWR_destWatchCIV;
+		{ _x setMarkerType "mil_start_noShadow"; _x setMarkerAlpha 0.5 } forEach CSWR_destHoldBLU + CSWR_destHoldOPF + CSWR_destHoldIND + CSWR_destHoldCIV;
 	// Otherwise, hiding the spawn and destination markers:
 	} else { {_x setMarkerAlpha 0} forEach CSWR_spwnsAll + CSWR_destsANYWHERE + CSWR_destsSpecial };
 	// Delete the useless spawn markers only, preserving the destinations:

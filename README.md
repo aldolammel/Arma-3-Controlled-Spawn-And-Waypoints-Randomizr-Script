@@ -52,9 +52,13 @@ __
 - Improved > Hold > new method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
-- Fixed > Watch > If sniper group's killed before to reach their spot to watch a location, CSWR keeps badly and forever waiting for them;
-- Fixed > Helicopters > They are not spawn in the same direction defined through the spawn-marker;
-- Removed > Civilian faction cannot move to anywhere (any marker) like a soldier, been limited to public markers;
+- Improved > Debug > Marker error handling has been improved;
+- Fixed > Paradrop > If editor added a custom nightvision for paratroopers, they received it duplicated;
+- Fixed > Watch > Sniper group's killed before to reach their spot to watch a location, CSWR kept waiting for them inappropriately;
+- Fixed > Helicopters > They weren't spawn in the same direction defined through the Eden spawn-markers;
+- Fixed > Wheeled APC and tracked APC crewmen were not receiving custom crew helmet;
+- Removed > Civilian faction cannot move to anywhere ("_move_ANY" instruction) like a soldier, from now it's been limited to public markers ("_move_PUBLIC");
+- Documentation has been updated.
 
 **Sep, 18th 2023 | v5.1**
 - Fixed > CRITICAL > In CSWR v5.0, all AI groups were stuck after the first waypoint to be completed;

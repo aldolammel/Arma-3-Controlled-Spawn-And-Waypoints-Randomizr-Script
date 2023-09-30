@@ -1,4 +1,4 @@
-// CSWR v5.1
+// CSWR v5.3
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
 // by thy (@aldolammel)
 
@@ -94,7 +94,7 @@ switch _faction do {
 		    [_unit, "B_Kitbag_cbr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
-		    [_unit, "", "", "", "", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "", "", "", "NVGoggles_OPFOR", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for things to add or link:
 		    //_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.
@@ -136,7 +136,7 @@ switch _faction do {
 		    [_unit, "B_AssaultPack_rgr", CSWR_isBackpackForAll, _isParadrop] call THY_fnc_CSWR_loadout_backpack;  // add a new backpack to the unit. Empty ("") will result no changes. To remove type "REMOVED".
 
 		// Exclusively for loadout replacement of paratrooper group [_unit, "uniform", "vest", "helmet", "nightvision", "Parachute bag classname"]:
-		    [_unit, "", "", "", "", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
+		    [_unit, "", "", "", "NVGoggles_INDEP", "B_Parachute", _isParadrop, _grpType] call THY_fnc_CSWR_loadout_paratrooper;  // empty ("") will result no changes. To remove type "REMOVED".
 		
 		// Exclusively for things to add or link:
 		    //_unit addItem "FirstAidKit";    // create just one bandage in unit inventory.
