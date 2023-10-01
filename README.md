@@ -48,10 +48,11 @@ __
 **Xxx, XXth 2023 | v5.3**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation (WIP);
 - Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
-- Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles;
-- Improved > Hold > new method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
+- Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles, avoiding accidental explosions;
+- Improved > Hold > New method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
+- Improved > Loadout > Now it's possible to turn On or Off which faction will get nightvision and what nightvision model (supports NVG from mods too);
 - Improved > Debug > Marker error handling has been improved;
 - Fixed > Paradrop > If editor added a custom nightvision for paratroopers, they received it duplicated;
 - Fixed > Watch > Sniper group's killed before to reach their spot to watch a location, CSWR kept waiting for them inappropriately;

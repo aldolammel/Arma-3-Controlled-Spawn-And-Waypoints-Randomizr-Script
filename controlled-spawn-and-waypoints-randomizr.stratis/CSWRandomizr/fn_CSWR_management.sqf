@@ -1,4 +1,4 @@
-// CSWR v5.3
+// CSWR v5.5
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
 // by thy (@aldolammel)
 
@@ -6,20 +6,38 @@ if (!isServer) exitWith {};
 
 // PARAMETERS OF EDITOR'S OPTIONS:
 // Debug:
-	CSWR_isOnDebugGlobal = true;  // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
-	CSWR_isOnDebugOccupy = false; // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugWatch = false;  // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHold = false;  // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHeli = false;  // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugPara = false;  // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugGlobal = true;    // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
+	CSWR_isOnDebugOccupy = false;   // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugWatch = false;    // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHold = false;     // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugHeli = false;     // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugPara = false;     // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugBooking = false;  // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-	CSWR_isOnBLU = true;  // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = false;  // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+	CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+	CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
 	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
 	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
-// Global loadout:
+// Loadout global:
 	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
 	CSWR_isVestForAll = false;        // true = if a custom vest, almost all units will get it / false = only units originally with vest will get it. Default: false.
+// Loadout by faction:
+	// Blu
+		CSWR_canNvgInfantryBLU = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
+		CSWR_canNvgParatroopsBLU = true;  // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
+		CSWR_canNvgSnipersBLU = false;    // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
+		CSWR_nvgDeviceBLU = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
+	// Opf
+		CSWR_canNvgInfantryOPF = false;         // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
+		CSWR_canNvgParatroopsOPF = true;        // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
+		CSWR_canNvgSnipersOPF = false;          // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
+		CSWR_nvgDeviceOPF = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
+	// Ind
+		CSWR_canNvgInfantryIND = false;         // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
+		CSWR_canNvgParatroopsIND = true;        // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
+		CSWR_canNvgSnipersIND = false;          // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
+		CSWR_nvgDeviceIND = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
+
 // Global vehicles:
 	CSWR_isHoldVehLightsOff = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
 	CSWR_isUnlimitedFuel = false;     // WIP
@@ -69,8 +87,9 @@ if (!isServer) exitWith {};
 	CSWR_txtDebugHeader = "CSWR DEBUG >";
 	CSWR_txtWarningHeader = "CSWR WARNING >";
 	// Initial values:
-	CSWR_bookedLocWatch = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
-	CSWR_bookedLocHold  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocWatch = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocHold  = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocSpwnVeh  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnHeli = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
 	_helipad="";
@@ -224,6 +243,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isOnDebugWatch";
 	publicVariable "CSWR_isOnDebugHeli";
 	publicVariable "CSWR_isOnDebugPara";
+	publicVariable "CSWR_isOnDebugBooking";
 	publicVariable "CSWR_isOnDebugHold";
 	publicVariable "CSWR_isOnBLU";
 	publicVariable "CSWR_isOnOPF";
@@ -231,6 +251,18 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isOnCIV";
 	publicVariable "CSWR_isBackpackForAll";
 	publicVariable "CSWR_isVestForAll";
+	publicVariable "CSWR_canNvgInfantryBLU";
+	publicVariable "CSWR_canNvgParatroopsBLU";
+	publicVariable "CSWR_canNvgSnipersBLU";
+	publicVariable "CSWR_nvgDeviceBLU";
+	publicVariable "CSWR_canNvgInfantryOPF";
+	publicVariable "CSWR_canNvgParatroopsOPF";
+	publicVariable "CSWR_canNvgSnipersOPF";
+	publicVariable "CSWR_nvgDeviceOPF";
+	publicVariable "CSWR_canNvgInfantryIND";
+	publicVariable "CSWR_canNvgParatroopsIND";
+	publicVariable "CSWR_canNvgSnipersIND";
+	publicVariable "CSWR_nvgDeviceIND";
 	publicVariable "CSWR_isHoldVehLightsOff";
 	publicVariable "CSWR_isUnlimitedFuel";
 	publicVariable "CSWR_isUnlimitedAmmo";
@@ -261,6 +293,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_txtWarningHeader";
 	publicVariable "CSWR_bookedLocWatch";
 	publicVariable "CSWR_bookedLocHold";
+	publicVariable "CSWR_bookedLocSpwnVeh";
 	publicVariable "CSWR_bookedLocSpwnHeli";
 	publicVariable "CSWR_spwnDelayQueueAmount";
 	publicVariable "CSWR_prefix";

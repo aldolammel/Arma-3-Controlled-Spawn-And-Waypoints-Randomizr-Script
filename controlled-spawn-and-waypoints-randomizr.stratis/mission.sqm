@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=517;
+		nextID=519;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=297;
+		nextID=300;
 	};
 	class Camera
 	{
-		pos[]={1764.9297,30.5,5606.1436};
-		dir[]={0.88013262,-0.14772236,0.45117083};
-		up[]={0.13145889,0.98902887,0.067388162};
-		aside[]={0.45617568,-1.360022e-007,-0.88989675};
+		pos[]={2883.0222,47.156551,5791.7417};
+		dir[]={-0.16850157,-0.33950919,0.92538691};
+		up[]={-0.060820397,0.94060278,0.33401707};
+		aside[]={0.98382336,-3.7252903e-009,0.17914212};
 	};
 };
 binarizationWanted=0;
@@ -416,7 +416,7 @@ class Mission
 					text="Spawn";
 					type="Select";
 					colorName="ColorGUER";
-					angle=221.13086;
+					angle=221.1308;
 					id=196;
 					atlOffset=-1.5974045e-005;
 				};
@@ -498,7 +498,7 @@ class Mission
 					text="Spawn";
 					type="Select";
 					colorName="ColorBlue";
-					angle=204.8719;
+					angle=204.87195;
 					id=296;
 					atlOffset=-0.00035095215;
 				};
@@ -997,12 +997,12 @@ class Mission
 		class Item4
 		{
 			dataType="Marker";
-			position[]={2214.4714,19.703758,6783.4883};
+			position[]={2214.4709,19.704,6783.4878};
 			name="markerVersion";
-			text="    VERSION 5.3";
+			text="    VERSION 5.5";
 			type="mil_box";
 			id=123;
-			atlOffset=54.626507;
+			atlOffset=54.626717;
 		};
 		class Item5
 		{
@@ -1917,7 +1917,7 @@ class Mission
 					dataType="Logic";
 					class PositionInfo
 					{
-						position[]={3022.5254,10.09505,6065.5581};
+						position[]={3022.5251,10.095092,6065.5586};
 					};
 					areaSize[]={1,-1,1};
 					id=511;
@@ -2585,12 +2585,11 @@ class Mission
 					dataType="Logic";
 					class PositionInfo
 					{
-						position[]={3030.6536,4.0057497,6038.5347};
+						position[]={3030.6533,4.0057325,6038.5327};
 					};
 					areaSize[]={1,-1,1};
 					id=516;
 					type="ModuleEditTerrainObject_F";
-					atlOffset=4.7683716e-007;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -2716,7 +2715,7 @@ class Mission
 				};
 			};
 			id=141;
-			atlOffset=2.4216678;
+			atlOffset=2.4218745;
 		};
 		class Item6
 		{
