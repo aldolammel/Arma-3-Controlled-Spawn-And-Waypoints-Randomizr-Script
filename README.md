@@ -45,10 +45,11 @@ __
 
 ## CHANGELOG
 
-**Xxx, XXth 2023 | v5.3**
+**Oct, XXth 2023 | v5.5**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation (WIP);
 - Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
 - Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles, avoiding accidental explosions;
+- Improved > New method to build custom loadouts (more flexible and intuitive);
 - Improved > Hold > New method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;

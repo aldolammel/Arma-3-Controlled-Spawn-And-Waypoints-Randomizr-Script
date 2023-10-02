@@ -1,5 +1,6 @@
 // CSWR v5.5
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
+// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 
@@ -709,6 +710,8 @@ THY_fnc_CSWR_is_valid_classname = {
 	                         https://community.bistudio.com/wiki/Arma_3:_CfgWeapons_Equipment  (uniforms, vests, helmets)
 	                  CfgMagazines:
 	                         https://community.bistudio.com/wiki/Arma_3:_CfgMagazines
+	                  CfgGlasses:
+	                         Wiki not found. (balaclavas, glasses, goggles, facewears)
 	
 	Source: https://community.bistudio.com/wiki/BIS_fnc_exportCfgVehiclesAssetDB
 	*/
@@ -748,7 +751,7 @@ THY_fnc_CSWR_is_valid_classname = {
 	// Debug texts:
 	_txt1 = "Check if it's spelled correct or, if it's from a mod, the mod is loaded on server. FIX IT!";
 	// If the _cfgClass spelled is known:
-	if ( _cfgClass isNotEqualTo "" && _cfgClass in ["CfgVehicles", "CfgWeapons", "CfgMagazines"] ) then {
+	if ( _cfgClass isNotEqualTo "" && _cfgClass in ["CfgVehicles", "CfgWeapons", "CfgMagazines", "CfgGlasses"] ) then {
 		{  // forEach _classnames:
 			// If the classname is not empty string ("") and not a string called "REMOVE", keep going with the validation:
 			// Important: this is important to LOADOUT Customization settings in CSWR Script.
@@ -1634,7 +1637,7 @@ THY_fnc_CSWR_loadout_scanner_vest = {
 	_vestContent = [];
 	// Declarations:
 	_vest = vest _unit;  // if empty, returns "".
-	// if there's a backpack, then save all its original content:
+	// if there's a vest, then save all its original content:
 	if ( _vest isNotEqualTo "" ) then { _vestContent = vestItems _unit };
 	// Return:
 	_vestContent;
@@ -1645,13 +1648,11 @@ THY_fnc_CSWR_loadout_scanner_backpack = {
 	// This function checks the unit's backpack to understand its current contents in case the mission editor chooses to replace the backpack by a new one.
 	// Returns _backpackContent.
 
-	params ["_unit"];
-	private ["_backpackContent", "_backpack"];
+	params ["_unit", "_backpack"];
+	private ["_backpackContent"];
 
 	// Initial values:
 	_backpackContent = [];
-	// Declarations:
-	_backpack = backpack _unit;  // if empty, returns "".
 	// if there's a backpack, then save all its original content:
 	if ( _backpack isNotEqualTo "" ) then { _backpackContent = backpackItems _unit };
 	// Return:
@@ -1659,24 +1660,23 @@ THY_fnc_CSWR_loadout_scanner_backpack = {
 };
 
 
-THY_fnc_CSWR_loadout_helmet = {
-	// This function replace the old unit's helmet for the new one.
+THY_fnc_CSWR_loadout_NVG = {
+	// This function undestands with unit class can got NVG and, if allowed, customizes it with editor's choice.
 	// Returns nothing.
 
-	params ["_newHelmetInfantry", "_newHelmetCrew", "_unit", "_grpType", "_isParadrop"];
-	private ["_oldHeadgear", "_veh", "_vehTypesNeedCrewHelmet", "_vehType", "_canNvgInfantry", "_canNvgParatroops", "_canNvgSnipers", "_nvgDevice", "_tag", "_oldNvg", "_isValidHelmetClassname", "_isValidNvgClassname"];
+	params ["_tag", "_unit", "_grpType", "_grpSpec"];
+	private ["_canNvgInfantry", "_canNvgParatroops", "_canNvgSnipers", "_nvgDevice", "_oldNvg", "_isValidClassname"];
 
+	// Escape:
+		// reserved space.
 	// Initial values:
-	_oldHeadgear = "";
-	_veh = objNull;
-	_vehTypesNeedCrewHelmet = [];
-	_vehType = [];
 	_canNvgInfantry = false;
 	_canNvgParatroops = false;
 	_canNvgSnipers = false;
 	_nvgDevice = "";
+	// Debug texts:
+		// reserved space.
 	// Declarations:
-	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
 	_oldNvg = hmd _unit;  // if empty, returns "".
 	// Check all information about NVG for the unit's faction:
 	switch _tag do {
@@ -1685,17 +1685,15 @@ THY_fnc_CSWR_loadout_helmet = {
 		case "IND": { _canNvgInfantry = CSWR_canNvgInfantryIND; _canNvgParatroops = CSWR_canNvgParatroopsIND; _canNvgSnipers = CSWR_canNvgSnipersIND; _nvgDevice = CSWR_nvgDeviceIND };
 		case "CIV": {};
 	};
-	_isValidHelmetClassname = [_tag, "CfgWeapons", "helmet", "of custom helmets", [_newHelmetInfantry, _newHelmetCrew]] call THY_fnc_CSWR_is_valid_classname;
-	_isValidNvgClassname = [_tag, "CfgWeapons", "nightvision", "_nvgDevice", [_nvgDevice]] call THY_fnc_CSWR_is_valid_classname;
+	_isValidClassname = [_tag, "CfgWeapons", "nightvision", "_nvgDevice", [_nvgDevice]] call THY_fnc_CSWR_is_valid_classname;
 
-	// NIGHTVISION:
 	// If NVG classname is valid:
-	if _isValidNvgClassname then {
+	if _isValidClassname then {
 
 		// If INFANTRY is allowed to use NVG:
 		if _canNvgInfantry then {
 			// If the unit ISN'T a paratrooper, and ISN'T a sniper group member:
-			if ( !_isParadrop && _grpType isNotEqualTo "teamS" ) then {
+			if ( _grpSpec isNotEqualTo "specParachuting" && _grpType isNotEqualTo "teamS" ) then {
 				// If Editor sets a custom NVG, do it:
 				if ( _nvgDevice isNotEqualTo "" && _nvgDevice isNotEqualTo _oldNvg ) then {
 					// Remove the old one:
@@ -1768,77 +1766,40 @@ THY_fnc_CSWR_loadout_helmet = {
 		// WIP : find a way to delete without check classname by classname.
 		{ _unit unlinkItem _x; _unit removeItem _x } forEach CSWR_NVGtoCheck; */
 	};
-	
-	// CREW HEADGEAR:
-	if (!isNull (objectParent _unit)) then {
-		// Declarations:
-		_oldHeadgear = headgear _unit;  // if empty, returns "".
-		_veh = vehicle _unit;
-		_vehTypesNeedCrewHelmet = ["Tank", "TrackedAPC", "WheeledAPC"];
-		_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
-		// Units can use headgear:
-		if ( _newHelmetCrew isNotEqualTo "REMOVED" && _isValidHelmetClassname ) then {
-			// if the unit had an old headgear:
-			if ( _oldHeadgear isNotEqualTo "" ) then {
-				// if the soldiers here are crewmen and not passagers:
-				if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
-					// if the vehicle's type is a heavy ground vehicle:
-					if ( _vehType in _vehTypesNeedCrewHelmet ) then {
-						// if the editors registered a new crew headgear, && both are not the same:
-						if ( _newHelmetCrew isNotEqualTo "" && _oldHeadgear isNotEqualTo _newHelmetCrew ) then {
-							// Remove the headgear:
-							removeHeadgear _unit;
-							// Add the new crew headgear:
-							_unit addHeadgear _newHelmetCrew;
-						};
-					// if the vehicle's type is other one:
-					} else {
-						// the crew will get the same helmet of infantry if the editors registered a new headgear, && both are not the same:
-						if ( _newHelmetInfantry isNotEqualTo "" && _newHelmetInfantry isNotEqualTo _newHelmetCrew ) then { 
-							// Remove the headgear:
-							removeHeadgear _unit;
-							// Add the new headgear:
-							_unit addHeadgear _newHelmetInfantry;
-						};
-					};
-				// if the crew actually is just a infantry spawned inside the vehicle...
-				} else {
-					// they're infantry so, getting the infantry headgear if the editors registered a new headgear, && both are not the same:
-					if ( _newHelmetInfantry isNotEqualTo "" && _newHelmetInfantry isNotEqualTo _newHelmetCrew ) then { 
-						// Remove the headgear:
-						removeHeadgear _unit;
-						// Add the new headgear:
-						_unit addHeadgear _newHelmetInfantry;
-					};
-				};
-			};
-		// If headgear must be removed at all or classname invalid:
-		} else {
-			// Remove the headgear:
-			removeHeadgear _unit;
-		};
 
-	// INFANTRY HEADGEAR:
-	} else {
-		// Declarations:
-		_oldHeadgear = headgear _unit;  // if empty, returns "".
-		// Units can use headgear:
-		if ( _newHelmetInfantry isNotEqualTo "REMOVED" ) then {
-			// if the unit had an old headgear:
-			if ( _oldHeadgear isNotEqualTo "" ) then {
-				// if the editors registered a new headgear, && both are not the same:
-				if ( _newHelmetInfantry isNotEqualTo "" && _oldHeadgear isNotEqualTo _newHelmetInfantry ) then { 
-					// Remove the headgear:
-					removeHeadgear _unit;
-					// Add the new headgear:
-					_unit addHeadgear _newHelmetInfantry;
-				};
-			};
-		// If headgear must be removed at all:
-		} else {
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_helmet = {
+	// This function replace the old unit's helmet for the new one.
+	// Returns nothing.
+
+	params ["_newHelmet", "_unit", "_grpType", "_grpSpec"];
+	private ["_tag", "_isValidClassname", "_oldHelmet"];
+
+	// Escape:
+		// Reserved space.
+	// Initial values:
+		// Reserved space.
+	// Declarations:
+	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
+	_isValidClassname = [_tag, "CfgWeapons", "helmet", "_newHelmet", [_newHelmet]] call THY_fnc_CSWR_is_valid_classname;
+	_oldHelmet = headgear _unit;  // if empty, returns "".
+	// If unit can use helmet, and the editor's choice is valid classname:
+	if ( _newHelmet isNotEqualTo "REMOVED" && _isValidClassname ) then {
+		// if the editors registered a new headgear, && both are not the same:
+		if ( _newHelmet isNotEqualTo "" && _newHelmet isNotEqualTo _oldHelmet ) then { 
 			// Remove the headgear:
 			removeHeadgear _unit;
+			// Add the new headgear:
+			_unit addHeadgear _newHelmet;
 		};
+	// Otherwise:
+	} else {
+		// headgear must be removed:
+		removeHeadgear _unit;
 	};
 	// Return:
 	true;
@@ -1849,14 +1810,16 @@ THY_fnc_CSWR_loadout_uniform = {
 	// This function add to the new uniform all the old unit's uniform original content.
 	// Returns nothing.
 
-	params ["_newUniform", "_unit"];
-	private ["_oldUniformContent", "_tag", "_isValidClassname", "_oldUniform"];
+	params ["_newUniform", "_unit", "_isParadrop"];
+	private ["_oldUniformContent", "_isValidClassname", "_tag", "_oldUniform"];
 
 	// Initial values:
 	_oldUniformContent = [];
+	_isValidClassname = true;
 	// Declarations:
 	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
-	_isValidClassname = [_tag, "CfgWeapons", "uniform", "_newUniform", [_newUniform]] call THY_fnc_CSWR_is_valid_classname;
+	//
+	if !_isParadrop then { _isValidClassname = [_tag, "CfgWeapons", "uniform", "_newUniform", [_newUniform]] call THY_fnc_CSWR_is_valid_classname };
 	_oldUniform = uniform _unit;  // if empty, returns "".
 	// Units can use uniform:
 	if ( _newUniform isNotEqualTo "REMOVED" && _isValidClassname ) then {
@@ -1924,34 +1887,36 @@ THY_fnc_CSWR_loadout_vest = {
 
 
 THY_fnc_CSWR_loadout_backpack = {
-	// This function add to the new backpack all the old unit's backpack original content.
+	// This function add to the new backpack to the unit without loose the original backpack content.
 	// Returns nothing.
 
-	params ["_unit", "_newBackpack", "_mandatory", "_shouldEscape"];
-	private ["_oldBackpackContent", "_tag", "_isValidClassname", "_oldBackpack"];
+	params ["_newBackpack", "_unit", "_isMandatory", "_isParadrop"];
+	private ["_oldContent", "_isValidClassname", "_tag", "_oldBackpack"];
 
 	// Escape:
-	if _shouldEscape exitWith {};
+		// Reserved space.
 	// Initial values:
-	_oldBackpackContent = [];
+	_oldContent = [];
+	_isValidClassname = true;
 	// Declarations:
 	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
-	_isValidClassname = [_tag, "CfgVehicles", "backpack", "_newBackpack", [_newBackpack]] call THY_fnc_CSWR_is_valid_classname;
 	_oldBackpack = backpack _unit;  // if empty, returns "".
+	// Classname validation (Paratroopers already crossed this validation):
+	if !_isParadrop then { _isValidClassname = [_tag, "CfgVehicles", "backpack", "_newBackpack", [_newBackpack]] call THY_fnc_CSWR_is_valid_classname };
 	// Units can use backpack:
 	if ( _newBackpack isNotEqualTo "REMOVED" && _isValidClassname ) then {
 		// if the unit had an old backpack OR the CSWR is been forced to add backpack for each unit, including those ones originally with no backpack:
-		if ( _oldBackpack isNotEqualTo "" || _mandatory ) then {
+		if ( _oldBackpack isNotEqualTo "" || _isMandatory ) then {
 			// if the editors registered a new backpack, and both are not the same:
 			if ( _newBackpack isNotEqualTo "" && _oldBackpack isNotEqualTo _newBackpack ) then {
 				// check the backpack original content:
-				_oldBackpackContent = [_unit] call THY_fnc_CSWR_loadout_scanner_backpack;
+				_oldContent = [_unit, _oldBackpack] call THY_fnc_CSWR_loadout_scanner_backpack;
 				// Remove the old backpack:
 				removeBackpack _unit;
 				// Add the new backpack:
 				_unit addBackpack _newBackpack;
 				// if there is one or more items from old backpack, repack them to the new one:
-				if ( count _oldBackpackContent > 0 ) then { { _unit addItemToBackpack _x } forEach _oldBackpackContent };
+				if ( count _oldContent > 0 ) then { { _unit addItemToBackpack _x } forEach _oldContent };
 			};
 		};
 	// If backpack must be removed at all:
@@ -1964,101 +1929,230 @@ THY_fnc_CSWR_loadout_backpack = {
 };
 
 
-THY_fnc_CSWR_loadout_sniper = {
-	// This function organizes exclusively the sniper group loadout.
+THY_fnc_CSWR_loadout_infantry_basic = {
+	// This function organizes the basic of all infantry classes loadout, including: heavy crew, sniper groups, and paratroopers.
 	// Returns nothing.
 
-	params ["_uniform", "_vest", "_rifle", "_rifleMagazine", "_rifleOptics", "_rifleRail", "_rifleMuzzle", "_rifleBipod", "_binoculars", "_unit", "_grpType"];
-	private ["_tag", "_isValidClassname", "_isSniper"];
+	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_unit", "_grpType", "_grpSpec"];
+	//private ["", "", ""];
 
-	// Initial values:
-		// Reserved space.
-	// Declarations:
-	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
-	_isValidClassname = [_tag, "CfgWeapons", "binoculars", "_binoculars", [_binoculars]] call THY_fnc_CSWR_is_valid_classname;
-	_isSniper = if ( _grpType isEqualTo "teamS" ) then { true } else { false };
 	// Escape:
-	if ( !_isSniper ) exitWith {};
+		// reserved space.
+	// Initial values:
+		// reserved space.
+	// Declarations:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+
 	// Uniform:
-	if ( _uniform isNotEqualTo "" ) then {
-		// New uniform replacement:
-		[_uniform, _unit] call THY_fnc_CSWR_loadout_uniform;
-	};
-	// Vest:
-	if ( _vest isNotEqualTo "" ) then {
-		// New vest replacement:
-		[_vest, _unit, true] call THY_fnc_CSWR_loadout_vest;
-	};
-	// Backpack:
-		// WIP - Consider if editor wants to make a different loadout not using the guilli suit.
-	// Rifle:
-	[_unit, _rifle, _rifleMagazine, _rifleOptics, _rifleRail, _rifleMuzzle, _rifleBipod] call THY_fnc_CSWR_loadout_team_sniper_weapon;
-	// Binocular:
-	if ( _binoculars isNotEqualTo "" && _binoculars isNotEqualTo "REMOVED" && _isValidClassname ) then {  // So the editor wants another binoculars.
-		// Remove the old one if it exists:
-		_unit removeWeapon (binocular _unit);
-		// New binoculars replacement:
-		_unit addWeapon _binoculars;
-	// If there's NO custom binoculars, check if there is at least a regular one:
-	} else { 
-		// If no binoculars at all, add it because for sniper group is mandatory:
-		if ( binocular _unit isEqualTo "" || _binoculars == "REMOVED" || !_isValidClassname ) then {  // Binoculars are mandatory for sniper group coz the logic used for sniper group with 2 units.
-			// Adding the simplest one:
-			_unit addWeapon "Binocular";
-			// Debug message:
-			if CSWR_isOnDebugGlobal then { ["%1 WATCH > '%2' needs binoculars to watch, so each member has one now.", CSWR_txtWarningHeader, str (group _unit)] call BIS_fnc_error; sleep 5 };
-		};
-	};
-	// Pistol:
-	// If there's NO pistol (mandatory for sniper group):
-	if ( handgunWeapon _unit isEqualTo "" ) then {
-		// Add a pistol:
-		_unit addWeapon "hgun_P07_F";
-		// Add at least one magazine directly on the weapon loader:
-		_unit addHandgunItem "16Rnd_9x21_Mag";
+	[_newUniform, _unit] call THY_fnc_CSWR_loadout_uniform;
+	// Helmet / Headgear:
+	[_newHelmet, _unit, _grpType, _grpSpec] call THY_fnc_CSWR_loadout_helmet;
+	// NightVision:
+	[_tag, _unit, _grpType, _grpSpec] call THY_fnc_CSWR_loadout_NVG;
+	// Vest / Balistic protection:
+	[_newVest, _unit, CSWR_isVestForAll] call THY_fnc_CSWR_loadout_vest;
+	// If unit is NOT a crew:
+	if ( _grpSpec isNotEqualTo "specCrew" ) then {
+		// Backpack:
+		[_newBackpack, _unit, CSWR_isBackpackForAll, _grpSpec] call THY_fnc_CSWR_loadout_backpack;
 	};
 	// Return:
 	true;
 };
 
 
-THY_fnc_CSWR_loadout_paratrooper = {
-	// This function organizes exclusively the paratrooper group loadout.
+THY_fnc_CSWR_loadout_infantry_heavy_crew = {
+	// This function organizes exclusively the infantry heavy crew loadout.
 	// Returns nothing.
 
-	params ["_uniform", "_vest", "_helmet", "_parachute", "_unit", "_grpType", "_isParadrop"];
-	//private [];
+	params ["_newHelmet", "_newVest", "_unit", "_grpType", "_grpSpec"];
+	private ["_veh", "_vehType"];
+
+	// Escape:
+	if ( isNull (objectParent _unit) ) exitWith {};
+	// Initial values:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+	// Declarations:
+	_veh = vehicle _unit;
+	_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
+	// if the unit is crew and not passager:
+	if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
+		// if the vehicle's type is a heavy ground one:
+		if ( _vehType in ["Tank", "TrackedAPC", "WheeledAPC"] ) then {
+			// Final helmet validations:
+			[_newHelmet, _unit, _grpType, _grpSpec] call THY_fnc_CSWR_loadout_helmet;
+		};
+		// Final vest validations:
+		[_newVest, _unit, CSWR_isVestForAll] call THY_fnc_CSWR_loadout_vest;
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_infantry_sniper = {
+	// This function organizes exclusively the infantry sniper group loadout.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_newRifle", "_newRifleMagazine", "_newRifleOptics", "_newRifleRail", "_newRifleMuzzle", "_newRifleBipod", "_newBinoculars", "_unit", "_grpType", "_grpSpec"];
+	private ["_tag", "_isValidClassname", "_genericBinoculars", "_genericPistol", "_genericPistolAmmo"];
+
+	// Escape:
+	if ( _grpType isNotEqualTo "teamS" ) exitWith {};
+	// Initial values:
+		// Reserved space.
+	// Declarations:
+	_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
+	_isValidClassname  = [_tag, "CfgWeapons", "binoculars", "_newBinoculars", [_newBinoculars]] call THY_fnc_CSWR_is_valid_classname;
+	_genericBinoculars = "Binocular";
+	_genericPistol     = "hgun_P07_F";
+	_genericPistolAmmo = "16Rnd_9x21_Mag";
+	
+	// Helmet / Headgear:
+	[_newHelmet, _unit, _grpType, _grpSpec] call THY_fnc_CSWR_loadout_helmet;
+	// Backpack:
+	[_newBackpack, _unit, CSWR_isBackpackForAll, _grpSpec] call THY_fnc_CSWR_loadout_backpack;
+	// Uniform:
+	[_newUniform, _unit] call THY_fnc_CSWR_loadout_uniform;
+	// Vest / Ballistic protection (mandatory for sniper group members):
+	[_newVest, _unit, true] call THY_fnc_CSWR_loadout_vest;
+	// Rifle setup:
+	[_unit, _newRifle, _newRifleMagazine, _newRifleOptics, _newRifleRail, _newRifleMuzzle, _newRifleBipod] call THY_fnc_CSWR_loadout_team_sniper_weapon;
+	// NightVision:
+	[_tag, _unit, _grpType, _grpSpec] call THY_fnc_CSWR_loadout_NVG;
+	// Binoculars:
+	// If there is an editor's choice, and the editor is not trying to force the binoculars removal, and the choice is valid:
+	if ( _newBinoculars isNotEqualTo "" && _newBinoculars isNotEqualTo "REMOVED" && _isValidClassname ) then {
+		// Remove the old one if it exists:
+		_unit removeWeapon (binocular _unit);
+		// New binoculars replacement:
+		_unit addWeapon _newBinoculars;
+	// Otherwise:
+	} else { 
+		// If no binoculars at all, add it coz binoculars for members of sniper groups is mandatory:
+		// Important: when group has 2 members, one of them will take the spotter role and will cosmetically use the binoculars.
+		if ( binocular _unit isEqualTo "" || _newBinoculars isEqualTo "REMOVED" || !_isValidClassname ) then {
+			// Adding a generic one:
+			_unit addWeapon _genericBinoculars;
+			// Warning message:
+			["%1 WATCH > %2 '%3' needs binoculars to watch, so each member has one now.", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
+		};
+	};
+	// Pistol:
+	// If there's NO pistol (mandatory for sniper group):
+	if ( handgunWeapon _unit isEqualTo "" ) then {
+		// Add a generic pistol:
+		_unit addWeapon _genericPistol;
+		// Add at least one magazine:
+		_unit addHandgunItem _genericPistolAmmo;
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_speciality_parachuting = {
+	// This function organizes the loadout of any group with parachuting specialty.
+	// Returns nothing.
+
+	params ["_uniform", "_helmet", "_goggles", "_vest", "_parachute", "_unit", "_grpType", "_isParadrop"];
+	private ["_txt1", "_genericGoggles", "_genericChute", "_isValidClassnames", "_isValidChuteClassname", "_isValidGogglesClassname"];
 
 	// Escape - part 1/2:
 	if !_isParadrop exitWith {};
 	// Initial values:
 		// Reserved space.
-	// Backpack:
-	// if has no parachute bag classname declared, and the unit is not in a vehicle:
-	if ( _parachute isNotEqualTo "" && isNull (objectParent _unit) ) then {
-		[_unit, _parachute, true, false] call THY_fnc_CSWR_loadout_backpack;  // Always set mandatory as true in this case coz the parachuter will always reach here with no backpack.
-	};
-	// Escape - part 2/2:
-	if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
+	// Debug texts:
+	_txt1 = format ["Fix it in 'fn_CSWR_loadout.sqf' file. Each %1 group member received a generic parachute-bag.", _tag];
+	// Declarations:
+	_genericGoggles = "G_Lowprofile";
+	_genericChute = "B_Parachute";
+	_isValidClassnames = [_tag, "CfgWeapons", "uniform or vest or helmet", "_uniform or _vest or _helmet", [_uniform, _vest, _helmet]] call THY_fnc_CSWR_is_valid_classname;
+	_isValidChuteClassname = [_tag, "CfgVehicles", "parachute-bag", "_parachute", [_parachute]] call THY_fnc_CSWR_is_valid_classname;
+	_isValidGogglesClassname = [_tag, "CfgGlasses", "goggles", "_goggles", [_goggles]] call THY_fnc_CSWR_is_valid_classname;
+	
+	// if paratrooper/parachuter is NOT crew of a paradrop-vehicle:
+	if ( isNull (objectParent _unit) ) then {
+		// Backpack:
+		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles.
+		// if editor's choice is not the same of original unit backpack, or the original unit has no backpack:
+		if ( _parachute isNotEqualTo (backpack _unit) || (backpack _unit) isEqualTo "" ) then {
+			// if editor has not a new parachute-bag, or they're trying to remove the parachute by force, or editor's choice is a invalid classname, set it as the basic:
+			if ( _parachute isEqualTo "" || _parachute isEqualTo "REMOVED" || !_isValidChuteClassname ) then { 
+				// Warning messages:
+				if !_isValidChuteClassname then {
+					["%1 PARADROP > %2 > '%3' is a UNKOWN PARACHUTE-BAG CLASSNAME. If it comes from a mod, make sure the mod is loaded on the server. %4", CSWR_txtWarningHeader, _tag, _parachute, _txt1] call BIS_fnc_error; sleep 5;
+				} else {
+					if ( _parachute isEqualTo "REMOVED" ) then {
+						["%1 PARADROP > %2 > DON'T use the command 'REMOVED' for paratrooper parachute-bag. %3", CSWR_txtWarningHeader, _tag, _txt1] call BIS_fnc_error; sleep 5;
+					} else {
+						["%1 PARADROP > %2 > For paratroopers and parachuters are mandatory to set a parachute-bag. %3", CSWR_txtWarningHeader, _tag, _txt1] call BIS_fnc_error; sleep 5;
+					};
+				};
+				// Add the generic parachute bag:
+				_parachute = _genericChute;
+			};
+			[_tag, _unit, _grpType, _isParadrop] call THY_fnc_CSWR_loadout_NVG;
+			// Give that, always setting this 'backpack' as mandatory (true) to avoid the unit's death by free fall:
+			[_parachute, _unit, true, _isParadrop] call THY_fnc_CSWR_loadout_backpack;
+		};
 
-	// Uniform:
-	if ( _uniform isNotEqualTo "" ) then {
-		// New uniform replacement:
-		[_uniform, _unit] call THY_fnc_CSWR_loadout_uniform;
+		// Goggles:
+		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles.
+		// If editor's choice has a valid classname, and they're not trying to remove the goggles by force:
+		if ( _isValidGogglesClassname && _goggles isNotEqualTo "REMOVED" ) then {
+			// if editor's choice is not the same of original unit goggles, or the unit has no goggles:
+			if ( _goggles isNotEqualTo (goggles _unit) || (goggles _unit) isEqualTo "" ) then {
+				// remove any possible goggles:
+				removeGoggles _unit;
+				// if editor has a new goggles:
+				if ( _goggles isNotEqualTo "" ) then {
+					// add the new one;
+					_unit addGoggles _goggles;
+				// otherwise, goggle is mandatory for parachuter:
+				} else {
+					// add the basic one:
+					_unit addGoggles _genericGoggles;
+				};
+			};
+		// Otherwise, if goggles classname is invalid:
+		} else {
+			// remove any possible goggles:
+			removeGoggles _unit;
+			// add the basic one:
+			_unit addGoggles _genericGoggles;
+		};
+
+		// Escape - part 2/2:
+		if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
+
+		if _isValidClassnames then {
+			// Vest:
+			if ( _vest isNotEqualTo (vest _unit) && _vest isNotEqualTo "" ) then {
+				// New vest replacement:
+				[_vest, _unit, true] call THY_fnc_CSWR_loadout_vest;
+			};
+
+			// Helmet & NightVision:
+			if ( _helmet isNotEqualTo (headgear _unit) && _helmet isNotEqualTo "" ) then {
+				// New helmet replacement:
+				[_helmet, "", _unit, _grpType, _isParadrop] call THY_fnc_CSWR_loadout_helmet;
+			};
+		};
 	};
-	// Vest:
-	if ( _vest isNotEqualTo "" ) then {
-		// New vest replacement:
-		[_vest, _unit, true] call THY_fnc_CSWR_loadout_vest;
-	};
-	// Goggles:
-	if ( (goggles _unit) isEqualTo "" ) then {
-		_unit addGoggles "G_Combat";
-	};
-	// Helmet & NightVision:
-	if ( _helmet isNotEqualTo "" ) then {
-		// New helmet replacement:
-		[_helmet, "", _unit, _grpType, _isParadrop] call THY_fnc_CSWR_loadout_helmet;
+	
+	if _isValidClassnames then {
+		// Uniform
+		// Important: paratroopers and crew can has an specific uniform.
+		// If editor's choice is not the same of original unit uniform, and the editor has a new one (or using "REMOVED"):
+		if ( _uniform isNotEqualTo (uniform _unit) && _uniform isNotEqualTo "" ) then {
+			// New uniform replacement:
+			[_uniform, _unit] call THY_fnc_CSWR_loadout_uniform;
+		};
 	};
 	// Return:
 	true;
@@ -2488,8 +2582,19 @@ THY_fnc_CSWR_spawn_and_go = {
 		_grpInfo set [2, _grp];
 		// Group/Vehicle config > Server performance:
 		_grp deleteGroupWhenEmpty true;
+		
+		
 		// Only group and ground vehicle config > Loadout customization:
-		if !_isVehAir then { { [_faction, _x, _grpType, _isSpwnParadrop] call THY_fnc_CSWR_loadout; sleep 0.3 } forEach units _grp };
+		if !_isVehAir then { 
+
+			{ [_faction, _x, _grpType, _isSpwnParadrop] call THY_fnc_CSWR_loadout; 
+			sleep 0.3;
+		
+		} forEach units _grp };
+
+
+
+
 		// Group/Vehicle config > Units skills:
 		[_grpType, _grp, _destType] call THY_fnc_CSWR_unit_skills;
 		// Only group config > Formation:

@@ -1,5 +1,6 @@
 // CSWR v5.5
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
+// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 if (!isServer) exitWith {};
