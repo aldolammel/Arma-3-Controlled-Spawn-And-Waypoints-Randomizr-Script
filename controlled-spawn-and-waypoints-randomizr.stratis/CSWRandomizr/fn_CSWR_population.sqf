@@ -57,18 +57,18 @@ if (!isServer) exitWith {};
 			// Vehicles
 			// [ owner, spawns (CSWR_spwnsBLU, CSWR_spwnsVehBLU, CSWR_spwnsHeliBLU, CSWR_spwnsParadropBLU), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 
-			/* [BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_light, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_light, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_vehicle_BLU_medium, _be_SAFE, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_heavy, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsVehBLU, CSWR_vehicle_BLU_heavy, _be_SAFE, _move_HOLD, []] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_vehicle_BLU_heavy, _be_COMBAT, _move_HOLD, [10, trigger_1]] call THY_fnc_CSWR_add_vehicle;
 			[BLUFOR, CSWR_spwnsHeliBLU, CSWR_vehicle_BLU_heli_light, _be_AWARE, _move_ANY, [1]] call THY_fnc_CSWR_add_vehicle;
-			[BLUFOR, CSWR_spwnsHeliBLU, CSWR_vehicle_BLU_heli_heavy, _be_COMBAT, _move_ANY, [10]] call THY_fnc_CSWR_add_vehicle; */
+			[BLUFOR, CSWR_spwnsHeliBLU, CSWR_vehicle_BLU_heli_heavy, _be_COMBAT, _move_ANY, [10]] call THY_fnc_CSWR_add_vehicle;
 	
 			// Soldier groups
 			// [ owner, spawns (CSWR_spwnsBLU, CSWR_spwnsVehBLU, CSWR_spwnsParadropBLU), team type, team formation (_form_BLU_1, _form_BLU_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 			
-			/* [BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_sniper, _form_BLU_1, _be_COMBAT, _move_WATCH, []] call THY_fnc_CSWR_add_group;
+			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_sniper, _form_BLU_1, _be_COMBAT, _move_WATCH, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_1, _be_COMBAT, _move_ANY, []] call THY_fnc_CSWR_add_group;
@@ -78,7 +78,7 @@ if (!isServer) exitWith {};
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_1, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_1, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_group;
-			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_group; */
+			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_COMBAT, _move_HOLD, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_light, _form_BLU_2, _be_COMBAT, _move_OCCUPY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsParadropBLU, CSWR_group_BLU_medium, _form_BLU_1, _be_COMBAT, _move_OCCUPY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_medium, _form_BLU_1, _be_SAFE, _move_ANY, []] call THY_fnc_CSWR_add_group;

@@ -20,8 +20,8 @@ if (!isServer) exitWith {};
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
     CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Loadout global:
-    CSWR_isBackpackForAllByFoot = false;  // true = all infantries will get it / false = only units originally with backpacks. Default: false.
-    CSWR_isVestForAll           = false;  // true = all units (except CIV) will get it / false = only units originally with vests. Default: false.
+    CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
+    CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
 // Loadout by faction:
     // Blu
         CSWR_canNvgInfantryBLU   = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
@@ -39,13 +39,17 @@ if (!isServer) exitWith {};
         CSWR_canNvgSnipersIND    = false;   // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
         CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
     // civ
-        CSWR_canNvgCIV = false;            // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
+        CSWR_canNvgCIV    = false;         // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
         CSWR_nvgDeviceCIV = "NVGoggles";   // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
-
+// Voices by faction:
+    //CSWR_voiceBLU = "";      // WIP.
+    //CSWR_voiceOPF = "";      // WIP.
+    //CSWR_voiceIND = "";      // WIP.
+    //CSWR_voiceCIV = "";      // WIP.
 // Global vehicles:
     CSWR_isHoldVehLightsOff   = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
-    CSWR_isUnlimitedFuel      = false;  // WIP
-    CSWR_isUnlimitedAmmo      = false;  // WIP
+    //CSWR_isUnlimitedFuel      = false;  // WIP
+    //CSWR_isUnlimitedAmmo      = false;  // WIP
     CSWR_shouldHeliSpwnInAir  = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
     CSWR_shouldAddHelipadSpwn = false;  // true = add a visible helipad in each heli spawnpoint / false = a invisible helipad is added. Default: false.
     CSWR_isElectroWarForBLU   = true;   // true = vehicles of BLU will use Electronic Warfare Resources / false = they don't. Default: true.
@@ -270,9 +274,13 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_nvgDeviceIND";
 	publicVariable "CSWR_canNvgCIV";
 	publicVariable "CSWR_nvgDeviceCIV";
+	/* publicVariable "CSWR_voiceBLU";
+	publicVariable "CSWR_voiceOPF";
+	publicVariable "CSWR_voiceIND";
+	publicVariable "CSWR_voiceCIV"; */
 	publicVariable "CSWR_isHoldVehLightsOff";
-	publicVariable "CSWR_isUnlimitedFuel";
-	publicVariable "CSWR_isUnlimitedAmmo";
+	/* publicVariable "CSWR_isUnlimitedFuel";
+	publicVariable "CSWR_isUnlimitedAmmo"; */
 	publicVariable "CSWR_shouldHeliSpwnInAir";
 	publicVariable "CSWR_shouldAddHelipadSpwn";
 	publicVariable "CSWR_isElectroWarForBLU";
@@ -404,6 +412,25 @@ if (!isServer) exitWith {};
 			};
 		};
 	};
+
+/* 
+
+	// WIP - VALIDACAO SE AS NIGHTVISIONS ESTAO PREENCHIDAS CERTINHO!
+	// If the editor leave the gear classname empty, or they're forcing the NVG removal by fn_CSWR_management (what doesnt make any sense):
+	if ( CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" ) then {
+		// Add a generic gear:
+		_newGear = _genericGear;  NVGoggles
+		// Warning message:
+		["%1 GEAR > NIGHTVISION > You turned the NVG usage 'true' for %2, but in parallel you're trying to force removal of %2 NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+
+
+ */
+
+
+
+
+
 	// Debug monitor looping:
 	while { CSWR_isOnDebugGlobal } do { call THY_fnc_CSWR_debug };
 };

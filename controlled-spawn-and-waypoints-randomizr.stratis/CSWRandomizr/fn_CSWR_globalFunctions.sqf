@@ -528,14 +528,14 @@ THY_fnc_CSWR_marker_booking = {
 	// Param > _attemptLimit > number: limit of times the function will try to find a free marker.
 	// Returns _bookingInfo. Array [string, bool].
 
-	params ["_mkrType", "_tag", "_markers", "_attemptLimit", "_cooldown"];
-	private ["_mkr", "_mkrPos", "_isBooked", "_bookingInfo", "_bookedLoc", "_isError", "_counter"];
+	params ["_mkrType", "_mkrPos", "_tag", "_markers", "_attemptLimit", "_cooldown"];
+	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_isError", "_counter"];
 
 	// Escape - part 1/2:
 		// reserved space.
 	// Initial values:
 	_mkr = "";
-	_mkrPos = [0,0,0];
+	//_mkrPos = [0,0,0];
 	_isBooked = false;
 	_bookingInfo = [_mkr, _mkrPos, _isBooked];
 	_bookedLoc = [];
@@ -1079,6 +1079,67 @@ THY_fnc_CSWR_is_valid_formation = {
 };
 
 
+THY_fnc_CSWR_is_playerNear = {
+	// This function searches for humam players around a specific unit (_unitTarget).
+	// Returns _isPlayerNear: bool.
+
+	params ["_unitTarget", "_kindOfPlayer", "_distLimiterPlayer"];
+	private ["_isPlayerNear", "_playersAlive"];
+
+	// Initial values:
+	_isPlayerNear = false;
+	_playersAlive = [];
+	// If the function must scan only for friendly players, do it:
+	if ( _kindOfPlayer isEqualTo "friendlyPlayers" ) then {
+		_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x && side _x == side _unitTarget };  // WIP - actually a friendly faction is not been considered here yet.
+	// Otherwise:
+	} else {
+		// If the function must scan all players, do it:
+		if ( _kindOfPlayer isEqualTo "allPlayers" ) then {
+			_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x };
+		};
+	};
+	// Check if some player is near to the unit-target:
+	{ if ( _x distance _unitTarget < _distLimiterPlayer ) then { _isPlayerNear = true; break } } forEach _playersAlive;
+	// Return:
+	_isPlayerNear;
+};
+
+
+THY_fnc_CSWR_is_spawn_paradrop = {
+	// This function checks if the spawn-points are paradrop type, and it updates the _spwnPos with the right drop altitude.
+	// Returns _return. Array: [bool, [y,x,z]].
+
+	params ["_spwns", "_spwnPos", "_isVeh", "_isAirCrew"];
+	private ["_return", "_isParadrop"];
+
+	// Initial values:
+	_isParadrop = false;
+	_return = [_isParadrop, _spwnPos];
+	// Escape:
+	if _isAirCrew exitWith { _return /* Returning... */};
+	// Declarations:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+	// If _spwns are the faction paradrop spawns, keep going:
+	if ( _spwns isEqualTo CSWR_spwnsParadropBLU || _spwns isEqualTo CSWR_spwnsParadropOPF || _spwns isEqualTo CSWR_spwnsParadropIND || _spwns isEqualTo CSWR_spwnsParadropCIV ) then { 
+		// Update the validation flag:
+		_isParadrop = true;
+		// Update the altitude of _spwnPos:
+		if !_isVeh then {
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropUnitAlt];
+		} else {
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropVehAlt];
+		};
+	};
+	// Preparing to return:
+	_return = [_isParadrop, _spwnPos];
+	// Return:
+	_return;
+};
+
+
 THY_fnc_CSWR_group_type_rules = {
 	// This function defines rules to each Group Type of a faction (through Erros Handling), and returns a "dictionary" to be used for another functions (e.g. Skills) later.
 	// Returns _grpInfo array. If it returns empty, it's because the group is invalid and can't be spawned.
@@ -1227,27 +1288,25 @@ THY_fnc_CSWR_group_type_rules = {
 };
 
 
-THY_fnc_CSWR_group_type_helicopter = {
-	// This function checks if the group belongs an helicopter group type.
-	// Returns _isHeli. Bool.
+THY_fnc_CSWR_group_type_isAirCrew = {
+	// This function returns if the group belongs an air group type.
+	// Returns _irAirCrew. Bool.
 
 	params ["_grpType"];
-	private ["_isHeli"];
+	private ["_irAirCrew"];
 
 	// Escape:
-	if ( isNil _grpType && _grpType isEqualTo "" ) exitWith { false };
+	if ( isNil _grpType && _grpType isEqualTo "" ) exitWith { false };  // WIP ----------------------- Should by || and not && instead?
 	// Initial values:
-	_isHeli = false;
+	_irAirCrew = false;
 	// Declarations:
 		// reserved space.
 	// Debug texts:
 		// reserved space.
-
 	// Main functionality:
-	if ( _grpType isEqualTo "heliL" || _grpType isEqualTo "heliH" ) then { _isHeli = true };
-
+	if ( _grpType isEqualTo "heliL" || _grpType isEqualTo "heliH" ) then { _irAirCrew = true };  // WIP including to check if is plane, helicopter 
 	// Return:
-	_isHeli;
+	_irAirCrew;
 };
 
 
@@ -1508,7 +1567,7 @@ THY_fnc_CSWR_veh_electronic_warfare = {
 	// This function sets the electronic warfare resources for vehicles.
 	// Returns nothing.
 
-	params ["_tag", "_veh", "_isVehAir"];
+	params ["_tag", "_veh", "_isAirCrew"];
 	private ["_isOn"];
 
 	// Escape:
@@ -1526,7 +1585,7 @@ THY_fnc_CSWR_veh_electronic_warfare = {
 		// reserved space.
 	// Main functionality:
 	_veh setVehicleReportOwnPosition _isOn;
-	if _isVehAir then { _veh setVehicleReceiveRemoteTargets true } else { _veh setVehicleReceiveRemoteTargets _isOn };
+	if _isAirCrew then { _veh setVehicleReceiveRemoteTargets true } else { _veh setVehicleReceiveRemoteTargets _isOn };
 	_veh setVehicleReportRemoteTargets _isOn;
 	// Return:
 	true;
@@ -1662,8 +1721,8 @@ THY_fnc_CSWR_gear_NVG = {
 	params ["_unit", "_grpType", "_grpSpec", "_tag", "_isMandatory"];
 	private ["_canNvgInfantry", "_canNvgParatroops", "_canNvgSnipers", "_newGear", "_oldGear"];
 
-	// Escape - part 1/2:
-	if ( _grpSpec isEqualTo "specCrew" ) exitWith {};  // Infantry heavy crew cannot use NVG.
+	// Escape > Any heavy crew cannot use NVG:
+	if ( _grpSpec in ["specHeavyCrew", "specParaHeavyCrew"] ) exitWith {};
 	// Initial values:
 	_canNvgInfantry = false;
 	_canNvgParatroops = false;
@@ -1682,12 +1741,8 @@ THY_fnc_CSWR_gear_NVG = {
 		case "IND": { _canNvgInfantry = CSWR_canNvgInfantryIND; _canNvgParatroops = CSWR_canNvgParatroopsIND; _canNvgSnipers = CSWR_canNvgSnipersIND; _newGear = CSWR_nvgDeviceIND };
 		case "CIV": { _canNvgInfantry = CSWR_canNvgCIV; _newGear = CSWR_nvgDeviceCIV };
 	};
-	// Escape - part 2/2:
-	// if there's a new gear, and that's the same of the unit original one, abort the replacement:
-	if ( _newGear isNotEqualTo "" && _newGear isEqualTo _oldGear ) exitWith {};
-
 	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
+	if _isMandatory then {
 		// Remove any possible gear:
 		_unit unlinkItem _oldGear;
 		_unit removeItem _oldGear;
@@ -1723,6 +1778,10 @@ THY_fnc_CSWR_gear_NVG = {
 			if _canNvgSnipers then { _unit linkItem _newGear };
 		};
 	};
+
+
+
+
 	// Return:
 	true;
 };
@@ -1733,7 +1792,7 @@ THY_fnc_CSWR_gear_facewear = {
 	// Returns nothing.
 
 	params ["_newGear", "_unit", "_grpType", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_oldGear"];
+	private ["_oldGear", "_genericGear"];
 
 	// Escape:
 		// Reserved space.
@@ -1743,34 +1802,35 @@ THY_fnc_CSWR_gear_facewear = {
 		// Reserved space.
 	// Declarations:
 	_oldGear = goggles _unit;  // if empty, returns "".
+	_genericGear = "";
 	// Debug texts:
 		// reserved space.
 
-	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
-		// if there's a new gear, and that's NOT the same of the unit original one:
-		if ( _newGear isNotEqualTo _oldGear ) then {
-			// Remove any possible gear:
-			removeGoggles _unit;
-			// Add the new gear:
-			_unit addGoggles _newGear;
-		};
-	// Otherwise, not mandatory:
-	} else {
-		// If editor is NOT trying to remove the gear by force:
-		if ( _newGear isNotEqualTo "REMOVED" ) then {
+	// If editor is NOT trying to remove the gear by force:
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+		// If the usage is mandatory:
+		if _isMandatory then {
 			// if there's a new gear, and that's NOT the same of the unit original one:
-			if ( _newGear isNotEqualTo _oldGear ) then { 
+			if ( _newGear isNotEqualTo _oldGear ) then {
 				// Remove any possible gear:
 				removeGoggles _unit;
 				// Add the new gear:
 				_unit addGoggles _newGear;
 			};
-		// Otherwise:
+		// Otherwise, not mandatory:
 		} else {
-			// Remove the gear:
-			removeGoggles _unit;
+			// if there's a new gear, and that's NOT the same of the current:
+			if ( _newGear isNotEqualTo "" /* && _oldGear isNotEqualTo "" */ && _newGear isNotEqualTo _oldGear ) then { 
+				// Remove any possible gear:
+				removeGoggles _unit;
+				// Add the new gear:
+				_unit addGoggles _newGear;
+			};
 		};
+	// Otherwise:
+	} else {
+		// Otherwise, force removal:
+		removeGoggles _unit;
 	};
 	// Return:
 	true;
@@ -1782,7 +1842,7 @@ THY_fnc_CSWR_gear_helmet = {
 	// Returns nothing.
 
 	params ["_newGear", "_unit", "_grpType", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_oldGear"];
+	private ["_oldGear", "_genericGear"];
 
 	// Escape:
 		// Reserved space.
@@ -1792,22 +1852,14 @@ THY_fnc_CSWR_gear_helmet = {
 		// Reserved space.
 	// Declarations:
 	_oldGear = headgear _unit;  // if empty, returns "".
+	_genericGear = "";
 	// Debug texts:
 			// reserved space.
 
-	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
-		// if there's a new gear, and that's NOT the same of the unit original one:
-		if ( _newGear isNotEqualTo _oldGear ) then { 
-			// Remove any possible gear:
-			removeHeadgear _unit;
-			// Add the new gear:
-			_unit addHeadgear _newGear;
-		};
-	// Otherwise, not mandatory:
-	} else {
-		// If editor is NOT trying to remove the gear by force:
-		if ( _newGear isNotEqualTo "REMOVED" ) then {
+	// If editor is NOT trying to remove the gear by force:
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+		// If the usage is mandatory:
+		if _isMandatory then {
 			// if there's a new gear, and that's NOT the same of the unit original one:
 			if ( _newGear isNotEqualTo _oldGear ) then { 
 				// Remove any possible gear:
@@ -1815,11 +1867,20 @@ THY_fnc_CSWR_gear_helmet = {
 				// Add the new gear:
 				_unit addHeadgear _newGear;
 			};
-		// Otherwise:
+		// Otherwise, not mandatory:
 		} else {
-			// Remove the gear:
-			removeHeadgear _unit;
+			// if there's a new gear, and that's NOT the same of the current:
+			if ( _newGear isNotEqualTo "" /* && _oldGear isNotEqualTo "" */ && _newGear isNotEqualTo _oldGear ) then { 
+				// Remove any possible gear:
+				removeHeadgear _unit;
+				// Add the new gear:
+				_unit addHeadgear _newGear;
+			};
 		};
+	// Otherwise, force removal:
+	} else {
+		// Remove the gear:
+		removeHeadgear _unit;
 	};
 	// Return:
 	true;
@@ -1831,7 +1892,7 @@ THY_fnc_CSWR_gear_uniform = {
 	// Returns nothing.
 
 	params ["_newGear", "_unit", "_grpType", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_oldGear"];
+	private ["_oldGear", "_genericGear"];
 
 	// Escape:
 		// Reserved space.
@@ -1841,30 +1902,43 @@ THY_fnc_CSWR_gear_uniform = {
 		// Reserved space.
 	// Declarations:
 	_oldGear = uniform _unit;  // if empty, returns "".
+	_genericGear = "U_BG_Guerilla2_1";
 	// Debug texts:
 		// reserved space.
 
-	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
-		// if there's a new gear, and that's NOT the same of the unit original one:
-		if ( _newGear isNotEqualTo _oldGear ) then {
-			// Transfer the old gear content to the new one:
-			["uniform", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
-		};
-	// Otherwise, not mandatory:
-	} else {
-		// If editor is NOT trying to remove the gear by force:
-		if ( _newGear isNotEqualTo "REMOVED" ) then {
-			// if there's a new gear, and that's NOT the same of the unit original one:
-			if ( _newGear isNotEqualTo _oldGear ) then {
+	// If editor is NOT trying to remove the gear by force:
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+		// If the usage is mandatory:
+		if _isMandatory then {
+			// If there's a new gear:
+			if (_newGear isNotEqualTo "" ) then {
+				// New gear is NOT the same of the current gear:
+				if ( _newGear isNotEqualTo _oldGear ) then {
+					// Transfer the old gear content to the new one:
+					["uniform", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+				};
+			// Otherwise, if editor hasn't a new gear declared:
+			} else {
+				// Check if the unit has no gear yet (inherited a possible editor's choice from other lower group class):
+				if ( _oldGear isEqualTo "" ) then {
+					// Add the generic gear:
+					_unit forceAddUniform _genericGear;
+					// Warning message:
+					["%1 LOADOUT > %2 units should be using UNIFORMS but in 'fn_CSWR_loadout.sqf' file you didn't set an uniform classname for them. For script integrity, CSWR sets a generic one.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+				};
+			};
+		// Otherwise, not mandatory:
+		} else {
+			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
+			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
 				// Transfer the old gear content to the new one:
 				["uniform", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
 			};
-		// Otherwise:
-		} else {
-			// Remove the gear:
-			removeUniform _unit;
 		};
+	// Otherwise, force removal:
+	} else {
+		// Remove the gear:
+		removeUniform _unit;
 	};
 	// Return:
 	true;
@@ -1876,7 +1950,7 @@ THY_fnc_CSWR_gear_vest = {
 	// Returns nothing.
 
 	params ["_newGear", "_unit", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_oldGear"];
+	private ["_oldGear", "_genericGear"];
 
 	// Escape:
 		// Reserved space.
@@ -1886,30 +1960,43 @@ THY_fnc_CSWR_gear_vest = {
 		// Reserved space.
 	// Declarations:
 	_oldGear = vest _unit;  // if empty, returns "".
+	_genericGear = "V_Chestrig_blk";
 	// Debug texts:
 		// reserved space.
 
-	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
-		// if there's a new gear, and that's NOT the same of the unit original one:
-		if ( _newGear isNotEqualTo _oldGear ) then {
-			// Transfer the old gear content to the new one:
-			["vest", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
-		};
-	// Otherwise, not mandatory:
-	} else {
-		// If editor is NOT trying to remove the gear by force:
-		if ( _newGear isNotEqualTo "REMOVED" ) then {
-			// if there's a new gear, and that's NOT the same of the unit original one:
-			if ( _newGear isNotEqualTo _oldGear ) then {
+	// If editor is NOT trying to remove the gear by force:
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+		// If the usage is mandatory:
+		if _isMandatory then {
+			// If there's a new gear:
+			if (_newGear isNotEqualTo "" ) then {
+				// New gear is NOT the same of the current gear:
+				if ( _newGear isNotEqualTo _oldGear ) then {
+					// Transfer the old gear content to the new one:
+					["vest", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+				};
+			// Otherwise, if editor hasn't a new gear declared:
+			} else {
+				// Check if the unit has no gear yet (inherited a possible editor's choice from other lower group class):
+				if ( _oldGear isEqualTo "" ) then {
+					// Add the generic gear:
+					_unit addVest _genericGear;
+					// Warning message:
+					["%1 LOADOUT > Some %2 units should be using VEST but in 'fn_CSWR_loadout.sqf' file you didn't set a vest classname for them. For script integrity, CSWR sets a generic one.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+				};
+			};
+		// Otherwise, not mandatory:
+		} else {
+			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
+			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
 				// Transfer the old gear content to the new one:
 				["vest", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
 			};
-		// Otherwise:
-		} else {
-			// Remove the gear:
-			removeVest _unit;
 		};
+	// Otherwise, force removal:
+	} else {
+		// Remove the gear:
+		removeVest _unit;
 	};
 	// Return:
 	true;
@@ -1921,298 +2008,58 @@ THY_fnc_CSWR_gear_backpack = {
 	// Returns nothing.
 
 	params ["_newGear", "_unit", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_oldGear"];
+	private ["_oldGear", "_genericGear"];
 
-	// Escape > Infantry Heavy Crew never will get backpack:
-	if ( _grpSpec isEqualTo "specCrew" ) exitWith {};
+	// Escape > Infantry (ANY) Crew never get backpack (not including passagers):
+	if ( !isNull (objectParent _unit) && { _unit isEqualTo driver (vehicle _unit) || _unit isEqualTo gunner (vehicle _unit) || _unit isEqualTo commander (vehicle _unit) } ) exitWith {};
+		// Escape > Infantry Heavy Crew never get backpack (not including passagers):
+		//if ( _grpSpec in ["specHeavyCrew", "specParaHeavyCrew"] ) exitWith {};
 	// Initial values:
 		// Reserved space.
 	// Errors handling:
 		// Reserved space.
 	// Declarations:
 	_oldGear = backpack _unit;  // if empty, returns "".
+	_genericGear = "B_Carryall_blk";
 	// Debug texts:
 		// reserved space.
 
-	// If the usage is mandatory:
-	if _isMandatory then {                                                                     // WIP e se vem o valor "REMOVED"???
-		// if there's a new gear, and that's NOT the same of the unit original one:
-		if ( _newGear isNotEqualTo _oldGear ) then {
-			// Transfer the old gear content to the new one:
-			["backpack", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
-		};
-	// Otherwise, not mandatory:
-	} else {
-		// If editor is NOT trying to remove the gear by force:
-		if ( _newGear isNotEqualTo "REMOVED" ) then {
-			// if there's a new gear, and that's NOT the same of the unit original one:
-			if ( _newGear isNotEqualTo _oldGear ) then {
+	// If editor is NOT trying to remove the gear by force:
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+		// If the usage is mandatory:
+		if _isMandatory then {
+			// Any crew unit never take a backpack:
+				// There is already a escape in this function.
+			// If there's a new gear:
+			if (_newGear isNotEqualTo "" ) then {
+				// New gear is NOT the same of the current gear:
+				if ( _newGear isNotEqualTo _oldGear ) then {
+					// Transfer the old gear content to the new one:
+					["backpack", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+				};
+			// Otherwise, if editor hasn't a new gear declared:
+			} else {
+				// Check if the unit has no gear yet (inherited a possible editor's choice from other lower group class):
+				if ( _oldGear isEqualTo "" ) then {
+					// Add the generic gear:
+					_unit addBackpack _genericGear;
+					// Warning message:
+					["%1 LOADOUT > Some %2 units should be using BACKPACKS but in 'fn_CSWR_loadout.sqf' file you didn't set a backpack classname for them. For script integrity, CSWR sets a generic one.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+				};
+			};
+		// Otherwise, not mandatory:
+		} else {
+			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
+			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
 				// Transfer the old gear content to the new one:
 				["backpack", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
 			};
-		// Otherwise:
-		} else {
-			// Remove the gear:
-			removeBackpack _unit;
 		};
-	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_selector = {
-	// This function <doc string>.
-	// Returns nothing.
-
-	params ["_tag", "_grp", "_grpType", "_veh", "_isVeh", "_isVehAir", "_isParadrop"];
-	private ["_vehType", "_wait"];
-
-	// Escape:
-		// reserved space.
-	// Initial values:
-	_vehType = [];
-	// Declarations:
-	_wait = 0.3;
-	// Debug texts:
-		// reserved space.
-		
-	// Ground forces:
-	if !_isVehAir then {
-		// Infantry air insertion:
-		if _isParadrop then {
-			// Paradrop vehicle:
-			if _isVeh then {
-				// Check the vehicle type:
-				_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
-				// by heavy vehicle:
-				if ( _vehType in CSWR_vehGroundHeavy ) then {
-					// Apply the loadout:
-					{ [_tag, _x, _grpType, "specParaCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-				// by regular vehicle:
-				} else {
-					// Apply the loadout:
-					{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-				};
-			// Paradrop soldiers:
-			} else {
-				// Apply the loadout:
-				{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-			};
-		// Infantry ground insertion:
-		} else {
-			// If vehicle:
-			if _isVeh then {
-				// Check the vehicle type:
-				_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
-				// by heavy vehicle:
-				if ( _vehType in CSWR_vehGroundHeavy ) then {
-					// Apply the loadout:
-					{ [_tag, _x, _grpType, "specCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-				// by regular vehicle:
-				} else {
-					// Apply the loadout:
-					{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-				};
-			// Soldiers by foot:
-			} else {
-				// Apply the loadout:
-				{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
-			};
-		};
-
-	// Air forces:
+	// Otherwise, force removal:
 	} else {
-		// Loadout > Air Crew:
-		// Soon...
+		// Remove the gear:
+		removeBackpack _unit;
 	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_infantry_basic = {
-	// This function organizes the basic of all infantry classes loadout, including: heavy crew, sniper groups, and paratroopers.
-	// Returns nothing.
-
-	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_unit", "_grpType", "_grpSpec", "_tag"];
-	//private ["", "", ""];
-
-	// Escape:
-		// reserved space.
-	// Initial values:
-		// reserved space.
-	// Declarations:
-		// reserved space.
-	// Debug texts:
-		// reserved space.
-
-	// Uniform:
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-	// Helmet / Headgear:
-	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-	// If unit is NOT member of Sniper group:
-	if ( _grpType isNotEqualTo "teamS" ) then {
-		// NightVision:
-		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
-	};
-	// Vest / Balistic protection:
-	[_newVest, _unit, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
-	// If unit is NOT a crew and NOT a parachuter:
-	if ( !(_grpSpec in ["specCrew", "specParaCrew", "specPara"]) ) then {
-		// Backpack:
-		[_newBackpack, _unit, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
-	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_infantry_heavy_crew = {
-	// This function organizes exclusively the infantry heavy crew loadout.
-	// Returns nothing.
-
-	params ["_newHelmet", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
-	private ["_veh"];
-
-	// Escape > If the unit speciality is not heavy crew, abort:
-	if ( _grpSpec isNotEqualTo "specCrew" &&  _grpSpec isNotEqualTo "specParaCrew" ) exitWith {};
-	// Initial values:
-		// reserved space.
-	// Debug texts:
-		// reserved space.
-	// Declarations:
-	_veh = vehicle _unit;
-	// if the unit is crew and not passager:
-	if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
-		// Final helmet validations:
-		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-		// Final vest validations:
-		[_newVest, _unit, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
-	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_infantry_sniper = {
-	// This function organizes exclusively the infantry sniper group loadout.
-	// Returns nothing.
-
-	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_newRif", "_newRifMag", "_newRifOptics", "_newRifRail", "_newRifMuzzle", "_newRifBipod", "_newBinoc", "_unit", "_grpType", "_grpSpec", "_tag"];
-	private ["_genericBinoc", "_genericPistol", "_genericPistolAmmo"];
-
-	// Escape:
-	if ( _grpType isNotEqualTo "teamS" ) exitWith {};
-	// Initial values:
-		// Reserved space.
-	// Declarations:
-	_genericBinoc      = "Binocular";
-	_genericPistol     = "hgun_P07_F";
-	_genericPistolAmmo = "16Rnd_9x21_Mag";
-	
-	// Helmet / Headgear:
-	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-	// Backpack:
-	[_newBackpack, _unit, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
-	// Uniform:
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-	// Vest / Ballistic protection:
-	// Important: mandatory for sniper group members.
-	[_newVest, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
-	// NightVision:
-	[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
-	// Rifle setup:
-	[_unit, _newRif, _newRifMag, _newRifOptics, _newRifRail, _newRifMuzzle, _newRifBipod] call THY_fnc_CSWR_weaponry_sniper;
-	// Binoculars:
-	// If there is an editor's choice, and the editor is not trying to force the binoculars removal.
-	if ( _newBinoc isNotEqualTo "" && _newBinoc isNotEqualTo "REMOVED" ) then {
-		// Remove the old one if it exists:
-		_unit removeWeapon (binocular _unit);
-		// New binoculars replacement:
-		_unit addWeapon _newBinoc;
-	// Otherwise:
-	} else { 
-		// If the original unit has no binoculars, or editor's trying to force removal, add it (mandatory):
-		// Important: when group has 2 members, one of them will take the spotter role and will cosmetically use the binoculars.
-		if ( binocular _unit isEqualTo "" || _newBinoc isEqualTo "REMOVED" ) then {
-			// Adding a generic one:
-			_unit addWeapon _genericBinoc;
-			// Warning message:
-			if ( _newBinoc isEqualTo "REMOVED" ) then {
-				["%1 WATCH > At least for %2, you're trying to remove binoculars but it's mandatory for Sniper group members. Fix it in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
-			} else {
-				["%1 WATCH > %2 '%3' needs binoculars to watch, so each member has one now.", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
-			};
-		};
-	};
-	// Pistol:
-	// If there's NO pistol (mandatory for sniper group):
-	if ( handgunWeapon _unit isEqualTo "" ) then {
-		// Add a generic pistol:
-		_unit addWeapon _genericPistol;
-		// Add at least one magazine:
-		_unit addHandgunItem _genericPistolAmmo;
-	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_speciality_parachuting = {
-	// This function organizes the loadout of any group with parachuting specialty.
-	// Returns nothing.
-
-	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_newParachute", "_unit", "_grpType", "_grpSpec"];
-	private ["_txt1", "_genericGoggles", "_genericChute"];
-
-	// Escape - part 1/2:
-	if ( !(_grpSpec in ["specPara", "specParaCrew"]) ) exitWith {};
-	// Initial values:
-		// Reserved space.
-	// Debug texts:
-	_txt1 = format ["Fix it in 'fn_CSWR_loadout.sqf' file. Each %1 group member received a generic parachute-bag.", _tag];
-	// Declarations:
-	_genericGoggles = "G_Lowprofile";
-	_genericChute   = "B_Parachute";
-	
-	// if parachuter by foot:
-	if ( _grpSpec isEqualTo "specPara" ) then {
-		// Backpack (Parachute):
-		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles.
-		// if editor's choice is not the same of original unit backpack, or the original unit has no backpack:
-		if ( _newParachute isNotEqualTo (backpack _unit) || (backpack _unit) isEqualTo "" ) then {
-			// if editor has not a new parachute-bag, or they're trying to remove the parachute by force:
-			if ( _newParachute isEqualTo "" || _newParachute isEqualTo "REMOVED" ) then { 
-				// Warning messages:
-				if ( _newParachute isEqualTo "REMOVED" ) then {
-						["%1 PARADROP > %2 > DON'T use the command 'REMOVED' for paratrooper parachute-bag. %3", CSWR_txtWarningHeader, _tag, _txt1] call BIS_fnc_error; sleep 5;
-				} else {
-						["%1 PARADROP > %2 > For paratroopers and parachuters are mandatory to set a parachute-bag. %3", CSWR_txtWarningHeader, _tag, _txt1] call BIS_fnc_error; sleep 5;
-				};
-				// Add the generic parachute bag:
-				_newParachute = _genericChute;
-			};
-			// Give that, always setting this 'backpack' as mandatory (true) to avoid the unit's death by free fall:
-			[_newParachute, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
-		};
-		// Goggles / Facewear:
-		// Important: mandatory for paratroopers/parachuters, but ignored by people inside vehicles.
-		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
-		// Escape - part 2/2:
-		if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
-		// Vest / Ballistic protection:
-		// Important: mandatory for paratroopers, but not for parachuters. Also it'll ignored by soldiers inside vehicles.
-		[_newVest, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
-		// Helmet:
-		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-		// NightVision:
-		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
-	};
-	// Uniform
-	// Important: paratroopers and heavy-crew-in-paradrop can has the same specific uniform.
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-
 	// Return:
 	true;
 };
@@ -2222,13 +2069,12 @@ THY_fnc_CSWR_weaponry_sniper = {
 	// This function replace the old sniper rifle for new stuff. Parameters empties result no changes.
 	// Returns nothing.
 
-	params ["_unit", "_rifle", "_rifleNewMag", "_rifleNewOptics", "_rifleNewRail", "_rifleNewMuzzle", "_rifleNewBipod", ["_magAmount", 6]];
-	private ["_tag", "_isValidClassMags", "_isValidClassRifle", "_rifleOldAccessories", "_rifleOldMag"];
+	params ["_tag", "_unit", "_rifle", "_rifleNewMag", "_rifleNewOptics", "_rifleNewRail", "_rifleNewMuzzle", "_rifleNewBipod", ["_magAmount", 6]];
+	private ["_isValidClassMags", "_isValidClassRifle", "_rifleOldAccessories", "_rifleOldMag"];
 
 	// Initial values:
 		// Reserved space.
 	// Declarations:
-		_tag = [side _unit] call THY_fnc_CSWR_convertion_faction_to_tag;
 		_isValidClassMags = [_tag, "CfgMagazines", "sniper magazine", "of sniper rifle magazines", [_rifleNewMag]] call THY_fnc_CSWR_is_valid_classname;
 		_isValidClassRifle = [_tag, "CfgWeapons", "sniper rifle or weapon gear", "of sniper weapon stuff", [_rifle, _rifleNewOptics, _rifleNewRail, _rifleNewMuzzle, _rifleNewBipod]] call THY_fnc_CSWR_is_valid_classname;
 		_rifleOldAccessories = _unit weaponAccessories (primaryWeapon _unit);  // [silencer, laserpointer/flashlight, optics, bipod] like ["","acc_pointer_IR","optic_Aco",""]
@@ -2327,6 +2173,347 @@ THY_fnc_CSWR_weaponry_sniper = {
 };
 
 
+THY_fnc_CSWR_loadout_infantry_basicGroup = {
+	// This function organizes the basic of all infantry classes loadout, including: heavy crew, sniper groups, and paratroopers. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_unit", "_grpType", "_grpSpec", "_tag"];
+	//private ["", "", ""];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+		// reserved space.
+	// Declarations:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+
+	// Uniform:
+	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	// Helmet / Headgear:
+	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+	// If unit is NOT member of Sniper group:
+	if ( _grpType isNotEqualTo "teamS" ) then {
+		// NightVision:
+		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	};
+	// Vest / Balistic protection:
+	[_newVest, _unit, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
+	// If unit is NOT a crew and NOT a parachuter:
+	if ( !(_grpSpec in ["specHeavyCrew", "specParaHeavyCrew", "specPara"]) ) then {
+		// Backpack:
+		[_newBackpack, _unit, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_infantry_heavyCrewGroup = {
+	// This function organizes exclusively the infantry heavy crew loadout. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newHelmet", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
+	private ["_veh"];
+
+	// Escape > If the unit speciality is NOT heavy crew, abort:
+	if ( !(_grpSpec in ["specHeavyCrew", "specParaHeavyCrew"]) ) exitWith {};
+	// Initial values:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+	// Declarations:
+	_veh = vehicle _unit;
+	// if the unit is crew and not passager:
+	if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
+		// Final helmet validations:
+		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+		// Final vest validations:
+		[_newVest, _unit, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_infantry_sniperGroup = {
+	// This function organizes exclusively the infantry sniper group loadout. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_newRif", "_newRifMag", "_newRifOptics", "_newRifRail", "_newRifMuzzle", "_newRifBipod", "_newBinoc", "_unit", "_grpType", "_grpSpec", "_tag"];
+	private ["_genericBinoc", "_genericPistol", "_genericPistolAmmo"];
+
+	// Escape:
+	if ( _grpType isNotEqualTo "teamS" ) exitWith {};
+	// Initial values:
+		// Reserved space.
+	// Declarations:
+	_genericBinoc      = "Binocular";
+	_genericPistol     = "hgun_P07_F";
+	_genericPistolAmmo = "16Rnd_9x21_Mag";
+	
+	// Helmet / Headgear:
+	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+	// Backpack:
+	[_newBackpack, _unit, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
+	// Uniform:
+	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	// Vest / Ballistic protection:
+	// Important: mandatory for sniper group members.
+	[_newVest, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
+	// NightVision:
+	[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	// Rifle setup:
+	[_tag, _unit, _newRif, _newRifMag, _newRifOptics, _newRifRail, _newRifMuzzle, _newRifBipod] call THY_fnc_CSWR_weaponry_sniper;
+	// Binoculars:
+	// If there is an editor's choice, and the editor is not trying to force the binoculars removal.
+	if ( _newBinoc isNotEqualTo "" && _newBinoc isNotEqualTo "REMOVED" ) then {
+		// Remove the old one if it exists:
+		_unit removeWeapon (binocular _unit);
+		// New binoculars replacement:
+		_unit addWeapon _newBinoc;
+	// Otherwise:
+	} else { 
+		// If the original unit has no binoculars, or editor's trying to force removal, add it (mandatory):
+		// Important: when group has 2 members, one of them will take the spotter role and will cosmetically use the binoculars.
+		if ( binocular _unit isEqualTo "" || _newBinoc isEqualTo "REMOVED" ) then {
+			// Adding a generic one:
+			_unit addWeapon _genericBinoc;
+			// Warning message:
+			if ( _newBinoc isEqualTo "REMOVED" ) then {
+				["%1 WATCH > At least for %2, you're trying to remove binoculars but it's mandatory for Sniper group members. Fix it in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
+			} else {
+				["%1 WATCH > %2 '%3' needs binoculars to watch, so each member has one now.", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
+			};
+		};
+	};
+	// Pistol:
+	// If there's NO pistol (mandatory for sniper group):
+	if ( handgunWeapon _unit isEqualTo "" ) then {
+		// Add a generic pistol:
+		_unit addWeapon _genericPistol;
+		// Add at least one magazine:
+		_unit addHandgunItem _genericPistolAmmo;
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_speciality_parachuting = {
+	// This function organizes the loadout of any group with parachuting specialty. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec"];
+	private ["_txt1", "_genericGoggles", "_genericChute"];
+
+	// Escape - part 1/2:
+	// If the unit doesn't have some parachute speciality, abort:
+	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew"]) ) exitWith {};
+	// Initial values:
+		// Reserved space.
+	// Debug texts:
+	_txt1 = format ["Fix it in 'fn_CSWR_loadout.sqf' file. Each %1 group member received a generic parachute-bag.", _tag];
+	// Declarations:
+	_genericGoggles = "G_Lowprofile";
+	_genericChute   = "B_Parachute";
+	
+	// if parachuter in free fall:
+	if ( isNull (objectParent _unit) ) then {
+		// Backpack (Parachute):
+		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
+		[_genericChute, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
+		// Goggles / Facewear:
+		// Important: mandatory for paratroopers/parachuters, but ignored by people inside vehicles.
+		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
+		// Escape - part 2/2:
+		if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
+		// Vest / Ballistic protection:
+		// Important: mandatory for paratroopers, but not for parachuters. Also it'll ignored by soldiers inside vehicles.
+		[_newVest, _unit, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
+		// Helmet:
+		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+		// NightVision:
+		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	};
+	// Uniform
+	// Important: parachuters and any crew executing paradrop can has the same specific uniform.
+	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_selector = {
+	// This function understands who is the group, its class and context, and select the right loadout must be applied for each group member.
+	// Returns nothing.
+
+	params ["_tag", "_grp", "_grpType", "_veh", "_isVeh", "_isAirCrew", "_isParadrop"];
+	private ["_vehType", "_wait"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_vehType = [];
+	// Declarations:
+	_wait = 0.3;
+	// Debug texts:
+		// reserved space.
+		
+	// Belong to Ground forces:
+	if !_isAirCrew then {
+		// Infantry air insertion:
+		if _isParadrop then {
+			// Paradrop vehicle:
+			if _isVeh then {
+				// Check the vehicle type:
+				_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
+				// by heavy vehicle:
+				if ( _vehType in CSWR_vehGroundHeavy ) then {
+					// Apply the loadout:
+					{ [_tag, _x, _grpType, "specParaHeavyCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				// by regular vehicle:
+				} else {
+					// Apply the loadout:
+					{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				};
+			// Paradrop soldiers:
+			} else {
+				// Apply the loadout:
+				{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+			};
+		// Infantry ground insertion:
+		} else {
+			// If vehicle:
+			if _isVeh then {
+				// Check the vehicle type:
+				_vehType = (_veh call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
+				// by heavy vehicle:
+				if ( _vehType in CSWR_vehGroundHeavy ) then {
+					// Apply the loadout:
+					{ [_tag, _x, _grpType, "specHeavyCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				// by regular vehicle:
+				} else {
+					// Apply the loadout:
+					{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;  // Important: don't apply "specPara" in crew, even when they are paratroopers.
+				};
+			// Soldiers by foot:
+			} else {
+				// Apply the loadout:
+				{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+			};
+		};
+
+	// Belong to Air forces:
+	} else {
+		// Loadout > Air Crew:
+		//{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;   // WIP ...
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_base_service_station = {
+	// This function provides rearming, refueling and repairing for AI vehicles, and health for crewmen.
+	// Returns nothing.
+
+	params ["_spwns", "_tag", "_grpType", "_grp", "_veh", "_isHeli", "_destType", "_behavior"];
+	private ["_time", "_wait"];
+
+	// Escape:
+	if ( isNull _grp || !alive _veh ) exitWith {};
+	// Initial values:
+	_time = 0;
+	// Declarations:
+	_wait = 30;
+	// Debug texts:
+		// reserved space.
+	// Main functionality:
+	_veh engineOn false;
+	sleep _wait;
+	// Crew health:
+		if ( !alive _veh) exitWith {};  // escape.
+		{ _x setDamage 0 } forEach (units _grp select { alive _x });
+		sleep _wait;
+	// Repairing:
+		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
+		_veh setDamage 0;
+		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _veh];
+		sleep _wait;
+	// Refueling:
+		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
+		[_veh, 1] remoteExec ["setFuel", _veh];  //the same as "_veh setFuel 1;" but for multiplayer when the variable (setFuel) is not global variable.
+		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_refuel.wss", _veh];
+		sleep _wait;
+	// Rearming:
+		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
+		[_veh, 1] remoteExec ["setVehicleAmmo", _veh];  //the same as "_veh setVehicleAmmo 1;" but for multiplayer when the variable (setVehicleAmmo) is not global variable.
+		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_rearm.wss", _veh];
+		sleep _wait;
+	// Preparing to return to the battle:
+	_veh engineOn true;
+	sleep _wait;
+	// If helicopter:
+	if _isHeli then {
+		// Dramatization breath:
+		_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 10; time > _time };
+		// Debug message:
+		if CSWR_isOnDebugGlobal then { systemChat format ["%1 After maintenance services, %2 '%3' helicopter's BACK TO DUTY!", CSWR_txtDebugHeader, _tag, str _grp] };
+	// Otherwise:
+	} else {
+		// Reserved space.
+	 };
+	// Return to duty:
+	[_spwns, _destType, _tag, _grpType, _grp, _behavior, true, _isHeli] spawn THY_fnc_CSWR_go;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_veh_condition = {
+	// This function checks the vehicle and its crew conditon (health, ammo, fuel, maintenance).
+	// Return _shouldRTB. Bool.
+
+	params["_grp", "_areaToPass", "_isHeli"];
+	private["_shouldRTB", "_veh", "_driver", "_gunner"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_shouldRTB = false;
+	// Declarations:
+	_tag = [side (leader _grp)] call THY_fnc_CSWR_convertion_faction_to_tag;
+	_veh = vehicle (leader _grp);
+	_driver = driver _veh;
+	_gunner = gunner _veh;
+	// Debug texts:
+		// reserved space.
+	// Waiting to the next waypoint:
+	waitUntil {
+		// If helicopter:
+		if _isHeli then {
+			// Breath for the next loop check:
+			sleep 10;
+			// Debug message > If helicopter is flighting (over 1 meter high):
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && _isHeli && ((getPos _veh) # 2) > 1 ) then {
+				["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh] call BIS_fnc_error;
+			};
+			// Allows the heli to go to the next waypoint:
+			isNull _grp || _veh distance _areaToPass < 200 || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1;
+		// Otherwise:
+		} else {
+			// Reserved space for other types of vehicles.
+		};
+	};
+	// If the vehicle or crew has some of these conditions, the next waypoint must be the base:
+	if ( damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 ) then { _shouldRTB = true };
+	// Return:
+	_shouldRTB;
+};
+
+
 THY_fnc_CSWR_spawn_type_checker = {
 	// This function validates if the group type selected is abled to spawn in a specific spawnpoint-type.
 	// Returns _isValid. Bool.
@@ -2379,7 +2566,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Returns nothing.
 
 	params ["_spwns", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destType"];
-	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPos", "_paradrop", "_isParadrop", "_bookingInfo", "_isBooked", "_serverBreath", "_blockers", "_time", "_nvg", "_faction", "_tag", "_grp", "_grpType", "_grpClasses", "_isVehAir", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3"];
+	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPosChecker", "_spwnPos", "_isParadrop", "_bookingInfo", "_isBooked", "_serverBreath", "_blockers", "_time", "_nvg", "_faction", "_tag", "_grp", "_grpType", "_grpClasses", "_isAirCrew", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3"];
 
 	// Escape:
 	if ( _grpInfo isEqualTo [] ) exitWith {};
@@ -2389,8 +2576,8 @@ THY_fnc_CSWR_spawn_and_go = {
 	_spwn = "";
 	_bookingInfo = [];
 	_isBooked = false;
+	_spwnPosChecker = [];
 	_spwnPos = [];
-	_paradrop = [];
 	_isParadrop = false;
 	_serverBreath = 0;
 	_blockers = [];
@@ -2399,15 +2586,15 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Errors handling:
 		// reserved space.
 	// Declarations:
-	_faction       = _grpInfo # 0;
-	_tag           = _grpInfo # 1;
-	_grp           = _grpInfo # 2;
-	_grpType       = _grpInfo # 3;
+	_faction    = _grpInfo # 0;
+	_tag        = _grpInfo # 1;
+	_grp        = _grpInfo # 2;
+	_grpType    = _grpInfo # 3;
 	_grpClasses = _grpInfo # 4;
-	_isVehAir      = [_grpType] call THY_fnc_CSWR_group_type_helicopter;
-	_grpSize       = count _grpClasses;  // debug proposes.
-	_requester     = if _isVeh then {"vehicle"} else {"group"};
-	_safeDis       = 20;
+	_isAirCrew  = [_grpType] call THY_fnc_CSWR_group_type_isAirCrew;
+	_grpSize    = count _grpClasses;  // debug proposes.
+	_requester  = if _isVeh then {"vehicle"} else {"group"};
+	_safeDis    = 20;
 	// Debug texts:
 	_txt1 = format ["A %1 %2 has an error in 'fn_CSWR_population.sqf' file.", _tag, _requester];
 	_txt2 = format ["For script integrity, the %1 WON'T SPAWN!", _requester];
@@ -2511,10 +2698,10 @@ THY_fnc_CSWR_spawn_and_go = {
 		_serverBreath = ((abs(CSWR_serverMaxFPS-diag_fps) / (CSWR_serverMaxFPS-CSWR_serverMinFPS)) ^ 2) * 2;  // ((abs(FPSMAX-diag_fps)/(FPSMAX-FPSLIMIT))^2)*MAXDELAY;
 		// Select a spawn:
 		_spwn = selectRandom _spwns;
-		// Check if they will be paradrop (group and vehicle):
-		_paradrop = [_spwns, markerPos _spwn, _isVeh, _isVehAir] call THY_fnc_CSWR_is_spawn_paradrop;
-		_isParadrop = _paradrop # 0;
-		_spwnPos = _paradrop # 1;
+		// Check if they will be paradrop (group and vehicle), regarding the answer, it returns the spawn position (_spwnPos):
+		_spwnPosChecker = [_spwns, markerPos _spwn, _isVeh, _isAirCrew] call THY_fnc_CSWR_is_spawn_paradrop;
+		_isParadrop = _spwnPosChecker # 0;
+		_spwnPos = _spwnPosChecker # 1;
 
 		// If NOT vehicle:
 		if !_isVeh then {
@@ -2530,7 +2717,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				// People on ground:
 				{ _grp createUnit [_x, _spwnPos, [], 20, "NONE"]; sleep _serverBreath } forEach _grpClasses;
 			} else {
-				// Parachuters:
+				// People on air (parachuters):
 				{ _grp createUnit [_x, _spwnPos, [], 200, "NONE"]; sleep _serverBreath } forEach _grpClasses;
 			};
 			// Not a good performance solution at all (by GOM, 2014 July):
@@ -2539,19 +2726,19 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Otherwise, if vehicle:
 		} else {
 
-			// BOOKING A SPAWN FOR VEHICLE:
-			// Looping to booking a spawn-point (exclusively for vehicles to avoid vehicle explosions by instant collision):
-			while { true } do {
-				// Try to booking a spawn-point for ground vehicle:
-				if !_isVehAir then {
-					_bookingInfo = ["BOOKING_SPAWNVEH", _tag, _spwns, 10, 5] call THY_fnc_CSWR_marker_booking;
-				// Otherwise, try to booking a spawn-point (helipad) for helicopter:
+			// BOOKING A GROUND SPAWN FOR VEHICLE:
+			// Looping to booking a spawn-point (exclusively for vehicles in GROUND SPAWNS to avoid vehicle explosions by instant collision):
+			while { !_isParadrop } do {
+				// If ground crew:
+				if !_isAirCrew then {
+					_bookingInfo = ["BOOKING_SPAWNVEH", _spwnPos, _tag, _spwns, 10, 5] call THY_fnc_CSWR_marker_booking;
+				// Otherwise, if air crew:
 				} else {
-					_bookingInfo = ["BOOKING_SPAWNHELI", _tag, _spwns, 10, 20] call THY_fnc_CSWR_marker_booking;
+					_bookingInfo = ["BOOKING_SPAWNHELI", _spwnPos, _tag, _spwns, 10, 20] call THY_fnc_CSWR_marker_booking;
 				};
 				// Which marker to spawn:
 				_spwn = _bookingInfo # 0;
-				// spawn position:
+				// Spawn position:
 				_spwnPos = _bookingInfo # 1;  // [x,y,z]
 				// Is booked?
 				_isBooked = _bookingInfo # 2;
@@ -2560,7 +2747,7 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Debug message:
 					if CSWR_isOnDebugGlobal then {
 						// If ground vehicle:
-						if !_isVehAir then {
+						if !_isAirCrew then {
 							["%1 VEHICLE > A %2 vehicle selected a spawn-point already booked for another vehicle. Next try soon...", CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
 						// Otherwise, if helicopter:
 						} else {
@@ -2577,8 +2764,9 @@ THY_fnc_CSWR_spawn_and_go = {
 			};  // While-loop ends.
 
 			// SPAWNING THE VEHICLE:
-			if !_isVehAir then {
-				// If the ground vehicle will spawn on ground:
+			// If not air vehicle:
+			if !_isAirCrew then {
+				// If the vehicle will spawn on ground:
 				if !_isParadrop then {
 					// Find an empty place near to the ground spawn-point:
 					_spwnPos = _spwnPos findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in vehicle explosions.
@@ -2633,16 +2821,16 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Additional CPU Breath for all vehicles:
 			sleep _serverBreath;
 			// Only vehicle config > Features:
-			[_tag, _veh, _isVehAir] call THY_fnc_CSWR_veh_electronic_warfare;
+			[_tag, _veh, _isAirCrew] call THY_fnc_CSWR_veh_electronic_warfare;
 		};
 
-		// RIGHT AFTER THE SPAWN (GROUP OR VEHICLE):
+		// RIGHT AFTER THE SPAWN:
 		// Update the _grpInfo:
 		_grpInfo set [2, _grp];
 		// Group/Vehicle config > Server performance:
 		_grp deleteGroupWhenEmpty true;
-		// Loadout seletor:
-		[_tag, _grp, _grpType, _veh, _isVeh, _isVehAir, _isParadrop] call THY_fnc_CSWR_loadout_selector;
+		// Loadout selector:
+		[_tag, _grp, _grpType, _veh, _isVeh, _isAirCrew, _isParadrop] call THY_fnc_CSWR_loadout_selector;
 		// Group/Vehicle config > Units skills:
 		[_grpType, _grp, _destType] call THY_fnc_CSWR_unit_skills;
 		// Only group config > Formation:
@@ -2659,7 +2847,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			} forEach allCurators;
 		};
 		// Only helicopter config > Takeoff delay:
-		if _isVehAir then {
+		if _isAirCrew then {
 			// Wait a bit:
 			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
 			// Debug message:
@@ -2712,7 +2900,7 @@ THY_fnc_CSWR_spawn_and_go = {
 
 		// WAYPOINTS SECTION:
 		// Group/Vehicle config > Move:
-		[_spwns, _destType, _tag, _grpType, _grp, _behavior, _isVeh, _isVehAir] spawn THY_fnc_CSWR_go;
+		[_spwns, _destType, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew] spawn THY_fnc_CSWR_go;
 
 		// UNDO THE BOOKING:
 		// if vehicle:
@@ -2727,7 +2915,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				if CSWR_isOnDebugGlobal then { systemChat format ["%1 BOOKING > A %2 vehicle (or its wreck) has been delete over a spawn-point to preserve the spawn integrity.", CSWR_txtDebugHeader, _tag, _spwn]	};
 			};
 			// If ground vehicle:
-			if !_isVehAir then {
+			if !_isAirCrew then {
 				// Undo the spawn booking:
 				["BOOKING_SPAWNVEH", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 				// Debug message:
@@ -2930,166 +3118,6 @@ THY_fnc_CSWR_add_vehicle = {
 	sleep 10;  // CRITICAL: helps to avoid veh colissions and explosions at beggining of the match. <10 = heavy veh can blow up in spawn. <5 = any veh can blow up in spawn.
 	// Return:
 	true;
-};
-
-
-THY_fnc_CSWR_is_playerNear = {
-	// This function searches for humam players around a specific unit (_unitTarget).
-	// Returns _isPlayerNear: bool.
-
-	params ["_unitTarget", "_kindOfPlayer", "_distLimiterPlayer"];
-	private ["_isPlayerNear", "_playersAlive"];
-
-	// Initial values:
-	_isPlayerNear = false;
-	_playersAlive = [];
-	// If the function must scan only for friendly players, do it:
-	if ( _kindOfPlayer isEqualTo "friendlyPlayers" ) then {
-		_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x && side _x == side _unitTarget };  // WIP - actually a friendly faction is not been considered here yet.
-	// Otherwise:
-	} else {
-		// If the function must scan all players, do it:
-		if ( _kindOfPlayer isEqualTo "allPlayers" ) then {
-			_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x };
-		};
-	};
-	// Check if some player is near to the unit-target:
-	{ if ( _x distance _unitTarget < _distLimiterPlayer ) then { _isPlayerNear = true; break } } forEach _playersAlive;
-	// Return:
-	_isPlayerNear;
-};
-
-
-THY_fnc_CSWR_is_spawn_paradrop = {
-	// This function checks if the spawn-points are paradrop type, and it updates the _spwnPos with the right drop altitude.
-	// Returns _return. Array: [bool, [y,x,z]].
-
-	params ["_spwns", "_spwnPos", "_isVeh", "_isVehAir"];
-	private ["_return", "_isParadrop"];
-
-	// Initial values:
-	_isParadrop = false;
-	_return = [_isParadrop, _spwnPos];
-	// Escape:
-	if _isVehAir exitWith { _return /* Returning... */};
-	// Declarations:
-		// reserved space.
-	// Debug texts:
-		// reserved space.
-	// Main functionality:
-	if ( _spwns isEqualTo CSWR_spwnsParadropBLU || _spwns isEqualTo CSWR_spwnsParadropOPF || _spwns isEqualTo CSWR_spwnsParadropIND || _spwns isEqualTo CSWR_spwnsParadropCIV ) then { 
-		// Update the validation flag:
-		_isParadrop = true;
-		// Update the altitude of _spwnPos:
-		if !_isVeh then {
-			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropUnitAlt];
-		} else {
-			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropVehAlt];
-		};
-	};
-	// Preparing to return:
-	_return = [_isParadrop, _spwnPos];
-	// Return:
-	_return;
-};
-
-
-THY_fnc_CSWR_base_service_station = {
-	// This function provides rearming, refueling and repairing for AI vehicles, and health for crewmen.
-	// Returns nothing.
-
-	params ["_spwns", "_tag", "_grpType", "_grp", "_veh", "_isHeli", "_destType", "_behavior"];
-	private ["_time", "_wait"];
-
-	// Escape:
-	if ( isNull _grp || !alive _veh ) exitWith {};
-	// Initial values:
-	_time = 0;
-	// Declarations:
-	_wait = 30;
-	// Debug texts:
-		// reserved space.
-	// Main functionality:
-	_veh engineOn false;
-	sleep _wait;
-	// Crew health:
-		if ( !alive _veh) exitWith {};  // escape.
-		{ _x setDamage 0 } forEach (units _grp select { alive _x });
-		sleep _wait;
-	// Repairing:
-		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
-		_veh setDamage 0;
-		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _veh];
-		sleep _wait;
-	// Refueling:
-		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
-		[_veh, 1] remoteExec ["setFuel", _veh];  //the same as "_veh setFuel 1;" but for multiplayer when the variable (setFuel) is not global variable.
-		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_refuel.wss", _veh];
-		sleep _wait;
-	// Rearming:
-		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
-		[_veh, 1] remoteExec ["setVehicleAmmo", _veh];  //the same as "_veh setVehicleAmmo 1;" but for multiplayer when the variable (setVehicleAmmo) is not global variable.
-		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_rearm.wss", _veh];
-		sleep _wait;
-	// Preparing to return to the battle:
-	_veh engineOn true;
-	sleep _wait;
-	// If helicopter:
-	if _isHeli then {
-		// Dramatization breath:
-		_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 10; time > _time };
-		// Debug message:
-		if CSWR_isOnDebugGlobal then { systemChat format ["%1 After maintenance services, %2 '%3' helicopter's BACK TO DUTY!", CSWR_txtDebugHeader, _tag, str _grp] };
-	// Otherwise:
-	} else {
-		// Reserved space.
-	 };
-	// Return to duty:
-	[_spwns, _destType, _tag, _grpType, _grp, _behavior, true, _isHeli] spawn THY_fnc_CSWR_go;
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_veh_condition = {
-	// This function checks the vehicle and its crew conditon (health, ammo, fuel, maintenance).
-	// Return _shouldRTB. Bool.
-
-	params["_grp", "_areaToPass", "_isHeli"];
-	private["_shouldRTB", "_veh", "_driver", "_gunner"];
-
-	// Escape:
-		// reserved space.
-	// Initial values:
-	_shouldRTB = false;
-	// Declarations:
-	_tag = [side (leader _grp)] call THY_fnc_CSWR_convertion_faction_to_tag;
-	_veh = vehicle (leader _grp);
-	_driver = driver _veh;
-	_gunner = gunner _veh;
-	// Debug texts:
-		// reserved space.
-	// Waiting to the next waypoint:
-	waitUntil {
-		// If helicopter:
-		if _isHeli then {
-			// Breath for the next loop check:
-			sleep 10;
-			// Debug message > If helicopter is flighting (over 1 meter high):
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && _isHeli && ((getPos _veh) # 2) > 1 ) then {
-				["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh] call BIS_fnc_error;
-			};
-			// Allows the heli to go to the next waypoint:
-			isNull _grp || _veh distance _areaToPass < 200 || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1;
-		// Otherwise:
-		} else {
-			// Reserved space for other types of vehicles.
-		};
-	};
-	// If the vehicle or crew has some of these conditions, the next waypoint must be the base:
-	if ( damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 ) then { _shouldRTB = true };
-	// Return:
-	_shouldRTB;
 };
 
 
@@ -3520,7 +3548,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			// Counter to prevent crazy loops:
 			_counter = _counter + 1;
 			// Try to booking a marker:
-			_bookingInfo = ["BOOKING_WATCH", _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
+			_bookingInfo = ["BOOKING_WATCH", getPos (leader _grp), _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
 			// Which marker to go:
 			_location = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
 			// Marker position:
@@ -4511,7 +4539,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// if tracked vehicle:
 	if _isVehTracked then { 
 		// Try to booking a marker:
-		_bookingInfo = ["BOOKING_HOLD", _tag, _destMarkers, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
+		_bookingInfo = ["BOOKING_HOLD", getPos (leader _grp), _tag, _destMarkers, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
 		// Which marker to go:
 		_areaToHold = _bookingInfo # 0;
 		// Marker position:
