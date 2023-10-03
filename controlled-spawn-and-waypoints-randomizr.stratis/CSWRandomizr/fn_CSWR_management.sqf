@@ -7,76 +7,79 @@ if (!isServer) exitWith {};
 
 // PARAMETERS OF EDITOR'S OPTIONS:
 // Debug:
-	CSWR_isOnDebugGlobal = true;    // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
-	CSWR_isOnDebugOccupy = false;   // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugWatch = false;    // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHold = false;     // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugHeli = false;     // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugPara = false;     // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugBooking = false;  // true = shows deeper markers booking debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugGlobal  = true;    // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
+    CSWR_isOnDebugOccupy  = false;   // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugWatch   = false;   // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugHold    = false;   // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-	CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-	CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
-	CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
-	CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
+    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
+    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Loadout global:
-	CSWR_isBackpackForAll = false;    // true = if a custom backpack, all units will get it / false = only units originally with backpack will get it. Default: false.
-	CSWR_isVestForAll = false;        // true = if a custom vest, almost all units will get it / false = only units originally with vest will get it. Default: false.
+    CSWR_isBackpackForAllByFoot = false;  // true = all infantries will get it / false = only units originally with backpacks. Default: false.
+    CSWR_isVestForAll           = false;  // true = all units (except CIV) will get it / false = only units originally with vests. Default: false.
 // Loadout by faction:
-	// Blu
-		CSWR_canNvgInfantryBLU = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
-		CSWR_canNvgParatroopsBLU = true;  // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
-		CSWR_canNvgSnipersBLU = false;    // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
-		CSWR_nvgDeviceBLU = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
-	// Opf
-		CSWR_canNvgInfantryOPF = false;         // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
-		CSWR_canNvgParatroopsOPF = true;        // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
-		CSWR_canNvgSnipersOPF = false;          // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
-		CSWR_nvgDeviceOPF = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
-	// Ind
-		CSWR_canNvgInfantryIND = false;         // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
-		CSWR_canNvgParatroopsIND = true;        // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
-		CSWR_canNvgSnipersIND = false;          // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
-		CSWR_nvgDeviceIND = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
+    // Blu
+        CSWR_canNvgInfantryBLU   = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
+        CSWR_canNvgParatroopsBLU = true;    // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
+        CSWR_canNvgSnipersBLU    = false;   // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
+        CSWR_nvgDeviceBLU        = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
+    // Opf
+        CSWR_canNvgInfantryOPF   = false;   // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
+        CSWR_canNvgParatroopsOPF = true;    // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
+        CSWR_canNvgSnipersOPF    = false;   // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
+        CSWR_nvgDeviceOPF        = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
+    // Ind
+        CSWR_canNvgInfantryIND   = false;   // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
+        CSWR_canNvgParatroopsIND = true;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
+        CSWR_canNvgSnipersIND    = false;   // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
+        CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
+    // civ
+        CSWR_canNvgCIV = false;            // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
+        CSWR_nvgDeviceCIV = "NVGoggles";   // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
 
 // Global vehicles:
-	CSWR_isHoldVehLightsOff = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
-	CSWR_isUnlimitedFuel = false;     // WIP
-	CSWR_isUnlimitedAmmo = false;     // WIP
-	CSWR_shouldHeliSpwnInAir  = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
-	CSWR_shouldAddHelipadSpwn = false;  // true = add a visible helipad in each heli spawnpoint / false = a invisible helipad is added. Default: false.
-	CSWR_isElectroWarForBLU = true;  // true = vehicles of BLU will use Electronic Warfare Resources / false = they don't. Default: true.
-	CSWR_isElectroWarForOPF = true;  // true = vehicles of OPF will use Electronic Warfare Resources / false = they don't. Default: true.
-	CSWR_isElectroWarForIND = true;  // true = vehicles of IND will use Electronic Warfare Resources / false = they don't. Default: true.
+    CSWR_isHoldVehLightsOff   = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
+    CSWR_isUnlimitedFuel      = false;  // WIP
+    CSWR_isUnlimitedAmmo      = false;  // WIP
+    CSWR_shouldHeliSpwnInAir  = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
+    CSWR_shouldAddHelipadSpwn = false;  // true = add a visible helipad in each heli spawnpoint / false = a invisible helipad is added. Default: false.
+    CSWR_isElectroWarForBLU   = true;   // true = vehicles of BLU will use Electronic Warfare Resources / false = they don't. Default: true.
+    CSWR_isElectroWarForOPF   = true;   // true = vehicles of OPF will use Electronic Warfare Resources / false = they don't. Default: true.
+    CSWR_isElectroWarForIND   = true;   // true = vehicles of IND will use Electronic Warfare Resources / false = they don't. Default: true.
 // Others:
-	CSWR_isEditableByZeus = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
-	CSWR_spwnHeliOnShipFloor = 25;  // WIP - If needed, set how many meters above the sea leval is the ship floor where the spawn of helicopters will be.
+    CSWR_isEditableByZeus = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
+    CSWR_spwnHeliOnShipFloor = 25;  // WIP - If needed, set how many meters above the sea leval is the ship floor where the spawn of helicopters will be.
 // Server:
-	CSWR_serverMaxFPS = 50.0;  // Be advised: extremely recommended do not change this value. Default; 50.0
-	CSWR_serverMinFPS = 20.0;  // Be advised: extremely recommended do not change this value. Default: 20.0
-	CSWR_wait = 1;  // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
+    CSWR_serverMaxFPS = 50.0;  // Be advised: extremely recommended do not change this value. Default; 50.0
+    CSWR_serverMinFPS = 20.0;  // Be advised: extremely recommended do not change this value. Default: 20.0
+    CSWR_wait = 1;  // If you need to make CSWR waits more for other scripts load first, set a delay in seconds. Default: 1.
 
-	// MOVEMENT ADVANCED SETTINGS:
-	// Time:
-		CSWR_destCommonTakeabreak = [5, 30, 60];         // In seconds, how long each group can stay on its Move-markers. Default: 5 sec, 30 sec, 60 sec.
-		CSWR_destOccupyTakeabreak = [300, 600, 1200];    // In seconds, how long each group can stay on its Occupy-markers. Default: 5min (300), 10min (600), 20min (1200).
-		CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
-		CSWR_heliTakeoffDelay     = [10, 20, 30];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 20 sec, 30 sec.
-	// Ranges:
-		CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
-		CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
-	// Altitudes:
-		CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
-		CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
-		CSWR_heliLightAlt = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
-		CSWR_heliHeavyAlt = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
-	// Exceptions management:
-		// What specific building positions must be ignored for all factions. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
-		CSWR_occupyIgnoredPositions = [  ];
-		// What building classnames must be ignored for all factions:
-		CSWR_occupyIgnoredBuildings = ["Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
-		// What ruins should be considered for occupy-movement (Important: if the ruin has no spots in its 3D, CSWR won't include it as option):
-		CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
+    // MOVEMENT ADVANCED SETTINGS:
+    // Time:
+        CSWR_destCommonTakeabreak = [5, 30, 60];         // In seconds, how long each group can stay on its Move-markers. Default: 5 sec, 30 sec, 60 sec.
+        CSWR_destOccupyTakeabreak = [300, 600, 1200];    // In seconds, how long each group can stay on its Occupy-markers. Default: 5min (300), 10min (600), 20min (1200).
+        CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
+        CSWR_heliTakeoffDelay     = [10, 20, 30];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 20 sec, 30 sec.
+    // Ranges:
+        CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
+        CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
+    // Altitudes:
+        CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
+        CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
+        CSWR_heliLightAlt = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
+        CSWR_heliHeavyAlt = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
+    // Exceptions management:
+        // What specific building positions must be ignored for all factions. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
+        CSWR_occupyIgnoredPositions = [  ];
+        // What building classnames must be ignored for all factions:
+        CSWR_occupyIgnoredBuildings = ["Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
+        // What ruins should be considered for occupy-movement (Important: if the ruin has no spots in its 3D, CSWR won't include it as option):
+        CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
@@ -97,6 +100,7 @@ if (!isServer) exitWith {};
 	// Declarations:
 	CSWR_prefix = "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
 	CSWR_spacer = "_";  // CAUTION: try do not change it!
+	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
 	// Main markers validation:
 	CSWR_confirmedMarkers = [CSWR_prefix, CSWR_spacer] call THY_fnc_CSWR_marker_scanner;
 	// Errors handling:
@@ -250,7 +254,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isOnOPF";
 	publicVariable "CSWR_isOnIND";
 	publicVariable "CSWR_isOnCIV";
-	publicVariable "CSWR_isBackpackForAll";
+	publicVariable "CSWR_isBackpackForAllByFoot";
 	publicVariable "CSWR_isVestForAll";
 	publicVariable "CSWR_canNvgInfantryBLU";
 	publicVariable "CSWR_canNvgParatroopsBLU";
@@ -264,6 +268,8 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_canNvgParatroopsIND";
 	publicVariable "CSWR_canNvgSnipersIND";
 	publicVariable "CSWR_nvgDeviceIND";
+	publicVariable "CSWR_canNvgCIV";
+	publicVariable "CSWR_nvgDeviceCIV";
 	publicVariable "CSWR_isHoldVehLightsOff";
 	publicVariable "CSWR_isUnlimitedFuel";
 	publicVariable "CSWR_isUnlimitedAmmo";
@@ -299,6 +305,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_spwnDelayQueueAmount";
 	publicVariable "CSWR_prefix";
 	publicVariable "CSWR_spacer";
+	publicVariable "CSWR_vehGroundHeavy";
 	publicVariable "CSWR_confirmedMarkers";
 	publicVariable "CSWR_spwnsBLU";
 	publicVariable "CSWR_spwnsVehBLU";

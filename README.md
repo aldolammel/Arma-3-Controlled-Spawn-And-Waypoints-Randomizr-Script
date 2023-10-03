@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.3
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.5
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -49,7 +49,8 @@ __
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation (WIP);
 - Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
 - Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles, avoiding accidental explosions;
-- Improved > New method to build custom loadouts (more flexible and intuitive);
+- Improved > Loadout > New method to build custom loadouts (more flexible and intuitive);
+- Improved > Loadout > The global options to force apply backpack and/or vest for all units now will ignore civilian faction;
 - Improved > Hold > New method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
