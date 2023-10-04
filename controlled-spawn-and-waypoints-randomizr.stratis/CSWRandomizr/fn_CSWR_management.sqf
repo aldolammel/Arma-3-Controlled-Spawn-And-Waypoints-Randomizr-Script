@@ -90,7 +90,7 @@ if (!isServer) exitWith {};
 // When the mission starts:
 [] spawn {
 	// Local object declarations:
-	private ["_helipad"];
+	private ["_helipad", "_genericNVG", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6"];
 	// Debug txts:
 	CSWR_txtDebugHeader = "CSWR DEBUG >";
 	CSWR_txtWarningHeader = "CSWR WARNING >";
@@ -105,23 +105,30 @@ if (!isServer) exitWith {};
 	CSWR_prefix = "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
 	CSWR_spacer = "_";  // CAUTION: try do not change it!
 	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
+	_genericNVG = "NVGoggles";
+	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="faction, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied.";
+
 	// Main markers validation:
 	CSWR_confirmedMarkers = [CSWR_prefix, CSWR_spacer] call THY_fnc_CSWR_marker_scanner;
 	// Errors handling:
 	if ( CSWR_wait < 1 ) then { CSWR_wait = 1 };  // Important to hold some functions and make their warning (if has) to show only in-game for mission editor.
 	if CSWR_isOnDebugGlobal then {
 		if ( CSWR_wait >= 5 ) then { systemChat format ["%1 Don't forget the CSWR is configurated to delay %2 seconds before to starts its tasks.", CSWR_txtDebugHeader, CSWR_wait] };
+	} else {
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarningHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2], _txt1, _txt2, _txt3 };
+		if ( CSWR_destHoldTakeabreak # 0 < 600 OR CSWR_destHoldTakeabreak # 1 < 1200 OR CSWR_destHoldTakeabreak # 2 < 1800 ) then { CSWR_destHoldTakeabreak=[600,1200,1800]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarningHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2], _txt1, _txt2, _txt3 };
+		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_watchMarkerRange, _txt1, _txt2, _txt3] };
+		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMarkerRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_occupyMarkerRange, _txt1, _txt2, _txt3] };
+		if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropUnitAlt, _txt1, _txt2, _txt3] };
+		if ( CSWR_spwnsParadropVehAlt < 200 ) then { CSWR_spwnsParadropVehAlt=200; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropVehAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropVehAlt, _txt1, _txt2, _txt3] };
+		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] };
+		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
-	if !CSWR_isOnDebugGlobal then {
-		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_destOccupyTakeabreak' values less than [%2 secs, %3 secs, %4 secs] out of debug mode. Minimal values have been applied.", CSWR_txtWarningHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2] };
-		if ( CSWR_destHoldTakeabreak # 0 < 600 OR CSWR_destHoldTakeabreak # 1 < 1200 OR CSWR_destHoldTakeabreak # 2 < 1800 ) then { CSWR_destHoldTakeabreak=[600,1200,1800]; systemChat format ["%1 HOLD > For good combat experince, don't use 'CSWR_destHoldTakeabreak' values less than [%2 secs, %3 secs, %4 secs] out of debug mode. Minimal values have been applied.", CSWR_txtWarningHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2] };
-		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > For good combat experince, don't use 'CSWR_watchMarkerRange' value less than %2 meters out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_watchMarkerRange] };
-		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > For good combat experince, don't use 'CSWR_occupyMarkerRange' value less than %2 meters out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_occupyMarkerRange] };
-		if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 SPAWN PARADROP > For good experince, don't use 'CSWR_spwnsParadropUnitAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropUnitAlt] };
-		if ( CSWR_spwnsParadropVehAlt < 200 ) then { CSWR_spwnsParadropVehAlt=200; systemChat format ["%1 SPAWN PARADROP > For good experince, don't use 'CSWR_spwnsParadropVehAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_spwnsParadropVehAlt] };
-		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > For good experince, don't use 'CSWR_heliLightAlt' value less than %2 meters of altitude out of debug mode. Minimal value (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt] };
-		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > For good experince, don't use 'CSWR_heliHeavyAlt' value less than 100 meters of altitude higher than 'CSWR_heliLightAlt' out of debug mode. Minimal value (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt] };
-	};
+	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceBLU = _genericNVG };
+	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceOPF = _genericNVG };
+	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceIND = _genericNVG };
+	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceCIV = _genericNVG };
+	
 	
 	// SPAWNPOINTS:
 	// Where each faction in-game will spawn randomly and what group's type is allowed to do that.
@@ -412,25 +419,6 @@ if (!isServer) exitWith {};
 			};
 		};
 	};
-
-/* 
-
-	// WIP - VALIDACAO SE AS NIGHTVISIONS ESTAO PREENCHIDAS CERTINHO!
-	// If the editor leave the gear classname empty, or they're forcing the NVG removal by fn_CSWR_management (what doesnt make any sense):
-	if ( CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" ) then {
-		// Add a generic gear:
-		_newGear = _genericGear;  NVGoggles
-		// Warning message:
-		["%1 GEAR > NIGHTVISION > You turned the NVG usage 'true' for %2, but in parallel you're trying to force removal of %2 NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-
-
- */
-
-
-
-
-
 	// Debug monitor looping:
 	while { CSWR_isOnDebugGlobal } do { call THY_fnc_CSWR_debug };
 };
