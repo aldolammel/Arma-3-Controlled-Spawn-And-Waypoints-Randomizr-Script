@@ -32,6 +32,7 @@ switch _tag do {
             _unit removeItem "16Rnd_9x21_Mag";
             _unit removeItem "16Rnd_9x21_Mag";
             _unit removeWeapon "Binocular";
+            _unit removeWeapon "Rangefinder";
             _unit removeWeapon "hgun_P07_F";
 
         // BLU INFANTRY UNITS:
@@ -56,8 +57,8 @@ switch _tag do {
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
                 "U_B_FullGhillie_lsh",   // sniper uniform
-                "REMOVED",               // sniper helmet
-                "",                      // sniper vest (cannot be removed!)
+                "",                      // sniper helmet
+                "",                      // sniper vest (cannot be "REMOVED")
                 "REMOVED",               // sniper backpack
                 "srifle_EBR_F",          // sniper rifle
                 "20Rnd_762x51_Mag",      // sniper rifle magazine
@@ -65,7 +66,7 @@ switch _tag do {
                 "",                      // sniper rifle rail
                 "muzzle_snds_B",         // sniper rifle muzzle/supressor
                 "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be removed!)
+                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -74,8 +75,8 @@ switch _tag do {
             [
                 "U_B_CombatUniform_mcam_tshirt",   // Paratrooper uniform
                 "H_HelmetB_light_desert",          // Paratrooper helmet
-                "G_Lowprofile",                    // Paratrooper goggles (cannot be removed!)
-                "V_HarnessO_brn",                  // Paratrooper vest (cannot be removed!)
+                "G_Lowprofile",                    // Paratrooper goggles (cannot be "REMOVED")
+                "V_HarnessO_brn",                  // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_speciality_parachuting;
 
@@ -111,6 +112,7 @@ switch _tag do {
             _unit removeItem "16Rnd_9x21_Mag";
             _unit removeItem "16Rnd_9x21_Mag";
             _unit removeWeapon "Binocular";
+            _unit removeWeapon "Rangefinder";
             _unit removeWeapon "hgun_Rook40_F";
 
         // OPF INFANTRY UNITS:
@@ -135,8 +137,8 @@ switch _tag do {
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
                 "U_O_FullGhillie_ard",   // sniper uniform
-                "REMOVED",               // sniper helmet
-                "",                      // sniper vest (cannot be removed!)
+                "",                      // sniper helmet
+                "",                      // sniper vest (cannot be "REMOVED")
                 "REMOVED",               // sniper backpack
                 "srifle_DMR_01_F",       // sniper rifle
                 "10Rnd_762x54_Mag",      // sniper rifle magazine
@@ -144,7 +146,7 @@ switch _tag do {
                 "",                      // sniper rifle rail
                 "muzzle_snds_B",         // sniper rifle muzzle/supressor
                 "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be removed!)
+                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -153,8 +155,8 @@ switch _tag do {
             [
                 "",                         // Paratrooper uniform
                 "H_HelmetB_light_desert",   // Paratrooper helmet
-                "G_Lowprofile",             // Paratrooper goggles (cannot be removed!)
-                "V_HarnessO_brn",           // Paratrooper vest (cannot be removed!)
+                "G_Lowprofile",             // Paratrooper goggles (cannot be "REMOVED")
+                "V_HarnessO_brn",           // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_speciality_parachuting;
 
@@ -185,6 +187,7 @@ switch _tag do {
             _unit removeItem "9Rnd_45ACP_Mag";
             _unit removeItem "9Rnd_45ACP_Mag";
             _unit removeWeapon "Binocular";
+            _unit removeWeapon "Rangefinder";
             _unit removeWeapon "hgun_ACPC2_F";
 
         // IND INFANTRY UNITS:
@@ -209,8 +212,8 @@ switch _tag do {
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
                 "U_I_GhillieSuit",       // sniper uniform
-                "REMOVED",               // sniper helmet
-                "",                      // sniper vest (cannot be removed!)
+                "",                      // sniper helmet
+                "",                      // sniper vest (cannot be "REMOVED")
                 "REMOVED",               // sniper backpack
                 "srifle_GM6_F",          // sniper rifle
                 "5Rnd_127x108_Mag",      // sniper rifle magazine
@@ -218,7 +221,7 @@ switch _tag do {
                 "",                      // sniper rifle rail
                 "",                      // sniper rifle muzzle/supressor
                 "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be removed!)
+                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -227,8 +230,8 @@ switch _tag do {
             [
                 "",                         // Paratrooper uniform
                 "REMOVED",                  // Paratrooper helmet
-                "G_Lowprofile",             // Paratrooper goggles (cannot be removed!)
-                "V_HarnessO_brn",           // Paratrooper vest (cannot be removed!)
+                "G_Lowprofile",             // Paratrooper goggles (cannot be "REMOVED")
+                "V_HarnessO_brn",           // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_speciality_parachuting;
 
@@ -268,8 +271,8 @@ switch _tag do {
             [
                 "",                         // Parachuter uniform
                 "REMOVED",                  // Parachuter helmet
-                "G_Shades_Blue",            // Parachuter goggles (cannot be removed!)
-                "V_Chestrig_blk",           // Parachuter vest (cannot be removed!)
+                "G_Shades_Blue",            // Parachuter goggles (cannot be "REMOVED")
+                "V_Chestrig_blk",           // Parachuter vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_speciality_parachuting;
 

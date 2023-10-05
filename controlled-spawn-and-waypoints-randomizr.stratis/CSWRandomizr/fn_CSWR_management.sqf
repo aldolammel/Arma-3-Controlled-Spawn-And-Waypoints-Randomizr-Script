@@ -26,21 +26,21 @@ if (!isServer) exitWith {};
     // Blu
         CSWR_canNvgInfantryBLU   = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
         CSWR_canNvgParatroopsBLU = true;    // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
-        CSWR_canNvgSnipersBLU    = false;   // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
+        CSWR_canNvgSnipersBLU    = true;    // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
         CSWR_nvgDeviceBLU        = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
     // Opf
         CSWR_canNvgInfantryOPF   = false;   // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
         CSWR_canNvgParatroopsOPF = true;    // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
-        CSWR_canNvgSnipersOPF    = false;   // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
+        CSWR_canNvgSnipersOPF    = true;    // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
         CSWR_nvgDeviceOPF        = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
     // Ind
         CSWR_canNvgInfantryIND   = false;   // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
         CSWR_canNvgParatroopsIND = true;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
-        CSWR_canNvgSnipersIND    = false;   // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
+        CSWR_canNvgSnipersIND    = true;    // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
         CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
     // civ
-        CSWR_canNvgCIV    = false;         // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
-        CSWR_nvgDeviceCIV = "NVGoggles";   // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
+        CSWR_canNvgCIV    = false;          // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
+        CSWR_nvgDeviceCIV = "NVGoggles";    // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
 // Voices by faction:
     //CSWR_voiceBLU = "";      // WIP.
     //CSWR_voiceOPF = "";      // WIP.
@@ -115,7 +115,7 @@ if (!isServer) exitWith {};
 	if CSWR_isOnDebugGlobal then {
 		if ( CSWR_wait >= 5 ) then { systemChat format ["%1 Don't forget the CSWR is configurated to delay %2 seconds before to starts its tasks.", CSWR_txtDebugHeader, CSWR_wait] };
 	} else {
-		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarningHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2], _txt1, _txt2, _txt3 };
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarningHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2, _txt1, _txt2, _txt3] };
 		if ( CSWR_destHoldTakeabreak # 0 < 600 OR CSWR_destHoldTakeabreak # 1 < 1200 OR CSWR_destHoldTakeabreak # 2 < 1800 ) then { CSWR_destHoldTakeabreak=[600,1200,1800]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarningHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] };
 		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_watchMarkerRange, _txt1, _txt2, _txt3] };
 		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMarkerRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_occupyMarkerRange, _txt1, _txt2, _txt3] };
@@ -124,10 +124,10 @@ if (!isServer) exitWith {};
 		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] };
 		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
-	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceBLU = _genericNVG };
-	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceOPF = _genericNVG };
-	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceIND = _genericNVG };
-	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; sleep 5; CSWR_nvgDeviceCIV = _genericNVG };
+	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceBLU = _genericNVG };
+	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceOPF = _genericNVG };
+	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceIND = _genericNVG };
+	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceCIV = _genericNVG };
 	
 	
 	// SPAWNPOINTS:
