@@ -2072,108 +2072,108 @@ THY_fnc_CSWR_gear_backpack = {
 
 
 THY_fnc_CSWR_weaponry_sniper = {
-	// This function replace the old sniper rifle for new stuff. Parameters empties result no changes.
+	// This function replaces the old sniper rifle setup for a new one.
 	// Returns nothing.
 
-	params ["_tag", "_unit", "_rifle", "_rifleNewMag", "_rifleNewOptics", "_rifleNewRail", "_rifleNewMuzzle", "_rifleNewBipod", ["_magAmount", 6]];
-	private ["_isValidClassMags", "_isValidClassRifle", "_rifleOldAccessories", "_rifleOldMag"];
+	params ["_tag", "_unit", "_newRifle", "_newMag", "_newOptics", "_newRail", "_newMuzzle", "_newBipod", ["_magAmount", 6]];
+	private ["_oldRif", "_oldAccess", "_oldMag"];
 
+	// Escape > if unit has no primary weapon yet (to inherit), and editor doesn't declared a new one, abort:
+	if ( primaryWeapon _unit isEqualTo "" && _newRifle isEqualTo "" ) exitWith {};
+	// Escape > if unit has no primary ammo yet (to inherit), and editor doesn't declared a new one, abort:
+	if ( primaryWeaponMagazine _unit isEqualTo "" && _newMag isEqualTo "" ) exitWith {};
 	// Initial values:
 		// Reserved space.
 	// Declarations:
-		_isValidClassMags = [_tag, "CfgMagazines", "sniper magazine", "of sniper rifle magazines", [_rifleNewMag]] call THY_fnc_CSWR_is_valid_classname;
-		_isValidClassRifle = [_tag, "CfgWeapons", "sniper rifle or weapon gear", "of sniper weapon stuff", [_rifle, _rifleNewOptics, _rifleNewRail, _rifleNewMuzzle, _rifleNewBipod]] call THY_fnc_CSWR_is_valid_classname;
-		_rifleOldAccessories = _unit weaponAccessories (primaryWeapon _unit);  // [silencer, laserpointer/flashlight, optics, bipod] like ["","acc_pointer_IR","optic_Aco",""]
-		//private _rifleOldMags = getArray (configFile >> "CfgWeapons" >> (primaryWeapon _unit) >> "magazines");  // collect all types of magazines from primary weapon.
-		_rifleOldMag = primaryWeaponMagazine _unit;  // old mag loaded on rifle.
-	// Magazine (Crucial: need to be first!)
-		if ( _rifle isNotEqualTo "REMOVED" ) then {  // it's correct about rifle here in magazines!
-			if ( _rifleNewMag isNotEqualTo "" && _rifleNewMag isNotEqualTo "REMOVED" && _isValidClassMags ) then {
-				// Removing all old rifle magazines from the loadout:
-				_unit removeMagazines (_rifleOldMag # 0); 
-				// Include new magazines in loadout containers (the old ones only will be removed if the rifle was replaced):
-				_unit addMagazines [_rifleNewMag, _magAmount];
-			// Got new rifle but magazine wasn't declared:
-			} else {
-				if ( _rifleNewMag == "REMOVED" ) then {
-					// Removing all rifle magazines from the loadout:
-					_unit removeMagazines (_rifleOldMag # 0);
-				};
-				// Something is written in Rifle Customization but is not "REMOVED", and the Mag Custom is empty/valid, so:
-				if ( _rifle isNotEqualTo "" && _isValidClassMags ) then {
-					// Warning message:
-					["%1 WATCH > %2 '%3' needs magazines for their new rifle!", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
-				};
-			};
-		} else {
-			// Warning message:
-			if CSWR_isOnDebugGlobal then { 
-				["%1 WATCH > To set a custom magazine to %2 '%3' sniper group, first don't remove the rifle to them in 'fn_CSWR_loadout.sqf' file!", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
-			};
-		};
+	_oldRif    = primaryWeapon _unit;
+	_oldAccess = _unit weaponAccessories _oldRif;  // [silencer, laserpointer/flashlight, optics, bipod] like ["","acc_pointer_IR","optic_Aco",""]
+	_oldMag    = primaryWeaponMagazine _unit;  // old mag loaded on rifle.
+		//_oldMags = getArray (configFile >> "CfgWeapons" >> _oldRif >> "magazines");  // collect all types of magazines from primary weapon.
+	// Magazine:
+	// Important: crucial to be first validation.
+	if ( _newMag isNotEqualTo "" ) then {
+		// Removing all old rifle magazines from the loadout:
+		_unit removeMagazines (_oldMag # 0); 
+		// Include new magazines in loadout containers (the old ones only will be removed if the rifle was replaced):
+		_unit addMagazines [_newMag, _magAmount];
+	};
 	// Rifle:
-		if ( _rifle isNotEqualTo "" && _rifle isNotEqualTo "REMOVED" ) then {  // Rifle is mandatory for sniper group.
-			// removes primary weapon:
-			_unit removeWeapon (primaryWeapon _unit);
-			// Add the new rifle (without magazines and acessories):
-			_unit addWeapon _rifle;
-			// Add an additional new magazine directly on the weapon loader:
-			_unit addPrimaryWeaponItem _rifleNewMag;
-			// Use the new rifle since mission starts:
-			_unit selectWeapon _rifle;
-		} else {
-			if ( _rifle == "REMOVED") then {
-				["%1 WATCH > %2 '%3' needs a primary weapon. No rifle will be removed from them!", CSWR_txtWarningHeader, _tag, str (group _unit)] call BIS_fnc_error; sleep 5;
-			};
+	if ( _newRifle isNotEqualTo "" ) then {
+		// removes primary weapon:
+		_unit removeWeapon _oldRif;
+		// Add the new rifle (without magazines and acessories):
+		_unit addWeapon _newRifle;
+		// Use the new rifle since mission starts:
+		_unit selectWeapon _newRifle;
+	};
+	// Reload the weapon:
+	// If there's a new mag:
+	if ( _newMag isNotEqualTo "" ) then {
+		// There is no way the unit has no rifle so just add the new mag on the rifle loader:
+		_unit addPrimaryWeaponItem _newMag;
+	// Otherwise:
+	} else {
+		// If there's NO new mag but the rifle is new:
+		if ( _newRifle isNotEqualTo "" ) then {
+			// Add the old/current mag in the new rifle:
+			_unit addPrimaryWeaponItem _oldMag;
 		};
-	// Optics:
-		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewOptics isNotEqualTo "" && _rifleNewOptics isNotEqualTo "REMOVED" ) then {
-			// removes old optics if there is one:
-			_unit removePrimaryWeaponItem (_rifleOldAccessories # 2);
-			// adds the new optics:
-			_unit addPrimaryWeaponItem _rifleNewOptics;
-		} else {
-			if ( _rifleNewOptics == "REMOVED" && (_rifleOldAccessories # 2) isNotEqualTo "" ) then {
-				// removes old optics if there is one:
-				_unit removePrimaryWeaponItem (_rifleOldAccessories # 2);
-			};
-		};
-	// Rail:
-		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewRail isNotEqualTo "" && _rifleNewRail isNotEqualTo "REMOVED" ) then {
-			// removes old rail item if there is one:
-			_unit removePrimaryWeaponItem (_rifleOldAccessories # 1);
-			// adds the new rail item:
-			_unit addPrimaryWeaponItem _rifleNewRail;
-		} else {
-			if ( _rifleNewRail == "REMOVED" && (_rifleOldAccessories # 1) isNotEqualTo "" ) then {
-				// removes old rail item if there is one:
-				_unit removePrimaryWeaponItem (_rifleOldAccessories # 1);
-			};
-		};
+	};
+	// WIP - Check the mag compability with rifle:
+		// If not compatibl  warning message:
+		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error; sleep 5;
 	// Muzzle:
-		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewMuzzle isNotEqualTo "" && _rifleNewMuzzle isNotEqualTo "REMOVED" ) then {
-			// removes old muzzle if there is one:
-			_unit removePrimaryWeaponItem (_rifleOldAccessories # 0);
-			// adds the new muzzle:
-			_unit addPrimaryWeaponItem _rifleNewMuzzle;
-		} else {
-			if ( _rifleNewMuzzle == "REMOVED" && (_rifleOldAccessories # 0) isNotEqualTo "" ) then {
-				// removes old muzzle if there is one:
-				_unit removePrimaryWeaponItem (_rifleOldAccessories # 0);
-			};
+	if ( _newMuzzle isNotEqualTo "REMOVED" ) then {
+		// If there's a new accessory:
+		if ( _newMuzzle isNotEqualTo "" ) then {
+			// removes old accessory if there is one:
+			_unit removePrimaryWeaponItem (_oldAccess # 0);
+			// adds the new one:
+			_unit addPrimaryWeaponItem _newMuzzle;
 		};
+	} else {
+		// removes current accessory if there is one:
+		_unit removePrimaryWeaponItem (_oldAccess # 0);
+	};
+	// Rail:
+	if ( _newRail isNotEqualTo "REMOVED" ) then {
+		// If there's a new accessory:
+		if ( _newRail isNotEqualTo "" ) then {
+			// removes old accessory if there is one:
+			_unit removePrimaryWeaponItem (_oldAccess # 1);
+			// adds the new one:
+			_unit addPrimaryWeaponItem _newRail;
+		};
+	} else {
+		// removes current accessory if there is one:
+		_unit removePrimaryWeaponItem (_oldAccess # 1);
+	};
+	// Optics:
+	if ( _newOptics isNotEqualTo "REMOVED" ) then {
+		// If there's a new accessory:
+		if ( _newOptics isNotEqualTo "" ) then {
+			// removes old accessory if there is one:
+			_unit removePrimaryWeaponItem (_oldAccess # 2);
+			// adds the new one:
+			_unit addPrimaryWeaponItem _newOptics;
+		};
+	} else {
+		// removes current accessory if there is one:
+		_unit removePrimaryWeaponItem (_oldAccess # 2);
+	};
 	// Bipod:
-		if ( _rifle isNotEqualTo "REMOVED" && _rifleNewBipod isNotEqualTo "" && _rifleNewBipod isNotEqualTo "REMOVED" ) then {
-			// removes old bipod if there is one:
-			_unit removePrimaryWeaponItem (_rifleOldAccessories # 3);
-			// adds the new bipod:
-			_unit addPrimaryWeaponItem _rifleNewBipod;
-		} else {
-			if ( _rifleNewBipod == "REMOVED" && (_rifleOldAccessories # 3) isNotEqualTo "" ) then {
-				// removes old bipod if there is one:
-				_unit removePrimaryWeaponItem (_rifleOldAccessories # 3);
-			};
+	if ( _newBipod isNotEqualTo "REMOVED" ) then {
+		// If there's a new accessory:
+		if ( _newBipod isNotEqualTo "" ) then {
+			// removes old accessory if there is one:
+			_unit removePrimaryWeaponItem (_oldAccess # 3);
+			// adds the new one:
+			_unit addPrimaryWeaponItem _newBipod;
 		};
+	} else {
+		// removes current accessory if there is one:
+		_unit removePrimaryWeaponItem (_oldAccess # 3);
+	};
 	// Return:
 	true;
 };
@@ -2183,7 +2183,7 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 	// This function organizes the basic of all infantry classes unit loadout, including: heavy crew, sniper groups, and paratroopers. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
 
-	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_unit", "_grpType", "_grpSpec", "_tag"];
+	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_newBackpack", "_unit", "_grpType", "_grpSpec", "_tag"];
 	//private ["", "", ""];
 
 	// Escape:
@@ -2194,19 +2194,23 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 		// reserved space.
 	// Debug texts:
 		// reserved space.
-
 	// Uniform:
 	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
 	// Helmet / Headgear:
 	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-	// NightVision:
-	[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	// Goggles / Facewear:
+	[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
 	// Vest / Balistic protection:
 	[_newVest, _unit, _grpType, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
-	// If unit is NOT a crew and NOT a parachuter:
-	if ( !(_grpSpec in ["specHeavyCrew", "specParaHeavyCrew", "specPara"]) ) then {
+	// Parachuters and crewmen never receive combat-backpack:
+	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew", "specHeavyCrew"]) ) then {
 		// Backpack:
 		[_newBackpack, _unit, _grpType, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
+		// As parachuters, the sniper group member will receive (or not) the NVG further, not now:
+		if ( _grpType isNotEqualTo "teamS" ) then {
+			// NightVision:
+			[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+		};
 	};
 	// Return:
 	true;
@@ -2217,10 +2221,10 @@ THY_fnc_CSWR_loadout_infantry_heavyCrewGroup = {
 	// This function organizes exclusively the infantry heavy crew unit loadout. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
 
-	params ["_newHelmet", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
+	params ["_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
 	private ["_veh"];
 
-	// Escape > If the unit speciality is NOT heavy crew, abort:
+	// Escape > If the unit speciality is NOT any kind of heavy crew, abort:
 	if ( !(_grpSpec in ["specHeavyCrew", "specParaHeavyCrew"]) ) exitWith {};
 	// Initial values:
 		// reserved space.
@@ -2230,11 +2234,66 @@ THY_fnc_CSWR_loadout_infantry_heavyCrewGroup = {
 	_veh = vehicle _unit;
 	// if the unit is crew and not passager:
 	if ( _unit isEqualTo driver _veh || _unit isEqualTo gunner _veh || _unit isEqualTo commander _veh ) then {
-		// Final helmet validations:
+		// Helmet:
 		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-		// Final vest validations:
+		// Goggles / Facewear:
+		[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
+		// Vest:
 		[_newVest, _unit, _grpType, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
 	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
+	// This function organizes the unit loadout of any group with parachuting specialty. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
+	private ["_genericGoggles", "_genericChute"];
+
+	// Escape > if the unit doesn't have some parachute speciality, abort:
+	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew"]) ) exitWith {};
+	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
+	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
+	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_parachuteAcceptableGoggles)} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
+	// Initial values:
+		// Reserved space.
+	// Debug texts:
+		// Reserved space.
+	// Declarations:
+	_genericChute = "B_Parachute";
+	// if parachuter is open-chest free fall:
+	if ( _grpSpec isEqualTo "specPara" ) then {
+	// Important: dont use "isNull (objectParent _unit)" because for Arma 3 parachute is vehicle too.
+		// Backpack (Parachute):
+		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
+		[_genericChute, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
+		// Goggles / Facewear:
+		// Important: mandatory for parachuter not inside a vehicle.
+		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
+		// Vest / Ballistic protection:
+		// Important: mandatory for parachuter without vehicle, it doesn't matter what was set in CSWR_isVestForAll.
+		[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
+		// Helmet:
+		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+		// NightVision:
+		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	};
+	// Uniform
+	// Important: parachuters and any crew executing paradrop can has the same specific uniform.
+	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
 	// Return:
 	true;
 };
@@ -2244,27 +2303,35 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// This function organizes exclusively the infantry sniper group unit loadout. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
 
-	params ["_newUniform", "_newHelmet", "_newVest", "_newBackpack", "_newRif", "_newRifMag", "_newRifOptics", "_newRifRail", "_newRifMuzzle", "_newRifBipod", "_newBinoc", "_unit", "_grpType", "_grpSpec", "_tag"];
+	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_newBackpack", "_newRifle", "_newMag", "_newOptics", "_newRail", "_newMuzzle", "_newBipod", "_newBinoc", "_unit", "_grpType", "_grpSpec", "_tag"];
 	private ["_genericPistol", "_genericPistolAmmo"];
 
 	// Escape > If unit is NOT member of sniper group, abort:
 	if ( _grpType isNotEqualTo "teamS" ) exitWith {};
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
+	if ( _newMag isEqualTo "REMOVED" || {_newMag isEqualTo "" && primaryWeaponMagazine _unit isEqualTo ""} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
+	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
 		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
-		// Breath:
-		sleep 5;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning message:
 		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
-		// Breath:
-		sleep 5;
 	};
 	// Initial values:
 		// Reserved space.
@@ -2274,17 +2341,19 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	
 	// Helmet / Headgear:
 	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+	// Goggles / Facewear:
+	[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
 	// Backpack:
 	[_newBackpack, _unit, _grpType, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
 	// Uniform:
 	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
 	// Vest / Ballistic protection:
-	// Important: mandatory for sniper group members.
+	// Important: mandatory for sniper group members, it doesn't matter what was set in CSWR_isVestForAll.
 	[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
 	// NightVision:
 	[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
 	// Rifle setup:
-	[_tag, _unit, _newRif, _newRifMag, _newRifOptics, _newRifRail, _newRifMuzzle, _newRifBipod] call THY_fnc_CSWR_weaponry_sniper;
+	[_tag, _unit, _newRifle, _newMag, _newOptics, _newRail, _newMuzzle, _newBipod] call THY_fnc_CSWR_weaponry_sniper;
 	// Binoculars:
 	// If new gear is NOT equal the current one:
 	if ( _newBinoc isNotEqualTo (binocular _unit) ) then {
@@ -2301,65 +2370,6 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 		// Add at least one magazine:
 		_unit addHandgunItem _genericPistolAmmo;
 	};
-	// Return:
-	true;
-};
-
-
-THY_fnc_CSWR_loadout_speciality_parachuting = {
-	// This function organizes the unit loadout of any group with parachuting specialty. The rules exceptions must be applied in this function, and not in the gear functions.
-	// Returns nothing.
-
-	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
-	private ["_txt1", "_genericChute"];
-
-	// Escape > if the unit doesn't have some parachute speciality, abort:
-	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew"]) ) exitWith {};
-	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
-	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
-		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE GROUP was deleted coz a mandatory gear (VEST) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
-		// Remove the unit as pushiment:
-		deleteVehicle _unit;
-		// Breath:
-		sleep 5;
-	};
-	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && goggles _unit isEqualTo ""} ) exitWith {
-		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE GROUP was deleted coz a mandatory gear (GOGGLES) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
-		// Remove the unit as pushiment:
-		deleteVehicle _unit;
-		// Breath:
-		sleep 5;
-	};
-	// Initial values:
-		// Reserved space.
-	// Debug texts:
-	_txt1 = format ["Fix it in 'fn_CSWR_loadout.sqf' file. Each %1 group member received a generic parachute-bag.", _tag];
-	// Declarations:
-	_genericChute = "B_Parachute";
-	
-	// if parachuter in free fall:
-	if ( isNull (objectParent _unit) ) then {
-		// Backpack (Parachute):
-		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
-		[_genericChute, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
-		// Goggles / Facewear:
-		// Important: mandatory for paratroopers/parachuters, but ignored by people inside vehicles.
-		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
-		// Escape - part 2/2:
-		if (_grpType isEqualTo "teamS") exitWith {};  // Sniper group doesn't need any additional customization from here on.
-		// Vest / Ballistic protection:
-		// Important: mandatory for paratroopers, but not for parachuters. Also it'll ignored by soldiers inside vehicles.
-		[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
-		// Helmet:
-		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-		// NightVision:
-		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
-	};
-	// Uniform
-	// Important: parachuters and any crew executing paradrop can has the same specific uniform.
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
 	// Return:
 	true;
 };
