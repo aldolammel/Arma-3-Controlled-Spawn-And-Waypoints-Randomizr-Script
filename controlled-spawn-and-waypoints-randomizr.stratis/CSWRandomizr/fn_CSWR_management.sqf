@@ -15,10 +15,10 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = false;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
     CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
-    CSWR_isOnCIV = true;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
@@ -86,8 +86,8 @@ if (!isServer) exitWith {};
         CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
         // WIP : What goggles are acceptable for parachuters inherit from infantry if the editor doesn't set a specific one to parachuters:
         CSWR_parachuteAcceptableGoggles = ["G_Balaclava_combat", "G_Balaclava_lowprofile", "G_Lowprofile", "G_Combat", "G_Goggles_VR", "G_Combat_Goggles_tna_F", "G_Balaclava_TI_G_blk_F", "G_Balaclava_TI_G_tna_F", "G_AirPurifyingRespirator_02_black_F", "G_AirPurifyingRespirator_02_olive_F", "G_AirPurifyingRespirator_02_sand_F", "G_AirPurifyingRespirator_01_F", "G_RegulatorMask_F", "G_EyeProtectors_F", "UK3CB_Glasses", "rhs_ess_black", "rhsusf_shemagh_gogg_grn", "rhsusf_shemagh2_gogg_grn", "rhsusf_shemagh_gogg_od", "rhsusf_shemagh2_gogg_od", "rhsusf_shemagh_gogg_tan", "rhsusf_shemagh2_gogg_tan", "rhsusf_shemagh_gogg_white", "rhsusf_shemagh2_gogg_white", "rhsusf_oakley_goggles_blk", "rhsusf_oakley_goggles_clr", "rhsusf_oakley_goggles_ylw"];
-		// WIP : What uniforms/outfits civilians can use it editors use the random selection:
-		CSWR_civilianOutfits = ["U_C_Poor_1", "U_C_Poloshirt_burgundy", "U_C_Poloshirt_salmon", "U_Competitor", "U_C_HunterBody_grn", "U_Marshal", "U_Rangemaster", "U_I_C_Soldier_Bandit_5_F", "U_I_C_Soldier_Bandit_4_F", "U_C_Man_casual_3_F", "U_C_Man_casual_1_F", "U_C_Man_casual_5_F", "U_C_man_sport_3_F", "U_C_Uniform_Farmer_01_F", "U_I_L_Uniform_01_tshirt_black_F", "U_C_Uniform_Scientist_02_formal_F", "U_C_ConstructionCoverall_Red_F", "U_C_ArtTShirt_01_v2_F", "U_C_FormalSuit_01_gray_F", "U_C_ArtTShirt_01_v6_F"];
+        // What uniforms/outfits civilians can use it editors use the random selection (only A3 original content already included):
+        CSWR_civilianOutfits = ["U_C_Poor_1", "U_C_Poloshirt_burgundy", "U_C_Poloshirt_salmon", "U_Competitor", "U_C_HunterBody_grn", "U_Marshal", "U_Rangemaster", "U_I_C_Soldier_Bandit_5_F", "U_I_C_Soldier_Bandit_4_F", "U_C_Man_casual_3_F", "U_C_Man_casual_1_F", "U_C_Man_casual_5_F", "U_C_man_sport_3_F", "U_C_Uniform_Farmer_01_F", "U_I_L_Uniform_01_tshirt_black_F", "U_C_Uniform_Scientist_02_formal_F", "U_C_ConstructionCoverall_Red_F", "U_C_ArtTShirt_01_v2_F", "U_C_FormalSuit_01_gray_F", "U_C_ArtTShirt_01_v6_F"];
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------

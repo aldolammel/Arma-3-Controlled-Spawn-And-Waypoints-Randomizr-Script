@@ -40,8 +40,8 @@ switch _tag do {
                 "",                        // infantry uniform
                 "H_Booniehat_tan",         // infantry helmet
                 "",                        // infantry goggles
-                "V_Chestrig_khk",          // infantry vest
-                "B_Carryall_cbr",          // infantry backpack
+                "V_Chestrig_khk",          // infantry vest (only units with vest will take the custom one)
+                "B_Carryall_cbr",          // infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 
@@ -67,11 +67,11 @@ switch _tag do {
         // BLU INF. SNIPER GROUP UNITS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_B_FullGhillie_lsh",   // sniper uniform
+                "U_B_FullGhillie_sard",  // sniper uniform
                 "",                      // sniper helmet
                 "",                      // sniper goggles
                 "",                      // sniper vest (cannot be "REMOVED")
-                "REMOVED",               // sniper backpack
+                "",                      // sniper backpack
                 "srifle_EBR_F",          // sniper rifle (cannot be "REMOVED")
                 "20Rnd_762x51_Mag",      // sniper rifle magazine (cannot be "REMOVED")
                 "optic_SOS",             // sniper rifle sight/optics
@@ -122,8 +122,8 @@ switch _tag do {
                 "U_O_CombatUniform_ocamo",  // infantry uniform
                 "H_HelmetB_camo",           // infantry helmet
                 "",                         // infantry goggles
-                "V_Chestrig_khk",           // infantry vest
-                "B_Kitbag_cbr",             // infantry backpack
+                "V_Chestrig_khk",           // infantry vest (only units with vest will take the custom one)
+                "B_Kitbag_cbr",             // infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
         
@@ -199,8 +199,8 @@ switch _tag do {
                 "U_BG_Guerrilla_6_1",     // infantry uniform
                 "H_Watchcap_khk",         // infantry helmet
                 "",                       // infantry goggles
-                "V_BandollierB_rgr",      // infantry vest
-                "B_AssaultPack_rgr",      // infantry backpack
+                "V_BandollierB_rgr",      // infantry vest (only units with vest will take the custom one)
+                "B_AssaultPack_rgr",      // infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
         
@@ -268,8 +268,8 @@ switch _tag do {
                 "RANDOM",                  // Citizen uniform (Use "RANDOM" for magic)
                 "",                        // Citizen hat
                 "",                        // Citizen goggles
-                "",                        // Citizen vest
-                "",                        // Citizen backpack
+                "",                        // Citizen vest  WIP - if this is used, all civilian must receive and not just those ones who originally has one.
+                "",                        // Citizen backpack   WIP - if this is used, all civilian must receive and not just those ones who originally has one.
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 

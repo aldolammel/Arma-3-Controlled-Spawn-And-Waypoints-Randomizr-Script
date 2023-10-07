@@ -54,9 +54,11 @@ __
 - Improved > Hold > New method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
 - Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
 - Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
-- Improved > Loadout > Now it's possible to turn On or Off which faction will get nightvision and what nightvision model (supports NVG from mods too);
+- Improved > Loadout > Now it's possible to turn On or Off which faction will get nightvision and what nightvision device model (supports NVG from mods too);
+- Improved > Loadout > Ue the "RANDOM" command in civilian uniform slot in loadout file to gives a random outfit for each CIV unit created by CSWR;
 - Improved > Debug > Marker error handling has been improved;
 - Fixed > Paradrop > If editor added a custom nightvision for paratroopers, they received it duplicated;
+- Fixed > Paradrop > Infantry Sniper groups when got the paratroop speciality and had their backpack "REMOVED", they weren't receiving parachutes;
 - Fixed > Watch > Sniper group's killed before to reach their spot to watch a location, CSWR kept waiting for them inappropriately;
 - Fixed > Helicopters > They weren't spawn in the same direction defined through the Eden spawn-markers;
 - Fixed > Wheeled APC and tracked APC crewmen were not receiving custom crew helmet;

@@ -1935,8 +1935,9 @@ THY_fnc_CSWR_gear_uniform = {
 			};
 		// Otherwise, not mandatory:
 		} else {
+			// Important: if those units that originally has no outfit (bizare) will be forced to take one if there's an option, differently other containers (backpack and vest) behaviors!
 			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
-			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
+			if ( _newGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
 				// Transfer the old gear content to the new one:
 				["uniform", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
 			};
@@ -1993,10 +1994,13 @@ THY_fnc_CSWR_gear_vest = {
 			};
 		// Otherwise, not mandatory:
 		} else {
-			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
-			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
-				// Transfer the old gear content to the new one:
-				["vest", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+			// if there's a current gear:
+			if ( _oldGear isNotEqualTo "" ) then {
+				// if there's an editor's choice and this choice is NOT the same of the current gear:
+				if ( _newGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
+					// Transfer the old gear content to the new one:
+					["vest", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+				};
 			};
 		};
 	// Otherwise, force removal:
@@ -2055,10 +2059,13 @@ THY_fnc_CSWR_gear_backpack = {
 			};
 		// Otherwise, not mandatory:
 		} else {
-			// if there's a new gear, the unit has a current gear, and the new gear is NOT the same of the current:
-			if ( _newGear isNotEqualTo "" && _oldGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
-				// Transfer the old gear content to the new one:
-				["backpack", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+			// if there's a current gear:
+			if ( _oldGear isNotEqualTo "" ) then {
+				// if there's an editor's choice and this choice is NOT the same of the current gear:
+				if ( _newGear isNotEqualTo "" && _newGear isNotEqualTo _oldGear ) then {
+					// Transfer the old gear content to the new one:
+					["backpack", _unit, _newGear] call THY_fnc_CSWR_gear_container_transfer;
+				};
 			};
 		};
 	// Otherwise, force removal:
@@ -2197,13 +2204,24 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 	// Debug texts:
 		// reserved space.
 	// Uniform:
-	if ( _tag isNotEqualTo "CIV" ) then {
+	// If editor is NOT trying to randomize the uniforms, keep going:
+	if ( _newUniform isNotEqualTo "RANDOM" ) then {
 		[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	// Otherwise:
 	} else {
-		if ( _newUniform isNotEqualTo "RANDOM" ) then {
-			[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-		} else {
+		// If civilian unit:
+		if ( _tag isEqualTo "CIV" ) then {
+			// use the command random to select one of the CSWR_civilianOutfits clothes available:
 			[selectRandom CSWR_civilianOutfits, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+		// Otherwise:
+		} else {
+			// Warning message:
+			// The msg shows up just once:
+			if ( _unit isEqualTo (leader (group _unit))) then {
+				["%1 %2 > Only CIV faction can use the command 'RANDOM' in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+			};
+			// Delete the unit:
+			deleteVehicle _unit;
 		};
 	};
 	// Helmet / Headgear:
@@ -2212,7 +2230,7 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 	[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
 	// Vest / Balistic protection:
 	[_newVest, _unit, _grpType, _grpSpec, _tag, CSWR_isVestForAll] call THY_fnc_CSWR_gear_vest;
-	// Parachuters and crewmen never receive combat-backpack:
+	// if the unit HASN'T parachuters speciality or it's NOT heavy crew:
 	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew", "specHeavyCrew"]) ) then {
 		// Backpack:
 		[_newBackpack, _unit, _grpType, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
@@ -2222,6 +2240,60 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 			[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
 		};
 	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
+	// This function organizes the unit loadout of any group with parachuting specialty. The rules exceptions must be applied in this function, and not in the gear functions.
+	// Returns nothing.
+
+	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
+	private ["_genericGoggles", "_genericChute"];
+
+	// Escape > if the unit doesn't have some parachute speciality, abort:
+	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew"]) ) exitWith {};
+	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
+	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
+	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles with editors not set some.
+	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_parachuteAcceptableGoggles)} ) exitWith {
+		// Warning message:
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		// Remove the unit as pushiment:
+		deleteVehicle _unit;
+	};
+	// Initial values:
+		// Reserved space.
+	// Debug texts:
+		// Reserved space.
+	// Declarations:
+	_genericChute = "B_Parachute";
+	// if parachuter is open-chest free fall (never including e.g. specParaHeavyCrew):
+	if ( _grpSpec isEqualTo "specPara" ) then {
+	// Important: avoid to use "isNull (objectParent _unit)" because for Arma 3 parachute is vehicle when opened.
+		// Backpack (Parachute):
+		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
+		[_genericChute, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
+		// Goggles / Facewear:
+		// Important: mandatory for parachuter not inside a vehicle.
+		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
+		// Vest / Ballistic protection:
+		// Important: mandatory for parachuter without vehicle, it doesn't matter what was set in CSWR_isVestForAll.
+		[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
+		// Helmet:
+		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+		// NightVision:
+		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	};
+	// Uniform
+	// Important: parachuters and any crew executing paradrop can has the same specific uniform.
+	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
 	// Return:
 	true;
 };
@@ -2256,60 +2328,6 @@ THY_fnc_CSWR_loadout_infantry_heavyCrewGroup = {
 };
 
 
-THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
-	// This function organizes the unit loadout of any group with parachuting specialty. The rules exceptions must be applied in this function, and not in the gear functions.
-	// Returns nothing.
-
-	params ["_newUniform", "_newHelmet", "_newGoggles", "_newVest", "_unit", "_grpType", "_grpSpec", "_tag"];
-	private ["_genericGoggles", "_genericChute"];
-
-	// Escape > if the unit doesn't have some parachute speciality, abort:
-	if ( !(_grpSpec in ["specPara", "specParaHeavyCrew"]) ) exitWith {};
-	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
-	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
-		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
-		// Remove the unit as pushiment:
-		deleteVehicle _unit;
-	};
-	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles with editors not set some.
-	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_parachuteAcceptableGoggles)} ) exitWith {
-		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
-		// Remove the unit as pushiment:
-		deleteVehicle _unit;
-	};
-	// Initial values:
-		// Reserved space.
-	// Debug texts:
-		// Reserved space.
-	// Declarations:
-	_genericChute = "B_Parachute";
-	// if parachuter is open-chest free fall:
-	if ( _grpSpec isEqualTo "specPara" ) then {
-	// Important: dont use "isNull (objectParent _unit)" because for Arma 3 parachute is vehicle too (?)
-		// Backpack (Parachute):
-		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
-		[_genericChute, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
-		// Goggles / Facewear:
-		// Important: mandatory for parachuter not inside a vehicle.
-		[_newGoggles, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_facewear;
-		// Vest / Ballistic protection:
-		// Important: mandatory for parachuter without vehicle, it doesn't matter what was set in CSWR_isVestForAll.
-		[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
-		// Helmet:
-		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-		// NightVision:
-		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
-	};
-	// Uniform
-	// Important: parachuters and any crew executing paradrop can has the same specific uniform.
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-	// Return:
-	true;
-};
-
-
 THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// This function organizes exclusively the infantry sniper group unit loadout. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
@@ -2328,19 +2346,19 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	};
 	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2350,19 +2368,28 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	_genericPistol     = "hgun_P07_F";
 	_genericPistolAmmo = "16Rnd_9x21_Mag";
 	
-	// Helmet / Headgear:
-	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
-	// Goggles / Facewear:
-	[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
-	// Backpack:
-	[_newBackpack, _unit, _grpType, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
-	// Uniform:
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
-	// Vest / Ballistic protection:
-	// Important: mandatory for sniper group members, it doesn't matter what was set in CSWR_isVestForAll.
-	[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
-	// NightVision:
-	[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	// If the sniper group member is NOT a paratrooper (coz they must inherit some paratrooper gears):
+	if ( _grpSpec isNotEqualTo "specPara" ) then {
+		// Helmet / Headgear:
+		[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
+		// Goggles / Facewear:
+		[_newGoggles, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_facewear;
+		// Backpack:
+		// if there's NO editor's choice, the unit only takes backpack if the original unit classname has a backpack:
+		if ( _newBackpack isEqualTo "" ) then {
+			[_newBackpack, _unit, _grpType, _grpSpec, _tag, CSWR_isBackpackForAllByFoot] call THY_fnc_CSWR_gear_backpack;
+		// Otherwise, if there's an editor's choice, regardless the original unit classname has or not a backpack, the unit will take one:
+		} else {
+			[_newBackpack, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
+		};
+		// Uniform:
+		[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+		// Vest / Ballistic protection:
+		// Important: mandatory for sniper group members, it doesn't matter what was set in CSWR_isVestForAll.
+		[_newVest, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_vest;
+		// NightVision:
+		[_unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_NVG;
+	};
 	// Rifle setup:
 	[_tag, _unit, _newRifle, _newMag, _newOptics, _newRail, _newMuzzle, _newBipod] call THY_fnc_CSWR_weaponry_sniper;
 	// Binoculars:
