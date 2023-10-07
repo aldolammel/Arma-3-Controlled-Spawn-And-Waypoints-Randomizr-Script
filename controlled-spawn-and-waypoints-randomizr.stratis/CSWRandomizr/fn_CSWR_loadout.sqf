@@ -35,7 +35,7 @@ switch _tag do {
             _unit removeWeapon "hgun_P07_F";
 
         // BLU INFANTRY UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "",                        // infantry uniform
                 "H_Booniehat_tan",         // infantry helmet
@@ -50,7 +50,7 @@ switch _tag do {
             [
                 "U_B_CombatUniform_mcam_tshirt",   // Paratrooper uniform
                 "H_HelmetB_light_desert",          // Paratrooper helmet
-                "",                    // Paratrooper goggles (cannot be "REMOVED")
+                "G_Lowprofile",                    // Paratrooper goggles (cannot be "REMOVED")
                 "V_HarnessO_brn",                  // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
@@ -58,14 +58,14 @@ switch _tag do {
         // BLU INF. HEAVY CREW UNITS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "H_HelmetCrew_I",       // heavy crew helmet
-                "",                     // heavy crew goggles
-                "V_Chestrig_khk",       // heavy crew vest
+                "H_HelmetCrew_I",          // heavy crew helmet
+                "G_Balaclava_lowprofile",  // heavy crew goggles
+                "V_Chestrig_khk",          // heavy crew vest
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_heavyCrewGroup;
 
         // BLU INF. SNIPER GROUP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "U_B_FullGhillie_lsh",   // sniper uniform
                 "",                      // sniper helmet
@@ -117,7 +117,7 @@ switch _tag do {
             _unit removeWeapon "hgun_Rook40_F";
 
         // OPF INFANTRY UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "U_O_CombatUniform_ocamo",  // infantry uniform
                 "H_HelmetB_camo",           // infantry helmet
@@ -138,7 +138,7 @@ switch _tag do {
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
 
         // OPF INF. HEAVY CREW UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "H_Tank_black_F",       // heavy crew helmet
                 "",                     // heavy crew goggles
@@ -194,7 +194,7 @@ switch _tag do {
             _unit removeWeapon "hgun_ACPC2_F";
 
         // IND INFANTRY UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "U_BG_Guerrilla_6_1",     // infantry uniform
                 "H_Watchcap_khk",         // infantry helmet
@@ -205,7 +205,7 @@ switch _tag do {
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
         
         // IND PARATROOP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "",                         // Paratrooper uniform
                 "REMOVED",                  // Paratrooper helmet
@@ -215,7 +215,7 @@ switch _tag do {
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
 
         // IND INF. HEAVY CREW UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "H_Beret_Colonel",       // heavy crew helmet
                 "",                      // heavy crew goggles
@@ -224,7 +224,7 @@ switch _tag do {
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_heavyCrewGroup;
 
         // IND INF. SNIPER GROUP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "U_I_GhillieSuit",       // sniper uniform
                 "",                      // sniper helmet
@@ -263,9 +263,9 @@ switch _tag do {
             _unit removeItem "ItemMap";
 
         // CIV CITIZENS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "",                        // Citizen uniform
+                "RANDOM",                  // Citizen uniform (Use "RANDOM" for magic)
                 "",                        // Citizen hat
                 "",                        // Citizen goggles
                 "",                        // Citizen vest
@@ -274,7 +274,7 @@ switch _tag do {
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 
         // CIV PARACHUTERS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "",                         // Parachuter uniform
                 "REMOVED",                  // Parachuter helmet

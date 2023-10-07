@@ -15,10 +15,10 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
+    CSWR_isOnBLU = false;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
     CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
-    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+    CSWR_isOnCIV = true;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
@@ -84,8 +84,10 @@ if (!isServer) exitWith {};
         CSWR_occupyIgnoredBuildings = ["Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
         // What ruins should be considered for occupy-movement (Important: if the ruin has no spots in its 3D, CSWR won't include it as option):
         CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
-        // What goggles are acceptable for parachuters inherit from infantry if the editor not set one to parachuters:
-        CSWR_parachuteAcceptableGoggles = ["G_Balaclava_combat", "G_Balaclava_lowprofile", "G_Lowprofile", "G_Combat", "G_Goggles_VR", "G_Combat_Goggles_tna_F", "G_Balaclava_TI_G_blk_F", "G_Balaclava_TI_G_tna_F", "G_AirPurifyingRespirator_02_black_F", "G_AirPurifyingRespirator_02_olive_F", "G_AirPurifyingRespirator_02_sand_F", "G_AirPurifyingRespirator_01_F", "G_RegulatorMask_F", "G_EyeProtectors_F"];
+        // WIP : What goggles are acceptable for parachuters inherit from infantry if the editor doesn't set a specific one to parachuters:
+        CSWR_parachuteAcceptableGoggles = ["G_Balaclava_combat", "G_Balaclava_lowprofile", "G_Lowprofile", "G_Combat", "G_Goggles_VR", "G_Combat_Goggles_tna_F", "G_Balaclava_TI_G_blk_F", "G_Balaclava_TI_G_tna_F", "G_AirPurifyingRespirator_02_black_F", "G_AirPurifyingRespirator_02_olive_F", "G_AirPurifyingRespirator_02_sand_F", "G_AirPurifyingRespirator_01_F", "G_RegulatorMask_F", "G_EyeProtectors_F", "UK3CB_Glasses", "rhs_ess_black", "rhsusf_shemagh_gogg_grn", "rhsusf_shemagh2_gogg_grn", "rhsusf_shemagh_gogg_od", "rhsusf_shemagh2_gogg_od", "rhsusf_shemagh_gogg_tan", "rhsusf_shemagh2_gogg_tan", "rhsusf_shemagh_gogg_white", "rhsusf_shemagh2_gogg_white", "rhsusf_oakley_goggles_blk", "rhsusf_oakley_goggles_clr", "rhsusf_oakley_goggles_ylw"];
+		// WIP : What uniforms/outfits civilians can use it editors use the random selection:
+		CSWR_civilianOutfits = ["U_C_Poor_1", "U_C_Poloshirt_burgundy", "U_C_Poloshirt_salmon", "U_Competitor", "U_C_HunterBody_grn", "U_Marshal", "U_Rangemaster", "U_I_C_Soldier_Bandit_5_F", "U_I_C_Soldier_Bandit_4_F", "U_C_Man_casual_3_F", "U_C_Man_casual_1_F", "U_C_Man_casual_5_F", "U_C_man_sport_3_F", "U_C_Uniform_Farmer_01_F", "U_I_L_Uniform_01_tshirt_black_F", "U_C_Uniform_Scientist_02_formal_F", "U_C_ConstructionCoverall_Red_F", "U_C_ArtTShirt_01_v2_F", "U_C_FormalSuit_01_gray_F", "U_C_ArtTShirt_01_v6_F"];
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
@@ -126,10 +128,10 @@ if (!isServer) exitWith {};
 		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] };
 		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
-	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceBLU = _genericNVG };
-	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceOPF = _genericNVG };
-	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceIND = _genericNVG };
-	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV isEqualTo "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceCIV = _genericNVG };
+	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU == "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceBLU = _genericNVG };
+	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF == "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceOPF = _genericNVG };
+	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND == "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceIND = _genericNVG };
+	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV == "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceCIV = _genericNVG };
 	
 	
 	// SPAWNPOINTS:
@@ -313,6 +315,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_occupyIgnoredPositions";
 	publicVariable "CSWR_occupyAcceptableRuins";
 	publicVariable "CSWR_parachuteAcceptableGoggles";
+	publicVariable "CSWR_civilianOutfits";
 	publicVariable "CSWR_wait";
 	publicVariable "CSWR_txtDebugHeader";
 	publicVariable "CSWR_txtWarningHeader";

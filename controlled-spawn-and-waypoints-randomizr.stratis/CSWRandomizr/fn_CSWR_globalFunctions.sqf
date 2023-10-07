@@ -2190,12 +2190,22 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 		// reserved space.
 	// Initial values:
 		// reserved space.
+	// Errors handling:
+		// reserved space.
 	// Declarations:
 		// reserved space.
 	// Debug texts:
 		// reserved space.
 	// Uniform:
-	[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	if ( _tag isNotEqualTo "CIV" ) then {
+		[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+	} else {
+		if ( _newUniform isNotEqualTo "RANDOM" ) then {
+			[_newUniform, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+		} else {
+			[selectRandom CSWR_civilianOutfits, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_uniform;
+		};
+	};
 	// Helmet / Headgear:
 	[_newHelmet, _unit, _grpType, _grpSpec, _tag, false] call THY_fnc_CSWR_gear_helmet;
 	// Goggles / Facewear:
@@ -2262,6 +2272,7 @@ THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
+	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles with editors not set some.
 	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_parachuteAcceptableGoggles)} ) exitWith {
 		// Warning message:
 		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarningHeader, _tag] call BIS_fnc_error;
@@ -2276,7 +2287,7 @@ THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
 	_genericChute = "B_Parachute";
 	// if parachuter is open-chest free fall:
 	if ( _grpSpec isEqualTo "specPara" ) then {
-	// Important: dont use "isNull (objectParent _unit)" because for Arma 3 parachute is vehicle too.
+	// Important: dont use "isNull (objectParent _unit)" because for Arma 3 parachute is vehicle too (?)
 		// Backpack (Parachute):
 		// Important: mandatory for parachuter, but ignored by soldiers inside vehicles (like crew and its passagers).
 		[_genericChute, _unit, _grpType, _grpSpec, _tag, true] call THY_fnc_CSWR_gear_backpack;
@@ -2355,8 +2366,8 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// Rifle setup:
 	[_tag, _unit, _newRifle, _newMag, _newOptics, _newRail, _newMuzzle, _newBipod] call THY_fnc_CSWR_weaponry_sniper;
 	// Binoculars:
-	// If new gear is NOT equal the current one:
-	if ( _newBinoc isNotEqualTo (binocular _unit) ) then {
+	// If there's an editor's choice, and the new gear is NOT equal the current one:
+	if ( _newBinoc isNotEqualTo "" && _newBinoc isNotEqualTo (binocular _unit) ) then {
 		// Remove the old one if it exists:
 		_unit removeWeapon (binocular _unit);
 		// New binoculars replacement:
