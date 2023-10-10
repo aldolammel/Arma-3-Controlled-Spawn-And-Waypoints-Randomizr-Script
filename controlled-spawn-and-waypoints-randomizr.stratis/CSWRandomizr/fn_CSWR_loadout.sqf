@@ -50,7 +50,7 @@ switch _tag do {
             [
                 "U_B_CombatUniform_mcam_tshirt",   // Paratrooper uniform
                 "H_HelmetB_light_desert",          // Paratrooper helmet
-                "",                    // Paratrooper goggles (cannot be "REMOVED")
+                "G_Lowprofile",                    // Paratrooper goggles (cannot be "REMOVED")
                 "V_HarnessO_brn",                  // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
