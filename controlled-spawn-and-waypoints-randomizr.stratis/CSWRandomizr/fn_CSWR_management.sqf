@@ -15,10 +15,10 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = no spawn.
-    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = no spawn.
-    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = no spawn.
-    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = no spawn.
+    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
+    CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this faction.
+    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this faction.
+    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
@@ -28,16 +28,22 @@ if (!isServer) exitWith {};
         CSWR_canNvgParatroopsBLU = true;    // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
         CSWR_canNvgSnipersBLU    = true;    // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
         CSWR_nvgDeviceBLU        = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
+        CSWR_canFlashlightBLU    = true;    // true = BLU units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+        CSWR_flashlightDeviceBLU = "acc_flashlight";  // Set the flashlight classname for BlU army. Empty ("") means no changes in original soldier loadout.
     // Opf
         CSWR_canNvgInfantryOPF   = false;   // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
         CSWR_canNvgParatroopsOPF = true;    // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
         CSWR_canNvgSnipersOPF    = true;    // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
         CSWR_nvgDeviceOPF        = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
+        CSWR_canFlashlightOPF    = true;    // true = OPF units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+        CSWR_flashlightDeviceOPF = "acc_flashlight";  // Set the flashlight classname for OPF army. Empty ("") means no changes in original soldier loadout.
     // Ind
         CSWR_canNvgInfantryIND   = false;   // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
         CSWR_canNvgParatroopsIND = true;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
         CSWR_canNvgSnipersIND    = true;    // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
         CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
+        CSWR_canFlashlightIND    = true;    // true = IND units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+        CSWR_flashlightDeviceIND = "acc_flashlight";  // Set the flashlight classname for IND army. Empty ("") means no changes in original soldier loadout.
     // civ
         CSWR_canNvgCIV    = false;          // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
         CSWR_nvgDeviceCIV = "NVGoggles";    // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
@@ -94,7 +100,7 @@ if (!isServer) exitWith {};
 // When the mission starts:
 [] spawn {
 	// Local object declarations:
-	private ["_helipad", "_genericNVG", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6"];
+	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8"];
 	// Debug txts:
 	CSWR_txtDebugHeader = "CSWR DEBUG >";
 	CSWR_txtWarningHeader = "CSWR WARNING >";
@@ -110,7 +116,8 @@ if (!isServer) exitWith {};
 	CSWR_spacer = "_";  // CAUTION: try do not change it!
 	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
 	_genericNVG = "NVGoggles";
-	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="faction, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied.";
+	_genericFlashlight = "acc_flashlight";
+	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="faction, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied."; _txt7="GEAR > FLASHLIGHT > You turned the Flashlight usage 'true' for"; _txt8="FLASHLIGHTS. Fix it in 'fn_CSWR_management.sqf' file. Generic Flashlight was applied.";
 
 	// Main markers validation:
 	CSWR_confirmedMarkers = [CSWR_prefix, CSWR_spacer] call THY_fnc_CSWR_marker_scanner;
@@ -128,10 +135,22 @@ if (!isServer) exitWith {};
 		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarningHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] };
 		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarningHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
-	if ( CSWR_isOnBLU && { CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU == "REMOVED" } ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceBLU = _genericNVG };
-	if ( CSWR_isOnOPF && { CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF == "REMOVED" } ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceOPF = _genericNVG };
-	if ( CSWR_isOnIND && { CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND == "REMOVED" } ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceIND = _genericNVG };
-	if ( CSWR_isOnCIV && { CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV == "REMOVED" } ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceCIV = _genericNVG };
+	// Some classname validations:
+	if CSWR_isOnBLU then {
+		if ( CSWR_canNvgInfantryBLU || CSWR_canNvgParatroopsBLU || CSWR_canNvgSnipersBLU ) then { if ( CSWR_nvgDeviceBLU isEqualTo "" || CSWR_nvgDeviceBLU == "REMOVED" ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceBLU = _genericNVG } else { ["BLU", "CfgWeapons", "NightVision", "CSWR_nvgDeviceBLU", [CSWR_nvgDeviceBLU]] call THY_fnc_CSWR_is_valid_classname } };
+		if CSWR_canFlashlightBLU then { if ( CSWR_flashlightDeviceBLU isEqualTo "" || CSWR_flashlightDeviceBLU == "REMOVED" ) then { systemChat format ["%1 %2 BLU %3 BLU %4", CSWR_txtWarningHeader, _txt7, _txt5, _txt8]; CSWR_flashlightDeviceBLU = _genericFlashlight } else { ["BLU", "CfgWeapons", "Flashlight", "CSWR_flashlightDeviceBLU", [CSWR_flashlightDeviceBLU]] call THY_fnc_CSWR_is_valid_classname } };
+	};
+	if CSWR_isOnOPF then {
+		if ( CSWR_canNvgInfantryOPF || CSWR_canNvgParatroopsOPF || CSWR_canNvgSnipersOPF ) then { if ( CSWR_nvgDeviceOPF isEqualTo "" || CSWR_nvgDeviceOPF == "REMOVED" ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceOPF = _genericNVG } else { ["OPF", "CfgWeapons", "NightVision", "CSWR_nvgDeviceOPF", [CSWR_nvgDeviceOPF]] call THY_fnc_CSWR_is_valid_classname } };
+		if CSWR_canFlashlightOPF then { if ( CSWR_flashlightDeviceOPF isEqualTo "" || CSWR_flashlightDeviceOPF == "REMOVED" ) then { systemChat format ["%1 %2 OPF %3 OPF %4", CSWR_txtWarningHeader, _txt7, _txt5, _txt8]; CSWR_flashlightDeviceOPF = _genericFlashlight } else { ["OPF", "CfgWeapons", "Flashlight", "CSWR_flashlightDeviceOPF", [CSWR_flashlightDeviceOPF]] call THY_fnc_CSWR_is_valid_classname } };
+	};
+	if CSWR_isOnIND then {
+		if ( CSWR_canNvgInfantryIND || CSWR_canNvgParatroopsIND || CSWR_canNvgSnipersIND ) then { if ( CSWR_nvgDeviceIND isEqualTo "" || CSWR_nvgDeviceIND == "REMOVED" ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceIND = _genericNVG } else { ["IND", "CfgWeapons", "NightVision", "CSWR_nvgDeviceIND", [CSWR_nvgDeviceIND]] call THY_fnc_CSWR_is_valid_classname } };
+		if CSWR_canFlashlightIND then { if ( CSWR_flashlightDeviceIND isEqualTo "" || CSWR_flashlightDeviceIND == "REMOVED" ) then { systemChat format ["%1 %2 IND %3 IND %4", CSWR_txtWarningHeader, _txt7, _txt5, _txt8]; CSWR_flashlightDeviceIND = _genericFlashlight } else { ["IND", "CfgWeapons", "Flashlight", "CSWR_flashlightDeviceIND", [CSWR_flashlightDeviceIND]] call THY_fnc_CSWR_is_valid_classname } };
+	};
+	if ( CSWR_isOnCIV && CSWR_canNvgCIV ) then {
+		if ( CSWR_nvgDeviceCIV isEqualTo "" || CSWR_nvgDeviceCIV == "REMOVED" ) then { systemChat format ["%1 %2 CIV %3 CIV %4", CSWR_txtWarningHeader, _txt4, _txt5, _txt6]; CSWR_nvgDeviceCIV = _genericNVG } else { ["CIV", "CfgWeapons", "NightVision", "CSWR_nvgDeviceCIV", [CSWR_nvgDeviceCIV]] call THY_fnc_CSWR_is_valid_classname };
+	};
 	
 	
 	// SPAWNPOINTS:
@@ -275,14 +294,20 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_canNvgParatroopsBLU";
 	publicVariable "CSWR_canNvgSnipersBLU";
 	publicVariable "CSWR_nvgDeviceBLU";
+	publicVariable "CSWR_canFlashlightBLU";
+	publicVariable "CSWR_flashlightDeviceBLU";
 	publicVariable "CSWR_canNvgInfantryOPF";
 	publicVariable "CSWR_canNvgParatroopsOPF";
 	publicVariable "CSWR_canNvgSnipersOPF";
 	publicVariable "CSWR_nvgDeviceOPF";
+	publicVariable "CSWR_canFlashlightOPF";
+	publicVariable "CSWR_flashlightDeviceOPF";
 	publicVariable "CSWR_canNvgInfantryIND";
 	publicVariable "CSWR_canNvgParatroopsIND";
 	publicVariable "CSWR_canNvgSnipersIND";
 	publicVariable "CSWR_nvgDeviceIND";
+	publicVariable "CSWR_canFlashlightIND";
+	publicVariable "CSWR_flashlightDeviceIND";
 	publicVariable "CSWR_canNvgCIV";
 	publicVariable "CSWR_nvgDeviceCIV";
 	/* publicVariable "CSWR_voiceBLU";

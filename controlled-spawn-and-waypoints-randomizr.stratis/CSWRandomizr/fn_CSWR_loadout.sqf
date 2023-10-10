@@ -50,7 +50,7 @@ switch _tag do {
             [
                 "U_B_CombatUniform_mcam_tshirt",   // Paratrooper uniform
                 "H_HelmetB_light_desert",          // Paratrooper helmet
-                "G_Lowprofile",                    // Paratrooper goggles (cannot be "REMOVED")
+                "",                    // Paratrooper goggles (cannot be "REMOVED")
                 "V_HarnessO_brn",                  // Paratrooper vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
@@ -153,7 +153,7 @@ switch _tag do {
                 "",                      // sniper helmet
                 "",                      // sniper goggles
                 "",                      // sniper vest (cannot be "REMOVED")
-                "REMOVED",               // sniper backpack
+                "",                      // sniper backpack
                 "srifle_DMR_01_F",       // sniper rifle (cannot be "REMOVED")
                 "10Rnd_762x54_Mag",      // sniper rifle magazine (cannot be "REMOVED")
                 "optic_LRPS",            // sniper rifle sight/optics
@@ -230,7 +230,7 @@ switch _tag do {
                 "",                      // sniper helmet
                 "",                      // sniper goggles
                 "",                      // sniper vest (cannot be "REMOVED")
-                "REMOVED",               // sniper backpack
+                "",                      // sniper backpack
                 "srifle_GM6_F",          // sniper rifle (cannot be "REMOVED")
                 "5Rnd_127x108_Mag",      // sniper rifle magazine (cannot be "REMOVED")
                 "optic_LRPS",            // sniper rifle sight/optics
@@ -265,11 +265,11 @@ switch _tag do {
         // CIV CITIZENS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "RANDOM",                  // Citizen uniform (Use "RANDOM" for magic)
+                "RANDOM",                  // Citizen uniform (Only here, use "RANDOM" if you want)
                 "",                        // Citizen hat
                 "",                        // Citizen goggles
-                "",                        // Citizen vest  WIP - if this is used, all civilian must receive and not just those ones who originally has one.
-                "",                        // Citizen backpack   WIP - if this is used, all civilian must receive and not just those ones who originally has one.
+                "",                        // Citizen vest (if used, it'll add to all CIV)
+                "",                        // Citizen backpack (if used, it'll add to all CIV)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 

@@ -46,7 +46,8 @@ __
 ## CHANGELOG
 
 **Oct, XXth 2023 | v5.5**
-- Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation (WIP);
+- Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;
+- Added > All infantry soldiers and paratroopers can get easily flashlights on their rifles when the editor desactivates their night-vision-goggles;
 - Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
 - Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles, avoiding accidental explosions;
 - Improved > Loadout > New method to build custom loadouts (more flexible and intuitive);
@@ -59,6 +60,7 @@ __
 - Improved > Debug > Marker error handling has been improved;
 - Fixed > Paradrop > If editor added a custom nightvision for paratroopers, they received it duplicated;
 - Fixed > Paradrop > Infantry Sniper groups when got the paratroop speciality and had their backpack "REMOVED", they weren't receiving parachutes;
+- Fixed > Loadout > When editor used the global loadout settings (CSWR_isBackpackForAllByFoot and CSWR_isVestForAll) civilians get army gears too;
 - Fixed > Watch > Sniper group's killed before to reach their spot to watch a location, CSWR kept waiting for them inappropriately;
 - Fixed > Helicopters > They weren't spawn in the same direction defined through the Eden spawn-markers;
 - Fixed > Wheeled APC and tracked APC crewmen were not receiving custom crew helmet;
