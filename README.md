@@ -45,7 +45,7 @@ __
 
 ## CHANGELOG
 
-**Oct, XXth 2023 | v5.5**
+**Oct, 11th 2023 | v5.5**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;
 - Added > All infantry soldiers and paratroopers can get easily flashlights on their rifles when the editor desactivates their night-vision-goggles;
 - Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
