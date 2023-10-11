@@ -1,4 +1,4 @@
-// CSWR v5.5
+// CSWR v6.0
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
