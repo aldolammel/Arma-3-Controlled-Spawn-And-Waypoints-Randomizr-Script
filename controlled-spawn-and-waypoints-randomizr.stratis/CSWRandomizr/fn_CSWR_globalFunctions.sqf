@@ -2914,14 +2914,14 @@ THY_fnc_CSWR_spawn_and_go = {
 			} else {
 				// People on air (parachuters):
 				{ _grp createUnit [_x, _spwnPos, [], 200, "NONE"]; sleep _serverBreath } forEach _grpClasses;
-				/* if ( _tag isEqualTo "CIV" ) then { 
+				if ( _tag isEqualTo "CIV" ) then { 
 					_grp setBehaviourStrong "CARELESS";
 					_grp allowFleeing 0;
 					{
 						_x setBehaviour "CARELESS";
 						_x disableAI "FSM";
 					} forEach units _grp;
-				}; */
+				};
 			};
 			// Not a good performance solution at all (by GOM, 2014 July):
 				//_grp = [_spwnPos, _faction, _grpClasses, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
@@ -3062,8 +3062,8 @@ THY_fnc_CSWR_spawn_and_go = {
 			if !_isVeh then {
 				// Wait the leader touch the ground:
 				waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 || !alive leader _grp };
-				//sleep 2;
-				//if ( _tag isEqualTo "CIV" ) then { leader _grp enableAI "FSM" };
+				sleep 2;
+				if ( _tag isEqualTo "CIV" ) then { leader _grp enableAI "FSM" };
 				// If the group has more than one unit alive:
 				if ( {alive _x} count (units _grp) > 1 ) then {
 					// Regroup with leader:
