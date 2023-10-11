@@ -745,7 +745,9 @@ THY_fnc_CSWR_is_valid_classname = {
 			sleep 5;
 		};
 	} forEach _classnames;
-	if !_isValid exitWith { _isValid /* Returning */ };
+	if !_isValid exitWith { _isValid /* Returning false */ };
+	// Escape > if editor's using 'RANDOM' command exclusively for civilian uniform, it's ok, just leave as valid:
+	if ( _tag isEqualTo "CIV" && _what == "uniform" && (_classnames # 0) isEqualTo "RANDOM" ) exitWith { _isValid;  /* Returning true */ };
 	// Declarations:
 		// reserved space.
 	// Debug texts:

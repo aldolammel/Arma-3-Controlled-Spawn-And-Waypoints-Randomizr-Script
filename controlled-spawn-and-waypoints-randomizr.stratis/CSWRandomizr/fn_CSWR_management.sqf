@@ -15,10 +15,10 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
-    CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this faction.
+    CSWR_isOnBLU = false;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
+    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this faction.
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this faction.
-    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
+    CSWR_isOnCIV = true;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.

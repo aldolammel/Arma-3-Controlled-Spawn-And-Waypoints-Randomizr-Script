@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=551;
+		nextID=552;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=342;
+		nextID=345;
 	};
 	class Camera
 	{
 		pos[]={1829.2151,44.132969,5687.8887};
-		dir[]={0.8732354,-0.19744679,0.44550866};
-		up[]={0.17587997,0.98031169,0.08973068};
-		aside[]={0.45445499,-7.962808e-008,-0.89077145};
+		dir[]={0.87323403,-0.19744645,0.44550809};
+		up[]={0.17587937,0.98031366,0.089730449};
+		aside[]={0.4544546,0,-0.89077002};
 	};
 };
 binarizationWanted=0;
@@ -372,7 +372,7 @@ class Mission
 			name="CSWR Spawnpoints";
 			class Entities
 			{
-				items=20;
+				items=21;
 				class Item0
 				{
 					dataType="Marker";
@@ -608,9 +608,21 @@ class Mission
 					id=420;
 					atlOffset=0.0004863739;
 				};
+				class Item20
+				{
+					dataType="Marker";
+					position[]={2399.782,40.698002,5393.6821};
+					name="cswr_spawnparadrop_civ_1";
+					text="Spawn";
+					type="Select";
+					colorName="ColorCIV";
+					angle=14.863996;
+					id=551;
+					atlOffset=-7.6293945e-006;
+				};
 			};
 			id=49;
-			atlOffset=-48.4599;
+			atlOffset=18.533688;
 		};
 		class Item3
 		{
@@ -999,7 +1011,7 @@ class Mission
 			dataType="Marker";
 			position[]={2214.4709,19.704,6783.4878};
 			name="markerVersion";
-			text="    VERSION 5.5";
+			text="    VERSION 6.0";
 			type="mil_box";
 			id=123;
 			atlOffset=54.626717;

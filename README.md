@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.5
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.0
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -27,6 +27,7 @@ __
 - There are 4 types of destinations: move, watch, hold, and occupy. For more details, check the documentation;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
+- Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
 - Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos. For more details, check the documentation;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
@@ -44,6 +45,10 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Xxx, xxth 2023 | v6.0**
+- XXX > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+- Xxxx > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 
 **Oct, 11th 2023 | v5.5**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;
