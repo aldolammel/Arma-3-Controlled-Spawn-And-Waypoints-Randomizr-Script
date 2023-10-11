@@ -10,7 +10,7 @@ Special thanks: To the old (but gold) "T8 Units" script for the inspiration over
 
 video demo (old version): https://www.youtube.com/watch?v=rpzIr0r03ZQ
 
-Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.VR/CSWRandomizr/_CSWR_Script_Documentation.pdf
+Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.stratis/CSWRandomizr/_CSWR_Script_Documentation.pdf
 
 __
 
