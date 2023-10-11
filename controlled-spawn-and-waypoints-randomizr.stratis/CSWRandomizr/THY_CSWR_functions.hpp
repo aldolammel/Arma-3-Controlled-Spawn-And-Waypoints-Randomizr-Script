@@ -1,5 +1,6 @@
 // CSWR v4.0
 // File: your_mission\CSWRandomizr\THY_CSWR_functions.hpp
+// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 class THY_CSWR_functions {

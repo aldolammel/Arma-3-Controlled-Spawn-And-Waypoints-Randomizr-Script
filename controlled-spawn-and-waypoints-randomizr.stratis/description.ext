@@ -1,38 +1,38 @@
 // MISSION CONFIGS
 class Header
 {
-	gameType 			= Sandbox; 	
-	minPlayers			= 1;		
-	maxPlayers			= 1;
+	gameType            = Sandbox;
+	minPlayers          = 1;
+	maxPlayers          = 1;
 };
 
 	// About
-	onLoadName 			= "CSWR";
-	author 				= "thy"; 						
-	overviewPicture 	= "images\thumb.jpg"; 			
-	onLoadMission 		= "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to set life faster on your mission map."; 
+	onLoadName          = "CSWR";
+	author              = "thy";
+	overviewPicture     = "images\thumb.jpg";
+	onLoadMission       = "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to create life and battles in a much faster and editable way."; 
 
 	// Gameplay
-	joinUnassigned 		= 0;
-	respawnButton 		= 0;
-	respawnDialog 		= 0;
-	debriefing 			= 0;
-	saving 				= 0;
+	joinUnassigned      = 0;
+	respawnButton       = 0;
+	respawnDialog       = 0;
+	debriefing          = 0;
+	saving              = 0;
 	
 	// Debug
 	enableDebugConsole  = 1;
 	allowFunctionsLog   = 1;
 	
 	// Performance
-	DisabledAI				= 1;
-	corpseManagerMode 		= 1;
-	corpseLimit 			= 5;
-	corpseRemovalMinTime	= 1200;
-	corpseRemovalMaxTime 	= 3600;
-	wreckManagerMode 		= 1;
-	wreckLimit 				= 5;
-	wreckRemovalMinTime 	= 1200;
-	wreckRemovalMaxTime 	= 3600;
+	DisabledAI              = 1;
+	corpseManagerMode       = 1;
+	corpseLimit             = 5;
+	corpseRemovalMinTime    = 300;
+	corpseRemovalMaxTime    = 600;
+	wreckManagerMode        = 1;
+	wreckLimit              = 5;
+	wreckRemovalMinTime     = 600;
+	wreckRemovalMaxTime     = 1200;
 
 // CBA MOD
 cba_settings_hasSettingsFile = 0;
@@ -45,6 +45,7 @@ cba_settings_hasSettingsFile = 0;
 
 class cfgFunctions 
 {
-	// CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
+	// CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
+	// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 	#include "CSWRandomizr\THY_CSWR_functions.hpp"
 };

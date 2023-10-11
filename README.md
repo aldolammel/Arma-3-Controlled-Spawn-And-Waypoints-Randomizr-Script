@@ -1,13 +1,16 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.1
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.5
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
+
+Creation concept: bring life to the mission through non-stop units' movements with some level of unpredictability without losing control of server performance and what AI units can do.
+Special thanks: To the old (but gold) "T8 Units" script for the inspiration over the years.
 
 ## HOW TO INSTALL / DOCUMENTATION
 
 video demo (old version): https://www.youtube.com/watch?v=rpzIr0r03ZQ
 
-Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.VR/CSWRandomizr/_CSWR_Script_Documentation.pdf
+Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.stratis/CSWRandomizr/_CSWR_Script_Documentation.pdf
 
 __
 
@@ -41,6 +44,28 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Oct, 11th 2023 | v5.5**
+- Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;
+- Added > All infantry soldiers and paratroopers can get easily flashlights on their rifles when the editor desactivates their night-vision-goggles;
+- Improved > All CSWR markers are invisible since the Briefing screen (init.sqf file has been included in project);
+- Improved > New method (more feasible to performance) to check if destinations and spawn-points are busy before accept new groups/vehicles, avoiding accidental explosions;
+- Improved > Loadout > New method to build custom loadouts (more flexible and intuitive);
+- Improved > Loadout > The global options to force apply backpack and/or vest for all units now will ignore civilian faction;
+- Improved > Hold > New method to turn the tracked vehicle to hold-marker direction even more accurate and safe (against vehicle bounces);
+- Improved > Hold > When in debug-mode-global is TRUE with debug-hold-mode is also TRUE, now the hold-markers and its direction are visible to the Mission Editor in-game;
+- Improved > Spawn delay > from now the spawn delay timer is configured in-minutes and not in-seconds anymore, making the Mission Editor's life easier;
+- Improved > Loadout > Now it's possible to turn On or Off which faction will get nightvision and what nightvision device model (supports NVG from mods too);
+- Improved > Loadout > Ue the "RANDOM" command in civilian uniform slot in loadout file to gives a random outfit for each CIV unit created by CSWR;
+- Improved > Debug > Marker error handling has been improved;
+- Fixed > Paradrop > If editor added a custom nightvision for paratroopers, they received it duplicated;
+- Fixed > Paradrop > Infantry Sniper groups when got the paratroop speciality and had their backpack "REMOVED", they weren't receiving parachutes;
+- Fixed > Loadout > When editor used the global loadout settings (CSWR_isBackpackForAllByFoot and CSWR_isVestForAll) civilians get army gears too;
+- Fixed > Watch > Sniper group's killed before to reach their spot to watch a location, CSWR kept waiting for them inappropriately;
+- Fixed > Helicopters > They weren't spawn in the same direction defined through the Eden spawn-markers;
+- Fixed > Wheeled APC and tracked APC crewmen were not receiving custom crew helmet;
+- Removed > Civilian faction cannot move to anywhere ("_move_ANY" instruction) like a soldier, from now it's been limited to public markers ("_move_PUBLIC");
+- Documentation has been updated.
 
 **Sep, 18th 2023 | v5.1**
 - Fixed > CRITICAL > In CSWR v5.0, all AI groups were stuck after the first waypoint to be completed;
