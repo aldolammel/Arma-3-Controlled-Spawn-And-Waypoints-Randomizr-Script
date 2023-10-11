@@ -1296,7 +1296,8 @@ THY_fnc_CSWR_group_type_isAirCrew = {
 	private ["_irAirCrew"];
 
 	// Escape:
-	if ( isNil _grpType || _grpType isEqualTo "" ) exitWith { false };
+	// WIP - when the 'isNil' is here, the exitWith is activated badly. Working on...
+	if ( /* isNil _grpType || */ _grpType isEqualTo "" ) exitWith { false };
 	// Initial values:
 	_irAirCrew = false;
 	// Declarations:
@@ -3338,8 +3339,9 @@ THY_fnc_CSWR_go = {
 	params["_spwns", "_destType", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli"];
 	//private["", "", ""];
 
-	// Escape:
+	// Escape > if the group doesn't exist anymore, or its leader is dead, abort:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	// Escape > if it's vehicle and the vehicle is destroyed, abort:
 	if ( _isVeh && !alive (vehicle leader _grp) ) exitWith {};
 	// Initial values:
 		// reserved space.
@@ -3525,7 +3527,7 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Error handling:
-	if ( side (leader _grp) == CIVILIAN ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
+	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_time = 0;
 	// Declarations:
