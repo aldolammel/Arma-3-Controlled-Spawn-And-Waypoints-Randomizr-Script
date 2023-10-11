@@ -3054,6 +3054,8 @@ THY_fnc_CSWR_spawn_and_go = {
 			if !_isVeh then {
 				// Wait the leader touch the ground:
 				waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 || !alive leader _grp };
+				// As civilian gets panic after landing (crouched), this will restart their leader body animation, making them get "UP" again:
+				if ( _tag isEqualTo "CIV" ) then { leader _grp switchmove "" };
 				// If the group has more than one unit alive:
 				if ( {alive _x} count (units _grp) > 1 ) then {
 					// Regroup with leader:
@@ -3075,6 +3077,11 @@ THY_fnc_CSWR_spawn_and_go = {
 							waitUntil { sleep 3; (getPos _x # 2) < 0.2 || !alive _x };
 							// Wait the parachute detchament animation gets finished:
 							sleep 1;
+							// If civilian and not the leader:
+							if ( _tag isEqualTo "CIV" && _x isNotEqualTo (leader _grp) ) then { 
+								// As civilian gets panic after landing (crouched), this will restart their body animation, making them get "UP" again:
+								_x switchmove "";
+							};
 							// Regroup at leader position:
 							_x doFollow (leader _grp);
 						};
