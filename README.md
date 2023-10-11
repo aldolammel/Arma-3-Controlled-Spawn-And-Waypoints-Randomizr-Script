@@ -27,6 +27,7 @@ __
 - There are 4 types of destinations: move, watch, hold, and occupy. For more details, check the documentation;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
+- Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
 - Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos. For more details, check the documentation;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
