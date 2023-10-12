@@ -15,10 +15,10 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = false;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
+    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
     CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this faction.
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this faction.
-    CSWR_isOnCIV = true;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
+    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
@@ -74,7 +74,7 @@ if (!isServer) exitWith {};
         CSWR_destCommonTakeabreak = [5, 30, 60];         // In seconds, how long each group can stay on its Move-markers. Default: 5 sec, 30 sec, 60 sec.
         CSWR_destOccupyTakeabreak = [300, 600, 1200];    // In seconds, how long each group can stay on its Occupy-markers. Default: 5min (300), 10min (600), 20min (1200).
         CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
-        CSWR_heliTakeoffDelay     = [10, 20, 30];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 20 sec, 30 sec.
+        CSWR_heliTakeoffDelay     = [10, 30, 60];        // In seconds, how long each helicopter can stay before takeoff. Defailt: 10 sec, 30 sec, 60 sec.
     // Ranges:
         CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
         CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.

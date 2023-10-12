@@ -1363,7 +1363,7 @@ THY_fnc_CSWR_group_behavior = {
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
 
-	params ["_grp", "_behavior", "_isVeh"];
+	params ["_grp", "_behavior", "_isVeh", ["_isHunting", false]];
 	//private [""];
 
 	// Escape:
@@ -1373,7 +1373,7 @@ THY_fnc_CSWR_group_behavior = {
 	// Errors handling:
 		// reserved space.
 	// Declarations:
-		// reserved space.
+	if _isHunting then { _behavior = "BE_CHAOS" };
 	// Debug texts:
 		// reserved space.
 	// 
@@ -1405,12 +1405,12 @@ THY_fnc_CSWR_group_behavior = {
 			// If crew group:
 			if _isVeh then {
 				_grp setBehaviourStrong "COMBAT";
-				_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
 			// If infantry group:
 			} else {
 				_grp setBehaviourStrong "AWARE";  // Dont set "COMBAT" here coz the bevarior will make the group to prone and stuff over and over again.
-				_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
 			};
+			_grp setCombatMode "RED";  // Mandatory if the waypoint is "SAD" type (for helicopters/air crew). Never remove it!
+			_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
 		};
 		default { ["%1 %2 > THERE IS NO behavior called '%3'. Check the documentation and fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarningHeader, side (leader _grp), _behavior] call BIS_fnc_error };
 	};
@@ -1426,7 +1426,7 @@ THY_fnc_CSWR_unit_behavior = {
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
 
-	params ["_grp", "_behavior", "_isVeh"];
+	params ["_grp", "_behavior", "_isVeh", ["_isHunting", false]];
 	//private [""];
 
 	// Escape:
@@ -1436,7 +1436,7 @@ THY_fnc_CSWR_unit_behavior = {
 	// Errors handling:
 		// reserved space.
 	// Declarations:
-		// reserved space.
+	if _isHunting then { _behavior = "BE_CHAOS" };
 	// Debug texts:
 		// reserved space.
 	// 
@@ -1456,7 +1456,7 @@ THY_fnc_CSWR_unit_behavior = {
 				_x setUnitCombatMode "WHITE";  // Hold Fire, Engage.
 			};
 			case "BE_CHAOS": {
-				_x setUnitCombatMode "RED";  // Fire at will, engage at will/loose formation.
+				_x setUnitCombatMode "RED";  // Fire at will, engage at will/loose formation. Mandatory for helicopter/air-crew using 'SAD' waypoint type.
 			};
 		};
 		// CPU breath:
@@ -1489,19 +1489,19 @@ THY_fnc_CSWR_unit_skills = {
 	{  // forEach units _grp:
 		// If member of Light group:
 		if ( _grpType isEqualTo "teamL" ) then {
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo leader _grp ) then {
 				_x setSkill ["commanding", 0.7];
 			};
 		};
 		// If member of Medium group:
 		if ( _grpType isEqualTo "teamM" ) then {
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo leader _grp ) then {
 				_x setSkill ["commanding", 0.8];
 			};
 		};
 		// If member of Heavy group:
 		if ( _grpType isEqualTo "teamH" ) then {
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo leader _grp ) then {
 				_x setSkill ["commanding", 0.9];
 			};
 			_x setSkill ["courage", 0.8];
@@ -1515,7 +1515,7 @@ THY_fnc_CSWR_unit_skills = {
 		// If member of Sniper group:
 		if ( _grpType isEqualTo "teamS" ) then {
 			// skills:
-			if ( _x == leader _grp ) then {  // leader is the main gunner.
+			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
 				_x setSkill ["spotTime", 0.6];
 				_x setSkill ["aimingAccuracy", 0.8];
 			} else {
@@ -1529,7 +1529,7 @@ THY_fnc_CSWR_unit_skills = {
 		// Updating the settings if Sniper group in watch strategy:
 		if ( _grpType isEqualTo "teamS" && _destType isEqualTo "MOVE_WATCH" ) then {
 			// skills:
-			if ( _x == leader _grp ) then {  // leader is the main gunner.
+			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
 				_x setSkill ["spotTime", 0.8];
 				_x setSkill ["aimingAccuracy", 0.9];
 			} else {
@@ -1555,7 +1555,7 @@ THY_fnc_CSWR_unit_skills = {
 		// If crewman of Heli Light:
 		if ( _grpType isEqualTo "heliL" ) then {
 			// skills:
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo leader _grp ) then {
 				_x setSkill ["commanding", 0.8];
 			};
 			_x setSkill ["spotDistance", 1];  // as Heli Light is closer from the ground (flyInHeight), it's easier to spot the enemy than Heli Heavy.
@@ -1564,10 +1564,10 @@ THY_fnc_CSWR_unit_skills = {
 		// If crewman of Heli Heavy:
 		if ( _grpType isEqualTo "heliH" ) then {
 			// skills:
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo leader _grp ) then {
 				_x setSkill ["commanding", 1];
 			};
-			/* if ( _x == gunner (vehicle _x) ) then {
+			/* if ( _x isEqualTo gunner (vehicle _x) ) then {
 				// reserved space.
 			} else {
 				// reserved space.
@@ -2685,48 +2685,6 @@ THY_fnc_CSWR_base_service_station = {
 };
 
 
-THY_fnc_CSWR_veh_condition = {
-	// This function checks the vehicle and its crew conditon (health, ammo, fuel, maintenance).
-	// Return _shouldRTB. Bool.
-
-	params["_grp", "_areaToPass", "_isHeli"];
-	private["_shouldRTB", "_veh", "_driver", "_gunner"];
-
-	// Escape:
-		// reserved space.
-	// Initial values:
-	_shouldRTB = false;
-	// Declarations:
-	_tag = [side (leader _grp)] call THY_fnc_CSWR_convertion_faction_to_tag;
-	_veh = vehicle (leader _grp);
-	_driver = driver _veh;
-	_gunner = gunner _veh;
-	// Debug texts:
-		// reserved space.
-	// Waiting to the next waypoint:
-	waitUntil {
-		// If helicopter:
-		if _isHeli then {
-			// Breath for the next loop check:
-			sleep 10;
-			// Debug message > If helicopter is flighting (over 1 meter high):
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && _isHeli && ((getPos _veh) # 2) > 1 ) then {
-				["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh] call BIS_fnc_error;
-			};
-			// Allows the heli to go to the next waypoint:
-			isNull _grp || _veh distance _areaToPass < 200 || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1;
-		// Otherwise:
-		} else {
-			// Reserved space for other types of vehicles.
-		};
-	};
-	// If the vehicle or crew has some of these conditions, the next waypoint must be the base:
-	if ( damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 ) then { _shouldRTB = true };
-	// Return:
-	_shouldRTB;
-};
-
-
 THY_fnc_CSWR_spawn_type_checker = {
 	// This function validates if the group type selected is abled to spawn in a specific spawnpoint-type.
 	// Returns _isValid. Bool.
@@ -2784,18 +2742,18 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Escape:
 	if ( _grpInfo isEqualTo [] ) exitWith {};
 	// Initial values:
-	_canSpawn = true;
-	_veh = objNull;
-	_spwn = "";
-	_bookingInfo = [];
-	_isBooked = false;
+	_canSpawn    = true;
+	_veh         = objNull;
+	_spwn        = "";
+	_bookingInfo    = [];
+	_isBooked       = false;
 	_spwnPosChecker = [];
-	_spwnPos = [];
-	_isParadrop = false;
+	_spwnPos        = [];
+	_isParadrop   = false;
 	_serverBreath = 0;
-	_blockers = [];
-	_time = 0;
-	_nvg = "";
+	_blockers     = [];
+	_time         = 0;
+	_nvg          = "";
 	// Errors handling:
 		// reserved space.
 	// Declarations:
@@ -3170,11 +3128,11 @@ THY_fnc_CSWR_spawn_delay = {
 		// reserved space.
 	// Initial values:
 	_isReadyToSpwn = false;
-	_timeLoop = 0;
+	_timeLoop  = 0;
 	// Declarations:
-	_time = time;
-	_counter = _time;
-	_wait = 10;  // CAUTION: this number is used to calcs the TIMER too.
+	_time      = time;
+	_counter   = _time;
+	_wait      = 10;  // CAUTION: this number is used to calcs the TIMER too.
 	_requester = if _isVeh then {"vehicle"} else {"group"};
 	
 	// Debug texts:
@@ -3349,7 +3307,7 @@ THY_fnc_CSWR_go = {
 	// This function select the type of movement the group/vehicle will execute in a row.
 	// Returns nothing.
 
-	params["_spwns", "_destType", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli"];
+	params["_spwns", "_destType", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew"];
 	//private["", "", ""];
 
 	// Escape > if the group doesn't exist anymore, or its leader is dead, abort:
@@ -3365,9 +3323,9 @@ THY_fnc_CSWR_go = {
 
 	// Main functionality:
 	switch _destType do {
-		case "MOVE_ANY":        { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, false] spawn THY_fnc_CSWR_go_ANYWHERE };
-		case "MOVE_PUBLIC":     { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, false] spawn THY_fnc_CSWR_go_dest_PUBLIC };
-		case "MOVE_RESTRICTED": { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED };
+		case "MOVE_ANY":        { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_ANYWHERE };
+		case "MOVE_PUBLIC":     { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_PUBLIC };
+		case "MOVE_RESTRICTED": { [_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED };
 		case "MOVE_WATCH":      { [_tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH };  // Vehicles and Civilian faction are not able to do this.
 		case "MOVE_OCCUPY":     { [_tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY };  // Vehicles are not able to do this.
 		case "MOVE_HOLD":       { [_tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD };  // Helicopters are not able to do this.
@@ -3379,35 +3337,98 @@ THY_fnc_CSWR_go = {
 };
 
 
+THY_fnc_CSWR_go_altitude = {
+	// This function checks the altitude of the waypoint.
+	// Returns _areaToPass. Array.
+
+	params ["_tag", "_grp", "_grpType", "_areaToPass", "_isAirCrew", "_isHunting", "_shouldRTB"];
+	//private [""];
+
+	// Escape > If damaged or wounded:
+	if _shouldRTB exitWith { _areaToPass /* Returning */ };
+	// Initial values:
+		// reserved space.
+	// Declarations:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+	// If helicopter:
+	if _isAirCrew then {
+		// If everything is alright wih helicopter, go to right altitude:
+		if _isHunting then {
+			// Debug message:
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli ) then { systemChat format ["%1 HELICOPTER > %2 '%3' is Seek & Destroy!", CSWR_txtDebugHeader, _tag, str _grp] };
+		// Otherwise, not hunting:
+		} else {
+			// If helicopter, set the new waypoint altitude (z axis):
+			if ( _grpType isEqualTo "heliL" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliLightAlt] };
+			if ( _grpType isEqualTo "heliH" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliHeavyAlt] };
+		};
+	};
+	// Return:
+	_areaToPass;
+};
+
+
 THY_fnc_CSWR_go_next_condition = {
 	// This function checks if the group or vehicle have been reached the condition for the next waypoint.
 	// Returns _shouldRTB. Bool.
 
-	params ["_grp", "_areaToPass", "_isVeh", "_isHeli"];
-	private ["_shouldRTB"];
+	params ["_tag", "_grp", "_areaToPass", "_isVeh", "_isAirCrew", ["_isHunting", false]];
+	private ["_shouldRTB", "_time", "_veh", "_driver", "_gunner"];
 
 	// Escape:
 		// reserved space.
 	// Initial values:
 	_shouldRTB = false;
+	_time      = 0;
+	_veh       = objNull;
+	_driver    = objNull;
+	_gunner    = objNull;
 	// Declarations:
 		// reserved space.
 	// Debug texts:
 		// reserved space.
-	// Main functionality:
 	// If a vehicle:
 	if _isVeh then {
-		// If a helicopter:
-		if _isHeli then {
-			// Looping to decide what waypoint comes next (combat or base):
-			_shouldRTB = [_grp, _areaToPass, _isHeli] call THY_fnc_CSWR_veh_condition;
-		// If a ground vehicle:
+		// Declarations:
+		_veh = vehicle (leader _grp);
+		// If ground vehicle:
+		if !_isAirCrew then {
+			// waiting the vehicle gets close enough of the waypoint position:
+			waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || !alive _veh || leader _grp distance _areaToPass < random 30 };
+			// When there, cooldown:
+			_time = time + (random CSWR_destCommonTakeabreak);
+			waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || !alive _veh || time > _time };
+		// If helicopter:
 		} else {
-			waitUntil { sleep 10; isNull _grp || leader _grp distance _areaToPass < 10 };
+			// Declarations:
+			_driver = driver _veh;
+			_gunner = gunner _veh;
+			// Waiting to the next waypoint:
+			waitUntil {
+				// Breath for the next loop check:
+				sleep 10;
+				// Debug message > If helicopter is flighting (over 1 meter high):
+				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && ((getPos _veh) # 2) > 1 ) then {
+					["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0  |  Hunting: %8", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh, _isHunting] call BIS_fnc_error;
+				};
+				// Allows the heli to go to the next waypoint:
+				isNull _grp || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1 || { if !_isHunting then {_veh distance _areaToPass < 300 || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "MOVE" } else { (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "SAD" } };
+			};
+			// If the group still alive, the vehicle or crew has some of these conditions, the next waypoint must be the base:
+			if ( alive (leader _grp) && { damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 } ) then { 
+				// Update to return:
+				_shouldRTB = true;
+			};
 		};
 	// Otherwise, if a group:
 	} else {
-		waitUntil { sleep 15; isNull _grp || leader _grp distance _areaToPass < 10 };
+		// waiting the group gets close enough of the waypoint position:
+		waitUntil { sleep 20; isNull _grp || !alive (leader _grp) || leader _grp distance _areaToPass < random 30 };
+		// When there, cooldown:
+		_time = time + (random CSWR_destCommonTakeabreak); 
+		waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || time > _time };
 	};
 	// Return:
 	_shouldRTB;
@@ -3418,7 +3439,7 @@ THY_fnc_CSWR_go_RTB = {
 	// This function checks set where are the service stations for vehicles in the faction base.
 	// Returns nothing.
 
-	params ["_spwns", "_tag", "_grpType", "_grp", "_isHeli", "_destType", "_behavior"];
+	params ["_spwns", "_tag", "_grpType", "_grp", "_isAirCrew", "_destType", "_behavior"];
 	private ["_wp", "_faction", "_veh", "_distToLanding", "_closestStationPos"];
 
 	// Escape:
@@ -3446,7 +3467,7 @@ THY_fnc_CSWR_go_RTB = {
 	// If already in base:
 	waitUntil {
 		// If helicopter:
-		if _isHeli then {
+		if _isAirCrew then {
 			// Breath for the next loop check:
 			sleep 10;
 			// Allows the group move to the next waypoint:
@@ -3457,7 +3478,7 @@ THY_fnc_CSWR_go_RTB = {
 		};
 	};
 	// If helicopter, execute the landing:m
-	if _isHeli then { [_spwns, _tag, _grpType, _grp, _veh, _destType, _behavior] spawn THY_fnc_CSWR_go_RTB_heli_landing };
+	if _isAirCrew then { [_spwns, _tag, _grpType, _grp, _veh, _destType, _behavior] spawn THY_fnc_CSWR_go_RTB_heli_landing };
 	// Return:
 	true;
 };
@@ -3532,52 +3553,39 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 
 THY_fnc_CSWR_go_ANYWHERE = {
 	// This function sets the group/vehicle to move to any destination (sum of almost all other preset destinations), including exclusive enemy faction destinations but excluding the specialized (watch, hold, occupy) ones. It's a looping.
+	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
-	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_time", "_areaToPass","_wp", "_shouldRTB"];
+	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew", "_shouldRTB"];
+	private ["_areaToPass", "_isHunting", "_wp"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Error handling:
 	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
-	_time = 0;
+		// reserved space.
 	// Declarations:
 	_areaToPass = markerPos (selectRandom CSWR_destsANYWHERE);
-	// If everything is alright wih helicopter, go to right altitude:
-	if ( _isHeli && !_shouldRTB ) then {
-		// If helicopter, set the new waypoint altitude (z axis):
-		if ( _grpType isEqualTo "heliL" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliLightAlt] };
-		if ( _grpType isEqualTo "heliH" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliHeavyAlt] };
-	};
+	_isHunting = selectRandom [true, false, false];
+	// Check the waypoint altitude:
+	_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _shouldRTB] call THY_fnc_CSWR_go_altitude;
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
-	_wp = _grp addWaypoint [_areaToPass, 0]; 
-	_wp setWaypointType "MOVE";
+	_wp = _grp addWaypoint [_areaToPass, 0];
+	// Waypoint type:
+	_wp setWaypointType "MOVE"; if ( _isAirCrew && _isHunting ) then { _wp setWaypointType "SAD" };  // SAD = Seek And Destroy.
+	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
+	_shouldRTB = [_tag, _grp, _areaToPass, _isVeh, _isAirCrew, _isHunting] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
-	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_ANY", _behavior] spawn THY_fnc_CSWR_go_RTB };
-	// Next planned move cooldown:
-	// If ground vehicle or a group of people:
-	if !_isHeli then {
-		// waiting the group gets close enough of the waypoint position:
-		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
-		// When there, cooldown:
-		_time = time + (random CSWR_destCommonTakeabreak); 
-		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
-	// Otherwise, if helicopter:
-	} else {
-		// waiting the heli gets close enough of the waypoint position:
-		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
-	};
+	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isAirCrew, "MOVE_ANY", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Restart the movement:
-	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_ANYWHERE;
+	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, _shouldRTB] spawn THY_fnc_CSWR_go_ANYWHERE;
 	// Return:
 	true;
 };
@@ -3585,50 +3593,39 @@ THY_fnc_CSWR_go_ANYWHERE = {
 
 THY_fnc_CSWR_go_dest_PUBLIC = { 
 	// This function sets the group/vehicle to move through PUBLIC destinations where civilians and soldiers can go, excluding the specialized (watch, hold, occupy) ones and the waypoints restricted by other factions. It's a looping.
+	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
-	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_time", "_areaToPass","_wp", "_shouldRTB"];
+	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew", "_shouldRTB"];
+	private ["_areaToPass", "_isHunting", "_wp"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
+	// Error handling:
+		// reserved space.
 	// Initial values:
-	_time = 0;
+		// reserved space.
 	// Declarations:
 	_areaToPass = markerPos (selectRandom CSWR_destsPUBLIC);
-	// If everything is alright wih helicopter, go to right altitude:
-	if ( _isHeli && !_shouldRTB ) then {
-		// If helicopter, set the new waypoint altitude (z axis):
-		if ( _grpType isEqualTo "heliL" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliLightAlt] };
-		if ( _grpType isEqualTo "heliH" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliHeavyAlt] };
-	};
+	_isHunting = selectRandom [true, false, false];
+	// Check the waypoint altitude:
+	_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _shouldRTB] call THY_fnc_CSWR_go_altitude;
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
 	_wp = _grp addWaypoint [_areaToPass, 0];
-	_wp setWaypointType "MOVE";
+	// Waypoint type:
+	_wp setWaypointType "MOVE"; if ( _isAirCrew && _isHunting ) then { _wp setWaypointType "SAD" };  // SAD = Seek And Destroy.
+	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
+	_shouldRTB = [_tag, _grp, _areaToPass, _isVeh, _isAirCrew, _isHunting] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
-	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_PUBLIC", _behavior] spawn THY_fnc_CSWR_go_RTB };
-	// Next planned move cooldown:
-	// If ground vehicle or a group of people:
-	if !_isHeli then {
-		// waiting the group gets close enough of the waypoint position:
-		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
-		// When there, cooldown:
-		_time = time + (random CSWR_destCommonTakeabreak);
-		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
-	// Otherwise, if helicopter:
-	} else {
-		// waiting the heli gets close enough of the waypoint position:
-		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
-	};
+	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isAirCrew, "MOVE_PUBLIC", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Restart the movement:
-	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_dest_PUBLIC;
+	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, _shouldRTB] spawn THY_fnc_CSWR_go_dest_PUBLIC;
 	// Return:
 	true;
 };
@@ -3636,17 +3633,18 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 
 THY_fnc_CSWR_go_dest_RESTRICTED = { 
 	// This function sets the group/vehicle to move only through the exclusive faction destinations, excluding public and specialized (watch, hold, occupy) ones. It's a looping.
+	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
-	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isHeli", "_shouldRTB"];
-	private ["_time", "_destMarkers", "_areaToPass","_wp", "_shouldRTB"];
+	params ["_spwns", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew", "_shouldRTB"];
+	private ["_destMarkers", "_areaToPass", "_isHunting", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
-	if ( _tag isEqualTo "CIV" ) exitWith {};
+	// Error handling:
+	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE RESTRICTED > Civilians CANNOT use '_move_RESTRICTED'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_destMarkers = [];
-	_time = 0;
 	// Defining the group markers to be considered:
 	switch _tag do {
 		case "BLU": { _destMarkers = CSWR_destBLU };
@@ -3656,39 +3654,25 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	};
 	// Check the available RESTRICTED faction markers on map:
 	_areaToPass = markerPos (selectRandom _destMarkers);
-	// If everything is alright wih helicopter, go to right altitude:
-	if ( _isHeli && !_shouldRTB ) then {
-		// If helicopter, set the new waypoint altitude (z axis):
-		if ( _grpType isEqualTo "heliL" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliLightAlt] };
-		if ( _grpType isEqualTo "heliH" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliHeavyAlt] };
-	};
+	_isHunting = selectRandom [true, false, false];
+	// Check the waypoint altitude:
+	_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _shouldRTB] call THY_fnc_CSWR_go_altitude;
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
-	_wp = _grp addWaypoint [_areaToPass, 0]; 
-	_wp setWaypointType "MOVE";
+	_wp = _grp addWaypoint [_areaToPass, 0];
+	// Waypoint type:
+	_wp setWaypointType "MOVE"; if ( _isAirCrew && _isHunting ) then { _wp setWaypointType "SAD" };  // SAD = Seek And Destroy.
+	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_shouldRTB = [_grp, _areaToPass, _isVeh, _isHeli] call THY_fnc_CSWR_go_next_condition;
+	_shouldRTB = [_tag, _grp, _areaToPass, _isVeh, _isAirCrew, _isHunting] call THY_fnc_CSWR_go_next_condition;
 	// Return to base:
-	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isHeli, "MOVE_RESTRICTED", _behavior] spawn THY_fnc_CSWR_go_RTB };
-	// Next planned move cooldown:
-	// If ground vehicle or a group of people:
-	if !_isHeli then {
-		// waiting the group gets close enough of the waypoint position:
-		waitUntil { sleep 10; leader _grp distance _areaToPass < random 30 || !alive (leader _grp) };
-		// When there, cooldown:
-		_time = time + (random CSWR_destCommonTakeabreak);
-		waitUntil { sleep 10; time > _time || !alive (leader _grp) };
-	// Otherwise, if helicopter:
-	} else {
-		// waiting the heli gets close enough of the waypoint position:
-		waitUntil { sleep 3; leader _grp distance _areaToPass < 200 || !alive (leader _grp) };
-	};
+	if _shouldRTB exitWith { [_spwns, _tag, _grpType, _grp, _isAirCrew, "MOVE_RESTRICTED", _behavior] spawn THY_fnc_CSWR_go_RTB };
 	// Restart the movement:
-	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isHeli, _shouldRTB] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
+	[_spwns, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, _shouldRTB] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
 	// Return:
 	true;
 };
@@ -3699,7 +3683,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_tag", "_grpType", "_grp", "_behavior"];
-	private ["_destMarkers", "_areaPos", "_locationPos", "_obj", "_disLocToArea", "_counter", "_attemptLimit", "_bookingInfo", "_location", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_wait", "_areaToWatch", "_locations", "_wp"];
+	private ["_destMarkers", "_areaPos", "_locationPos", "_obj", "_disLocToArea", "_counter", "_bookingInfo", "_location", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_attemptLimit", "_wait", "_areaToWatch", "_locations", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -3709,22 +3693,22 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	if ( side (leader _grp) isEqualTo CIVILIAN ) exitWith { ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_destMarkers = [];
-	_areaPos = [];
+	_areaPos     = [];
 	_locationPos = [];
-	_obj = objNull;
-	_disLocToArea = nil;
-	_counter = 0;
-	_attemptLimit = 5;
-	_bookingInfo = [];
-	_location = nil;
-	_isBooked = false;
-	_roadsAround = [];
+	_obj         = objNull;
+	_disLocToArea  = nil;
+	_counter       = 0;
+	_bookingInfo   = [];
+	_location      = nil;
+	_isBooked      = false;
+	_roadsAround   = [];
 	_mkrDebugWatch = "";  // Debug purposes.
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
+	_attemptLimit  = 5;
 	_wait = 10;
 	// Defining the group markers to be considered:
 	switch _tag do {
@@ -4086,12 +4070,12 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
 	_destMarkers = [];
-	_bldgPos = [];
-	_spots = [];
-	_wp = [];
-	_grpLead = objNull;
+	_bldgPos     = [];
+	_spots       = [];
+	_wp          = [];
+	_grpLead     = objNull;
 	_leadStuckCounter = 0;
-	_getOutPos = [];
+	_getOutPos   = [];
 	// Declarations:
 	_distLimiterFromBldg = 10;  // Distance to activate occupy functions validations to group leader.
 	_distLimiterFriendPlayer = 40;  // Distance to desactivate the AI teleport when player is around.
@@ -4234,8 +4218,8 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_faction = {
 	private ["_bldgsByMkr", "_bldgsToCheck", "_bldgsSpotsAvailable", "_spots", "_isWaterSurrounding"];
 
 	// Initial values:
-	_bldgsByMkr = [];
-	_bldgsToCheck = [];
+	_bldgsByMkr          = [];
+	_bldgsToCheck        = [];
 	_bldgsSpotsAvailable = [];
 	// Escape:
 	if ( !_isOnFaction ) exitWith { _bldgsSpotsAvailable /* return */ };
@@ -4724,17 +4708,17 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
-	_destMarkers = [];
+	_destMarkers  = [];
 	_isVehTracked = false;
-	_bookingInfo = [];
-	_areaToHold = "";
-	_isBooked = false;
-	_areaPos = [];
-	_wp = [];
-	_time = 0;
-	_counter = 0;
+	_bookingInfo  = [];
+	_areaToHold   = "";
+	_isBooked     = false;
+	_areaPos      = [];
+	_wp           = [];
+	_time         = 0;
+	_counter      = 0;
 	_trackedVehTypes = [];
-	_vehType = "";
+	_vehType      = "";
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:

@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=556;
+		nextID=560;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=345;
+		nextID=348;
 	};
 	class Camera
 	{
-		pos[]={1829.2151,44.132969,5687.8887};
-		dir[]={0.87323397,-0.19744617,0.44550806};
-		up[]={0.17587911,0.98031372,0.089730315};
-		aside[]={0.45445457,0,-0.8907699};
+		pos[]={1856.1031,33.52549,5710.0732};
+		dir[]={0.87323397,-0.19744611,0.44550806};
+		up[]={0.17587903,0.98031372,0.089730285};
+		aside[]={0.45445454,7.4505806e-009,-0.89076984};
 	};
 };
 binarizationWanted=0;
@@ -992,14 +992,14 @@ class Mission
 				};
 			};
 			id=51;
-			atlOffset=-52.048698;
+			atlOffset=-0.13067245;
 		};
 		class Item4
 		{
 			dataType="Marker";
 			position[]={2214.4709,19.704,6783.4878};
 			name="markerVersion";
-			text="    VERSION 6.0";
+			text="    VERSION 5.5";
 			type="mil_box";
 			id=123;
 			atlOffset=54.626717;

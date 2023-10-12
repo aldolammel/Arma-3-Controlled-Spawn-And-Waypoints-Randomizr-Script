@@ -47,8 +47,13 @@ __
 ## CHANGELOG
 
 **Xxx, xxth 2023 | v6.0**
-- XXX > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-- Xxxx > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+- Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
+- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > Helipcoter > From now, 33% chance of helicopters approach the current waypoint with Seek & Destroy style;
+- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Documentation has been updated.
 
 **Oct, 11th 2023 | v5.5**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;

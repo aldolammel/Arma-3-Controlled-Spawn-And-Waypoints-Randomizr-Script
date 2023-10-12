@@ -25,7 +25,7 @@ if (!isServer) exitWith {};
 		// Define the number of soldiers and vehicles of BluFor side.
 
 			// Vehicles
-			CSWR_vehicle_BLU_light      = "B_MRAP_01_hmg_F";
+			CSWR_vehicle_BLU_light      = "B_LSV_01_armed_F";
 			CSWR_vehicle_BLU_medium     = "B_APC_Wheeled_01_cannon_F";
 			CSWR_vehicle_BLU_heavy      = "B_MBT_01_TUSK_F";
 			CSWR_vehicle_BLU_custom_1   = "";
