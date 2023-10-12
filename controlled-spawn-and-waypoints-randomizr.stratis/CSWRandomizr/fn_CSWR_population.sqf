@@ -294,7 +294,7 @@ if (!isServer) exitWith {};
 		// Define each group and their features and destination.
 
 			// Vehicles
-			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV, CSWR_spwnsHeliCIV), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_PUBLIC, _move_RESTRICTED, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
+			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV, CSWR_spwnsHeliCIV), vehicle type, initial crew behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_PUBLIC, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 			
 			[CIVILIAN, CSWR_spwnsCIV, CSWR_vehicle_CIV_light, _be_CHAOS, _move_PUBLIC, []] call THY_fnc_CSWR_add_vehicle;
 			[CIVILIAN, CSWR_spwnsCIV, CSWR_vehicle_CIV_medium, _be_SAFE, _move_PUBLIC, []] call THY_fnc_CSWR_add_vehicle;
@@ -302,7 +302,7 @@ if (!isServer) exitWith {};
 			[CIVILIAN, CSWR_spwnsHeliCIV, CSWR_vehicle_CIV_heli_light, _be_AWARE, _move_PUBLIC, []] call THY_fnc_CSWR_add_vehicle;
 			
 			// People groups
-			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV, CSWR_spwnsParadropCIV), team type, team formation (_form_CIV_1, _form_CIV_2), initial team behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
+			// [ owner, spawns (CSWR_spwnsCIV, CSWR_spwnsVehCIV, CSWR_spwnsParadropCIV), team type, team formation (_form_CIV_1, _form_CIV_2), initial team behavior (_be_SAFE, _be_AWARE, _be_CHAOS), destination (_move_PUBLIC, _move_OCCUPY, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
 			
 			[CIVILIAN, CSWR_spwnsCIV, CSWR_group_CIV_lone, _form_CIV_1, _be_SAFE, _move_PUBLIC, []] call THY_fnc_CSWR_add_group;
 			[CIVILIAN, CSWR_spwnsCIV, CSWR_group_CIV_lone, _form_CIV_1, _be_AWARE, _move_PUBLIC, []] call THY_fnc_CSWR_add_group;
