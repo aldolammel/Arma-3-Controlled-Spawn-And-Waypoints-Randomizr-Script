@@ -146,43 +146,59 @@ THY_fnc_CSWR_marker_name_section_type = {
 
 THY_fnc_CSWR_marker_name_section_owner = {
 	// This function checks the third section (mandatory) of the marker's name, validating who is the marker's owner.
-	// Returns _mkrOwner: when valid, owner tag as string. When invalid, an empty string ("").
+	// Returns _mkrTag: when valid, owner tag as string. When invalid, an empty string ("").
 
-	params ["_mkrNameStructure", "_mkr", "_prefix", "_spacer", "_isOwnerForSpwn"];
-	private ["_txt1", "_mkrOwner", "_allOwnersAvailable", "_mkrOwnerToCheck"];
+	params ["_mkrNameStructure", "_mkr", "_prefix", "_spacer", "_isTagForSpwn"];
+	private ["_mkrTag", "_tagsAvailable", "_mkrTypeToCheck", "_mkrTagToCheck", "_txt1"];
 
 	// Initial values:
-	_mkrOwner = "";
-	_allOwnersAvailable = [];
+	_mkrTag = "";
+	_tagsAvailable = [];
 	// Escape:
 		// reserved space.
 	// Declarations:
-	if _isOwnerForSpwn then {
+	_mkrTypeToCheck = _mkrNameStructure # 1;  // e.g: cswr_move_blu_1
+	_mkrTagToCheck  = _mkrNameStructure # 2;  // e.g: cswr_spwn_blu_1
+	// If it's a spawn marker:
+	if _isTagForSpwn then {
 		// If it's about owners for spawnpoints:
-		_allOwnersAvailable = ["BLU", "OPF", "IND", "CIV"];
+		_tagsAvailable = ["BLU", "OPF", "IND", "CIV"];
 	} else {
-		// If it's about owners for destinations:
-		_allOwnersAvailable = ["BLU", "OPF", "IND", "CIV", "PUBLIC"];
+		// If it's about owners for move destinations:
+		if ( _mkrTypeToCheck isEqualTo "MOVE" ) then {
+			// Move destinations are NOT available for civilian faction:
+			_tagsAvailable = ["BLU", "OPF", "IND", "PUBLIC"];
+		// Otherwise:
+		} else {
+			// If watch-move:
+			if ( _mkrTypeToCheck isEqualTo "WATCH" ) then {
+				// Not available for civilian faction:
+				_tagsAvailable = ["BLU", "OPF", "IND"];
+			// Otherwise:
+			} else {
+				// Available for all factions:
+				_tagsAvailable = ["BLU", "OPF", "IND", "CIV"];
+			};
+		};
 	};
-	_mkrOwnerToCheck = _mkrNameStructure # 2;  // exemplo: cswr_spwn_blu_1
 	// Debug texts:
 	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPWN%2BLU%2anynumber' or '%1%2DEST%2PUBLIC%2anynumber' or '%1%2SPWN%2OPF%2anynumber' or '%1%2DEST%2IND%2anynumber' for example.", _prefix, _spacer];
 	// Errors handling:
 	if ( count _mkrNameStructure < 3 ) exitWith {  // cswr_spwn_blu_1   or   cswr_dest_public_1
 		["%1 MARKER '%2' > The OWNER TAG looks missing. %3", CSWR_txtWarningHeader, toUpper _mkr, _txt1] call BIS_fnc_error; sleep 5;
 		// Returning:
-		_mkrOwner;
+		_mkrTag;
 	};
 	// If the owner is valid:
-	if ( _mkrOwnerToCheck in _allOwnersAvailable ) then {
+	if ( _mkrTagToCheck in _tagsAvailable ) then {
 		// Updating to return:
-		_mkrOwner = _mkrOwnerToCheck;
+		_mkrTag = _mkrTagToCheck;
 	// If NOT valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The OWNER TAG looks wrong. There's no '%3' option available. Meanwhile this marker is ignored, here's the options: %4", CSWR_txtWarningHeader, toUpper _mkr, _mkrOwnerToCheck, _allOwnersAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The OWNER TAG looks wrong. There's no '%3' option available when '%4' marker. Meanwhile this marker is ignored, here's the options: %5", CSWR_txtWarningHeader, toUpper _mkr, _mkrTagToCheck, _mkrTypeToCheck, _tagsAvailable] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
-	_mkrOwner;
+	_mkrTag;
 };
 
 
@@ -384,7 +400,7 @@ THY_fnc_CSWR_marker_scanner = {
 						case "BLU":    { _destMoveBLU pushBack _x;    _x setMarkerText "BLU Move" };
 						case "OPF":    { _destMoveOPF pushBack _x;    _x setMarkerText "OPF Move" };
 						case "IND":    { _destMoveIND pushBack _x;    _x setMarkerText "IND Move" };
-						case "CIV":    { _destMoveCIV pushBack _x;    _x setMarkerText "CIV Move" };
+						//case "CIV":    { _destMoveCIV pushBack _x;    _x setMarkerText "CIV Move" };  // CIV cannot use restricted destinations.
 						case "PUBLIC": { _destMovePUBLIC pushBack _x; _x setMarkerText "Move" };
 					};
 				};
@@ -403,7 +419,7 @@ THY_fnc_CSWR_marker_scanner = {
 						case "BLU": { _destWatchBLU pushBack _x; _x setMarkerText "BLU To Watch zone" };
 						case "OPF": { _destWatchOPF pushBack _x; _x setMarkerText "OPF To Watch zone" };
 						case "IND": { _destWatchIND pushBack _x; _x setMarkerText "IND To Watch zone" };
-						case "CIV": { _destWatchCIV pushBack _x; _x setMarkerText "CIV To Watch zone" };
+						//case "CIV": { _destWatchCIV pushBack _x; _x setMarkerText "CIV To Watch zone" };  // CIV cannot use watch destinations.
 					};
 				};
 			};
@@ -895,7 +911,8 @@ THY_fnc_CSWR_is_valid_destination = {
 	_minAmount = nil;
 	_isError = false;
 	// Escape - part 1/2:
-		// reserved space.
+	// Civilians cannot use restricted markers, nor watch markers, so abort:
+	if ( _tag isEqualTo "CIV" && _destType in ["MOVE_RESTRICTED", "MOVE_WATCH"] ) exitWith { _isThereDest /* Returning */ };
 	// Declarations:
 	_requester = if _isVeh then { "vehicle" } else { "group" };
 	switch _destType do {
@@ -952,6 +969,7 @@ THY_fnc_CSWR_is_valid_destination = {
 				case "BLU": { _destMarkers = CSWR_destBLU };
 				case "OPF": { _destMarkers = CSWR_destOPF };
 				case "IND": { _destMarkers = CSWR_destIND };
+				//case "CIV": { _destMarkers = CSWR_destCIV };  // Civilian only public places.
 			};
 			// if at least X destinations of this type:
 			if ( count _destMarkers >= CSWR_minDestRestricted ) then {
@@ -3625,6 +3643,7 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	if ( _tag isEqualTo "CIV" ) exitWith {};
 	// Initial values:
 	_destMarkers = [];
 	_time = 0;
@@ -3633,7 +3652,7 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 		case "BLU": { _destMarkers = CSWR_destBLU };
 		case "OPF": { _destMarkers = CSWR_destOPF };
 		case "IND": { _destMarkers = CSWR_destIND };
-		case "CIV": { _destMarkers = CSWR_destCIV };
+		//case "CIV": { _destMarkers = CSWR_destCIV };  // Civ cannot use restricted move, only public ones.
 	};
 	// Check the available RESTRICTED faction markers on map:
 	_areaToPass = markerPos (selectRandom _destMarkers);
@@ -3684,6 +3703,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	if ( _tag isEqualTo "CIV" ) exitWith {};
 	// Errors handling:
 	if ( _grpType isNotEqualTo "teamS" ) exitWith { ["%1 WATCH > A non-sniper-group tried to use the '_move_WATCH'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	if ( side (leader _grp) isEqualTo CIVILIAN ) exitWith { ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarningHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
@@ -3711,7 +3731,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		case "BLU": { _destMarkers = CSWR_destWatchBLU };
 		case "OPF": { _destMarkers = CSWR_destWatchOPF };
 		case "IND": { _destMarkers = CSWR_destWatchIND };
-		case "CIV": { _destMarkers = CSWR_destWatchCIV };
+		//case "CIV": { _destMarkers = CSWR_destWatchCIV };  // CIV cannot use watch destinations.
 	};
 	// Check the available WATCH faction markers on map:
 	_areaToWatch = markerPos (selectRandom _destMarkers);

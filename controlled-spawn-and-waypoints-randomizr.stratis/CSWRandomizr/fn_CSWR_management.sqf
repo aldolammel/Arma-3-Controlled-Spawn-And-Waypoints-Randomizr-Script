@@ -225,8 +225,8 @@ if (!isServer) exitWith {};
 	CSWR_destHoldIND   = ((CSWR_confirmedMarkers # 1) # 2) # 3;
 	CSWR_destsAllIND   = CSWR_destIND + CSWR_destWatchIND + CSWR_destOccupyIND + CSWR_destHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
-	CSWR_destCIV       = ((CSWR_confirmedMarkers # 1) # 3) # 0;
-	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually.Reserved space only.
+	CSWR_destCIV       = ((CSWR_confirmedMarkers # 1) # 3) # 0;  // CIV has no restricted-move, actually. Reserved space only.
+	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually. Reserved space only.
 	CSWR_destOccupyCIV = ((CSWR_confirmedMarkers # 1) # 3) # 2;
 	CSWR_destHoldCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 3;
 	CSWR_destsAllCIV   = CSWR_destCIV + CSWR_destWatchCIV + CSWR_destOccupyCIV + CSWR_destHoldCIV;  // NEVER include PUBLICs in this calc!
@@ -445,7 +445,7 @@ if (!isServer) exitWith {};
 		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
 		if ( CSWR_isOnCIV AND count CSWR_spwnsAllCIV > 0 ) then {
 			// If one of each faction destination type has at least 2 destination points, show the debug message:
-			if ( count CSWR_destCIV >= CSWR_minDestRestricted OR count CSWR_destWatchCIV >= CSWR_minDestWatch OR count CSWR_destOccupyCIV >= CSWR_minDestOccupy OR count CSWR_destHoldCIV >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
+			if ( /* count CSWR_destCIV >= CSWR_minDestRestricted OR count CSWR_destWatchCIV >= CSWR_minDestWatch OR */ count CSWR_destOccupyCIV >= CSWR_minDestOccupy OR count CSWR_destHoldCIV >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
 				systemChat format ["%1 FACTION CIV > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count CSWR_destsAllCIV, count CSWR_destsPUBLIC];
 			};
 		};

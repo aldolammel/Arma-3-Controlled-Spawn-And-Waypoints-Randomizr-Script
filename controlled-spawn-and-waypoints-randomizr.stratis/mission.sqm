@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=552;
+		nextID=556;
 	};
 	class MarkerIDProvider
 	{
@@ -21,9 +21,9 @@ class EditorData
 	class Camera
 	{
 		pos[]={1829.2151,44.132969,5687.8887};
-		dir[]={0.87323403,-0.19744645,0.44550809};
-		up[]={0.17587937,0.98031366,0.089730449};
-		aside[]={0.4544546,0,-0.89077002};
+		dir[]={0.87323397,-0.19744617,0.44550806};
+		up[]={0.17587911,0.98031372,0.089730315};
+		aside[]={0.45445457,0,-0.8907699};
 	};
 };
 binarizationWanted=0;
@@ -372,7 +372,7 @@ class Mission
 			name="CSWR Spawnpoints";
 			class Entities
 			{
-				items=21;
+				items=20;
 				class Item0
 				{
 					dataType="Marker";
@@ -608,21 +608,9 @@ class Mission
 					id=420;
 					atlOffset=0.0004863739;
 				};
-				class Item20
-				{
-					dataType="Marker";
-					position[]={2399.782,40.698002,5393.6821};
-					name="cswr_spawnparadrop_civ_1";
-					text="Spawn";
-					type="Select";
-					colorName="ColorCIV";
-					angle=14.863996;
-					id=551;
-					atlOffset=-7.6293945e-006;
-				};
 			};
 			id=49;
-			atlOffset=18.533688;
+			atlOffset=-48.4599;
 		};
 		class Item3
 		{
@@ -1004,7 +992,7 @@ class Mission
 				};
 			};
 			id=51;
-			atlOffset=-0.13067245;
+			atlOffset=-52.048698;
 		};
 		class Item4
 		{
