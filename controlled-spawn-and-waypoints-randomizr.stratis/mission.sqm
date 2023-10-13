@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=345;
+		nextID=348;
 	};
 	class Camera
 	{
-		pos[]={1829.2151,44.132969,5687.8887};
-		dir[]={0.87323397,-0.19744614,0.44550806};
-		up[]={0.17587906,0.98031372,0.0897303};
-		aside[]={0.45445457,0,-0.89076984};
+		pos[]={1838.1505,30.5,5722.9087};
+		dir[]={0.93585837,-0.17376083,0.30657288};
+		up[]={0.1651285,0.98478615,0.054093573};
+		aside[]={0.31130987,-6.9558155e-009,-0.95031714};
 	};
 };
 binarizationWanted=0;
@@ -376,24 +376,23 @@ class Mission
 				class Item0
 				{
 					dataType="Marker";
-					position[]={2028.901,6.1209998,5571.8271};
+					position[]={2027.1896,6.0900002,5600.3496};
 					name="cswr_spawn_civ_1";
 					text="Spawn";
 					type="Select";
 					colorName="ColorCIV";
-					angle=58.214001;
+					angle=85.303528;
 					id=190;
-					atlOffset=0.00038719177;
 				};
 				class Item1
 				{
 					dataType="Marker";
-					position[]={1815.347,5.5,5356.3818};
+					position[]={2187.8481,6.8200002,5476.7456};
 					name="cswr_spawn_civ_2";
 					text="Spawn";
 					type="Select";
 					colorName="ColorCIV";
-					angle=72.374001;
+					angle=5.2587762;
 					id=191;
 				};
 				class Item2
@@ -435,12 +434,12 @@ class Mission
 				class Item5
 				{
 					dataType="Marker";
-					position[]={1810.577,5.5,6012.3838};
+					position[]={2156.824,8.7299995,5368.3618};
 					name="cswr_spawnveh_civ_1";
 					text="Spawn";
 					type="Select";
 					colorName="ColorCIV";
-					angle=189.21091;
+					angle=3.1656933;
 					id=188;
 				};
 				class Item6
@@ -552,13 +551,14 @@ class Mission
 				class Item15
 				{
 					dataType="Marker";
-					position[]={1540.309,5.5,5031.9492};
+					position[]={2177.4426,5.960587,5758.604};
 					name="cswr_spawnheli_civ_1";
 					text="Spawn";
 					type="Select";
 					colorName="ColorCIV";
-					angle=14.863996;
+					angle=101.51582;
 					id=423;
+					atlOffset=4.7683716e-007;
 				};
 				class Item16
 				{
@@ -610,7 +610,7 @@ class Mission
 				};
 			};
 			id=49;
-			atlOffset=-48.4599;
+			atlOffset=-44.011986;
 		};
 		class Item3
 		{
