@@ -67,7 +67,7 @@ if (!isServer) exitWith {};
 	
 			// Soldier groups
 			// [ owner, spawns (CSWR_spwnsBLU, CSWR_spwnsVehBLU, CSWR_spwnsParadropBLU), team type, team formation (_form_BLU_1, _form_BLU_2), initial team behavior (_be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS), destination (_move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD), spawn delay (in minutes, or a list of triggers or targets. Check the documentation) ]
-			
+		
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_sniper, _form_BLU_1, _be_COMBAT, _move_WATCH, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;
 			[BLUFOR, CSWR_spwnsBLU, CSWR_group_BLU_light, _form_BLU_2, _be_AWARE, _move_ANY, []] call THY_fnc_CSWR_add_group;

@@ -635,7 +635,6 @@ THY_fnc_CSWR_marker_booking_undo = {
 	if _isError exitWith {};
 	// Debug texts:
 		// reserved space.
-	// Main functionality:
 	// For each case, remove the current hold-marker as reserved from the reservation list:
 	switch _tag do {
 		case "BLU": { (_bookedLoc # 0) deleteAt ((_bookedLoc # 0) find _mkr); _bookedAmount = count (_bookedLoc # 0) };
@@ -1111,7 +1110,8 @@ THY_fnc_CSWR_is_playerNear = {
 	_playersAlive = [];
 	// If the function must scan only for friendly players, do it:
 	if ( _kindOfPlayer isEqualTo "friendlyPlayers" ) then {
-		_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x && side _x == side _unitTarget };  // WIP - actually a friendly faction is not been considered here yet.
+		// WIP - actually a friendly faction is not been considered here yet. Check the command when working on: BIS_fnc_friendlySides
+		_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x && (side _x) isEqualTo (side _unitTarget) };
 	// Otherwise:
 	} else {
 		// If the function must scan all players, do it:
@@ -1353,6 +1353,82 @@ THY_fnc_CSWR_group_formation = {
 	_grp setFormation _form;
 	// Breath for the group execute the new formation:
 	sleep 3;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_group_join_to_survive = {
+	// This function tries to find options and, if found, drive the group to join in another one.
+	// Returns nothing.
+
+	params ["_tag", "_grp", "_targetToJoin", "_distance", "_isPunished"];
+	private ["_availableGroups"];
+
+	// Escape:
+	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	// Initial values:
+	_availableGroups = [];
+	// Declarations:
+		// reserved space.
+	// Debug texts:
+		// reserved space.
+	// Select the target to look for:
+	switch _targetToJoin do {
+		case "all": {
+			_availableGroups = allUnits - allPlayers select { 
+				side _x isEqualTo (side (leader _grp)) && _x isNotEqualTo (leader _grp) && _x distance (leader _grp) <= _distance && _x isEqualTo (leader (group _x)) && alive _x;
+			};
+		};
+		case "onlyInfantry": {
+			_availableGroups = allUnits - allPlayers select { 
+				side _x isEqualTo (side (leader _grp)) && _x isNotEqualTo (leader _grp) && _x distance (leader _grp) <= _distance && _x isEqualTo (leader (group _x)) && alive _x && isNull objectParent _x;
+			};
+		};
+		case "onlyVehicle": {
+			_availableGroups = allUnits - allPlayers select {
+				side _x isEqualTo (side (leader _grp)) && _x isNotEqualTo (leader _grp) && _x distance (leader _grp) <= _distance && _x isEqualTo (leader (group _x)) && alive _x && !isNull objectParent _x;
+			};
+		};
+		default { if CSWR_isOnDebugGlobal then { ["%1 THY_fnc_CSWR_group_join_to_survive > There's NO '%2' option in _targetToJoin var.", CSWR_txtWarningHeader, _targetToJoin] call BIS_fnc_error; sleep 5 } };
+	};
+	// Breath:
+	sleep 3;
+	// Delete their waypoint(s):
+	for "_i" from ((count waypoints _grp) - 1) to 0 step -1 do { deleteWaypoint [_grp, _i]; sleep 0.2 };
+	// If another group has been found to join:
+	if ( count _availableGroups > 0 ) then {
+		// Go to the new group:
+		{ _x doMove (getPos leader (_availableGroups # 0)); sleep 0.2 } forEach units _grp;
+		// Make the crew join in the first found ally group:
+		(units _grp) joinSilent (_availableGroups # 0);
+		// Debug message:
+		if CSWR_isOnDebugGlobal then {
+			systemChat format ["%1 HOLD > A %2 crew SURVIVED their vehicle lost and JOINED in another group.", CSWR_txtDebugHeader, _tag]; 
+			// Breath:
+			sleep 5;
+		};
+	// Otherwise, no another group to join:
+	} else {
+		// Tweak the group behavior to last standing:
+		_grp setCombatMode "RED";
+		// If there's a punishment:
+		if _isPunished then {
+			// Remmove the first aid kits:
+			// WIP - will remove when ACE?
+			{ _x removeItems "FirstAidKit" } forEach (units _grp);
+			// Punishment:
+			{ while { alive _x } do { _x setDamage (damage _x) + 0.25; sleep 5 } } forEach (units _grp) select { alive _x };
+		// Otherwise:
+		} else {
+			// Debug message:
+			if CSWR_isOnDebugGlobal then {
+				systemChat format ["%1 HOLD > A %2 crew survived their vehicle lost but HAS NO MISSION anymore.", CSWR_txtDebugHeader, _tag]; 
+				// Breath:
+				sleep 5;
+			};
+		};
+	};
 	// Return:
 	true;
 };
@@ -3477,7 +3553,7 @@ THY_fnc_CSWR_go_RTB = {
 			// Reserved space for other types of vehicles.
 		};
 	};
-	// If helicopter, execute the landing:m
+	// If helicopter, execute the landing:
 	if _isAirCrew then { [_spwns, _tag, _grpType, _grp, _veh, _destType, _behavior] spawn THY_fnc_CSWR_go_RTB_heli_landing };
 	// Return:
 	true;
@@ -4703,10 +4779,15 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_destMarkers", "_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_wpDisLimit", "_wait", "_waitForVeh"];
+	private ["_destMarkers", "_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	// Error handling > if it's a vehicle but for some reason the crew is out of the vehicle, abort:
+	if ( _isVeh && isNull (objectParent (leader _grp)) ) exitWith {
+		// Crew with no vehicle should join in a infantry group:
+		[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
+	};
 	// Initial values:
 	_destMarkers  = [];
 	_isVehTracked = false;
@@ -4719,13 +4800,14 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_counter      = 0;
 	_trackedVehTypes = [];
 	_vehType      = "";
+	_veh          = objNull;
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
 	_wpDisLimit = 20;  // Critical - from 19m, the risk of the vehicle doesn't reach the waypoint is too high.
-	_wait = 10;
+	_wait       = 10;
 	_waitForVeh = 0.25;
 	// Defining the group markers to be considered:
 	switch _tag do {
@@ -4736,10 +4818,11 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	};
 	// Check if it's a vehicle and which kind of them:
 	if _isVeh then {
+		_veh = vehicle (leader _grp);
 		_trackedVehTypes = ["Tank", "TrackedAPC"];
-		_vehType = ((vehicle (leader _grp)) call BIS_fnc_objectType) # 1;  // Returns like ['vehicle','Tank']
-		// It's a tracked vehicle:
-		if ( _vehType in _trackedVehTypes ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
+		_vehType = (_veh call BIS_fnc_objectType) # 1;  // Returns like ['vehicle','Tank']
+		// It's a tracked vehicle and not from CIV faction:
+		if ( _vehType in _trackedVehTypes && _tag isNotEqualTo "CIV" ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
 	};
 	// Debug message:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHold ) then {
@@ -4800,37 +4883,67 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// If infantry/people:
 	if !_isVeh then {
 		// Check if the group is already on their destination:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < 2 };
-	// Otherwise, if vehicle:
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
+	// If vehicle:
 	} else {
 		// Wait 'til getting really closer:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < (_wpDisLimit + 30) || !alive (vehicle (leader _grp)) };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
 		// if crew still in vehicle:
-		if ( !isNull (objectParent leader _grp) ) then {
-			// it forces the crew order to drive as closer as possible the waypoint:
-			leader _grp doMove _areaPos;
+		if ( !isNull (objectParent (leader _grp)) ) then {
+			// If there's still the original waypoint:
+			if ( waypointType [_grp, currentWaypoint _grp] isEqualTo "HOLD" ) then {
+				// it forces the crew order to drive as closer as possible the waypoint:
+				(leader _grp) doMove _areaPos;
+			};
+		// crew by foot:
+		} else {
+			// Undo the booking:
+			["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+			// Update to avoid further checking:
+			_isBooked = false;
+			// Crew with no vehicle should join in a infantry group:
+			[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
 		};
 		// Wait 'til the vehicle is over the waypoint:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < _wpDisLimit || !alive (vehicle (leader _grp)) };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
 	};
-	// Escape:
-	if ( isNull _grp || !alive (vehicle (leader _grp)) ) exitWith { ["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
+	// Escape > if NOT a vehicle, and if the group doesn't exist or the leader was killed, abort:
+	if ( !_isVeh && { isNull _grp || !alive (leader _grp) } ) exitWith {};
+	// Escape > Booked or not, it's a vehicle, and if the ground doesn't exist or the leader was killed, or the vehicle has been destroyed, or even the group is out of the vehicle, abort:
+	if ( _isVeh && { isNull _grp || !alive (leader _grp) || !alive _veh || isNull (objectParent (leader _grp)) } ) exitWith {
+		// Undo the booking if booked:
+		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	};
+	// Escape > if the group/vehicle lost its hold-waypoint:
+	if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" ) exitWith { 
+		// Undo the booking:
+		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		// Restart:
+		[_tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
+	};
 
 	// ARRIVAL IN MARKER POSITION:
 	// If vehicle:
 	if _isVeh then {
-		// The function accepts only trached vehicle to adjust the vehicle direction:
-		[_areaToHold, _grp, _tag, _isVehTracked] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
-		// If editors choice was stealth all vehicles on hold, do it:
-		if CSWR_isHoldVehLightsOff then { _grp setBehaviourStrong "STEALTH" };
-	// Otherwise, if infantry/people:
+		// if the crewmen is inside the vehicle:
+		if ( !isNull (objectParent (leader _grp)) ) then { 
+			// Function validation is: if vehicle has its crewmen inside and the vehicle is a tracked one, do it:
+			[_areaToHold, _grp, _tag, _isVehTracked] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
+			// If editors choice was stealth all vehicles on hold:
+			if CSWR_isHoldVehLightsOff then { sleep 5; _grp setBehaviourStrong "STEALTH" };
+		// Otherwise, if the crew is by foot:
+		} else {
+			// Crew with no vehicle should join in a infantry group:
+			[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
+		};
+	// infantry:
 	} else {
 		// Group always will change the formation for this (aesthetically better):
-		_wp setWaypointFormation "DIAMOND";
+		_grp setFormation "DIAMOND";
 	};
 	// Next planned move cooldown:
 	_time = time + (random CSWR_destHoldTakeabreak); 
-	waitUntil { sleep _wait; time > _time || isNull _grp || !alive (vehicle (leader _grp)) };
+	waitUntil { sleep _wait; isNull _grp || !alive (leader _grp) || time > _time || { if _isVeh then { !alive _veh } else { false } } };  // Important: dont check the currentWaypoints coz infantry will delete it in their arrival.
 	
 	// UNDO IF BOOKED:
 	["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
@@ -4873,23 +4986,26 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// Returns nothing.
 
 	params ["_mkr", "_grp", "_tag", "_isVehTracked"];
-	private ["_blockers", "_attemptCounter", "_attemptLimiter", "_veh", "_directionToHold", "_vehPos"];
+	private ["_veh", "_blockers", "_attemptCounter", "_attemptLimiter", "_directionToHold", "_vehPos"];
 	
-	// Escape:
+	// Declarations - part 1/2:
+	_veh = vehicle (leader _grp);
+	// Escape > if vehicle is destroyed, abort:
+	if ( !alive _veh ) exitWith {};
+	// Escape > if not tracked-vehicle, abort:
 	if !_isVehTracked exitWith {};
 	// Initial values:
 	_blockers = [];
 	_attemptCounter = 0;
-	// Declarations:
+	// Declarations - part 2/2:
 	_attemptLimiter = 5;
-	_veh = vehicle (leader _grp);
-	_directionToHold = markerDir _mkr; 
+	_directionToHold = markerDir _mkr;
 	// Force the vehicle stop before get the hold-direction:
 	_veh sendSimpleCommand "STOP";
 	// Wait the vehicle to brake:
 	waitUntil { sleep 2; speed _veh <= 0.1 };
 	// Check if there is some blocker around the vehicle. A simple unit around can make a tank get to fly like a rocket if too much close during the setDir command:
-	while { alive _veh && _attemptCounter < _attemptLimiter } do {
+	while { alive _veh && _attemptCounter < _attemptLimiter && !isNull (objectParent (leader _grp)) && (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" } do {
 		// Check if something relevant is blocking the Hold-marker position:
 		_blockers = (getPos _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Helicopter", "Plane"], 10];
 		// Removing the group vehicle itself from the calc as blocker:
@@ -4910,7 +5026,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 		// long breath to the next loop check:
 		sleep 20;
 	};  // while loop ends.
-	// Escape:
+	// Escape > if there are some blockers, abort:
 	if ( count _blockers > 0 ) exitWith {};
 	// Set the direction:
 	_vehPos = getPosATL _veh;
