@@ -49,11 +49,16 @@ __
 **Xxx, xxth 2023 | v6.0**
 - Added > Vehicles > When a vehicle is lost but the its crew survives, if allies close, the crew will join in that new group, taking a new mission;
 - Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
+- Fixed > Debug > Small fix about marker examples;
+- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > Helipcoter > Besides the regular move to the waypoint, now helicopter has 33% of chance to approach the current waypoint with Seek & Destroy style;
 - Improved > Hold > Small improvement during the hold maneuver validation when solid objects around and group leader is out of the vehicle;
 - Improved > Hold > Civilian tracked-vehicle cannot booked center marker position anymore as a tank or trackedAPC;
+- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Documentation has been updated.
