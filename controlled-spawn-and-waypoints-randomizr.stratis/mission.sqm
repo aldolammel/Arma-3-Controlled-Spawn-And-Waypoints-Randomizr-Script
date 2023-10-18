@@ -8,22 +8,22 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=595;
+		nextID=605;
 	};
 	class MarkerIDProvider
 	{
-		nextID=34;
+		nextID=35;
 	};
 	class LayerIndexProvider
 	{
-		nextID=372;
+		nextID=375;
 	};
 	class Camera
 	{
-		pos[]={1996.6298,191.00035,5861.0591};
-		dir[]={-0.53586257,-0.44344607,-0.71852899};
-		up[]={-0.26511508,0.89628524,-0.35548925};
-		aside[]={-0.80165178,1.2618111e-006,0.59785503};
+		pos[]={1904.8726,191.00035,5881.229};
+		dir[]={-0.32041582,-0.49376276,-0.80841339};
+		up[]={-0.18193422,0.8695966,-0.45902249};
+		aside[]={-0.92964172,0,0.36846486};
 	};
 };
 binarizationWanted=0;
@@ -37,13 +37,14 @@ addons[]=
 	"A3_Soft_F_Quadbike_01",
 	"A3_Boat_F_Jets_Carrier_01",
 	"A3_Modules_F",
-	"A3_Structures_F_Ind_PowerLines"
+	"A3_Structures_F_Ind_PowerLines",
+	"A3_Misc_F_Helpers"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=8;
+		items=9;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -97,6 +98,13 @@ class AddonsMetaData
 		{
 			className="A3_Structures_F_Ind";
 			name="Arma 3 - Industrial Structures";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+		class Item8
+		{
+			className="A3_Misc_F";
+			name="Arma 3 - 3D Aids and Helpers";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
@@ -173,7 +181,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=17;
+		items=23;
 		class Item0
 		{
 			dataType="Group";
@@ -446,7 +454,7 @@ class Mission
 					text="Spawn";
 					type="Select";
 					colorName="ColorCIV";
-					angle=2.960604;
+					angle=2.9606037;
 					id=188;
 				};
 				class Item6
@@ -628,13 +636,14 @@ class Mission
 				class Item21
 				{
 					dataType="Marker";
-					position[]={1501.4025,5.4419227,5042.4507};
+					position[]={1501.402,5.4419999,5042.4512};
 					name="cswr_spawn_blu_a_2";
 					text="Spawn";
 					type="Select";
 					colorName="ColorBlue";
-					angle=205.50397;
+					angle=205.50398;
 					id=565;
+					atlOffset=8.8214874e-005;
 				};
 				class Item22
 				{
@@ -682,7 +691,7 @@ class Mission
 				};
 			};
 			id=49;
-			atlOffset=0.86673594;
+			atlOffset=0.86673832;
 		};
 		class Item3
 		{
@@ -3220,6 +3229,99 @@ class Mission
 			id=594;
 			type="Land_PowerPoleWooden_L_off_F";
 			atlOffset=4.7683716e-007;
+		};
+		class Item17
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1500.573,6.1856403,5038.6563};
+				angles[]={0.0049914722,0,0.014998405};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=596;
+			type="Sign_Arrow_Large_F";
+			atlOffset=9.4413757e-005;
+		};
+		class Item18
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1633.2863,6.2503266,5001.6973};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=597;
+			type="Sign_Arrow_Large_F";
+			atlOffset=9.4413757e-005;
+		};
+		class Item19
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1623.2078,6.2502322,5502.27};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=600;
+			type="Sign_Arrow_Large_Pink_F";
+		};
+		class Item20
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1779.4268,6.2502322,5456.916};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=601;
+			type="Sign_Arrow_Large_Pink_F";
+		};
+		class Item21
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1564.4156,6.2502322,5273.8208};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=602;
+			type="Sign_Arrow_Large_Green_F";
+		};
+		class Item22
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={1692.0784,6.2502322,5236.8657};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+			};
+			id=603;
+			type="Sign_Arrow_Large_Green_F";
 		};
 	};
 };

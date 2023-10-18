@@ -37,10 +37,10 @@ THY_fnc_CSWR_marker_name_splitter = {
 	// Returns _mkrNameStructure: array
 
 	params ["_mkrName", "_prefix", "_spacer"];
-	private ["_mkrNameStructureRaw", "_txt1", "_mkrNameStructure", "_spacerAmount"];
+	private ["_txt1", "_mkrNameStructure", "_spacerAmount"];
 
 	// Initial values:
-	_mkrNameStructure = [];
+		// reserved space.
 	// Errors handling:
 		// reserved space.
 	// Escape:
@@ -48,19 +48,16 @@ THY_fnc_CSWR_marker_name_splitter = {
 	// Declarations:
 		// reserved space.
 	// Debug texts:
-	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWN%2OPF%2anynumber' or '%1%2MOVE%2IND%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example.", _prefix, _spacer];
-	// check if the object name has more than one _spacer character in its string composition:
-	_mkrNameStructureRaw = _mkrName splitString "";
-	_spacerAmount = count (_mkrNameStructureRaw select {_x find _spacer isEqualTo 0});  // counting how many times the same character appers in a string.
+	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWN%2OPF%2anynumber' or '%1%2MOVE%2IND%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example. The marker has been ignored.", _prefix, _spacer];
 	// spliting the object name to check its structure:
-	_mkrNameStructureRaw = _mkrName splitString _spacer;
+	_mkrNameStructure = _mkrName splitString _spacer;  // ["CSWR","SPAWN","BLU","1"]  or  ["CSWR","SPAWN","BLU","A","1"]
 	// if the _spacer is NOT been used correctly:
-	if ( _spacerAmount < 3 || _spacerAmount > 4 ) then {
+	if ( count _mkrNameStructure < 4 || count _mkrNameStructure > 5 ) then {
 		// Warning message:
-		["%1 MARKER '%2' > Your marker names structure looks is NOT using the number of spacer character '%3' correctly. %4", CSWR_txtWarnHeader, toUpper _mkrName, _spacer, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > This marker name's structure look's NOT correct! %4", CSWR_txtWarnHeader, _mkrName, _spacer, _txt1] call BIS_fnc_error; sleep 5;
+		// Update to return as failed:
+		_mkrNameStructure = [];
 	};
-	// Updating to return, converting all strings to uppercase:
-	{ _mkrNameStructure pushBack toUpper _x } forEach _mkrNameStructureRaw;
 	// Return:
 	_mkrNameStructure;
 };
@@ -124,20 +121,14 @@ THY_fnc_CSWR_marker_name_section_type = {
 	_allTypesAvailable = _spwnTypes + _destTypes;
 	_mkrTypeToCheck = _mkrNameStructure # 1;  // it should be one of _allTypesAvailable.
 	// Debug texts:
-	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2BLU%2anynumber' or '%1%2MOVE%2BLU%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example.", _prefix, _spacer];
-	// Escape:
-	if ( count _mkrNameStructure < 4 ) exitWith {  // cswr_spawn_blu_1   or   cswr_move_public_1   or   cswr_spawn_blu_a_1
-		["%1 MARKER '%2' > The TYPE TAG looks missing. %3", CSWR_txtWarnHeader, toUpper _mkr, _txt1] call BIS_fnc_error; sleep 5;
-		// Returning:
-		_mkrType;
-	};
+	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2BLU%2anynumber' or '%1%2MOVE%2BLU%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example. This marker has been ignored.", _prefix, _spacer];
 	// If the marker type is valid:
 	if ( _mkrTypeToCheck in _allTypesAvailable ) then {
 		// Update to return:
 		_mkrType = _mkrTypeToCheck;
 	// If not valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The TYPE name's section looks wrong. There's NO any '%3' type available. The type tags are: %4.", CSWR_txtWarnHeader, toUpper _mkr, _mkrTypeToCheck, _allTypesAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The TYPE name's section looks wrong. There's NO any '%3' type available. The type tags are: %4.", CSWR_txtWarnHeader, _mkr, _mkrTypeToCheck, _allTypesAvailable] call BIS_fnc_error; sleep 5;
 	}; 
 	// Return:
 	_mkrType;
@@ -166,17 +157,17 @@ THY_fnc_CSWR_marker_name_section_owner = {
 	} else {
 		// If it's about owners for move destinations:
 		if ( _mkrTypeToCheck isEqualTo "MOVE" ) then {
-			// Move destinations are NOT available for civilian faction:
+			// Move destinations are NOT available for civilian side:
 			_tagsAvailable = ["BLU", "OPF", "IND", "PUBLIC"];
 		// Otherwise:
 		} else {
 			// If watch-move:
 			if ( _mkrTypeToCheck isEqualTo "WATCH" ) then {
-				// Not available for civilian faction:
+				// Not available for civilian side:
 				_tagsAvailable = ["BLU", "OPF", "IND"];
 			// Otherwise:
 			} else {
-				// Available for all factions:
+				// Available for all sides:
 				_tagsAvailable = ["BLU", "OPF", "IND", "CIV"];
 			};
 		};
@@ -185,7 +176,7 @@ THY_fnc_CSWR_marker_name_section_owner = {
 	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2OPF%2anynumber' or '%1%2MOVE%2IND%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' for example.", _prefix, _spacer];
 	// Errors handling:
 	if ( count _mkrNameStructure < 3 ) exitWith {  // cswr_spawn_blu_1   or   cswr_move_public_1
-		["%1 MARKER '%2' > The OWNER TAG looks missing. %3", CSWR_txtWarnHeader, toUpper _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The OWNER TAG looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_mkrTag;
 	};
@@ -195,7 +186,7 @@ THY_fnc_CSWR_marker_name_section_owner = {
 		_mkrTag = _mkrTagToCheck;
 	// If NOT valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The OWNER name's section looks wrong. There's NO '%3' option available when '%4' marker. Meanwhile this marker is ignored, here's the options: %5", CSWR_txtWarnHeader, toUpper _mkr, _mkrTagToCheck, _mkrTypeToCheck, _tagsAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The OWNER name's section looks wrong. There's NO '%3' option available when '%4' marker. Meanwhile this marker is ignored, here's the options: %5", CSWR_txtWarnHeader, _mkr, _mkrTagToCheck, _mkrTypeToCheck, _tagsAvailable] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
 	_mkrTag;
@@ -226,7 +217,7 @@ THY_fnc_CSWR_marker_name_section_sector = {
 		_mkrSector = _mkrSectorToCheck;
 	// If NOT valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The SECTOR name's section looks wrong. There's NO '%3' option available when you're using SECTOR letter. Meanwhile this marker is ignored, here's the options: %4", CSWR_txtWarnHeader, toUpper _mkr, _mkrSectorToCheck, _sectorsAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The SECTOR name's section looks wrong. There's NO '%3' option available when you're using SECTOR letter. Meanwhile this marker is ignored, here's the options: %4. Fix it on Eden.", CSWR_txtWarnHeader, _mkr, _mkrSectorToCheck, _sectorsAvailable] call BIS_fnc_error; sleep 5;
 	}; 
 	// Return:
 	_mkrSector;
@@ -252,13 +243,13 @@ THY_fnc_CSWR_marker_name_section_number = {
 	_txt2 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example.", _prefix, _spacer];
 	// Escape > If name's structure has no sector declared, and less than 4 sections:
 	if ( !_hasSector && count _mkrNameStructure < 4 ) exitWith {  // e.g cswr_spawn_blu_1
-		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, toUpper _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_isNum;
 	};
 	// Escape > If name's structure has sector declared, and less than 5 sections:
 	if ( _hasSector && count _mkrNameStructure < 5 ) exitWith {  // e.g cswr_spawn_blu_A_1
-		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, toUpper _mkr, _txt2] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt2] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_isNum;
 	};
@@ -273,7 +264,7 @@ THY_fnc_CSWR_marker_name_section_number = {
 	// If is NOT a number (will be zero):
 	} else {
 		// Warning message:
-		["%1 MARKER '%2' > It has no a valid name. %3", CSWR_txtWarnHeader, toUpper _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > It has no a valid name. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
 	_isNum;
@@ -285,7 +276,7 @@ THY_fnc_CSWR_marker_scanner = {
 	// Return: _confirmedMarkers: array
 
 	params ["_prefix", "_spacer"];
-	private ["_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParadropBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParadropOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParadropIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParadropCIV", "_destMoveBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destMoveOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destMoveIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destMoveCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destMovePUBLIC", "_confirmedMarkers", "_spwns", "_spwnsVeh", "_spwnsHeli", "_spwnsParadrop", "_isValid", "_mkrType", "_isValidShape", "_tag", "_destSector", "_isNum", "_realPrefix", "_txt0", "_txt1", "_possibleMarkers", "_mkrNameStructure"];
+	private ["_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParadropBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParadropOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParadropIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParadropCIV", "_destMoveBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destMoveOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destMoveIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destMoveCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destMovePUBLIC", "_confirmedMarkers", "_spwns", "_spwnsVeh", "_spwnsHeli", "_spwnsParadrop", "_isValid", "_mkr", "_mkrType", "_isValidShape", "_tag", "_destSector", "_isNum", "_realPrefix", "_txt0", "_txt1", "_possibleMarkers", "_mkrNameStructure"];
 
 	// Initial values:
 	_spwnsBLU=[]; _spwnsVehBLU=[]; _spwnsHeliBLU=[]; _spwnsParadropBLU=[];
@@ -317,6 +308,7 @@ THY_fnc_CSWR_marker_scanner = {
 	_spwnsHeli     = 0;
 	_spwnsParadrop = 0;
 	_isValid       = false;
+	_mkr           = "";
 	_mkrType       = "";
 	_isValidShape  = false;
 	_tag           = "";
@@ -327,14 +319,18 @@ THY_fnc_CSWR_marker_scanner = {
 	// Escape:
 		// reserved space.
 	// Declarations:
-	_realPrefix = toUpper _prefix + toUpper _spacer;
+	_prefix     = toUpper _prefix;
+	_spacer     = toUpper _spacer;
+	_realPrefix = _prefix + _spacer;
 	// Debug texts:
 	_txt0 = "This mission still HAS NO possible CSWR MARKERS to be loaded.";
 	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPWN%2BLU%2anynumber' or '%1%2DEST%2PUBLIC%2anynumber' or '%1%2SPWN%2OPF%2anynumber' or '%1%2DEST%2IND%2anynumber' for example.", _prefix, _spacer];
 	
 	// Step 1/2 > Creating a list with only markers with right prefix:
 	// Selecting the relevant markers:
-	_possibleMarkers = allMapMarkers select { toUpper _x find _realPrefix == 0 };
+	_possibleMarkers = allMapMarkers select { toUpper _x find _realPrefix isNotEqualTo -1 };
+	// Debug message:
+	if CSWR_isOnDebugGlobal then { systemChat format ["%1 Valid markers found: %2 of %3 dropped on the map.", CSWR_txtDebugHeader, count _possibleMarkers, count allMapMarkers] };
 	// Escape > If no _possibleMarkers found:
 	if ( count _possibleMarkers isEqualTo 0 ) exitWith { ["%1 %2 %3", CSWR_txtWarnHeader, _txt0, _txt1] call BIS_fnc_error; sleep 5; _confirmedMarkers /* returning */ };
 	// Validating each marker position:
@@ -349,179 +345,185 @@ THY_fnc_CSWR_marker_scanner = {
 
 	// Step 2/2 > Ignoring from the first list those markers that don't fit the name's structure rules, and creating new lists:
 	{  // forEach _possibleMarkers:
+		_mkr = toUpper _x;
 		// check if the marker name has _spacer character enough in its string composition:
-		_mkrNameStructure = [_x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_splitter;
+		_mkrNameStructure = [_mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_splitter;
+		// Escape > if invalid structure, skip this one:
+		if ( count _mkrNameStructure isEqualTo 0 ) then { continue };
 		// check what type is each marker: cswr_spawn_blu_1
-		_mkrType = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_type;
+		_mkrType = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_type;
+		// Escape > if invalid type, skip this one:
+		if ( _mkrType isEqualTo "" ) then { continue };
 		// Case by case, check the valid marker name's amounts of strings:
 		switch _mkrType do {
 			// Case example: cswr_spawn_blu_1
 			case "SPAWN": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _spwnsBLU pushBack _x; _x setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "OPF": { _spwnsOPF pushBack _x; _x setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "IND": { _spwnsIND pushBack _x; _x setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "CIV": { _spwnsCIV pushBack _x; _x setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "BLU": { _spwnsBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "OPF": { _spwnsOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "IND": { _spwnsIND pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "CIV": { _spwnsCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_spawnveh_blu_1
 			case "SPAWNVEH": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _spwnsVehBLU pushBack _x; _x setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "OPF": { _spwnsVehOPF pushBack _x; _x setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "IND": { _spwnsVehIND pushBack _x; _x setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "CIV": { _spwnsVehCIV pushBack _x; _x setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "BLU": { _spwnsVehBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "OPF": { _spwnsVehOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "IND": { _spwnsVehIND pushBack _mkr; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "CIV": { _spwnsVehCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_spawnheli_blu_1
 			case "SPAWNHELI": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _spwnsHeliBLU pushBack _x; _x setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "OPF": { _spwnsHeliOPF pushBack _x; _x setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "IND": { _spwnsHeliIND pushBack _x; _x setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "CIV": { _spwnsHeliCIV pushBack _x; _x setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "BLU": { _spwnsHeliBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "OPF": { _spwnsHeliOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "IND": { _spwnsHeliIND pushBack _mkr; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "CIV": { _spwnsHeliCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_spawnparadrop_blu_1
 			case "SPAWNPARADROP": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Select") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Select") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, true] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _spwnsParadropBLU pushBack _x; _x setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "OPF": { _spwnsParadropOPF pushBack _x; _x setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "IND": { _spwnsParadropIND pushBack _x; _x setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "CIV": { _spwnsParadropCIV pushBack _x; _x setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "BLU": { _spwnsParadropBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "OPF": { _spwnsParadropOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "IND": { _spwnsParadropIND pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "CIV": { _spwnsParadropCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_move_blu_1
 			case "MOVE": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU":    { _destMoveBLU pushBack _x;    _x setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						case "OPF":    { _destMoveOPF pushBack _x;    _x setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						case "IND":    { _destMoveIND pushBack _x;    _x setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						//case "CIV":  { _destMoveCIV pushBack _x;    _x setMarkerText (format ["%1 Move %2", _tag, _destSector]) };  // CIV cannot use restricted destinations.
-						case "PUBLIC": { _destMovePUBLIC pushBack _x; _x setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "BLU":    { _destMoveBLU pushBack _mkr;    _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "OPF":    { _destMoveOPF pushBack _mkr;    _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "IND":    { _destMoveIND pushBack _mkr;    _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						//case "CIV":  { _destMoveCIV pushBack _mkr;    _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };  // CIV cannot use restricted destinations.
+						case "PUBLIC": { _destMovePUBLIC pushBack _mkr; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_watch_blu_1
 			case "WATCH": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _destWatchBLU pushBack _x; _x setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						case "OPF": { _destWatchOPF pushBack _x; _x setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						case "IND": { _destWatchIND pushBack _x; _x setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						//case "CIV": { _destWatchCIV pushBack _x; _x setMarkerText (format ["%1 Zone to Watch %2", _tag, _destSector]) };  // CIV cannot use watch destinations.
+						case "BLU": { _destWatchBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						case "OPF": { _destWatchOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						case "IND": { _destWatchIND pushBack _mkr; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						//case "CIV": { _destWatchCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Zone to Watch %2", _tag, _destSector]) };  // CIV cannot use watch destinations.
 					};
 				};
 			};
 			// Case example: cswr_occupy_blu_1
 			case "OCCUPY": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _destOccupyBLU pushBack _x; _x setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "OPF": { _destOccupyOPF pushBack _x; _x setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "IND": { _destOccupyIND pushBack _x; _x setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "CIV": { _destOccupyCIV pushBack _x; _x setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "BLU": { _destOccupyBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "OPF": { _destOccupyOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "IND": { _destOccupyIND pushBack _mkr; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "CIV": { _destOccupyCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
 					};
 				};
 			};
 			// Case example: cswr_hold_blu_1
 			case "HOLD": {
 				// Check the type of marker:
-				_isValidShape = if ( getMarkerType _x isEqualTo "Empty") then { true } else { false };
+				_isValidShape = if ( getMarkerType _mkr isEqualTo "Empty") then { true } else { false };
 				// Check if there is a valid owner section:
-				_tag = [_mkrNameStructure, _x, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
+				_tag = [_mkrNameStructure, _mkr, _prefix, _spacer, false] call THY_fnc_CSWR_marker_name_section_owner;  // if owner not valid, returns "", otherwise it returns the owner tag.
 				// Check if there is an optional sector section:
-				_destSector = [_mkrNameStructure, _x, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
+				_destSector = [_mkrNameStructure, _mkr, _prefix, _spacer] call THY_fnc_CSWR_marker_name_section_sector;
 				// Check if the last section of the area marker name is numeric:
-				_isNum = [_mkrNameStructure, _x, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
+				_isNum = [_mkrNameStructure, _mkr, _prefix, _spacer, _destSector] call THY_fnc_CSWR_marker_name_section_number;
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { _destHoldBLU pushBack _x; _x setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "OPF": { _destHoldOPF pushBack _x; _x setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "IND": { _destHoldIND pushBack _x; _x setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "CIV": { _destHoldCIV pushBack _x; _x setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "BLU": { _destHoldBLU pushBack _mkr; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "OPF": { _destHoldOPF pushBack _mkr; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "IND": { _destHoldIND pushBack _mkr; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "CIV": { _destHoldCIV pushBack _mkr; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
 					};
 				};
 			};
+			//default { /* Not necessary because the errors handling are inside the previously functions inside this current function */ };
 		};
 		// Error handling:
 		if !_isValidShape then {
 			// Deleting the marker:
-			deleteMarker _x;
-			_possibleMarkers deleteAt (_possibleMarkers find _x);
+			deleteMarker _mkr;
+			_possibleMarkers deleteAt (_possibleMarkers find _mkr);
 			// Warning message:
 			systemChat format ["%1 A %2 %3 marker DOESN'T HAVE the correct marker shape. For spawn, use 'Select' marker, and for destination, use 'Empty' marker. Check the documentation.", CSWR_txtWarnHeader, _tag, _mkrType];
 		};
@@ -544,47 +546,47 @@ THY_fnc_CSWR_marker_scanner = {
 			[_destMovePUBLIC]
 		]
 	];
-	// By actived faction, check if there is, at least, one spawn mark available:
+	// By actived side, check if there is, at least, one spawn mark available:
 	if CSWR_isOnBLU then {
-		// Defining amount of spawns of faction:
+		// Defining amount of spawns of side:
 		_spwns     = count (((_confirmedMarkers # 0) # 0) # 0);
 		_spwnsVeh  = count (((_confirmedMarkers # 0) # 0) # 1);
 		_spwnsHeli = count (((_confirmedMarkers # 0) # 0) # 2);
 		_spwnsParadrop = count (((_confirmedMarkers # 0) # 0) # 3);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop == 0 ) then {
+		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnOPF then {
-		// Defining amount of spawns of faction:
+		// Defining amount of spawns of side:
 		_spwns     = count (((_confirmedMarkers # 0) # 1) # 0);
 		_spwnsVeh  = count (((_confirmedMarkers # 0) # 1) # 1);
 		_spwnsHeli = count (((_confirmedMarkers # 0) # 1) # 2);
 		_spwnsParadrop = count (((_confirmedMarkers # 0) # 1) # 3);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop == 0 ) then {
+		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnIND then {
-		// Defining amount of spawns of faction:
+		// Defining amount of spawns of side:
 		_spwns     = count (((_confirmedMarkers # 0) # 2) # 0);
 		_spwnsVeh  = count (((_confirmedMarkers # 0) # 2) # 1);
 		_spwnsHeli = count (((_confirmedMarkers # 0) # 2) # 2);
 		_spwnsParadrop = count (((_confirmedMarkers # 0) # 2) # 3);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop == 0 ) then {
+		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnCIV then {
-		// Defining amount of spawns of faction:
+		// Defining amount of spawns of side:
 		_spwns     = count (((_confirmedMarkers # 0) # 3) # 0);
 		_spwnsVeh  = count (((_confirmedMarkers # 0) # 3) # 1);
 		_spwnsHeli = count (((_confirmedMarkers # 0) # 3) # 2);
 		_spwnsParadrop = count (((_confirmedMarkers # 0) # 3) # 3);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop == 0 ) then {
+		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsParadrop isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
@@ -726,11 +728,11 @@ THY_fnc_CSWR_marker_booking_undo = {
 };
 
 
-THY_fnc_CSWR_convertion_faction_to_tag = {
-	// This function converts the faction name to the owner tag for further validations.
-	// Returns _tag: string of faction abbreviation.
+THY_fnc_CSWR_convertion_side_to_tag = {
+	// This function converts the side name to the owner tag for further validations.
+	// Returns _tag: string of side abbreviation.
 
-	params ["_faction"];
+	params ["_side"];
 	private ["_tag"];
 
 	// Initial values:
@@ -744,7 +746,7 @@ THY_fnc_CSWR_convertion_faction_to_tag = {
 	// Debug texts:
 		// reserved space.
 	// Main validation:
-	switch _faction do {
+	switch _side do {
 		case BLUFOR:      { _tag = "BLU" };
 		case OPFOR:       { _tag = "OPF" };
 		case INDEPENDENT: { _tag = "IND" };
@@ -795,8 +797,9 @@ THY_fnc_CSWR_is_valid_classname = {
 	_isValid = true;
 	// Errors handling > If _classnames receive something that's not an array, convert it to an array:
 	if ( typeName _classnames isNotEqualTo "ARRAY" ) then { _classnames = [_classnames] };
+	_what = toUpper _what;
 	// Escape > If array empty:
-	if ( count _classnames == 0 ) exitWith {
+	if ( count _classnames isEqualTo 0 ) exitWith {
 		/* // Update the validation flag:
 		_isValid = false;
 		// Warning message:
@@ -819,7 +822,7 @@ THY_fnc_CSWR_is_valid_classname = {
 	} forEach _classnames;
 	if !_isValid exitWith { _isValid /* Returning false */ };
 	// Escape > if editor's using 'RANDOM' command exclusively for civilian uniform, it's ok, just leave as valid:
-	if ( _tag isEqualTo "CIV" && _what == "uniform" && (_classnames # 0) isEqualTo "RANDOM" ) exitWith { _isValid;  /* Returning true */ };
+	if ( _tag isEqualTo "CIV" && _what in ["UNIFORM", "OUTFIT"] && (_classnames # 0) isEqualTo "RANDOM" ) exitWith { _isValid;  /* Returning true */ };
 	// Declarations:
 		// reserved space.
 	// Debug texts:
@@ -835,7 +838,7 @@ THY_fnc_CSWR_is_valid_classname = {
 					// Update the validation flag:
 					_isValid = false;
 					// Warning message:
-					["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, toUpper _what, _txt1] call BIS_fnc_error;
+					["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
 					// Breath:
 					sleep 5;
 				};
@@ -849,7 +852,7 @@ THY_fnc_CSWR_is_valid_classname = {
 				// Update the validation flag:
 				_isValid = false;
 				// Warning message:
-				["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, toUpper _what, _txt1] call BIS_fnc_error;
+				["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
 				// Breath:
 				sleep 5;
 			};
@@ -996,7 +999,7 @@ THY_fnc_CSWR_is_valid_destination = {
 	// Main validation:
 	switch _destType do {
 		case "MOVE_ANY": {
-			// if at least X destinations of this type, and the faction IS NOT civilian:
+			// if at least X destinations of this type, and the side IS NOT civilian:
 			if ( count CSWR_destsANYWHERE >= CSWR_minDestAny && _tag isNotEqualTo "CIV" ) then { 
 				// Prepare to return, saying there are available destinations:
 				_return = [[_destType, _destSector], true];
@@ -1024,7 +1027,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			}; 
 		};
 		case "MOVE_RESTRICTED": { 
-			// Checking which faction is here:
+			// Checking which side is here:
 			switch _tag do {
 				case "BLU": { _destMarkers = CSWR_destBLU };
 				case "OPF": { _destMarkers = CSWR_destOPF };
@@ -1042,13 +1045,13 @@ THY_fnc_CSWR_is_valid_destination = {
 			}; 
 		};
 		case "MOVE_WATCH": { 
-			// Checking which faction is here:
+			// Checking which side is here:
 			switch _tag do {
 				case "BLU": { _destMarkers = CSWR_destWatchBLU };
 				case "OPF": { _destMarkers = CSWR_destWatchOPF };
 				case "IND": { _destMarkers = CSWR_destWatchIND };
 			};
-			// if at least X destinations of this type, and the requester IS NOT a vehicle, and the faction IS NOT civilian:
+			// if at least X destinations of this type, and the requester IS NOT a vehicle, and the side IS NOT civilian:
 			if ( count _destMarkers >= CSWR_minDestWatch && _requester isNotEqualTo "vehicle" && _tag isNotEqualTo "CIV" ) then {
 				// Prepare to return, saying there are available destinations:
 				_return = [[_destType, _destSector], true];
@@ -1074,7 +1077,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			}; 
 		};
 		case "MOVE_OCCUPY": { 
-			// Checking which faction is here:
+			// Checking which side is here:
 			switch _tag do {
 				case "BLU": { _destMarkers = CSWR_destOccupyBLU };
 				case "OPF": { _destMarkers = CSWR_destOccupyOPF };
@@ -1099,7 +1102,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			}; 
 		};
 		case "MOVE_HOLD": { 
-			// Checking which faction is here:
+			// Checking which side is here:
 			switch _tag do {
 				case "BLU": { _destMarkers = CSWR_destHoldBLU };
 				case "OPF": { _destMarkers = CSWR_destHoldOPF };
@@ -1172,7 +1175,7 @@ THY_fnc_CSWR_is_playerNear = {
 	_playersAlive = [];
 	// If the function must scan only for friendly players, do it:
 	if ( _kindOfPlayer isEqualTo "friendlyPlayers" ) then {
-		// WIP - actually a friendly faction is not been considered here yet. Check the command when working on: BIS_fnc_friendlySides
+		// WIP - actually a friendly side is not been considered here yet. Check the command when working on: BIS_fnc_friendlySides
 		_playersAlive = allPlayers - entities "HeadlessClient_F" select { alive _x && (side _x) isEqualTo (side _unitTarget) };
 	// Otherwise:
 	} else {
@@ -1193,21 +1196,21 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 	// Returns _return. Array: [bool, [y,x,z]].
 
 	params ["_spwns", "_spwnPos", "_isVeh", "_isAirCrew"];
-	private ["_return", "_isParadrop"];
+	private ["_return", "_isPara"];
 
 	// Initial values:
-	_isParadrop = false;
-	_return = [_isParadrop, _spwnPos];
+	_isPara = false;
+	_return = [_isPara, _spwnPos];
 	// Escape:
 	if _isAirCrew exitWith { _return /* Returning... */};
 	// Declarations:
 		// reserved space.
 	// Debug texts:
 		// reserved space.
-	// If _spwns are the faction paradrop spawns, keep going:
+	// If _spwns are the side paradrop spawns, keep going:
 	if ( _spwns isEqualTo CSWR_spwnsParaBLU || _spwns isEqualTo CSWR_spwnsParaOPF || _spwns isEqualTo CSWR_spwnsParaIND || _spwns isEqualTo CSWR_spwnsParaCIV ) then { 
 		// Update the validation flag:
-		_isParadrop = true;
+		_isPara = true;
 		// Update the altitude of _spwnPos:
 		if !_isVeh then {
 			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParaUnitAlt];
@@ -1216,17 +1219,17 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 		};
 	};
 	// Preparing to return:
-	_return = [_isParadrop, _spwnPos];
+	_return = [_isPara, _spwnPos];
 	// Return:
 	_return;
 };
 
 
 THY_fnc_CSWR_group_type_rules = {
-	// This function defines rules to each Group Type of a faction (through Erros Handling), and returns a "dictionary" to be used for another functions (e.g. Skills) later.
+	// This function defines rules to each Group Type of a side (through Erros Handling), and returns a "dictionary" to be used for another functions (e.g. Skills) later.
 	// Returns _grpInfo array. If it returns empty, it's because the group is invalid and can't be spawned.
 
-	params["_faction", "_tag", "_grpClasses", "_destType", "_behavior", "_form"];
+	params["_side", "_tag", "_grpClasses", "_destType", "_behavior", "_form"];
 	private["_teamLight", "_teamMedium", "_teamHeavy", "_teamCustom1", "_teamCustom2", "_teamCustom3", "_teamSniper", "_vehLight", "_vehMedium", "_vehHeavy", "_vehCustom1", "_vehCustom2", "_vehCustom3", "_heliLight", "_heliHeavy", "_isError", "_grpInfo","_grpType", "_grpSize"];
 
 	// Escape:
@@ -1239,7 +1242,7 @@ THY_fnc_CSWR_group_type_rules = {
 	// Debug texts:
 		// reserved space.
 	// Groups' dictionary:
-	switch _faction do {
+	switch _side do {
 		case BLUFOR: {
 			// People group:
 			_teamLight   = CSWR_group_BLU_light;
@@ -1316,13 +1319,13 @@ THY_fnc_CSWR_group_type_rules = {
 			_heliLight  = [CSWR_vehicle_CIV_heli_light];
 			_heliHeavy  = [CSWR_vehicle_CIV_heli_heavy];
 		};
-		default { ["%1 %2 > There is no faction called '%3'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _faction] call BIS_fnc_error; _isError = true };
+		default { ["%1 %2 > There is no side called '%3'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _side] call BIS_fnc_error; _isError = true };
 	};
 	// Escape:
 	if _isError exitWith { _grpInfo /* Returning */ };
 	// Group information > basic:
-	// _grpInfo is [ group faction (side variable), group faction tag (strig), group id (obj), group type (str), group classnames ([strs]), group behavior (str), group formation (str), destination type (str) ]
-	_grpInfo = [_faction, _tag, grpNull, "", [], _behavior, _form, _destType];  // Tip: to figure out the _grpInfo units (objs), use: "units _grpInfo # 2" or "units _grp".
+	// _grpInfo is [ group side (side variable), group side tag (strig), group id (obj), group type (str), group classnames ([strs]), group behavior (str), group formation (str), destination type (str) ]
+	_grpInfo = [_side, _tag, grpNull, "", [], _behavior, _form, _destType];  // Tip: to figure out the _grpInfo units (objs), use: "units _grpInfo # 2" or "units _grp".
 	// Group information > specificity:
 	switch _grpClasses do {
 		// People group:
@@ -1497,7 +1500,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 
 
 THY_fnc_CSWR_group_behavior = {
-	// This function defines the group behavior only.
+	// This function defines the group behavior only. This always will run first than THY_fnc_CSWR_unit_behavior.
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
 
@@ -1509,7 +1512,12 @@ THY_fnc_CSWR_group_behavior = {
 	// Initial values:
 		// reserved space.
 	// Errors handling:
-		// reserved space.
+	if ( side _grp isEqualTo civilian && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) then {
+		// warning message:
+		["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _behavior] call BIS_fnc_error; sleep 3;
+		// Fixing:
+		_behavior = "BE_AWARE";
+	};
 	// Declarations:
 	if _isHunting then { _behavior = "BE_CHAOS" };
 	// Debug texts:
@@ -1560,7 +1568,7 @@ THY_fnc_CSWR_group_behavior = {
 
 
 THY_fnc_CSWR_unit_behavior = {
-	// This function defines the unit behavior inside their group.
+	// This function defines the unit behavior inside their group. This always will run right after the THY_fnc_CSWR_group_behavior.
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
 
@@ -1569,6 +1577,7 @@ THY_fnc_CSWR_unit_behavior = {
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	if (side _grp isEqualTo civilian && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) exitWith {};  // the warning message is in THY_fnc_CSWR_group_behavior already ;)
 	// Initial values:
 		// reserved space.
 	// Errors handling:
@@ -1738,7 +1747,7 @@ THY_fnc_CSWR_veh_electronic_warfare = {
 		case "BLU": { _isOn = CSWR_isElectroWarForBLU };
 		case "OPF": { _isOn = CSWR_isElectroWarForOPF };
 		case "IND": { _isOn = CSWR_isElectroWarForIND };
-		case "CIV": { /* this faction has no this option */ };
+		case "CIV": { /* this side has no this option */ };
 	};
 	// Debug texts:
 		// reserved space.
@@ -1897,7 +1906,7 @@ THY_fnc_CSWR_gear_NVG = {
 	// Escape > Any heavy crew cannot use NVG:
 	if ( _grpSpec in ["specHeavyCrew", "specParaHeavyCrew"] ) exitWith {};  // Leave this always after NVG removal.
 	// Declarations - part 2/2:
-	// Check all information about gear for the unit's faction:
+	// Check all information about gear for the unit's side:
 	switch _tag do {
 		case "BLU": { _canNvgInfantry = CSWR_canNvgInfantryBLU; _canNvgParatroops = CSWR_canNvgParatroopsBLU; _canNvgSnipers = CSWR_canNvgSnipersBLU; _canFlashlight = CSWR_canFlashlightBLU; _newNvg = CSWR_nvgDeviceBLU; _newFlashlight = CSWR_flashlightDeviceBLU };
 		case "OPF": { _canNvgInfantry = CSWR_canNvgInfantryOPF; _canNvgParatroops = CSWR_canNvgParatroopsOPF; _canNvgSnipers = CSWR_canNvgSnipersOPF; _canFlashlight = CSWR_canFlashlightOPF; _newNvg = CSWR_nvgDeviceOPF; _newFlashlight = CSWR_flashlightDeviceOPF };
@@ -1942,7 +1951,7 @@ THY_fnc_CSWR_gear_NVG = {
 				if _canNvgParatroops then { 
 					_unit linkItem _newNvg;
 				} else {
-					// If the faction can use flashlight, at least the unit will get one when no NVG:
+					// If the side can use flashlight, at least the unit will get one when no NVG:
 					if _canFlashlight then {
 						// Avoids a duplication at least if the gear is the same classname:
 						_unit removePrimaryWeaponItem _newFlashlight;
@@ -1960,7 +1969,7 @@ THY_fnc_CSWR_gear_NVG = {
 				if _canNvgInfantry then {
 					_unit linkItem _newNvg;
 				} else {
-					// If the faction can use flashlight, at least the unit will get one when no NVG:
+					// If the side can use flashlight, at least the unit will get one when no NVG:
 					if _canFlashlight then {
 						// Avoids a duplication at least if the gear is the same classname:
 						_unit removePrimaryWeaponItem _newFlashlight;
@@ -2113,7 +2122,7 @@ THY_fnc_CSWR_gear_uniform = {
 					// Add the generic gear:
 					_unit forceAddUniform _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2172,7 +2181,7 @@ THY_fnc_CSWR_gear_vest = {
 					// Add the generic gear:
 					_unit addVest _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2245,7 +2254,7 @@ THY_fnc_CSWR_gear_backpack = {
 					// Add the generic gear:
 					_unit addBackpack _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2327,7 +2336,7 @@ THY_fnc_CSWR_weaponry_sniper = {
 	};
 	// WIP - Check the mag compability with rifle:
 		// If not compatibl  warning message:
-		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// ["%1 LOADOUT CUSTOMIZATION > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	// Muzzle:
 	if ( _newMuzzle isNotEqualTo "REMOVED" ) then {
 		// If there's a new accessory:
@@ -2430,7 +2439,7 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 			// Warning message:
 			// The msg shows up just once:
 			if ( _unit isEqualTo (leader (group _unit))) then {
-				["%1 %2 > Only CIV faction can use the command 'RANDOM' in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+				["%1 %2 > Only CIV side can use the command 'RANDOM' in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 			};
 			// Delete the unit:
 			deleteVehicle _unit;
@@ -2483,14 +2492,14 @@ THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles when editor doesn't set some.
 	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_paraAcceptableGoggles)} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2593,25 +2602,25 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newMag isEqualTo "REMOVED" || {_newMag isEqualTo "" && primaryWeaponMagazine _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2700,7 +2709,7 @@ THY_fnc_CSWR_loadout_selector = {
 	// This function understands who is the group, its class and context, and select the right loadout must be applied for each group member.
 	// Returns nothing.
 
-	params ["_tag", "_grp", "_grpType", "_veh", "_isVeh", "_isAirCrew", "_isParadrop"];
+	params ["_tag", "_grp", "_grpType", "_veh", "_isVeh", "_isAirCrew", "_isPara"];
 	private ["_vehType", "_wait"];
 
 	// Escape:
@@ -2715,7 +2724,7 @@ THY_fnc_CSWR_loadout_selector = {
 	// Belong to Ground forces:
 	if !_isAirCrew then {
 		// Infantry air insertion:
-		if _isParadrop then {
+		if _isPara then {
 			// Paradrop vehicle:
 			if _isVeh then {
 				// Check the vehicle type:
@@ -2875,21 +2884,20 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Returns nothing.
 
 	params ["_spwnsInfo", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destsInfo"];
-	private ["_isValidToSpwnHere", "_canSpawn", "_veh", "_spwn", "_spwnPosChecker", "_spwnPos", "_isParadrop", "_bookingInfo", "_isBooked", "_spwnsWithSector", "_itHasSector", "_serverBreath", "_blockers", "_time", "_nvg", "_spwns", "_spwnsSector", "_destType", "_destSector", "_faction", "_tag", "_grp", "_grpType", "_grpClasses", "_isAirCrew", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3"];
+	private ["_canSpwn", "_veh", "_spwn", "_bookingInfo", "_isBooked", "_spwnsWithSector", "_spwnPosChecker", "_spwnPos", "_isPara", "_serverBreath", "_blockers", "_time", "_nvg", "_spwns", "_spwnsSector", "_destType", "_destSector", "_side", "_tag", "_grp", "_grpType", "_grpClasses", "_isAirCrew", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3", "_isValidToSpwnHere"];
 
 	// Escape:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
 	// Initial values:
-	_canSpawn        = true;
+	_canSpwn         = true;
 	_veh             = objNull;
 	_spwn            = "";
 	_bookingInfo     = [];
 	_isBooked        = false;
 	_spwnsWithSector = [];
-	_itHasSector     = nil;
 	_spwnPosChecker  = [];
 	_spwnPos         = [];
-	_isParadrop      = false;
+	_isPara          = false;
 	_serverBreath    = 0;
 	_blockers        = [];
 	_time            = 0;
@@ -2899,11 +2907,9 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Declarations:
 	_spwns       = _spwnsInfo # 0;
 	_spwnsSector = _spwnsInfo # 1;
-	systemChat str _spwnsSector;
 	_destType    = _destsInfo # 0;
 	_destSector  = _destsInfo # 1;
-	systemChat str _destSector;
-	_faction     = _grpInfo # 0;
+	_side        = _grpInfo # 0;
 	_tag         = _grpInfo # 1;
 	_grp         = _grpInfo # 2;
 	_grpType     = _grpInfo # 3;
@@ -2923,7 +2929,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Escape > if group-type is NOT valid to spawn here:
 	if !_isValidToSpwnHere exitWith {
 		// Flag to abort the group/vehicle spawn:
-		//_canSpawn = false;  // not necessary!
+		//_canSpwn = false;  // not necessary!
 		// Warning message:
 		["%1 SPAWN > %2 group-type '%3' is NOT ALLOWED to spawn in the selected spawns-type: %4.", CSWR_txtWarnHeader, _tag, _grpType, str _spwns] call BIS_fnc_error;
 		// Message breath:
@@ -2941,26 +2947,26 @@ THY_fnc_CSWR_spawn_and_go = {
 			{  // forEach _spwnDelayMethods:
 				if ( isNil "_x" ) exitWith {
 					// Flag to abort the group/vehicle spawn:
-					_canSpawn = false;
+					_canSpwn = false;
 					// Warning message:
 					["%1 SPAWN DELAY > %2 Make sure you SPELLED the trigger or target name(s) CORRECTLY. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 			// If the object doesn't exist, the spawn isn't available, so there's no reason the keep the validation process running:
-			if !_canSpawn exitWith {};
+			if !_canSpwn exitWith {};
 
 			// Spawn Delay Validation Step 2/4:
 			// Escape > If there is more than 1 timer, abort the spawn:
 			{  // forEach _spwnDelayMethods:
 				if ( { typeName _x isEqualTo "SCALAR" } count _spwnDelayMethods > 1 ) exitWith {
 					// Flag to abort the group/vehicle spawn:
-					_canSpawn = false;
+					_canSpwn = false;
 					// Warning message:
 					["%1 SPAWN DELAY > %2 It's NOT allowed a group with more than 1 TIMER. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 			// If the object doesn't exist, the spawn isn't available, so there's no reason the keep the validation process running:
-			if !_canSpawn exitWith {};
+			if !_canSpwn exitWith {};
 
 			// Spawn Delay Validation Step 3/4:
 			// Errors handling > If the method is Timer:
@@ -2968,7 +2974,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				if ( typeName _x isEqualTo "SCALAR" ) then {
 					// If the Timer value is 0 (invalid), delete it from the array and keep going the validation:
 					// Important: editors during the mission edition will use "0" in array istead of leave that empty.
-					if ( _x == 0 ) then { _spwnDelayMethods deleteAt (_spwnDelayMethods find 0)};
+					if ( _x isEqualTo 0 ) then { _spwnDelayMethods deleteAt (_spwnDelayMethods find 0)};
 				};
 			} forEach _spwnDelayMethods;
 
@@ -2977,14 +2983,14 @@ THY_fnc_CSWR_spawn_and_go = {
 			{  // forEach _spwnDelayMethods:
 				if ( !(typeName _x in ["OBJECT", "SCALAR"]) ) exitWith { 
 					// Flag to abort the group/vehicle spawn:
-					_canSpawn = false;
+					_canSpwn = false;
 					// Warning message:
 					["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [5] or [varname_1] or [varname_1, varname_2] or [5, varname_1, varname_2]. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 
 			// If everything is fine, Spawn Delay:
-			if _canSpawn then {
+			if _canSpwn then {
 				// Debug:
 				if CSWR_isOnDebugGlobal then {
 					// Debug monitor > How many units will spawn soon:
@@ -3002,7 +3008,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Otherwise, if the _spwnDelayMethods is not an array:
 	} else {
 		// Flag to abort the group/vehicle spawn:
-		_canSpawn = false;
+		_canSpwn = false;
 		// Warning message:
 		["%1 SPAWN DELAY > %2 %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error;
 		// Message breath:
@@ -3010,32 +3016,27 @@ THY_fnc_CSWR_spawn_and_go = {
 	};
 
 	// SPAWN SECTION:
-	if _canSpawn then {
+	if _canSpwn then {
 		// Checks current server performance:
 		_serverBreath = ((abs(CSWR_serverMaxFPS-diag_fps) / (CSWR_serverMaxFPS-CSWR_serverMinFPS)) ^ 2) * 2;  // ((abs(FPSMAX-diag_fps)/(FPSMAX-FPSLIMIT))^2)*MAXDELAY;
 		// If Editor declared that there's a sector for the group:
 		if ( _spwnsSector isNotEqualTo "" ) then {
-			systemChat (CSWR_spacer + _spwnsSector + CSWR_spacer);
 			// Looks for sectored-spawn-markers already stored by CSWR:
-			{  // forEach _spwns:
-				_itHasSector = _x find str (CSWR_spacer + _spwnsSector + CSWR_spacer);  // e.g: "_A_"
-				// If it has been found, add the marker in _spwnsWithSector list:
-				if (_itHasSector > 0) then { _spwnsWithSector pushBack _x };
-			} forEach _spwns;
-			// Verifies if there is at least one spawn-sector-marker of XXX faction found on Eden Editor:
+			_spwnsWithSector = _spwns select { _x find (CSWR_spacer + _spwnsSector + CSWR_spacer) isNotEqualTo -1 };
+			// Verifies if there is at least one spawn-sector-marker of XXX side found on Eden Editor:
 			if (count _spwnsWithSector > 0) then {
 				// Updating _spwns only with only sectored-spawn-points options:
 				_spwns = _spwnsWithSector;
 			} else {
 				// Warning message:
-				["%1 SPAWN > A %2 %3 CANNOT spawn 'cause they have NO SECTORED SPAWNPOINT MARKER dropped on the map. Check the %2 spawn markers on Eden. Follow these examples: '%4%5SPAWN%5%2%5sectorletter%5anynumber' or '%4%5SPAWNVEH%5%2%5sectorletter%5anynumber'.", CSWR_txtWarnHeader, _tag, _requester, CSWR_prefix, CSWR_spacer] call BIS_fnc_error; sleep 5;
+				["%1 SPAWN > %2 > No sectorized spawn-point was found with the letter '%3'. Are you sure some spawn-marker on Eden is using the sector '%3' in its name?", CSWR_txtWarnHeader, _tag, _spwnsSector] call BIS_fnc_error; sleep 5;
 			};
 		};
 		// Select a spawn:
 		_spwn = selectRandom _spwns;
 		// Check if they will be paradrop (group and vehicle), regarding the answer, it returns the spawn position (_spwnPos):
 		_spwnPosChecker = [_spwns, markerPos _spwn, _isVeh, _isAirCrew] call THY_fnc_CSWR_is_spawn_paradrop;
-		_isParadrop     = _spwnPosChecker # 0;
+		_isPara     = _spwnPosChecker # 0;
 		_spwnPos        = _spwnPosChecker # 1;
 
 		// If NOT vehicle:
@@ -3046,9 +3047,9 @@ THY_fnc_CSWR_spawn_and_go = {
 
 			// SPAWNING GROUP OF PEOPLE:
 			// Create the group id:
-			_grp = createGroup _faction;
+			_grp = createGroup _side;
 			// Create the units:
-			if !_isParadrop then {
+			if !_isPara then {
 				// People on ground:
 				{ _grp createUnit [_x, _spwnPos, [], 20, "NONE"]; sleep _serverBreath } forEach _grpClasses;
 			} else {
@@ -3056,14 +3057,14 @@ THY_fnc_CSWR_spawn_and_go = {
 				{ _grp createUnit [_x, _spwnPos, [], 200, "NONE"]; sleep _serverBreath } forEach _grpClasses;
 			};
 			// Not a good performance solution at all (by GOM, 2014 July):
-				//_grp = [_spwnPos, _faction, _grpClasses, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
+				//_grp = [_spwnPos, _side, _grpClasses, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
 			
 		// Otherwise, if vehicle:
 		} else {
 
 			// BOOKING A GROUND SPAWN FOR VEHICLE:
 			// Looping to booking a spawn-point (exclusively for vehicles in GROUND SPAWNS to avoid vehicle explosions by instant collision):
-			while { !_isParadrop } do {
+			while { !_isPara } do {
 				// If ground crew:
 				if !_isAirCrew then {
 					_bookingInfo = ["BOOKING_SPAWNVEH", _spwnPos, _tag, _spwns, 10, 5] call THY_fnc_CSWR_marker_booking;
@@ -3102,7 +3103,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			// If not air vehicle:
 			if !_isAirCrew then {
 				// If the vehicle will spawn on ground:
-				if !_isParadrop then {
+				if !_isPara then {
 					// Find an empty place near to the ground spawn-point:
 					_spwnPos = _spwnPos findEmptyPosition [10, 300];  // [radius, distance] / IMPORTANT: if decrease these valius might result in vehicle explosions.
 					// Creating the vehicle on ground:
@@ -3121,7 +3122,7 @@ THY_fnc_CSWR_spawn_and_go = {
 
 				// SPAWNING THE HELICOPTER AND CREW:
 				// if heli will spawn landed, this looping manages if has no blockers over the booked helipad:
-				while { !CSWR_shouldHeliSpwnInAir } do {
+				while { !CSWR_isHeliSpwningInAir } do {
 					// Check if something relevant is blocking the _spwn position:
 					_blockers = _spwnPos nearEntities [["Helicopter", "Plane", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV"], 20];
 					// If there's NO blockers:
@@ -3135,7 +3136,7 @@ THY_fnc_CSWR_spawn_and_go = {
 					sleep 20;  // IMPORTANT: leave this command in the final of this scope/loop, never in the beginning.
 				};  // While loop ends.
 				// If Helicopter must spawn already in air:
-				if CSWR_shouldHeliSpwnInAir then {
+				if CSWR_isHeliSpwningInAir then {
 					// Create the helicopter:
 					_veh = createVehicle [_grpClasses # 0, _spwnPos, [], 0, "FLY"];
 				// Otherwise, Helicopter must spawn landed:
@@ -3152,7 +3153,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Only vehicle config > Setting the vehicle direction:
 			[_veh, markerDir _spwn] remoteExec ["setDir"];
 			// Creating the group and its ground vehicle crew:
-			_grp = _faction createVehicleCrew _veh;  // CRITICAL: never remove _faction to avoid inconscistences when mission editor to use vehicles from another faction.
+			_grp = _side createVehicleCrew _veh;  // CRITICAL: never remove _side to avoid inconscistences when mission editor to use vehicles from another side.
 			// Additional CPU Breath for all vehicles:
 			sleep _serverBreath;
 			// Only vehicle config > Features:
@@ -3165,7 +3166,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Group/Vehicle config > Server performance:
 		_grp deleteGroupWhenEmpty true;
 		// Loadout selector:
-		[_tag, _grp, _grpType, _veh, _isVeh, _isAirCrew, _isParadrop] call THY_fnc_CSWR_loadout_selector;
+		[_tag, _grp, _grpType, _veh, _isVeh, _isAirCrew, _isPara] call THY_fnc_CSWR_loadout_selector;
 		// Group/Vehicle config > Units skills:
 		[_grpType, _grp, _destType] call THY_fnc_CSWR_unit_skills;
 		// Only group config > Formation:
@@ -3186,10 +3187,10 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Wait a bit:
 			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && !CSWR_shouldHeliSpwnInAir ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
+			if ( CSWR_isOnDebugGlobal && !CSWR_isHeliSpwningInAir ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, str _grp] };
 		};
 		// If Spawn was a Paradrop:
-		if _isParadrop then {
+		if _isPara then {
 			// If group of people:
 			if !_isVeh then {
 				// Wait the leader touch the ground:
@@ -3375,43 +3376,103 @@ THY_fnc_CSWR_add_group = {
 	// This function requests and prepares the basic of the creation of a group of AI soldiers.
 	// Returns nothing.
 	
-	params ["_faction", ["_spwnsInfo", [[], nil]], ["_grpClasses", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", nil]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_txt0", "_txt1", "_txt2", "_txt3", "_txt4", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
+	params ["_side", ["_spwnsInfo", [[], ""]], ["_grpClasses", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
+	private ["_tag", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
 	
 	// Initial values:
 		// reserved space.
+	// Errors handling > If _spwnsInfo is empty or has just one element, fix it including the sector empty:
+	if ( count _spwnsInfo < 2 ) then { _spwnsInfo set [1, ""] };
+	// Errors handling > If _destsInfo is empty or has just one element, fix it including the sector empty:
+	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""] };
 	// Declarations - part 1/2:
-	_tag = [_faction] call THY_fnc_CSWR_convertion_faction_to_tag;
+	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	// Debug texts:
-	_txt0 = format ["IMPOSSIBLE TO SPAWN a %1 group in spawn-points from another faction. Check 'fn_CSWR_population.sqf' file and make sure all %1 group lines have the spawn-point assigned to 'CSWR_spwns%1'.", _tag];
-	_txt1 = format ["%1 > There IS NO SPAWNPOINT to create a group. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%1' is spelled correctly and make sure there's at least 1 %1 spawn marker of this faction on Eden.", _tag];
-	_txt2 = format ["%1 > At least one type of group configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script get to know which unit(s) should be created. FIX IT!", _tag];
-	_txt3 = "One or more groups have a typo/mispelling in the name of the faction they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.";
-	_txt4 = format ["%1 > There IS NO DESTINATION to send a group. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' is configured.", _tag];
+		// reserved space.
 	// Escape - part 1/2:
-	if ( _tag isEqualTo "" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5 };
-	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" && typeName (_spwnsInfo # 0) isNotEqualTo "ARRAY" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5 };
-	if ( !isNil (_spwnsInfo # 1) && typeName (_spwnsInfo # 1) isNotEqualTo "STRING" ) exitWith { ["%1 xxxxxxxxxxxxxxxxxxxxxxxxxxx", CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5 };
-	if ( count (_spwnsInfo # 0) isEqualTo 0 ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5 };
-	// WIP --- if ( toUpper (_spwnsInfo # 0) find _tag == -1 ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt0] call BIS_fnc_error; sleep 5 };
-	if ( count _grpClasses isEqualTo 0 ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt2] call BIS_fnc_error; sleep 5 };
-	if ( typeName _destsInfo isNotEqualTo "ARRAY" && typeName (_destsInfo # 0) isNotEqualTo "STRING" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
-	if ( !isNil (_destsInfo # 1) && typeName (_destsInfo # 1) isNotEqualTo "STRING" ) exitWith { ["%1 xxxxxxxxxxxxxxxxxxxxxxxxxxx", CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5 };
+	// Escape > If some issue with the side declaration, abort:
+	if ( _tag isEqualTo "" ) exitWith {
+		// Warning message:
+		["%1 One or more groups have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.", 
+		CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If _spwnsInfo is not array or it's first content is not array, abort:
+	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" || typeName (_spwnsInfo # 0) isNotEqualTo "ARRAY" ) exitWith {
+		// Warning message:
+		["%1 %2 > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If _spwnsInfo first content doesn't exist, abort:
+		// Warning message:
+		// WIP if ( xxxxxx ) exitWith {};
+	// Escape > If _spwnsInfo first content is empty, abort:
+	if ( count (_spwnsInfo # 0) isEqualTo 0 ) exitWith {
+		// Warning message:
+		["%1 SPAWN > %2 > There IS NO SPAWNPOINT to create a group. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If the spawn sector is not a string, even when empty, abort:
+	if ( typeName (_spwnsInfo # 1) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > %2 > Make sure the SPAWN-POINT SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwns%2, 'X']", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If the spawn sector has more than one character, abort:
+	if ( (_spwnsInfo # 1) isNotEqualTo "" && count (_spwnsInfo # 1) isNotEqualTo 1 ) exitWith {
+		// Warning message:
+		["%1 SPAWN > At least one %2 group has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spwns%2, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If the side tag is not found in the spawn-marker name, abort to avoid a side spawning through spawnpoint from another side:
+	if ( (((_spwnsInfo # 0) # 0 splitString toUpper CSWR_spacer) # 2) isNotEqualTo _tag ) exitWith {
+		// Warning message:
+		["%1 SPAWN > NOT ALLOWED to spawn a %2 group in spawn-points from another side. Check 'fn_CSWR_population.sqf' file and make sure all %2 group lines have the spawn-point assigned to 'CSWR_spwns%2'.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;  // splitString results e.g: ["CSWR","SPAWN","BLU","1"]
+	};
+	// Escape > If has something declared as unit classname, but the first element is not string, abort:
+	if ( count _grpClasses > 0 && typeName (_grpClasses # 0) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 GROUP CUSTOMIZATION > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If the group is empty, abort:
+	if ( count _grpClasses isEqualTo 0 ) exitWith {
+		// Warning message:
+		["%1 GROUP CUSTOMIZATION > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:
+	if ( typeName _destsInfo isNotEqualTo "ARRAY" || typeName (_destsInfo # 0) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 DESTINATION > There IS NO DESTINATION to send a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If destination-sector is not a string, even when empty, abort:
+	if ( typeName (_destsInfo # 1) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 DESTINATION > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X']", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > If the destination sector has more than one character, abort:
+	if ( (_destsInfo # 1) isNotEqualTo "" && count (_destsInfo # 1) isNotEqualTo 1 ) exitWith {
+		// Warning message:
+		["%1 DESTINATION > At least one %2 group has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
 	// Errors handling:
-	_spwnsInfo         = [_spwnsInfo # 0, toUpper (_spwnsInfo # 1)];  // spawn sector typing fixed.
 	_isValidClasses    = [_tag, "CfgVehicles", "unit", "_grpClasses", _grpClasses] call THY_fnc_CSWR_is_valid_classname;
 	_isValidClassTypes = [_tag, _grpClasses, ["Man"], false] call THY_fnc_CSWR_is_valid_classnames_type;
 	_validBehavior     = [_tag, false, _behavior] call THY_fnc_CSWR_is_valid_behavior;      // [behavior name fixed, isValid]
 	_validDest         = [_tag, false, _destsInfo] call THY_fnc_CSWR_is_valid_destination;  // [ 0= [ 0=destination-type name fixed, 1=sector letter fixed ], 1=isValid ]
 	_validForm         = [_tag, false, _form] call THY_fnc_CSWR_is_valid_formation;         // [formation name fixed, isValid]
+	_spwnsInfo         = [_spwnsInfo # 0, toUpper (_spwnsInfo # 1)];                        // spawn sector typing fixed.
 	// Escape - part 2/2:
 	if ( !_isValidClasses || !_isValidClassTypes || !(_validBehavior # 1) || !(_validDest # 1) || !(_validForm # 1) ) exitWith {};
 	// To check other escapes and errors handling based in _grpClasses):
-	_grpInfo = [_faction, _tag, _grpClasses, (_validDest # 0) # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_type_rules;
+	_grpInfo = [_side, _tag, _grpClasses, (_validDest # 0) # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
 	// Spawn Schadule:
-	systemChat str _spwnsInfo;
 	[_spwnsInfo, _spwnDelayMethods, _grpInfo, false, _validBehavior # 0, _validDest # 0] spawn THY_fnc_CSWR_spawn_and_go;
 	// CPU breath:
 	sleep 1;
@@ -3424,21 +3485,21 @@ THY_fnc_CSWR_add_vehicle = {
 	// This function requests and prepares the basic of the creation of a vehicle and its AI crewmen.
 	// Returns nothing.
 	
-	params ["_faction", ["_spwnsInfo", [[], nil]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", nil]], ["_spwnDelayMethods", 0]];
+	params ["_side", ["_spwnsInfo", [[], nil]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", nil]], ["_spwnDelayMethods", 0]];
 	private ["_tag", "_isHeli", "_txt0", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
 	
 	// Initial values:
 		// reserved space.
 	// Declarations - part 1/2:
-	_tag = [_faction] call THY_fnc_CSWR_convertion_faction_to_tag;
+	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	_isHeli = if ( _vehClass isKindOf "Helicopter" ) then { true } else { false };
 	// Debug texts:
 	_txt0 = "For script integrity, the vehicle WON'T SPAWN!";
-	_txt1 = format ["%1 > There IS NO SPAWNPOINT to create a vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwns%1' is spelled correctly and make sure there's at least 1 %1 spawn marker of this faction on Eden.", _tag];
+	_txt1 = format ["%1 > There IS NO SPAWNPOINT to create a vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwns%1' is spelled correctly and make sure there's at least 1 %1 spawn marker of this side on Eden.", _tag];
 	_txt2 = format ["%1 > A HELICOPTER HAS NO SPAWNPOINT. Add at least one SPAWN-MARKER for helicopters on Eden, e.g. 'cswr_spawnheli_%2_aNumber'.", _tag, toLower _tag];
 	_txt3 = format ["%1 > At least one type of vehicle configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script get to know which vehicle should be created. FIX IT!", _tag];
-	_txt4 = format ["IMPOSSIBLE TO SPAWN a %1 vehicle in spawn-points from another faction. Check 'fn_CSWR_population.sqf' file and make sure all %1 vehicle lines have the spawn-point assigned to 'CSWR_spwns%1' or 'CSWR_spwnsVeh%1' or 'CSWR_spwnsHeli%1'.", _tag];
-	_txt5 = "One or more groups have a typo/mispelling in the name of the faction they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.";
+	_txt4 = format ["IMPOSSIBLE TO SPAWN a %1 vehicle in spawn-points from another side. Check 'fn_CSWR_population.sqf' file and make sure all %1 vehicle lines have the spawn-point assigned to 'CSWR_spwns%1' or 'CSWR_spwnsVeh%1' or 'CSWR_spwnsHeli%1'.", _tag];
+	_txt5 = "One or more groups have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.";
 	// Escape - part 1/2:
 	if ( _tag isEqualTo "" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt5] call BIS_fnc_error; sleep 5 };
 	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" && typeName (_spwnsInfo # 0) isNotEqualTo "ARRAY" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5 };
@@ -3453,7 +3514,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Escape - part 2/2:
 	if ( !_isValidClasses || !_isValidClassTypes || !_validBehavior || !_validDest ) exitWith {};
 	// To check other escapes and errors handling based in type of _vehClass:
-	_grpInfo = [_faction, _tag, [_vehClass], (_destsInfo # 0), _behavior, ""] call THY_fnc_CSWR_group_type_rules;
+	_grpInfo = [_side, _tag, [_vehClass], (_destsInfo # 0), _behavior, ""] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
 	// Spawn Schadule:
@@ -3488,7 +3549,7 @@ THY_fnc_CSWR_go = {
 		case "MOVE_ANY":        { [_spwns, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_ANYWHERE };
 		case "MOVE_PUBLIC":     { [_spwns, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_PUBLIC };
 		case "MOVE_RESTRICTED": { [_spwns, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED };
-		case "MOVE_WATCH":      { [_destSector, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH };  // Vehicles and Civilian faction are not able to do this.
+		case "MOVE_WATCH":      { [_destSector, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH };  // Vehicles and Civilian side are not able to do this.
 		case "MOVE_OCCUPY":     { [_destSector, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY };  // Vehicles are not able to do this.
 		case "MOVE_HOLD":       { [_destSector, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD };  // Helicopters are not able to do this.
 		// And if something wrong:
@@ -3598,18 +3659,18 @@ THY_fnc_CSWR_go_next_condition = {
 
 
 THY_fnc_CSWR_go_RTB = {
-	// This function checks set where are the service stations for vehicles in the faction base.
+	// This function checks set where are the service stations for vehicles in the side base.
 	// Returns nothing.
 
 	params ["_spwns", "_tag", "_grpType", "_grp", "_isAirCrew", "_destType", "_destSector", "_behavior"];
-	private ["_wp", "_faction", "_veh", "_distToLanding", "_closestStationPos"];
+	private ["_wp", "_side", "_veh", "_distToLanding", "_closestStationPos"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Initial values:
 	_wp = [];
 	// Declarations:
-	_faction           = side leader _grp;
+	_side           = side leader _grp;
 	_veh               = vehicle (leader _grp);
 	_distToLanding     = if ( _grpType isEqualTo "heliL" ) then { abs CSWR_heliLightAlt + 50 } else { if ( _grpType isEqualTo "heliH" ) then { abs CSWR_heliHeavyAlt + 50 } else { 300 }  }; // critical!
 	_closestStationPos = [_spwns, _veh] call THY_fnc_CSWR_go_RTB_closest_station;
@@ -3650,11 +3711,11 @@ THY_fnc_CSWR_go_RTB_closest_station = {
 	// This function verifies which service station for vehicles is nearest to the group.
 	// Returns _closestStationPos. Array of a marker position: [x,y,0].
 
-	params["_factionStations", "_veh"];
+	params["_sideStations", "_veh"];
 	private["_closestStationPos", "_shortestDist", "_currentDist"];
 
 	// Initial values:
-	_closestStationPos = markerPos (_factionStations # 0);  // If only one station (spare solution).
+	_closestStationPos = markerPos (_sideStations # 0);  // If only one station (spare solution).
 	_shortestDist = 0;
 	_currentDist = [];
 	// Escape:
@@ -3662,10 +3723,10 @@ THY_fnc_CSWR_go_RTB_closest_station = {
 	// Debug texts:
 		// reserved space.
 	// If more than 1 station:
-	if ( count _factionStations > 1 ) then {
+	if ( count _sideStations > 1 ) then {
 		// Declarations:
 		_shortestDist = _closestStationPos distance2D _veh;
-		{  // forEach _factionStations:
+		{  // forEach _sideStations:
 			_currentDist = (markerPos _x) distance2D _veh;
 			// Check which _closestStationPos is closer:
 			if ( _currentDist < _shortestDist ) then { 
@@ -3674,7 +3735,7 @@ THY_fnc_CSWR_go_RTB_closest_station = {
 				// Position of the new closest station:
 				_closestStationPos = markerPos _x;
 			};
-		} forEach _factionStations;
+		} forEach _sideStations;
 	};
 	// Return:
 	_closestStationPos;
@@ -3714,12 +3775,12 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 
 
 THY_fnc_CSWR_go_ANYWHERE = {
-	// This function sets the group/vehicle to move to any destination (sum of almost all other preset destinations), including exclusive enemy faction destinations but excluding the specialized (watch, hold, occupy) ones. It's a looping.
+	// This function sets the group/vehicle to move to any destination (sum of almost all other preset destinations), including exclusive enemy side destinations but excluding the specialized (watch, hold, occupy) ones. It's a looping.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
 	params ["_spwns", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew", "_shouldRTB"];
-	private ["_destsAvaliable", "_itHasSector", "_isHunting", "_areaToPass", "_wp"];
+	private ["_destsAvaliable", "_isHunting", "_areaToPass", "_wp"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
@@ -3727,27 +3788,25 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Initial values:
 	_destsAvaliable = [];
-	_itHasSector = nil;
 	// Declarations:
 	_isHunting = selectRandom [true, false, false];
 	// If it has NO sectored-destination:
-	if ( isNil _destSector || _destSector isEqualTo "" ) then {
+	if ( _destSector isEqualTo "" ) then {
 		// Copying:
 		_destsAvaliable = +CSWR_destsANYWHERE;
 	// If has a sector:
 	} else {
-		systemChat (CSWR_spacer + _destSector + CSWR_spacer);
 		// Looks for sectored-destination-markers already stored by CSWR:
-		{  // forEach CSWR_destsANYWHERE:
-			_itHasSector = _x find (CSWR_spacer + _destSector + CSWR_spacer);  // e.g: "_B_"
-			// If it has been found, add the marker in _destsAvaliable list:
-			if ( _itHasSector > 0 ) then { _destsAvaliable pushBack _x };
-		} forEach CSWR_destsANYWHERE;
+		_destsAvaliable = CSWR_destsANYWHERE select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 	};
-	// Escape > 
-	if ( !isNil _destSector && count _destsAvaliable < 1 ) exitWith {
+	// Error handling > No sectorized destination marker was been found, then delete the group:
+	if ( count _destsAvaliable isEqualTo 0 ) exitWith {
+		// Deleting the vehicle if it exists:
+		if _isVeh then { deleteVehicle vehicle (leader _grp) };
+		// Deleting the group:
+		{ deleteVehicle _x } forEach units _grp;
 		// Warning message:
-		["%1 DESTINATION > A %2 group/vehicle CANNOT go ANYWHERE 'cause they have NO SECTORED DESTINATION MARKER dropped on the map. Check the %2 destination markers on Eden. Follow these examples: '%3%4MOVE%4%2%4sectorletter%4anynumber' or '%3%4MOVE%4PUBLIC%4sectorletter%4anynumber'.", CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer] call BIS_fnc_error; sleep 5;
+		["%1 DESTINATION > %2 > No sectorized destination was found with the letter '%3'. Are you sure some destination-marker on Eden is using the sector '%3' in its name? For script integrity, the group/vehicle has been deleted.", CSWR_txtWarnHeader, _tag, _destSector] call BIS_fnc_error; sleep 5;
 	};
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
 	_areaToPass = markerPos (selectRandom _destsAvaliable);
@@ -3775,7 +3834,7 @@ THY_fnc_CSWR_go_ANYWHERE = {
 
 
 THY_fnc_CSWR_go_dest_PUBLIC = { 
-	// This function sets the group/vehicle to move through PUBLIC destinations where civilians and soldiers can go, excluding the specialized (watch, hold, occupy) ones and the waypoints restricted by other factions. It's a looping.
+	// This function sets the group/vehicle to move through PUBLIC destinations where civilians and soldiers can go, excluding the specialized (watch, hold, occupy) ones and the waypoints restricted by other sides. It's a looping.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
@@ -3815,7 +3874,7 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 
 
 THY_fnc_CSWR_go_dest_RESTRICTED = { 
-	// This function sets the group/vehicle to move only through the exclusive faction destinations, excluding public and specialized (watch, hold, occupy) ones. It's a looping.
+	// This function sets the group/vehicle to move only through the exclusive side destinations, excluding public and specialized (watch, hold, occupy) ones. It's a looping.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing.
 	
@@ -3835,7 +3894,7 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 		case "IND": { _destMarkers = CSWR_destIND };
 		//case "CIV": { _destMarkers = CSWR_destCIV };  // Civ cannot use restricted move, only public ones.
 	};
-	// Check the available RESTRICTED faction markers on map:
+	// Check the available RESTRICTED side markers on map:
 	_areaToPass = markerPos (selectRandom _destMarkers);
 	_isHunting = selectRandom [true, false, false];
 	// Check the waypoint altitude:
@@ -3900,7 +3959,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		case "IND": { _destMarkers = CSWR_destWatchIND };
 		//case "CIV": { _destMarkers = CSWR_destWatchCIV };  // CIV cannot use watch destinations.
 	};
-	// Check the available WATCH faction markers on map:
+	// Check the available WATCH side markers on map:
 	_areaToWatch = markerPos (selectRandom _destMarkers);
 	// Finding out specific types of locations around:
 	_locations = nearestLocations [_areaToWatch, ["RockArea", "Hill", "ViewPoint", "Flag"], CSWR_watchMarkerRange];
@@ -3993,7 +4052,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 				// WIP: trying to identify if there's a terrain between the sniper eyes and the area-target:
 				//private _isTerrainBlockingView = terrainIntersect [_areaPos, _areaToWatch];  // High cost for Engine/server (info from wiki);
 				// If the spot is within target range and there's No any road too close, it potencialy is a good spot:
-				if ( _areaPos distance _areaToWatch <= _disLocToArea /* && (!isOnRoad _areaPos) */ && count _roadsAround == 0 /* && (!_isTerrainBlockingView) */ ) then { break };
+				if ( _areaPos distance _areaToWatch <= _disLocToArea /* && (!isOnRoad _areaPos) */ && count _roadsAround isEqualTo 0 /* && (!_isTerrainBlockingView) */ ) then { break };
 				// Warning message:
 				if ( _counter > 20 ) then {
 					// Restart the counter:
@@ -4116,7 +4175,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 		// Stay in position:
 		_x disableAI "PATH";
 		// Debug message:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / leader '%8'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x == (leader _grp))] call BIS_fnc_error; sleep 3 };
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / leader '%8'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 3 };
 	} forEach units _grp;
 	
 	
@@ -4127,7 +4186,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	while { behaviour (leader _grp) isNotEqualTo "COMBAT" } do {
 		{  // forEach units _grp;:
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x == (leader _grp))] call BIS_fnc_error; sleep 1 };
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1 };
 			// Forcing the sniper/leader 
 			if ( _x isEqualTo leader _grp ) then {
 				// leader behavior aware if they're feel safe:
@@ -4155,11 +4214,11 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			// Error handling:
 			if ( !alive _x || incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { break };
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x == (leader _grp))] call BIS_fnc_error; sleep 1 };
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1 };
 			// If enemy revealed is too close, unit can move again:
 			if ( !isNull (getAttackTarget _x) && _x distance (getAttackTarget _x) < _enemyDangerClose ) then { _x doFollow leader _grp };
 			// Remember the leader (or new leader):
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo (leader _grp) ) then {
 				_x setUnitCombatMode "YELLOW";
 			// If spotter:
 			} else {
@@ -4189,7 +4248,7 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 	params ["_grp", "_unit", "_enemyDangerClose"];
 
 	// Escape:
-	if ( _unit == (leader _grp) ) exitWith {};
+	if ( _unit isEqualTo (leader _grp) ) exitWith {};
 	if ( !isNull (getAttackTarget _unit) && _unit distance (getAttackTarget _unit) < _enemyDangerClose ) exitWith {
 		// Spotter get combat mode:
 		_unit setCombatBehaviour "COMBAT";
@@ -4252,20 +4311,24 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
-	_destMarkers = [];
-	_bldgPos     = [];
-	_spots       = [];
-	_wp          = [];
-	_grpLead     = objNull;
+	_destMarkers      = [];
+	_bldgPos          = [];
+	_spots            = [];
+	_wp               = [];
+	_grpLead          = objNull;
 	_leadStuckCounter = 0;
-	_getOutPos   = [];
+	_getOutPos        = [];
 	// Declarations:
-	_distLimiterFromBldg = 10;  // Distance to activate occupy functions validations to group leader.
+	_distLimiterFromBldg     = 10;  // Distance to activate occupy functions validations to group leader.
 	_distLimiterFriendPlayer = 40;  // Distance to desactivate the AI teleport when player is around.
-	_distLimiterEnemy = 200;  // Distance to desactivate the AI teleport when enemies (including player) are around.
-	_wait = 10;  // Avoid crazy loopings in entery occupy functions. Be careful.
-	_grpSize = count (units _grp);
-	// Errors handling:
+	_distLimiterEnemy        = 200;  // Distance to desactivate the AI teleport when enemies (including player) are around.
+	_wait                    = 10;  // Avoid crazy loopings in entery occupy functions. Be careful.
+	_grpSize                 = count (units _grp);
+	// Error handling > Vehicle cannot provide occupy:
+	if ( !isNull (objectParent (leader _grp)) ) exitWith {
+		["%1 OCCUPY > A %2 vehicle was trying to OCCUPY a building, and vehicles cannot do this. Fix it in 'fn_CSWR_population.sqf' file. For script integrity, The vehicle and its crew were deleted!", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; deleteVehicle (vehicle (leader _grp)); { deleteVehicle _x } forEach units _grp; sleep 5;
+	};
+	// Error handling > No more than X units:
 	if ( _grpSize > 6 ) exitWith { ["%1 OCCUPY > %2 '%3' group current size (%4) is too big for occupy movement integrity. Use groups composed from 1 to 6 units. For now, the group has been deleted.", CSWR_txtWarnHeader, _tag, str _grp, _grpSize] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
 	// Forcing unit basic setup to start the Occupy movement to prevent anomalies:
 	{  // forEach of units _grp:
@@ -4284,7 +4347,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		case "IND": { _destMarkers = CSWR_destOccupyIND };
 		case "CIV": { _destMarkers = CSWR_destOccupyCIV };
 	};
-	// Check the available OCCUPY faction markers on map:
+	// Check the available OCCUPY side markers on map:
 	_regionToSearch = markerPos (selectRandom _destMarkers);
 	// Selecting one building from probably many others found in that range:
 	_building = [_grp, _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
@@ -4337,7 +4400,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 					break;
 				};
 				// Check if the waypoint was lost (sometimes bugs or misclick by zeus can delete the waypoint):
-				if ( waypointType _wp isEqualTo "" || currentWaypoint _grp == 0 ) then {
+				if ( waypointType _wp isEqualTo "" || currentWaypoint _grp isEqualTo 0 ) then {
 					// Debug message:
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' group lost the waypoint for unknown reason. New search in %6 secs.", CSWR_txtDebugHeader, _tag, str _grp, count (units _grp), count _spots, _wait]; sleep 1 };
 					// Small cooldown to prevent crazy loopings:
@@ -4353,7 +4416,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 					// Debug message:
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader looks stuck %4 time(s).", CSWR_txtDebugHeader, _tag, str _grp, _leadStuckCounter] };
 					// After timeout and leader looks stuck, teleport them to a free space:
-					if ( _leadStuckCounter == 5 ) then {
+					if ( _leadStuckCounter isEqualTo 5 ) then {
 						if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader apparently was stuck, but now he's free.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
 						// Find pos min 10m (_distLimiterFromBldg) from _grpLead but not further 20m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
 						_getOutPos = [_grpLead, _distLimiterFromBldg, (_distLimiterFromBldg * 2), 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
@@ -4393,8 +4456,8 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 };
 
 
-THY_fnc_CSWR_OCCUPY_find_buildings_by_faction = {
-	// This function finds all relevant buildings in each faction marker (_x) range, and include them in a faction general list to check deeper further. It runs once the mission get started.
+THY_fnc_CSWR_OCCUPY_find_buildings_by_side = {
+	// This function finds all relevant buildings in each side marker (_x) range, and include them in a side general list to check deeper further. It runs once the mission get started.
 	// Returns _bldgsSpotsAvailable: array of objects.
 
 	params ["_isOnFaction", "_mkrsOccupy", "_range", "_ignoredBldgs", "_ignoredPos"];
@@ -4407,8 +4470,8 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_faction = {
 	// Escape:
 	if ( !_isOnFaction ) exitWith { _bldgsSpotsAvailable /* return */ };
 	// Error handling:
-	if ( count _mkrsOccupy == 0 ) exitWith { _bldgsSpotsAvailable /* return */ };
-	// FIRST STEP: find the buildings for faction marker:
+	if ( count _mkrsOccupy isEqualTo 0 ) exitWith { _bldgsSpotsAvailable /* return */ };
+	// FIRST STEP: find the buildings for side marker:
 	{  // forEach _mkrsOccupyBLU:
 		_bldgsByMkr = nearestObjects [[markerPos _x # 0, markerPos _x # 1, 0], ["HOUSE", "BUILDING"], _range];  // Important: assets from 'building' category generally has no ALIVE option, so they cant be destroy in-game. 'building' category is here to be mapped to check further if one of them is in the CSWR_occupyAcceptableRuins list as exception, because basically no assets that cannot be destroy get in the final list, except those ones in CSWR_occupyAcceptableRuins.
 		//_bldgsByMkr = [(markerPos _x) # 0, (markerPos _x) # 1] nearObjects ["HOUSE", _range];  // BACKUP ONLY.
@@ -4426,7 +4489,7 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_faction = {
 				_isWaterSurrounding = surfaceIsWater (getPosATL _x);  // specialy ignoring Tanoa's riverside houses issue.
 				// If not over the water or the building is an exception, do it:
 				if ( !_isWaterSurrounding || typeOf _x in CSWR_occupyAcceptableRuins ) then {
-					// Adding the building to the final options for faction groups executing occupy-movement:
+					// Adding the building to the final options for side groups executing occupy-movement:
 					_bldgsSpotsAvailable pushBackUnique _x;
 				};
 			};
@@ -4438,7 +4501,7 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_faction = {
 
 
 THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
-	// This function checks what pre-available buildings are around a specific faction marker range and selects one of them to be used for the group requesting the occupy-movement. It's a looping.
+	// This function checks what pre-available buildings are around a specific side marker range and selects one of them to be used for the group requesting the occupy-movement. It's a looping.
 	// Return _building: object.
 
 	params ["_grp", "_tag"];
@@ -4553,7 +4616,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 			// Meanwhile the unit is alive or their group to exist:
 			while { alive _x || !isNull _grp } do {
 				// If the unit is the leader:
-				if ( _x == leader _grp ) then {
+				if ( _x isEqualTo (leader _grp) ) then {
 					// if the leader is NOT awake:
 					if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then {
 						// Kill the AI leader to renew the group leadership:
@@ -4719,7 +4782,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						};
 					};
 					// Timeout for script understand the unit is stuck around the building and leave they there until the leader leave the building again and forces the regrouping:
-					if ( _timeOutToUnit == 0 ) then { break };
+					if ( _timeOutToUnit isEqualTo 0 ) then { break };
 					_timeOutToUnit = _timeOutToUnit - 1;
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy && !(leader _grp checkAIFeature "PATH") && _timeOutToUnit <= 10 ) then { systemChat format ["%1 OCCUPY > %2 '%3' unit should get-in: %4", CSWR_txtDebugHeader, _tag, _x, _timeOutToUnit] };
 					sleep 1.5;
@@ -4755,7 +4818,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 		if ( count _alreadySheltered > floor (_grpSize / 2) ) then {
 			// Debug messages:
 			if CSWR_isOnDebugGlobal then { 
-				if ( count _alreadySheltered == _grpSize ) then {
+				if ( count _alreadySheltered isEqualTo _grpSize ) then {
 					systemChat format ["%1 OCCUPY > All %2 '%3' is in a building.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 3;
 				} else {
 					systemChat format ["%1 OCCUPY > Most of the %2 '%3' is in a building.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 3;
@@ -4801,7 +4864,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 		// Meanwhile the unit is alive or their group to exist:
 		while { alive _x || !isNull _grp } do {
 			// If the unit is the leader:
-			if ( _x == leader _grp ) then {
+			if ( _x isEqualTo (leader _grp) ) then {
 				// Check if there are friendly players around:
 				_isFriendPlayerClose = [_x, "friendlyPlayers", _distLimiterFriendPlayer] call THY_fnc_CSWR_is_playerNear;
 				// Check if there are enemies around:
@@ -4928,7 +4991,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		_veh = vehicle (leader _grp);
 		_trackedVehTypes = ["Tank", "TrackedAPC"];
 		_vehType = (_veh call BIS_fnc_objectType) # 1;  // Returns like ['vehicle','Tank']
-		// It's a tracked vehicle and not from CIV faction:
+		// It's a tracked vehicle and not from CIV side:
 		if ( _vehType in _trackedVehTypes && _tag isNotEqualTo "CIV" ) then { _isVehTracked = true };  // WIP the reason of this is, in future, only tracked veh will execute the turn maneuver over its axis, without setDir cheat like nowadays.
 	};
 	// Debug message:
@@ -5070,7 +5133,7 @@ THY_fnc_CSWR_HOLD_ground_cleaner = {
 	//private [""];
 
 	// Escape:
-	if ( count _markers == 0 ) exitWith {};
+	if ( count _markers isEqualTo 0 ) exitWith {};
 	// Initial values:
 		// reserved space.
 	// Declarations:
@@ -5167,10 +5230,10 @@ THY_fnc_CSWR_debug = {
 	// Debug texts:
 		// reserved space.
 	// Declarations:
-	_playableBLU = { alive _x && side _x == BLUFOR } count playableUnits;
-	_playableOPF = { alive _x && side _x == OPFOR } count playableUnits;
-	_playableIND = { alive _x && side _x == INDEPENDENT } count playableUnits;
-	_playableCIV = { alive _x && side _x == CIVILIAN } count playableUnits;
+	_playableBLU = { alive _x && side _x isEqualTo BLUFOR } count playableUnits;
+	_playableOPF = { alive _x && side _x isEqualTo OPFOR } count playableUnits;
+	_playableIND = { alive _x && side _x isEqualTo INDEPENDENT } count playableUnits;
+	_playableCIV = { alive _x && side _x isEqualTo CIVILIAN } count playableUnits;
 	_aliveAll = { alive _x } count (allUnits - playableUnits);
 	_aliveBLU = ({ alive _x } count units BLUFOR) - _playableBLU;
 	_aliveOPF = ({ alive _x } count units OPFOR) - _playableOPF;

@@ -4,7 +4,7 @@
 // by thy (@aldolammel)
 
 
-// This function defines the faction loadout details for each unit spawned by CSWR. 
+// This function defines the side loadout details for each unit spawned by CSWR. 
 // Returns nothing.
 
 params ["_tag", "_unit", "_grpType", "_grpSpec"];

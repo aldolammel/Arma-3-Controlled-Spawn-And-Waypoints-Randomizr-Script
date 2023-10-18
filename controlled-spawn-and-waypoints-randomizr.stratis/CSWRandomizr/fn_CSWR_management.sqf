@@ -15,14 +15,14 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 // Factions:
-    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this faction.
-    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this faction.
-    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this faction.
-    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this faction.
+    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
+    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
+    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this side.
+    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this side.
 // Loadout global:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
-// Loadout by faction:
+// Loadout by side:
     // Blu
         CSWR_canNvgInfantryBLU   = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
         CSWR_canNvgParatroopsBLU = true;    // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
@@ -47,7 +47,7 @@ if (!isServer) exitWith {};
     // civ
         CSWR_canNvgCIV    = false;          // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
         CSWR_nvgDeviceCIV = "NVGoggles";    // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
-// Voices by faction:
+// Voices by side:
     //CSWR_voiceBLU = "";      // WIP.
     //CSWR_voiceOPF = "";      // WIP.
     //CSWR_voiceIND = "";      // WIP.
@@ -56,13 +56,13 @@ if (!isServer) exitWith {};
     CSWR_isHoldVehLightsOff   = false;  // true = vehicles on hold-move will turn its lights off / false = The AI behavior decides. Default: false.
     //CSWR_isUnlimitedFuel      = false;  // WIP
     //CSWR_isUnlimitedAmmo      = false;  // WIP
-    CSWR_shouldHeliSpwnInAir  = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
+    CSWR_isHeliSpwningInAir   = false;  // true = helicopter will spawn already in air / false = they spawn on the ground level. Default: false.
     CSWR_shouldAddHelipadSpwn = false;  // true = add a visible helipad in each heli spawnpoint / false = a invisible helipad is added. Default: false.
     CSWR_isElectroWarForBLU   = true;   // true = vehicles of BLU will use Electronic Warfare Resources / false = they don't. Default: true.
     CSWR_isElectroWarForOPF   = true;   // true = vehicles of OPF will use Electronic Warfare Resources / false = they don't. Default: true.
     CSWR_isElectroWarForIND   = true;   // true = vehicles of IND will use Electronic Warfare Resources / false = they don't. Default: true.
 // Others:
-    CSWR_isEditableByZeus = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
+    CSWR_isEditableByZeus    = true;  // true = CSWR units and CSWR vehicles can be manipulated when Zeus is available / false = no editable. Default: true.
     //CSWR_reportToRadioAllies = false;   // WIP - true = player's allies units report important things on radio-chat to the leaders / false = silence. Default: false.
 	CSWR_spwnHeliOnShipFloor = 25;  // If needed, set how many meters above the sea leval is the ship floor where the spawn of helicopters will be.
 // Server:
@@ -73,8 +73,8 @@ if (!isServer) exitWith {};
 
     // MOVEMENT ADVANCED SETTINGS:
     // Time:
-        CSWR_destCommonTakeabreak = [5, 30, 60];         // In seconds, how long each group can stay on its Move-markers. Default: 5 sec, 30 sec, 60 sec.
-        CSWR_destOccupyTakeabreak = [300, 600, 1200];    // In seconds, how long each group can stay on its Occupy-markers. Default: 5min (300), 10min (600), 20min (1200).
+        CSWR_destCommonTakeabreak = [0, 30, 60];         // In seconds, how long each group can stay on its Move-markers. Default: 0 sec, 30 sec, 60 sec.
+        CSWR_destOccupyTakeabreak = [600, 1200, 2400];    // In seconds, how long each group can stay on its Occupy-markers. Default: 10min (600), 20min (1200), 40min (2400).
         CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
         CSWR_heliTakeoffDelay     = [10, 30, 60];        // In seconds, how long each helicopter can stay before takeoff. Default: 10 sec, 30 sec, 60 sec.
     // Ranges:
@@ -83,12 +83,12 @@ if (!isServer) exitWith {};
     // Altitudes:
         CSWR_spwnsParaUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
         CSWR_spwnsParaVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
-        CSWR_heliLightAlt = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
-        CSWR_heliHeavyAlt = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
+        CSWR_heliLightAlt     = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
+        CSWR_heliHeavyAlt     = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
     // Exceptions management:
-        // What specific building positions must be ignored for all factions. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
+        // What specific building positions must be ignored for all sides. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
         CSWR_occupyIgnoredPositions = [  ];
-        // What building classnames must be ignored for all factions:
+        // What building classnames must be ignored for all sides:
         CSWR_occupyIgnoredBuildings = ["Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
         // What ruins should be considered for occupy-movement (Important: if the ruin has no spots in its 3D, CSWR won't include it as option):
         CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
@@ -119,7 +119,7 @@ if (!isServer) exitWith {};
 	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
 	_genericNVG         = "NVGoggles";
 	_genericFlashlight  = "acc_flashlight";
-	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="faction, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied."; _txt7="GEAR > FLASHLIGHT > You turned the Flashlight usage 'true' for"; _txt8="FLASHLIGHTS. Fix it in 'fn_CSWR_management.sqf' file. Generic Flashlight was applied.";
+	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="side, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied."; _txt7="GEAR > FLASHLIGHT > You turned the Flashlight usage 'true' for"; _txt8="FLASHLIGHTS. Fix it in 'fn_CSWR_management.sqf' file. Generic Flashlight was applied.";
 
 	// Main markers validation:
 	CSWR_confirmedMarkers = [CSWR_prefix, CSWR_spacer] call THY_fnc_CSWR_marker_scanner;
@@ -128,8 +128,8 @@ if (!isServer) exitWith {};
 	if CSWR_isOnDebugGlobal then {
 		if ( CSWR_wait >= 5 ) then { systemChat format ["%1 Don't forget the CSWR is configurated to delay %2 seconds before to starts its tasks.", CSWR_txtDebugHeader, CSWR_wait] };
 	} else {
-		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[300,600,1200]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2, _txt1, _txt2, _txt3] };
-		if ( CSWR_destHoldTakeabreak # 0 < 600 OR CSWR_destHoldTakeabreak # 1 < 1200 OR CSWR_destHoldTakeabreak # 2 < 1800 ) then { CSWR_destHoldTakeabreak=[600,1200,1800]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] };
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[600,1200,2400]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2, _txt1, _txt2, _txt3] };
+		if ( CSWR_destHoldTakeabreak # 0 < 900 OR CSWR_destHoldTakeabreak # 1 < 1800 OR CSWR_destHoldTakeabreak # 2 < 3600 ) then { CSWR_destHoldTakeabreak=[1800,3600,7200]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] };
 		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_watchMarkerRange, _txt1, _txt2, _txt3] };
 		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMarkerRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_occupyMarkerRange, _txt1, _txt2, _txt3] };
 		if ( CSWR_spwnsParaUnitAlt < 500 ) then { CSWR_spwnsParaUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParaUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParaUnitAlt, _txt1, _txt2, _txt3] };
@@ -156,7 +156,7 @@ if (!isServer) exitWith {};
 	
 	
 	// SPAWNPOINTS:
-	// Where each faction in-game will spawn randomly and what group's type is allowed to do that.
+	// Where each side in-game will spawn randomly and what group's type is allowed to do that.
 	/*
 	Structure of spawn arrays: CSWR_confirmedMarkers
 	[0 spawn types
@@ -237,7 +237,7 @@ if (!isServer) exitWith {};
 
 
 	// DESTINATION:
-	// Where each faction in-game will move randomly.
+	// Where each side in-game will move randomly.
 	/*
 	Structure of destination arrays: CSWR_confirmedMarkers
 	[0 spawn types
@@ -306,10 +306,10 @@ if (!isServer) exitWith {};
 	// All destinations, except the specialized/special ones:
 	CSWR_destsANYWHERE  = CSWR_destsPUBLIC + CSWR_destBLU + CSWR_destOPF + CSWR_destIND + CSWR_destCIV;
 	// Occupy-move validations:
-	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, CSWR_destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
-	CSWR_bldgsAvailableOPF = [CSWR_isOnOPF, CSWR_destOccupyOPF, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
-	CSWR_bldgsAvailableIND = [CSWR_isOnIND, CSWR_destOccupyIND, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
-	CSWR_bldgsAvailableCIV = [CSWR_isOnCIV, CSWR_destOccupyCIV, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_faction;
+	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, CSWR_destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
+	CSWR_bldgsAvailableOPF = [CSWR_isOnOPF, CSWR_destOccupyOPF, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
+	CSWR_bldgsAvailableIND = [CSWR_isOnIND, CSWR_destOccupyIND, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
+	CSWR_bldgsAvailableCIV = [CSWR_isOnCIV, CSWR_destOccupyCIV, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
 	// Hold-move ground cleaner:
 	if CSWR_isOnBLU then { [CSWR_destHoldBLU] call THY_fnc_CSWR_HOLD_ground_cleaner };
 	if CSWR_isOnOPF then { [CSWR_destHoldOPF] call THY_fnc_CSWR_HOLD_ground_cleaner };
@@ -334,15 +334,15 @@ if (!isServer) exitWith {};
 	if !CSWR_isOnIND then { { deleteMarker _x } forEach CSWR_spwnsAllIND + CSWR_destsAllIND };
 	if !CSWR_isOnCIV then { { deleteMarker _x } forEach CSWR_spwnsAllCIV + CSWR_destsAllCIV };
 	// Destroying useless things:
-	CSWR_spwnsAll = nil;
+	CSWR_spwnsAll     = nil;
 	CSWR_destsSpecial = nil;
-	// Minimal amount of each type of destination by faction for a correctly script execution:
-	CSWR_minDestAny = 2;
+	// Minimal amount of each type of destination by side for a correctly script execution:
+	CSWR_minDestAny        = 2;
 	CSWR_minDestRestricted = 2; 
-	CSWR_minDestWatch = 1; 
-	CSWR_minDestOccupy = 1; 
-	CSWR_minDestHold = 2; 
-	CSWR_minDestPublic = 2;
+	CSWR_minDestWatch      = 1; 
+	CSWR_minDestOccupy     = 1; 
+	CSWR_minDestHold       = 2; 
+	CSWR_minDestPublic     = 2;
 	// Global object declarations:
 	publicVariable "CSWR_isOnDebugGlobal";
 	publicVariable "CSWR_isOnDebugOccupy";
@@ -384,7 +384,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isHoldVehLightsOff";
 	/* publicVariable "CSWR_isUnlimitedFuel";
 	publicVariable "CSWR_isUnlimitedAmmo"; */
-	publicVariable "CSWR_shouldHeliSpwnInAir";
+	publicVariable "CSWR_isHeliSpwningInAir";
 	publicVariable "CSWR_shouldAddHelipadSpwn";
 	publicVariable "CSWR_isElectroWarForBLU";
 	publicVariable "CSWR_isElectroWarForOPF";
@@ -490,32 +490,32 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_minDestPublic";
 	// Debug messages:
 	if CSWR_isOnDebugGlobal then {
-		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint, keep going:
 		if ( CSWR_isOnBLU AND count CSWR_spwnsAllBLU > 0 ) then {
-			// If one of each faction destination type has at least 2 destination points, show the debug message:
+			// If one of each side destination type has at least 2 destination points, show the debug message:
 			if ( count CSWR_destBLU >= CSWR_minDestRestricted OR count CSWR_destWatchBLU >= CSWR_minDestWatch OR count CSWR_destOccupyBLU >= CSWR_minDestOccupy OR count CSWR_destHoldBLU >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 FACTION BLU > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count CSWR_destsAllBLU, count CSWR_destsPUBLIC];
+				systemChat format ["%1 SIDE BLU > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count CSWR_destsAllBLU, count CSWR_destsPUBLIC];
 			};
 		};
-		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint, keep going:
 		if ( CSWR_isOnOPF AND count CSWR_spwnsAllOPF > 0 ) then {
-			// If one of each faction destination type has at least 2 destination points, show the debug message:
+			// If one of each side destination type has at least 2 destination points, show the debug message:
 			if ( count CSWR_destOPF >= CSWR_minDestRestricted OR count CSWR_destWatchOPF >= CSWR_minDestWatch OR count CSWR_destOccupyOPF >= CSWR_minDestOccupy OR count CSWR_destHoldOPF >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 FACTION OPF > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count CSWR_destsAllOPF, count CSWR_destsPUBLIC];
+				systemChat format ["%1 SIDE OPF > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count CSWR_destsAllOPF, count CSWR_destsPUBLIC];
 			};
 		};
-		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint, keep going:
 		if ( CSWR_isOnIND AND count CSWR_spwnsAllIND > 0 ) then {
-			// If one of each faction destination type has at least 2 destination points, show the debug message:
+			// If one of each side destination type has at least 2 destination points, show the debug message:
 			if ( count CSWR_destIND >= CSWR_minDestRestricted OR count CSWR_destWatchIND >= CSWR_minDestWatch OR count CSWR_destOccupyIND >= CSWR_minDestOccupy OR count CSWR_destHoldIND >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 FACTION IND > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count CSWR_destsAllIND, count CSWR_destsPUBLIC];
+				systemChat format ["%1 SIDE IND > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count CSWR_destsAllIND, count CSWR_destsPUBLIC];
 			};
 		};
-		// If the specific faction is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint, keep going:
 		if ( CSWR_isOnCIV AND count CSWR_spwnsAllCIV > 0 ) then {
-			// If one of each faction destination type has at least 2 destination points, show the debug message:
+			// If one of each side destination type has at least 2 destination points, show the debug message:
 			if ( /* count CSWR_destCIV >= CSWR_minDestRestricted OR count CSWR_destWatchCIV >= CSWR_minDestWatch OR */ count CSWR_destOccupyCIV >= CSWR_minDestOccupy OR count CSWR_destHoldCIV >= CSWR_minDestHold OR count CSWR_destsPUBLIC >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 FACTION CIV > Got %2 spawn(s), %3 faction destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count CSWR_destsAllCIV, count CSWR_destsPUBLIC];
+				systemChat format ["%1 SIDE CIV > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count CSWR_destsAllCIV, count CSWR_destsPUBLIC];
 			};
 		};
 	};

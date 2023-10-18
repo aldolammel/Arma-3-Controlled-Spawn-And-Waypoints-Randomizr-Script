@@ -18,22 +18,24 @@ __
 
 - No dependencies from other mods or scripts;
 - Manually define which markers the faction can use as spawn-points;
+- NEW! - Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
 - Create unlimited different types of spawn-points (including air paradrop) for one or more factions;
-- Spawn-points can be triggered by mission starts, Timer delay (down count), Trigger delay (trigger activation), and Target delay (unit killed or building destroyed). For more details, check the documentation;
-- Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns;
-- There is no re-spawn. Death is death for units and vehicles spawned by CSWR; 
-- Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until death;
+- Spawn-points can be triggered by mission starts, Timer delay (down count), Trigger activation, and Target status (unit killed or building destroyed);
+- Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
+- There's no re-spawn. Death is death for units and vehicles spawned by CSWR; 
+- Vehicles with turrets spawned by CSWR, when damaged, their gunners will try to never leave the vehicle, doing the last standing in combat;
 - Manually define which markers will be used as one type of destinations (waypoints) for AI units and vehicles;
-- There are 4 types of destinations: move, watch, hold, and occupy. For more details, check the documentation;
+- There are 4 types of destinations: move, watch, hold, and occupy;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
+- NEW! - Sectorize which groups can move through many sectorized destination options of their faction;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
 - Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
-- Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos. For more details, check the documentation;
+- Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
 - Set if the CSWR should wait for another script load first on the server;
-- Debugging: friendly error handling;
-- Debugging: hint monitor to control some AI numbers;
+- Debugging: Mission Editor has a friendly error handling;
+- Debugging: Mission Editor has a hint monitor to control some AI numbers during the tests;
 - Debugging: full documentation available.
 
 __
@@ -50,7 +52,7 @@ __
 - Added > Vehicles > When a vehicle is lost but the its crew survives, if allies close, the crew will join in that new group, taking a new mission;
 - Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
 - Fixed > Debug > Small fix about marker examples;
-- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+- Fixed > Occupy > Vehicles configured to use Occupy-move markers were able badly to try to occypy a building;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > Helipcoter > Besides the regular move to the waypoint, now helicopter has 33% of chance to approach the current waypoint with Seek & Destroy style;
@@ -60,7 +62,7 @@ __
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
-- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > Small improve during the marker's scan;
 - Documentation has been updated.
 
 **Oct, 11th 2023 | v5.5**
