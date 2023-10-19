@@ -1211,14 +1211,14 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 	// Debug texts:
 		// reserved space.
 	// If _spwns are the side paradrop spawns, keep going:
-	if ( _spwns isEqualTo CSWR_spwnsParaBLU || _spwns isEqualTo CSWR_spwnsParaOPF || _spwns isEqualTo CSWR_spwnsParaIND || _spwns isEqualTo CSWR_spwnsParaCIV ) then { 
+	if ( _spwns isEqualTo CSWR_spwnsParadropBLU || _spwns isEqualTo CSWR_spwnsParadropOPF || _spwns isEqualTo CSWR_spwnsParadropIND || _spwns isEqualTo CSWR_spwnsParadropCIV ) then { 
 		// Update the validation flag:
 		_isPara = true;
 		// Update the altitude of _spwnPos:
 		if !_isVeh then {
-			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParaUnitAlt];
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropUnitAlt];
 		} else {
-			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParaVehAlt];
+			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropVehAlt];
 		};
 	};
 	// Preparing to return:
@@ -2840,11 +2840,11 @@ THY_fnc_CSWR_spawn_type_checker = {
 	// Returns _isValid. Bool.
 
 	params ["_spwns", "_grpType"];
-	private ["_isValid", "_grpTypesAllowed"];
+	private ["_isValid", "_allowed"];
 
 	// Initial values:
-	_isValid         = false;
-	_grpTypesAllowed = [];
+	_isValid = false;
+	_allowed = [];
 	// Escape:
 	if ( _grpType isEqualTo "" ) exitWith { _isValid /* Returning... */ };
 	if ( count ((_spwns # 0)+(_spwns # 1)) isEqualTo 0 ) exitWith { _isValid /* Returning... */ };
@@ -2855,30 +2855,46 @@ THY_fnc_CSWR_spawn_type_checker = {
 	// Step 1/2 > Select which group-types are allowed to spawn in the selected spawnpoints-type:
 	switch _spwns do {
 		// Blu
-		case (CSWR_spwnsBLU # 0):         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };                                  // WIP xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		case (CSWR_spwnsBLU # 1):         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };                                  // WIP xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		//case {CSWR_spwnsBLU # 0 || CSWR_spwnsBLU # 1}:         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };
-		case {(CSWR_spwnsVehBLU # 0)  || (CSWR_spwnsVehBLU # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehBLU };
-		case {(CSWR_spwnsHeliBLU # 0) || (CSWR_spwnsHeliBLU # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliBLU };
-		case {(CSWR_spwnsParaBLU # 0) || (CSWR_spwnsParaBLU # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaBLU };
+		case (CSWR_spwnsBLU # 0):         { _allowed = CSWR_groupTypesForSpwnsBLU };  // nonSectorized
+		case (CSWR_spwnsBLU # 1):         { _allowed = CSWR_groupTypesForSpwnsBLU };  // Sectorized
+		case (CSWR_spwnsVehBLU # 0):      { _allowed = CSWR_groupTypesForSpwnsVehBLU };
+		case (CSWR_spwnsVehBLU # 1):      { _allowed = CSWR_groupTypesForSpwnsVehBLU };
+		case (CSWR_spwnsHeliBLU # 0):     { _allowed = CSWR_groupTypesForSpwnsHeliBLU };
+		case (CSWR_spwnsHeliBLU # 1):     { _allowed = CSWR_groupTypesForSpwnsHeliBLU };
+		case (CSWR_spwnsParadropBLU # 0): { _allowed = CSWR_groupTypesForSpwnsParaBLU };
+		case (CSWR_spwnsParadropBLU # 1): { _allowed = CSWR_groupTypesForSpwnsParaBLU };
+
 		// Opf
-		case {(CSWR_spwnsOPF # 0)     || (CSWR_spwnsOPF # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsOPF };
-		case {(CSWR_spwnsVehOPF # 0)  || (CSWR_spwnsVehOPF # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehOPF };
-		case {(CSWR_spwnsHeliOPF # 0) || (CSWR_spwnsHeliOPF # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliOPF };
-		case {(CSWR_spwnsParaOPF # 0) || (CSWR_spwnsParaOPF # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaOPF };
+		case (CSWR_spwnsOPF # 0):         { _allowed = CSWR_groupTypesForSpwnsOPF };  // nonSectorized
+		case (CSWR_spwnsOPF # 1):         { _allowed = CSWR_groupTypesForSpwnsOPF };  // Sectorized
+		case (CSWR_spwnsVehOPF # 0):      { _allowed = CSWR_groupTypesForSpwnsVehOPF };
+		case (CSWR_spwnsVehOPF # 1):      { _allowed = CSWR_groupTypesForSpwnsVehOPF };
+		case (CSWR_spwnsHeliOPF # 0):     { _allowed = CSWR_groupTypesForSpwnsHeliOPF };
+		case (CSWR_spwnsHeliOPF # 1):     { _allowed = CSWR_groupTypesForSpwnsHeliOPF };
+		case (CSWR_spwnsParadropOPF # 0): { _allowed = CSWR_groupTypesForSpwnsParaOPF };
+		case (CSWR_spwnsParadropOPF # 1): { _allowed = CSWR_groupTypesForSpwnsParaOPF };
+
 		// Ind
-		case {(CSWR_spwnsIND # 0)     || (CSWR_spwnsIND # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsIND };
-		case {(CSWR_spwnsVehIND # 0)  || (CSWR_spwnsVehIND # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehIND };
-		case {(CSWR_spwnsHeliIND # 0) || (CSWR_spwnsHeliIND # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliIND };
-		case {(CSWR_spwnsParaIND # 0) || (CSWR_spwnsParaIND # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaIND };
+		case (CSWR_spwnsIND # 0):         { _allowed = CSWR_groupTypesForSpwnsIND };  // nonSectorized
+		case (CSWR_spwnsIND # 1):         { _allowed = CSWR_groupTypesForSpwnsIND };  // Sectorized
+		case (CSWR_spwnsVehIND # 0):      { _allowed = CSWR_groupTypesForSpwnsVehIND };
+		case (CSWR_spwnsVehIND # 1):      { _allowed = CSWR_groupTypesForSpwnsVehIND };
+		case (CSWR_spwnsHeliIND # 0):     { _allowed = CSWR_groupTypesForSpwnsHeliIND };
+		case (CSWR_spwnsHeliIND # 1):     { _allowed = CSWR_groupTypesForSpwnsHeliIND };
+		case (CSWR_spwnsParadropIND # 0): { _allowed = CSWR_groupTypesForSpwnsParaIND };
+		case (CSWR_spwnsParadropIND # 1): { _allowed = CSWR_groupTypesForSpwnsParaIND };
 		// Civ
-		case {(CSWR_spwnsCIV # 0)     || (CSWR_spwnsCIV # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsCIV };
-		case {(CSWR_spwnsVehCIV # 0)  || (CSWR_spwnsVehCIV # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehCIV };
-		case {(CSWR_spwnsHeliCIV # 0) || (CSWR_spwnsHeliCIV # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliCIV };
-		case {(CSWR_spwnsParaCIV # 0) || (CSWR_spwnsParaCIV # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaCIV };
+		case (CSWR_spwnsCIV # 0):         { _allowed = CSWR_groupTypesForSpwnsCIV };  // nonSectorized
+		case (CSWR_spwnsCIV # 1):         { _allowed = CSWR_groupTypesForSpwnsCIV };  // Sectorized
+		case (CSWR_spwnsVehCIV # 0):      { _allowed = CSWR_groupTypesForSpwnsVehCIV };
+		case (CSWR_spwnsVehCIV # 1):      { _allowed = CSWR_groupTypesForSpwnsVehCIV };
+		case (CSWR_spwnsHeliCIV # 0):     { _allowed = CSWR_groupTypesForSpwnsHeliCIV };
+		case (CSWR_spwnsHeliCIV # 1):     { _allowed = CSWR_groupTypesForSpwnsHeliCIV };
+		case (CSWR_spwnsParadropCIV # 0): { _allowed = CSWR_groupTypesForSpwnsParaCIV };
+		case (CSWR_spwnsParadropCIV # 1): { _allowed = CSWR_groupTypesForSpwnsParaCIV };
 	};
 	// Step 2/2 > Check if the selected group-type is allowed to spawn in the selected spawnpoints-type:
-	if ( _grpType in _grpTypesAllowed ) then { _isValid = true };
+	if ( _grpType in _allowed ) then { _isValid = true };
 	// Return:
 	_isValid;
 };
@@ -3024,7 +3040,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// If the group/vehicle spawns are sectorized, do it:
 		if ( _spwnsSector isNotEqualTo "" ) then {
 			// Selecting only those with right sector-letter:
-			_spwns = _spwns select { _x find (CSWR_spacer + _spwnsSector + CSWR_spacer) isNotEqualTo -1 };
+			_spwns = +(_spwns select { _x find (CSWR_spacer + _spwnsSector + CSWR_spacer) isNotEqualTo -1 });
 		};
 		// Checks current server performance:
 		_serverBreath = ((abs(CSWR_serverMaxFPS-diag_fps) / (CSWR_serverMaxFPS-CSWR_serverMinFPS)) ^ 2) * 2;  // ((abs(FPSMAX-diag_fps)/(FPSMAX-FPSLIMIT))^2)*MAXDELAY;
@@ -3476,7 +3492,7 @@ THY_fnc_CSWR_add_group = {
 	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
 		// Message:
-		systemChat format ["%1 SPAWN > %2 group w/ %3 units | spwnSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str (count _grpClasses), if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
+		systemChat format ["%1 SPAWN > %2 group | spwnSectorized: %3 %4 | Seen: %5.", CSWR_txtDebugHeader, _tag, if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
 		// Breath:
 		sleep 5;
 	};
@@ -3610,7 +3626,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
 		// Message:
-		systemChat format ["%1 SPAWN > %2 '%3' | spwnSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str _vehClass, if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
+		systemChat format ["%1 SPAWN > %2 vehicle | spwnSectorized: %3 %4 | Seen: %5.", CSWR_txtDebugHeader, _tag, if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
 		// Breath:
 		sleep 5;
 	};
@@ -3654,11 +3670,11 @@ THY_fnc_CSWR_go = {
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
 				// Updating:
-				_dests = CSWR_destsANYWHERE # 0;
+				_dests = (CSWR_destsANYWHERE # 0);
 			// If there's sectorized destination:
 			} else {
 				// Looks for only for sectorized ones:
-				_dests = (CSWR_destsANYWHERE # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				_dests = +(CSWR_destsANYWHERE # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move looping:
 			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_ANYWHERE;
@@ -3667,11 +3683,11 @@ THY_fnc_CSWR_go = {
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
 				// Updating:
-				_dests = CSWR_destsPUBLIC # 0;
+				_dests = (CSWR_destsPUBLIC # 0);
 			// If there's sectorized destination:
 			} else {
 				// Looks for only for sectorized ones:
-				_dests = (CSWR_destsPUBLIC # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				_dests = +((CSWR_destsPUBLIC # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 });
 			};
 			// Start the move looping:
 			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_PUBLIC;
@@ -3679,10 +3695,10 @@ THY_fnc_CSWR_go = {
 		case "MOVE_RESTRICTED": {  // Important: Civilians are not able to do this.
 			// Defining the destination side markers to be considered:
 			switch _tag do {
-				case "BLU": { _dests = CSWR_destBLU };
-				case "OPF": { _dests = CSWR_destOPF };
-				case "IND": { _dests = CSWR_destIND };
-				//case "CIV": { _dests = CSWR_destCIV };
+				case "BLU": { _dests = +CSWR_destBLU };
+				case "OPF": { _dests = +CSWR_destOPF };
+				case "IND": { _dests = +CSWR_destIND };
+				//case "CIV": { _dests = +CSWR_destCIV };
 			};
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
@@ -3699,10 +3715,10 @@ THY_fnc_CSWR_go = {
 		case "MOVE_WATCH": {  // Important: Vehicles and Civilian side are not able to do this.
 			// Defining the destination side markers to be considered:
 			switch _tag do {
-				case "BLU": { _dests = CSWR_destWatchBLU };
-				case "OPF": { _dests = CSWR_destWatchOPF };
-				case "IND": { _dests = CSWR_destWatchIND };
-				//case "CIV": { _dests = CSWR_destWatchCIV };
+				case "BLU": { _dests = +CSWR_destWatchBLU };
+				case "OPF": { _dests = +CSWR_destWatchOPF };
+				case "IND": { _dests = +CSWR_destWatchIND };
+				//case "CIV": { _dests = +CSWR_destWatchCIV };
 			};
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
@@ -3719,10 +3735,10 @@ THY_fnc_CSWR_go = {
 		case "MOVE_OCCUPY": {  // Important: Vehicles are not able to do this.
 			// Defining the destination side markers to be considered:
 			switch _tag do {
-				case "BLU": { _dests = CSWR_destOccupyBLU };
-				case "OPF": { _dests = CSWR_destOccupyOPF };
-				case "IND": { _dests = CSWR_destOccupyIND };
-				//case "CIV": { _dests = CSWR_destOccupyCIV };
+				case "BLU": { _dests = +CSWR_destOccupyBLU };
+				case "OPF": { _dests = +CSWR_destOccupyOPF };
+				case "IND": { _dests = +CSWR_destOccupyIND };
+				//case "CIV": { _dests = +CSWR_destOccupyCIV };
 			};
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
@@ -3739,10 +3755,10 @@ THY_fnc_CSWR_go = {
 		case "MOVE_HOLD": {  // Important: Helicopters are not able to do this.
 			// Defining the destination side markers to be considered:
 			switch _tag do {
-				case "BLU": { _dests = CSWR_destHoldBLU };
-				case "OPF": { _dests = CSWR_destHoldOPF };
-				case "IND": { _dests = CSWR_destHoldIND };
-				case "CIV": { _dests = CSWR_destHoldCIV };
+				case "BLU": { _dests = +CSWR_destHoldBLU };
+				case "OPF": { _dests = +CSWR_destHoldOPF };
+				case "IND": { _dests = +CSWR_destHoldIND };
+				case "CIV": { _dests = +CSWR_destHoldCIV };
 			};
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
@@ -3762,7 +3778,7 @@ THY_fnc_CSWR_go = {
 	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
 		// Message:
-		systemChat format ["%1 DESTIN. > %2 '%3' | destSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str _grp, if (_destSector isNotEqualTo "") then {true} else {false}, if (_destSector isNotEqualTo "") then {"(" + str _destSector + ")"} else {""}, str _dests];
+		systemChat format ["%1 DESTIN. > %2 %3 | destSectorized: %4 %5 | Seen: %6.", CSWR_txtDebugHeader, _tag, if !_isVeh then {"group"} else {"vehicle"}, if (_destSector isNotEqualTo "") then {true} else {false}, if (_destSector isNotEqualTo "") then {"(" + str _destSector + ")"} else {""}, str _dests];
 		// Breath:
 		sleep 5;
 	};

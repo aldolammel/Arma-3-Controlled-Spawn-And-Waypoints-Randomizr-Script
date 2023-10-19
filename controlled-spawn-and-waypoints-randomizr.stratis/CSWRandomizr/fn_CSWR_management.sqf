@@ -14,7 +14,7 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugSectors = true;   // true = shows deeper which markers are sectorized / false = turn it off. Default: false.
+	CSWR_isOnDebugSectors = false;   // true = shows deeper which markers are sectorized / false = turn it off. Default: false.
 // Factions:
     CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
     CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
@@ -82,8 +82,8 @@ if (!isServer) exitWith {};
         CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
         CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
     // Altitudes:
-        CSWR_spwnsParaUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
-        CSWR_spwnsParaVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
+        CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
+        CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
         CSWR_heliLightAlt     = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
         CSWR_heliHeavyAlt     = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
     // Exceptions management:
@@ -133,8 +133,8 @@ if (!isServer) exitWith {};
 		if ( CSWR_destHoldTakeabreak # 0 < 900 OR CSWR_destHoldTakeabreak # 1 < 1800 OR CSWR_destHoldTakeabreak # 2 < 3600 ) then { CSWR_destHoldTakeabreak=[1800,3600,7200]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] };
 		if ( CSWR_watchMarkerRange < 100 ) then { CSWR_watchMarkerRange=100; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_watchMarkerRange, _txt1, _txt2, _txt3] };
 		if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMarkerRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_occupyMarkerRange, _txt1, _txt2, _txt3] };
-		if ( CSWR_spwnsParaUnitAlt < 500 ) then { CSWR_spwnsParaUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParaUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParaUnitAlt, _txt1, _txt2, _txt3] };
-		if ( CSWR_spwnsParaVehAlt < 200 ) then { CSWR_spwnsParaVehAlt=200; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParaVehAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParaVehAlt, _txt1, _txt2, _txt3] };
+		if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParadropUnitAlt, _txt1, _txt2, _txt3] };
+		if ( CSWR_spwnsParadropVehAlt < 200 ) then { CSWR_spwnsParadropVehAlt=200; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropVehAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParadropVehAlt, _txt1, _txt2, _txt3] };
 		if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] };
 		if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarnHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
@@ -174,7 +174,7 @@ if (!isServer) exitWith {};
 				[0 non-sectorized],
 				[1 sectorized]
 			],
-			[3 CSWR_spwnsParaBLU
+			[3 CSWR_spwnsParadropBLU
 				[0 non-sectorized],
 				[1 sectorized]
 			]
@@ -192,7 +192,7 @@ if (!isServer) exitWith {};
 				[0 non-sectorized],
 				[1 sectorized]
 			],
-			[3 CSWR_spwnsParaOPF
+			[3 CSWR_spwnsParadropOPF
 				[0 non-sectorized],
 				[1 sectorized]
 			]
@@ -210,7 +210,7 @@ if (!isServer) exitWith {};
 				[0 non-sectorized],
 				[1 sectorized]
 			],
-			[3 CSWR_spwnsParaIND
+			[3 CSWR_spwnsParadropIND
 				[0 non-sectorized],
 				[1 sectorized]
 			]
@@ -228,7 +228,7 @@ if (!isServer) exitWith {};
 				[0 non-sectorized],
 				[1 sectorized]
 			],
-			[3 CSWR_spwnsParaCIV
+			[3 CSWR_spwnsParadropCIV
 				[0 non-sectorized],
 				[1 sectorized]
 			]
@@ -239,56 +239,56 @@ if (!isServer) exitWith {};
 	];
 	*/
 	// BluFor spawns:
-	CSWR_spwnsBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 0;
-	CSWR_spwnsVehBLU  = ((CSWR_confirmedMarkers # 0) # 0) # 1;
-	CSWR_spwnsHeliBLU = ((CSWR_confirmedMarkers # 0) # 0) # 2;
-	CSWR_spwnsParaBLU = ((CSWR_confirmedMarkers # 0) # 0) # 3;
-	_spwnsBLU         = (CSWR_spwnsBLU # 0)     + (CSWR_spwnsBLU # 1);
-	_spwnsVehBLU      = (CSWR_spwnsVehBLU # 0)  + (CSWR_spwnsVehBLU # 1);
-	_spwnsHeliBLU     = (CSWR_spwnsHeliBLU # 0) + (CSWR_spwnsHeliBLU # 1);
-	_spwnsParaBLU     = (CSWR_spwnsParaBLU # 0) + (CSWR_spwnsParaBLU # 1);
+	CSWR_spwnsBLU         = ((CSWR_confirmedMarkers # 0) # 0) # 0;
+	CSWR_spwnsVehBLU      = ((CSWR_confirmedMarkers # 0) # 0) # 1;
+	CSWR_spwnsHeliBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 2;
+	CSWR_spwnsParadropBLU = ((CSWR_confirmedMarkers # 0) # 0) # 3;
+	_spwnsBLU         = (CSWR_spwnsBLU # 0)         + (CSWR_spwnsBLU # 1);
+	_spwnsVehBLU      = (CSWR_spwnsVehBLU # 0)      + (CSWR_spwnsVehBLU # 1);
+	_spwnsHeliBLU     = (CSWR_spwnsHeliBLU # 0)     + (CSWR_spwnsHeliBLU # 1);
+	_spwnsParaBLU     = (CSWR_spwnsParadropBLU # 0) + (CSWR_spwnsParadropBLU # 1);
 	CSWR_spwnsAllBLU  = _spwnsBLU + _spwnsVehBLU + _spwnsHeliBLU + _spwnsParaBLU;
 	CSWR_groupTypesForSpwnsBLU     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehBLU  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliBLU = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaBLU = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// OpFor spawns:
-	CSWR_spwnsOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 0;
-	CSWR_spwnsVehOPF  = ((CSWR_confirmedMarkers # 0) # 1) # 1;
-	CSWR_spwnsHeliOPF = ((CSWR_confirmedMarkers # 0) # 1) # 2;
-	CSWR_spwnsParaOPF = ((CSWR_confirmedMarkers # 0) # 1) # 3;
-	_spwnsOPF         = (CSWR_spwnsOPF # 0)     + (CSWR_spwnsOPF # 1);
-	_spwnsVehOPF      = (CSWR_spwnsVehOPF # 0)  + (CSWR_spwnsVehOPF # 1);
-	_spwnsHeliOPF     = (CSWR_spwnsHeliOPF # 0) + (CSWR_spwnsHeliOPF # 1);
-	_spwnsParaOPF     = (CSWR_spwnsParaOPF # 0) + (CSWR_spwnsParaOPF # 1);
+	CSWR_spwnsOPF         = ((CSWR_confirmedMarkers # 0) # 1) # 0;
+	CSWR_spwnsVehOPF      = ((CSWR_confirmedMarkers # 0) # 1) # 1;
+	CSWR_spwnsHeliOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 2;
+	CSWR_spwnsParadropOPF = ((CSWR_confirmedMarkers # 0) # 1) # 3;
+	_spwnsOPF         = (CSWR_spwnsOPF # 0)         + (CSWR_spwnsOPF # 1);
+	_spwnsVehOPF      = (CSWR_spwnsVehOPF # 0)      + (CSWR_spwnsVehOPF # 1);
+	_spwnsHeliOPF     = (CSWR_spwnsHeliOPF # 0)     + (CSWR_spwnsHeliOPF # 1);
+	_spwnsParaOPF     = (CSWR_spwnsParadropOPF # 0) + (CSWR_spwnsParadropOPF # 1);
 	CSWR_spwnsAllOPF  = _spwnsOPF + _spwnsVehOPF + _spwnsHeliOPF + _spwnsParaOPF;
 	CSWR_groupTypesForSpwnsOPF     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehOPF  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliOPF = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaOPF = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// Independent spawns:
-	CSWR_spwnsIND     = ((CSWR_confirmedMarkers # 0) # 2) # 0;
-	CSWR_spwnsVehIND  = ((CSWR_confirmedMarkers # 0) # 2) # 1;
-	CSWR_spwnsHeliIND = ((CSWR_confirmedMarkers # 0) # 2) # 2;
-	CSWR_spwnsParaIND = ((CSWR_confirmedMarkers # 0) # 2) # 3;
-	_spwnsIND         = (CSWR_spwnsIND # 0)     + (CSWR_spwnsIND # 1);
-	_spwnsVehIND      = (CSWR_spwnsVehIND # 0)  + (CSWR_spwnsVehIND # 1);
-	_spwnsHeliIND     = (CSWR_spwnsHeliIND # 0) + (CSWR_spwnsHeliIND # 1);
-	_spwnsParaIND     = (CSWR_spwnsParaIND # 0) + (CSWR_spwnsParaIND # 1);
+	CSWR_spwnsIND         = ((CSWR_confirmedMarkers # 0) # 2) # 0;
+	CSWR_spwnsVehIND      = ((CSWR_confirmedMarkers # 0) # 2) # 1;
+	CSWR_spwnsHeliIND     = ((CSWR_confirmedMarkers # 0) # 2) # 2;
+	CSWR_spwnsParadropIND = ((CSWR_confirmedMarkers # 0) # 2) # 3;
+	_spwnsIND         = (CSWR_spwnsIND # 0)         + (CSWR_spwnsIND # 1);
+	_spwnsVehIND      = (CSWR_spwnsVehIND # 0)      + (CSWR_spwnsVehIND # 1);
+	_spwnsHeliIND     = (CSWR_spwnsHeliIND # 0)     + (CSWR_spwnsHeliIND # 1);
+	_spwnsParaIND     = (CSWR_spwnsParadropIND # 0) + (CSWR_spwnsParadropIND # 1);
 	CSWR_spwnsAllIND  = _spwnsIND + _spwnsVehIND + _spwnsHeliIND + _spwnsParaIND;
 	CSWR_groupTypesForSpwnsIND     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehIND  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliIND = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaIND = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// Civilian spawns:
-	CSWR_spwnsCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 0;
-	CSWR_spwnsVehCIV  = ((CSWR_confirmedMarkers # 0) # 3) # 1;
-	CSWR_spwnsHeliCIV = ((CSWR_confirmedMarkers # 0) # 3) # 2;
-	CSWR_spwnsParaCIV = ((CSWR_confirmedMarkers # 0) # 3) # 3;
-	_spwnsCIV         = (CSWR_spwnsCIV # 0)     + (CSWR_spwnsCIV # 1);
-	_spwnsVehCIV      = (CSWR_spwnsVehCIV # 0)  + (CSWR_spwnsVehCIV # 1);
-	_spwnsHeliCIV     = (CSWR_spwnsHeliCIV # 0) + (CSWR_spwnsHeliCIV # 1);
-	_spwnsParaCIV     = (CSWR_spwnsParaCIV # 0) + (CSWR_spwnsParaCIV # 1);
+	CSWR_spwnsCIV         = ((CSWR_confirmedMarkers # 0) # 3) # 0;
+	CSWR_spwnsVehCIV      = ((CSWR_confirmedMarkers # 0) # 3) # 1;
+	CSWR_spwnsHeliCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 2;
+	CSWR_spwnsParadropCIV = ((CSWR_confirmedMarkers # 0) # 3) # 3;
+	_spwnsCIV         = (CSWR_spwnsCIV # 0)         + (CSWR_spwnsCIV # 1);
+	_spwnsVehCIV      = (CSWR_spwnsVehCIV # 0)      + (CSWR_spwnsVehCIV # 1);
+	_spwnsHeliCIV     = (CSWR_spwnsHeliCIV # 0)     + (CSWR_spwnsHeliCIV # 1);
+	_spwnsParaCIV     = (CSWR_spwnsParadropCIV # 0) + (CSWR_spwnsParadropCIV # 1);
 	CSWR_spwnsAllCIV  = _spwnsCIV + _spwnsVehCIV + _spwnsHeliCIV + _spwnsParaCIV;
 	CSWR_groupTypesForSpwnsCIV     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "vehL", "vehM", "vehC1", "vehH", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehCIV  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
@@ -537,8 +537,8 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_heliTakeoffDelay";
 	publicVariable "CSWR_watchMarkerRange";
 	publicVariable "CSWR_occupyMarkerRange";
-	publicVariable "CSWR_spwnsParaUnitAlt";
-	publicVariable "CSWR_spwnsParaVehAlt";
+	publicVariable "CSWR_spwnsParadropUnitAlt";
+	publicVariable "CSWR_spwnsParadropVehAlt";
 	publicVariable "CSWR_heliLightAlt";
 	publicVariable "CSWR_heliHeavyAlt";
 	publicVariable "CSWR_occupyIgnoredBuildings";
