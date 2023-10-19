@@ -48,10 +48,11 @@ __
 
 ## CHANGELOG
 
-**Xxx, xxth 2023 | v6.0**
-- Added > Vehicles > When a vehicle is lost but the its crew survives, if allies close, the crew will join in that new group, taking a new mission;
+**Oct, XXth 2023 | v6.0**
+- Added > Markers scan > Now CSWR knows how to sectorize spawns and destinations, so Editor can define which groups and vehicles must consider those sectors or not;
+- Added > Vehicles > When a vehicle's lost but its crewmen survive, if allies are close, the crew will join them, taking their mission to themselves;
 - Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
-- Fixed > Debug > Small fix about marker examples;
+- Fixed > Debug > Small fix about marker message's examples;
 - Fixed > Occupy > Vehicles configured to use Occupy-move markers were able badly to try to occypy a building;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
@@ -62,7 +63,7 @@ __
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
-- Improved > Small improve during the marker's scan;
+- Improved > Markers scan > Small improvements;
 - Documentation has been updated.
 
 **Oct, 11th 2023 | v5.5**
