@@ -371,10 +371,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_spwnsBLU # 0) pushBack _mkr} else {(_spwnsBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_spwnsOPF # 0) pushBack _mkr} else {(_spwnsOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_spwnsIND # 0) pushBack _mkr} else {(_spwnsIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_spwnsCIV # 0) pushBack _mkr} else {(_spwnsCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_spwnsBLU # 0) pushBack _mkr} else {(_spwnsBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_spwnsOPF # 0) pushBack _mkr} else {(_spwnsOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_spwnsIND # 0) pushBack _mkr} else {(_spwnsIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_spwnsCIV # 0) pushBack _mkr} else {(_spwnsCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -391,10 +391,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_spwnsVehBLU # 0) pushBack _mkr} else {(_spwnsVehBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_spwnsVehOPF # 0) pushBack _mkr} else {(_spwnsVehOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_spwnsVehIND # 0) pushBack _mkr} else {(_spwnsVehIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_spwnsVehCIV # 0) pushBack _mkr} else {(_spwnsVehCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_spwnsVehBLU # 0) pushBack _mkr} else {(_spwnsVehBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_spwnsVehOPF # 0) pushBack _mkr} else {(_spwnsVehOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_spwnsVehIND # 0) pushBack _mkr} else {(_spwnsVehIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_spwnsVehCIV # 0) pushBack _mkr} else {(_spwnsVehCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Veh Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -411,10 +411,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_spwnsHeliBLU # 0) pushBack _mkr} else {(_spwnsHeliBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_spwnsHeliOPF # 0) pushBack _mkr} else {(_spwnsHeliOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_spwnsHeliIND # 0) pushBack _mkr} else {(_spwnsHeliIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_spwnsHeliCIV # 0) pushBack _mkr} else {(_spwnsHeliCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_spwnsHeliBLU # 0) pushBack _mkr} else {(_spwnsHeliBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_spwnsHeliOPF # 0) pushBack _mkr} else {(_spwnsHeliOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_spwnsHeliIND # 0) pushBack _mkr} else {(_spwnsHeliIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_spwnsHeliCIV # 0) pushBack _mkr} else {(_spwnsHeliCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Heli Spawn %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -431,10 +431,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_spwnsParaBLU # 0) pushBack _mkr} else {(_spwnsParaBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_spwnsParaOPF # 0) pushBack _mkr} else {(_spwnsParaOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_spwnsParaIND # 0) pushBack _mkr} else {(_spwnsParaIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_spwnsParaCIV # 0) pushBack _mkr} else {(_spwnsParaCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_spwnsParaBLU # 0) pushBack _mkr} else {(_spwnsParaBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_spwnsParaOPF # 0) pushBack _mkr} else {(_spwnsParaOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_spwnsParaIND # 0) pushBack _mkr} else {(_spwnsParaIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_spwnsParaCIV # 0) pushBack _mkr} else {(_spwnsParaCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Spawn Paradrop %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -451,11 +451,11 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU":    { if (_destSector isNotEqualTo "") then {(_destMoveBLU # 0) pushBack _mkr} else {(_destMoveBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						case "OPF":    { if (_destSector isNotEqualTo "") then {(_destMoveOPF # 0) pushBack _mkr} else {(_destMoveOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						case "IND":    { if (_destSector isNotEqualTo "") then {(_destMoveIND # 0) pushBack _mkr} else {(_destMoveIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
-						//case "CIV":  { if (_destSector isNotEqualTo "") then {(_destMoveCIV # 0) pushBack _mkr} else {(_destMoveCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };  // CIV cannot use restricted destinations.
-						case "PUBLIC": { if (_destSector isNotEqualTo "") then {(_destMovePUBLIC # 0) pushBack _mkr} else {(_destMovePUBLIC # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "BLU":    { if (_destSector isEqualTo "") then {(_destMoveBLU # 0) pushBack _mkr} else {(_destMoveBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "OPF":    { if (_destSector isEqualTo "") then {(_destMoveOPF # 0) pushBack _mkr} else {(_destMoveOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						case "IND":    { if (_destSector isEqualTo "") then {(_destMoveIND # 0) pushBack _mkr} else {(_destMoveIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
+						//case "CIV":  { if (_destSector isEqualTo "") then {(_destMoveCIV # 0) pushBack _mkr} else {(_destMoveCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };  // CIV cannot use restricted destinations.
+						case "PUBLIC": { if (_destSector isEqualTo "") then {(_destMovePUBLIC # 0) pushBack _mkr} else {(_destMovePUBLIC # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Move %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -472,10 +472,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_destWatchBLU # 0) pushBack _mkr} else {(_destWatchBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_destWatchOPF # 0) pushBack _mkr} else {(_destWatchOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_destWatchIND # 0) pushBack _mkr} else {(_destWatchIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
-						//case "CIV": { if (_destSector isNotEqualTo "") then {(_destWatchCIV # 0) pushBack _mkr} else {(_destWatchCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Zone to Watch %2", _tag, _destSector]) };  // CIV cannot use watch destinations.
+						case "BLU": { if (_destSector isEqualTo "") then {(_destWatchBLU # 0) pushBack _mkr} else {(_destWatchBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_destWatchOPF # 0) pushBack _mkr} else {(_destWatchOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_destWatchIND # 0) pushBack _mkr} else {(_destWatchIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Watch %2", _tag, _destSector]) };
+						//case "CIV": { if (_destSector isEqualTo "") then {(_destWatchCIV # 0) pushBack _mkr} else {(_destWatchCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Zone to Watch %2", _tag, _destSector]) };  // CIV cannot use watch destinations.
 					};
 				};
 			};
@@ -492,10 +492,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_destOccupyBLU # 0) pushBack _mkr} else {(_destOccupyBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_destOccupyOPF # 0) pushBack _mkr} else {(_destOccupyOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_destOccupyIND # 0) pushBack _mkr} else {(_destOccupyIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_destOccupyCIV # 0) pushBack _mkr} else {(_destOccupyCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_destOccupyBLU # 0) pushBack _mkr} else {(_destOccupyBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_destOccupyOPF # 0) pushBack _mkr} else {(_destOccupyOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_destOccupyIND # 0) pushBack _mkr} else {(_destOccupyIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_destOccupyCIV # 0) pushBack _mkr} else {(_destOccupyCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Occupy %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -512,10 +512,10 @@ THY_fnc_CSWR_marker_scanner = {
 				// If all validations alright:
 				if _isNum then {
 					switch _tag do {
-						case "BLU": { if (_destSector isNotEqualTo "") then {(_destHoldBLU # 0) pushBack _mkr} else {(_destHoldBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "OPF": { if (_destSector isNotEqualTo "") then {(_destHoldOPF # 0) pushBack _mkr} else {(_destHoldOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "IND": { if (_destSector isNotEqualTo "") then {(_destHoldIND # 0) pushBack _mkr} else {(_destHoldIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
-						case "CIV": { if (_destSector isNotEqualTo "") then {(_destHoldCIV # 0) pushBack _mkr} else {(_destHoldCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "BLU": { if (_destSector isEqualTo "") then {(_destHoldBLU # 0) pushBack _mkr} else {(_destHoldBLU # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "OPF": { if (_destSector isEqualTo "") then {(_destHoldOPF # 0) pushBack _mkr} else {(_destHoldOPF # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "IND": { if (_destSector isEqualTo "") then {(_destHoldIND # 0) pushBack _mkr} else {(_destHoldIND # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
+						case "CIV": { if (_destSector isEqualTo "") then {(_destHoldCIV # 0) pushBack _mkr} else {(_destHoldCIV # 1) pushBack _mkr}; _mkr setMarkerText (format ["%1 Hold %2", _tag, _destSector]) };
 					};
 				};
 			};
@@ -557,7 +557,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 0) # 3) # 0) + count ((((_confirmedMarkers # 0) # 0) # 3) # 1);
 		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
 			// Warning message:
-			systemChat format ["%1 NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnOPF then {
@@ -568,7 +568,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 1) # 3) # 0) + count ((((_confirmedMarkers # 0) # 1) # 3) # 1);
 		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
 			// Warning message:
-			systemChat format ["%1 NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnIND then {
@@ -579,7 +579,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 2) # 3) # 0) + count ((((_confirmedMarkers # 0) # 2) # 3) # 1);
 		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
 			// Warning message:
-			systemChat format ["%1 NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnCIV then {
@@ -590,7 +590,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 3) # 3) # 0) + count ((((_confirmedMarkers # 0) # 3) # 3) # 1);
 		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
 			// Warning message:
-			systemChat format ["%1 NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	// Return:
@@ -1158,7 +1158,7 @@ THY_fnc_CSWR_is_valid_formation = {
 	// Otherwise:
 	} else {
 		// Warning message:
-		["%1 %2 > One or more groups HAS NO FORMATION properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 GROUP > One or more %2 groups HAS NO FORMATION properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		sleep 5;
 	};
 	// Return:
@@ -1305,9 +1305,9 @@ THY_fnc_CSWR_group_type_rules = {
 		};
 		case CIVILIAN: {
 			// People group:
-			_teamLight   = CSWR_group_CIV_lone;
-			_teamMedium  = CSWR_group_CIV_couple;
-			_teamHeavy   = CSWR_group_CIV_gang;
+			_teamLight   = CSWR_group_CIV_light;
+			_teamMedium  = CSWR_group_CIV_medium;
+			_teamHeavy   = CSWR_group_CIV_heavy;
 			_teamCustom1 = CSWR_group_CIV_custom_1;
 			_teamCustom2 = CSWR_group_CIV_custom_2;
 			_teamCustom3 = CSWR_group_CIV_custom_3;
@@ -1322,7 +1322,7 @@ THY_fnc_CSWR_group_type_rules = {
 			_heliLight  = [CSWR_vehicle_CIV_heli_light];
 			_heliHeavy  = [CSWR_vehicle_CIV_heli_heavy];
 		};
-		default { ["%1 %2 > There is no side called '%3'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _side] call BIS_fnc_error; _isError = true };
+		default { ["%1 SIDE > There is no side called '%2'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _side] call BIS_fnc_error; _isError = true };
 	};
 	// Escape:
 	if _isError exitWith { _grpInfo /* Returning */ };
@@ -1515,7 +1515,7 @@ THY_fnc_CSWR_group_behavior = {
 	// Initial values:
 		// reserved space.
 	// Errors handling:
-	if ( side _grp isEqualTo civilian && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) then {
+	if ( side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) then {
 		// warning message:
 		["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _behavior] call BIS_fnc_error; sleep 3;
 		// Fixing:
@@ -1580,7 +1580,7 @@ THY_fnc_CSWR_unit_behavior = {
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
-	if (side _grp isEqualTo civilian && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) exitWith {};  // the warning message is in THY_fnc_CSWR_group_behavior already ;)
+	if (side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) exitWith {};  // the warning message is in THY_fnc_CSWR_group_behavior already ;)
 	// Initial values:
 		// reserved space.
 	// Errors handling:
@@ -2125,7 +2125,7 @@ THY_fnc_CSWR_gear_uniform = {
 					// Add the generic gear:
 					_unit forceAddUniform _genericGear;
 					// Warning message:
-					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2184,7 +2184,7 @@ THY_fnc_CSWR_gear_vest = {
 					// Add the generic gear:
 					_unit addVest _genericGear;
 					// Warning message:
-					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2257,7 +2257,7 @@ THY_fnc_CSWR_gear_backpack = {
 					// Add the generic gear:
 					_unit addBackpack _genericGear;
 					// Warning message:
-					["%1 LOADOUT CUSTOMIZATION > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2339,7 +2339,7 @@ THY_fnc_CSWR_weaponry_sniper = {
 	};
 	// WIP - Check the mag compability with rifle:
 		// If not compatibl  warning message:
-		// ["%1 LOADOUT CUSTOMIZATION > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	// Muzzle:
 	if ( _newMuzzle isNotEqualTo "REMOVED" ) then {
 		// If there's a new accessory:
@@ -2495,14 +2495,14 @@ THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles when editor doesn't set some.
 	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_paraAcceptableGoggles)} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2605,25 +2605,25 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newMag isEqualTo "REMOVED" || {_newMag isEqualTo "" && primaryWeaponMagazine _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT CUSTOMIZATION > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2836,7 +2836,7 @@ THY_fnc_CSWR_base_service_station = {
 
 
 THY_fnc_CSWR_spawn_type_checker = {
-	// This function validates if the group type selected is allowed to spawn in a specific spawnpoint-type.
+	// This function validates if the selected group-type is allowed to spawn in the selected spawnpoints-type.
 	// Returns _isValid. Bool.
 
 	params ["_spwns", "_grpType"];
@@ -2852,30 +2852,32 @@ THY_fnc_CSWR_spawn_type_checker = {
 		// reserved space.
 	// Debug texts:
 		// reserved space.
-	// Figures out which spawnpoint-type the function will work and defines the group types are allowed to spawn there:
+	// Step 1/2 > Select which group-types are allowed to spawn in the selected spawnpoints-type:
 	switch _spwns do {
 		// Blu
-		case CSWR_spwnsBLU:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };
-		case CSWR_spwnsVehBLU:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehBLU };
-		case CSWR_spwnsHeliBLU: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliBLU };
-		case CSWR_spwnsParaBLU: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaBLU };
+		case (CSWR_spwnsBLU # 0):         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };                                  // WIP xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		case (CSWR_spwnsBLU # 1):         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };                                  // WIP xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		//case {CSWR_spwnsBLU # 0 || CSWR_spwnsBLU # 1}:         { _grpTypesAllowed = CSWR_groupTypesForSpwnsBLU };
+		case {(CSWR_spwnsVehBLU # 0)  || (CSWR_spwnsVehBLU # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehBLU };
+		case {(CSWR_spwnsHeliBLU # 0) || (CSWR_spwnsHeliBLU # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliBLU };
+		case {(CSWR_spwnsParaBLU # 0) || (CSWR_spwnsParaBLU # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaBLU };
 		// Opf
-		case CSWR_spwnsOPF:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsOPF };
-		case CSWR_spwnsVehOPF:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehOPF };
-		case CSWR_spwnsHeliOPF: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliOPF };
-		case CSWR_spwnsParaOPF: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaOPF };
+		case {(CSWR_spwnsOPF # 0)     || (CSWR_spwnsOPF # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsOPF };
+		case {(CSWR_spwnsVehOPF # 0)  || (CSWR_spwnsVehOPF # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehOPF };
+		case {(CSWR_spwnsHeliOPF # 0) || (CSWR_spwnsHeliOPF # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliOPF };
+		case {(CSWR_spwnsParaOPF # 0) || (CSWR_spwnsParaOPF # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaOPF };
 		// Ind
-		case CSWR_spwnsIND:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsIND };
-		case CSWR_spwnsVehIND:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehIND };
-		case CSWR_spwnsHeliIND: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliIND };
-		case CSWR_spwnsParaIND: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaIND };
+		case {(CSWR_spwnsIND # 0)     || (CSWR_spwnsIND # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsIND };
+		case {(CSWR_spwnsVehIND # 0)  || (CSWR_spwnsVehIND # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehIND };
+		case {(CSWR_spwnsHeliIND # 0) || (CSWR_spwnsHeliIND # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliIND };
+		case {(CSWR_spwnsParaIND # 0) || (CSWR_spwnsParaIND # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaIND };
 		// Civ
-		case CSWR_spwnsCIV:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsCIV };
-		case CSWR_spwnsVehCIV:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehCIV };
-		case CSWR_spwnsHeliCIV: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliCIV };
-		case CSWR_spwnsParaCIV: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaCIV };
+		case {(CSWR_spwnsCIV # 0)     || (CSWR_spwnsCIV # 1)}:     { _grpTypesAllowed = CSWR_groupTypesForSpwnsCIV };
+		case {(CSWR_spwnsVehCIV # 0)  || (CSWR_spwnsVehCIV # 1)}:  { _grpTypesAllowed = CSWR_groupTypesForSpwnsVehCIV };
+		case {(CSWR_spwnsHeliCIV # 0) || (CSWR_spwnsHeliCIV # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsHeliCIV };
+		case {(CSWR_spwnsParaCIV # 0) || (CSWR_spwnsParaCIV # 1)}: { _grpTypesAllowed = CSWR_groupTypesForSpwnsParaCIV };
 	};
-	// Check if the group is allowed to spawn in this type of spawnpoint:
+	// Step 2/2 > Check if the selected group-type is allowed to spawn in the selected spawnpoints-type:
 	if ( _grpType in _grpTypesAllowed ) then { _isValid = true };
 	// Return:
 	_isValid;
@@ -2908,7 +2910,6 @@ THY_fnc_CSWR_spawn_and_go = {
 		// reserved space.
 	// Declarations:
 	_spwns       = _spwnsInfo # 0;
-	systemChat str _spwns;
 	_spwnsSector = _spwnsInfo # 1;
 	_destType    = _destsInfo # 0;
 	_destSector  = _destsInfo # 1;
@@ -3372,7 +3373,7 @@ THY_fnc_CSWR_add_group = {
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_grpClasses", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSector", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
+	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSectorLetter", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
 	
 	// Initial values:
 		// reserved space.
@@ -3384,10 +3385,10 @@ THY_fnc_CSWR_add_group = {
 	_tag               = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
 	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
-	_spwnsSectorLetter = _spwnsInfo # 1;
+	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
 	_spwnsAll          = _spwnsNonSector + _spwnsWithSector;
 	_destType          = _destsInfo # 0;
-	_destSector        = _destsInfo # 1;
+	_destSectorLetter  = toUpper (_destsInfo # 1);
 	// Debug texts:
 		// reserved space.
 	// Escape - part 1/2:
@@ -3433,31 +3434,31 @@ THY_fnc_CSWR_add_group = {
 	// Escape > If has something declared as unit classname, but the first element is not string, abort:
 	if ( count _grpClasses > 0 && typeName (_grpClasses # 0) isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 GROUP CUSTOMIZATION > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
+		["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the group is empty, abort:
 	if ( count _grpClasses isEqualTo 0 ) exitWith {
 		// Warning message:
-		["%1 GROUP CUSTOMIZATION > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
+		["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:
 	if ( typeName _destsInfo isNotEqualTo "ARRAY" || typeName _destType isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > There IS NO DESTINATION to send a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
+		["%1 DESTIN. > There IS NO DESTINATION to send a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If destination-sector is not a string, even when empty, abort:
-	if ( typeName _destSector isNotEqualTo "STRING" ) exitWith {
+	if ( typeName _destSectorLetter isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
+		["%1 DESTIN. > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the destination-sector letter has more than one character, abort:
-	if ( _destSector isNotEqualTo "" && count _destSector isNotEqualTo 1 ) exitWith {
+	if ( _destSectorLetter isNotEqualTo "" && count _destSectorLetter isNotEqualTo 1 ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > At least one %2 group has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
+		["%1 DESTIN. > At least one %2 group has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Errors handling:
@@ -3472,13 +3473,20 @@ THY_fnc_CSWR_add_group = {
 	_grpInfo = [_side, _tag, _grpClasses, (_validDest # 0) # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
+	// Debug:
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
+		// Message:
+		systemChat format ["%1 SPAWN > %2 group w/ %3 units | spwnSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str (count _grpClasses), if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
+		// Breath:
+		sleep 5;
+	};
 	// Re-building _spwnsInfo to be straight:
-	if ( _destSector isEqualTo "" ) then {
+	if ( _spwnsSectorLetter isEqualTo "" ) then {
 		// Case spawns have NO sectors:
 		_spwnsInfo = [_spwnsNonSector, ""];
 	} else {
 		// Case spawns have sectors:
-		_spwnsInfo = [_spwnsWithSector, toUpper _destSector];
+		_spwnsInfo = [_spwnsWithSector, _spwnsSectorLetter];
 	};
 	// Spawn Schadule:
 	[_spwnsInfo, _spwnDelayMethods, _grpInfo, false, _validBehavior # 0, _validDest # 0] spawn THY_fnc_CSWR_spawn_and_go;
@@ -3494,9 +3502,8 @@ THY_fnc_CSWR_add_vehicle = {
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSector", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
+	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSectorLetter", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
 	
-	systemChat str _spwnsInfo;
 	// Initial values:
 		// reserved space.
 	// Errors handling > If _spwnsInfo is empty or has just one element, fix it including the sector empty:
@@ -3507,10 +3514,10 @@ THY_fnc_CSWR_add_vehicle = {
 	_tag               = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
 	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
-	_spwnsSectorLetter = _spwnsInfo # 1;
+	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
 	_spwnsAll          = _spwnsNonSector + _spwnsWithSector;
 	_destType          = _destsInfo # 0;
-	_destSector        = _destsInfo # 1;
+	_destSectorLetter  = toUpper (_destsInfo # 1);
 	_isHeli            = if ( _vehClass isKindOf "Helicopter" ) then { true } else { false };
 	// Debug texts:
 		// reserved space.
@@ -3574,19 +3581,19 @@ THY_fnc_CSWR_add_vehicle = {
 	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:
 	if ( typeName _destsInfo isNotEqualTo "ARRAY" || typeName _destType isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > There IS NO DESTINATION to send a %2 vehicle. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
+		["%1 DESTIN. > There IS NO DESTINATION to send a %2 vehicle. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If destination-sector is not a string, even when empty, abort:
-	if ( typeName _destSector isNotEqualTo "STRING" ) exitWith {
+	if ( typeName _destSectorLetter isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
+		["%1 DESTIN. > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the destination-sector letter has more than one character, abort:
-	if ( _destSector isNotEqualTo "" && count _destSector isNotEqualTo 1 ) exitWith {
+	if ( _destSectorLetter isNotEqualTo "" && count _destSectorLetter isNotEqualTo 1 ) exitWith {
 		// Warning message:
-		["%1 DESTINATION > At least one %2 vehicle has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
+		["%1 DESTIN. > At least one %2 vehicle has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Errors handling:
@@ -3600,15 +3607,21 @@ THY_fnc_CSWR_add_vehicle = {
 	_grpInfo = [_side, _tag, [_vehClass], (_validDest # 0) # 0, _validBehavior # 0, ""] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
+	// Debug:
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
+		// Message:
+		systemChat format ["%1 SPAWN > %2 '%3' | spwnSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str _vehClass, if (_spwnsSectorLetter isNotEqualTo "") then {true} else {false}, if (_spwnsSectorLetter isNotEqualTo "") then {"(" + str _spwnsSectorLetter + ")"} else {""}, if (_spwnsSectorLetter isEqualTo "") then {str _spwnsNonSector} else {str _spwnsWithSector}];
+		// Breath:
+		sleep 5;
+	};
 	// Re-building _spwnsInfo to be straight:
-	if ( _destSector isEqualTo "" ) then {
+	if ( _spwnsSectorLetter isEqualTo "" ) then {
 		// Case spawns have NO sectors:
 		_spwnsInfo = [_spwnsNonSector, ""];
 	} else {
 		// Case spawns have sectors:
-		_spwnsInfo = [_spwnsWithSector, toUpper _destSector];
+		_spwnsInfo = [_spwnsWithSector, _spwnsSectorLetter];
 	};
-	systemChat str _spwnsInfo;
 	// Spawn Schadule:
 	[_spwnsInfo, _spwnDelayMethods, _grpInfo, true, _validBehavior # 0, _validDest # 0] spawn THY_fnc_CSWR_spawn_and_go;
 	// CPU breath:
@@ -3745,6 +3758,13 @@ THY_fnc_CSWR_go = {
 		};
 		// And if something wrong:
 		default { ["%1 %2 '%3' group has an UNKNOWN DESTINATION. Check the 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, str _grp] call BIS_fnc_error; sleep 5 };
+	};
+	// Debug:
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
+		// Message:
+		systemChat format ["%1 DESTIN. > %2 '%3' | destSectorized=%4 %5 | Seen=%6.", CSWR_txtDebugHeader, _tag, str _grp, if (_destSector isNotEqualTo "") then {true} else {false}, if (_destSector isNotEqualTo "") then {"(" + str _destSector + ")"} else {""}, str _dests];
+		// Breath:
+		sleep 5;
 	};
 	// Return:
 	true;

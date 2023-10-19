@@ -14,6 +14,7 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
+	CSWR_isOnDebugSectors = true;   // true = shows deeper which markers are sectorized / false = turn it off. Default: false.
 // Factions:
     CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
     CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
@@ -161,28 +162,76 @@ if (!isServer) exitWith {};
 	Structure of spawn arrays: CSWR_confirmedMarkers
 	[0 spawn types
 		[0 blu
-			[0 CSWR_spwnsBLU],
-			[1 CSWR_spwnsVehBLU],
-			[2 CSWR_spwnsHeliBLU],
-			[3 CSWR_spwnsParaBLU]
+			[0 CSWR_spwnsBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_spwnsVehBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_spwnsHeliBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_spwnsParaBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[1 opf
-			[0 CSWR_spwnsOPF],
-			[1 CSWR_spwnsVehOPF],
-			[2 CSWR_spwnsHeliOPF],
-			[3 CSWR_spwnsParaOPF]
+			[0 CSWR_spwnsOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_spwnsVehOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_spwnsHeliOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_spwnsParaOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[2 ind
-			[0 CSWR_spwnsIND],
-			[1 CSWR_spwnsVehIND],
-			[2 CSWR_spwnsHeliIND],
-			[3 CSWR_spwnsParaIND]
+			[0 CSWR_spwnsIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_spwnsVehIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_spwnsHeliIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_spwnsParaIND
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[3 civ
-			[0 CSWR_spwnsCIV],
-			[1 CSWR_spwnsVehCIV],
-			[2 CSWR_spwnsHeliCIV],
-			[3 CSWR_spwnsParaCIV]
+			[0 CSWR_spwnsCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_spwnsVehCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_spwnsHeliCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_spwnsParaCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		]
 	],
 	[1 destination types
@@ -190,11 +239,11 @@ if (!isServer) exitWith {};
 	];
 	*/
 	// BluFor spawns:
-	CSWR_spwnsBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_spwnsBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 0;
 	CSWR_spwnsVehBLU  = ((CSWR_confirmedMarkers # 0) # 0) # 1;
 	CSWR_spwnsHeliBLU = ((CSWR_confirmedMarkers # 0) # 0) # 2;
 	CSWR_spwnsParaBLU = ((CSWR_confirmedMarkers # 0) # 0) # 3;
-	_spwnsBLU         = (CSWR_spwnsBLU # 0)     + (CSWR_spwnsBLU # 1);     // [nonSectorized] + [Sectorized]
+	_spwnsBLU         = (CSWR_spwnsBLU # 0)     + (CSWR_spwnsBLU # 1);
 	_spwnsVehBLU      = (CSWR_spwnsVehBLU # 0)  + (CSWR_spwnsVehBLU # 1);
 	_spwnsHeliBLU     = (CSWR_spwnsHeliBLU # 0) + (CSWR_spwnsHeliBLU # 1);
 	_spwnsParaBLU     = (CSWR_spwnsParaBLU # 0) + (CSWR_spwnsParaBLU # 1);
@@ -204,11 +253,11 @@ if (!isServer) exitWith {};
 	CSWR_groupTypesForSpwnsHeliBLU = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaBLU = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// OpFor spawns:
-	CSWR_spwnsOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_spwnsOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 0;
 	CSWR_spwnsVehOPF  = ((CSWR_confirmedMarkers # 0) # 1) # 1;
 	CSWR_spwnsHeliOPF = ((CSWR_confirmedMarkers # 0) # 1) # 2;
 	CSWR_spwnsParaOPF = ((CSWR_confirmedMarkers # 0) # 1) # 3;
-	_spwnsOPF         = (CSWR_spwnsOPF # 0)     + (CSWR_spwnsOPF # 1);     // [nonSectorized] + [Sectorized]
+	_spwnsOPF         = (CSWR_spwnsOPF # 0)     + (CSWR_spwnsOPF # 1);
 	_spwnsVehOPF      = (CSWR_spwnsVehOPF # 0)  + (CSWR_spwnsVehOPF # 1);
 	_spwnsHeliOPF     = (CSWR_spwnsHeliOPF # 0) + (CSWR_spwnsHeliOPF # 1);
 	_spwnsParaOPF     = (CSWR_spwnsParaOPF # 0) + (CSWR_spwnsParaOPF # 1);
@@ -218,11 +267,11 @@ if (!isServer) exitWith {};
 	CSWR_groupTypesForSpwnsHeliOPF = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaOPF = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// Independent spawns:
-	CSWR_spwnsIND     = ((CSWR_confirmedMarkers # 0) # 2) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_spwnsIND     = ((CSWR_confirmedMarkers # 0) # 2) # 0;
 	CSWR_spwnsVehIND  = ((CSWR_confirmedMarkers # 0) # 2) # 1;
 	CSWR_spwnsHeliIND = ((CSWR_confirmedMarkers # 0) # 2) # 2;
 	CSWR_spwnsParaIND = ((CSWR_confirmedMarkers # 0) # 2) # 3;
-	_spwnsIND         = (CSWR_spwnsIND # 0)     + (CSWR_spwnsIND # 1);     // [nonSectorized] + [Sectorized]
+	_spwnsIND         = (CSWR_spwnsIND # 0)     + (CSWR_spwnsIND # 1);
 	_spwnsVehIND      = (CSWR_spwnsVehIND # 0)  + (CSWR_spwnsVehIND # 1);
 	_spwnsHeliIND     = (CSWR_spwnsHeliIND # 0) + (CSWR_spwnsHeliIND # 1);
 	_spwnsParaIND     = (CSWR_spwnsParaIND # 0) + (CSWR_spwnsParaIND # 1);
@@ -232,11 +281,11 @@ if (!isServer) exitWith {};
 	CSWR_groupTypesForSpwnsHeliIND = ["heliL", "heliH"];
 	CSWR_groupTypesForSpwnsParaIND = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	// Civilian spawns:
-	CSWR_spwnsCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_spwnsCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 0;
 	CSWR_spwnsVehCIV  = ((CSWR_confirmedMarkers # 0) # 3) # 1;
 	CSWR_spwnsHeliCIV = ((CSWR_confirmedMarkers # 0) # 3) # 2;
 	CSWR_spwnsParaCIV = ((CSWR_confirmedMarkers # 0) # 3) # 3;
-	_spwnsCIV         = (CSWR_spwnsCIV # 0)     + (CSWR_spwnsCIV # 1);     // [nonSectorized] + [Sectorized]
+	_spwnsCIV         = (CSWR_spwnsCIV # 0)     + (CSWR_spwnsCIV # 1);
 	_spwnsVehCIV      = (CSWR_spwnsVehCIV # 0)  + (CSWR_spwnsVehCIV # 1);
 	_spwnsHeliCIV     = (CSWR_spwnsHeliCIV # 0) + (CSWR_spwnsHeliCIV # 1);
 	_spwnsParaCIV     = (CSWR_spwnsParaCIV # 0) + (CSWR_spwnsParaCIV # 1);
@@ -261,60 +310,111 @@ if (!isServer) exitWith {};
 	],
 	[1 destination types
 		[0 blu
-			[0 CSWR_destBLU],
-			[1 CSWR_destWatchBLU],
-			[2 CSWR_destOccupyBLU],
-			[3 CSWR_destHoldBLU]
+			[0 CSWR_destBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_destWatchBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_destOccupyBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_destHoldBLU
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[1 opf
-			[0 CSWR_destOPF],
-			[1 CSWR_destWatchOPF],
-			[2 CSWR_destOccupyOPF],
-			[3 CSWR_destHoldOPF]
+			[0 CSWR_destOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_destWatchOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_destOccupyOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_destHoldOPF
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[2 ind
-			[0 CSWR_destIND],
-			[1 CSWR_destWatchIND],
-			[2 CSWR_destOccupyIND],
-			[3 CSWR_destHoldIND]
+			[0 CSWR_destIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_destWatchIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_destOccupyIND
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_destHoldIND
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[3 civ
-			[0 CSWR_destCIV],
-			[1 CSWR_destWatchCIV],
-			[2 CSWR_destOccupyCIV],
-			[3 CSWR_destHoldCIV]
+			[0 CSWR_destCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[1 CSWR_destWatchCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[2 CSWR_destOccupyCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			],
+			[3 CSWR_destHoldCIV
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		],
 		[4 public
-			[0 CSWR_destsPUBLIC]
+			[0 CSWR_destsPUBLIC
+				[0 non-sectorized],
+				[1 sectorized]
+			]
 		]
 	];
 	*/
 	// Only BluFor destinations:
-	CSWR_destBLU       = ((CSWR_confirmedMarkers # 1) # 0) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_destBLU       = ((CSWR_confirmedMarkers # 1) # 0) # 0;
 	CSWR_destWatchBLU  = ((CSWR_confirmedMarkers # 1) # 0) # 1;
 	CSWR_destOccupyBLU = ((CSWR_confirmedMarkers # 1) # 0) # 2;
 	CSWR_destHoldBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 3;
-	_destBLU           = (CSWR_destBLU # 0)       + (CSWR_destBLU # 1);     // [nonSectorized] + [Sectorized]
+	_destBLU           = (CSWR_destBLU # 0)       + (CSWR_destBLU # 1);
 	_destWatchBLU      = (CSWR_destWatchBLU # 0)  + (CSWR_destWatchBLU # 1);
 	_destOccupyBLU     = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1);
 	_destHoldBLU       = (CSWR_destHoldBLU # 0)   + (CSWR_destHoldBLU # 1);
 	_destsAllBLU       = _destBLU + _destWatchBLU + _destOccupyBLU + _destHoldBLU;  // NEVER include PUBLICs in this calc!
 	// Only OpFor destinations:
-	CSWR_destOPF       = ((CSWR_confirmedMarkers # 1) # 1) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_destOPF       = ((CSWR_confirmedMarkers # 1) # 1) # 0;
 	CSWR_destWatchOPF  = ((CSWR_confirmedMarkers # 1) # 1) # 1;
 	CSWR_destOccupyOPF = ((CSWR_confirmedMarkers # 1) # 1) # 2;
 	CSWR_destHoldOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 3;
-	_destOPF           = (CSWR_destOPF # 0)       + (CSWR_destOPF # 1);     // [nonSectorized] + [Sectorized]
+	_destOPF           = (CSWR_destOPF # 0)       + (CSWR_destOPF # 1);
 	_destWatchOPF      = (CSWR_destWatchOPF # 0)  + (CSWR_destWatchOPF # 1);
 	_destOccupyOPF     = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1);
 	_destHoldOPF       = (CSWR_destHoldOPF # 0)   + (CSWR_destHoldOPF # 1);
 	_destsAllOPF       = _destOPF + _destWatchOPF + _destOccupyOPF + _destHoldOPF;  // NEVER include PUBLICs in this calc!
 	// Only Independent destinations:
-	CSWR_destIND       = ((CSWR_confirmedMarkers # 1) # 2) # 0;             // [[nonSectorized], [Sectorized]]
+	CSWR_destIND       = ((CSWR_confirmedMarkers # 1) # 2) # 0;
 	CSWR_destWatchIND  = ((CSWR_confirmedMarkers # 1) # 2) # 1;
 	CSWR_destOccupyIND = ((CSWR_confirmedMarkers # 1) # 2) # 2;
 	CSWR_destHoldIND   = ((CSWR_confirmedMarkers # 1) # 2) # 3;
-	_destIND           = (CSWR_destIND # 0)       + (CSWR_destIND # 1);     // [nonSectorized] + [Sectorized]
+	_destIND           = (CSWR_destIND # 0)       + (CSWR_destIND # 1);
 	_destWatchIND      = (CSWR_destWatchIND # 0)  + (CSWR_destWatchIND # 1);
 	_destOccupyIND     = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1);
 	_destHoldIND       = (CSWR_destHoldIND # 0)   + (CSWR_destHoldIND # 1);
@@ -337,8 +437,8 @@ if (!isServer) exitWith {};
 					_destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
 	// All destinations, except the specialized/special ones:
 	CSWR_destsANYWHERE  = [
-		[(CSWR_destsPUBLIC # 0) + (CSWR_destBLU # 0) + (CSWR_destOPF # 0) + (CSWR_destIND # 0) + (CSWR_destCIV # 0)],  // nonSectorized
-		[(CSWR_destsPUBLIC # 1) + (CSWR_destBLU # 1) + (CSWR_destOPF # 1) + (CSWR_destIND # 1) + (CSWR_destCIV # 1)]   // Sectorized
+		(CSWR_destsPUBLIC # 0) + (CSWR_destBLU # 0) + (CSWR_destOPF # 0) + (CSWR_destIND # 0) + (CSWR_destCIV # 0),  // nonSectorized
+		(CSWR_destsPUBLIC # 1) + (CSWR_destBLU # 1) + (CSWR_destOPF # 1) + (CSWR_destIND # 1) + (CSWR_destCIV # 1)   // Sectorized
 	];
 	// Occupy-move validations:
 	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, _destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
@@ -385,6 +485,7 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_isOnDebugHeli";
 	publicVariable "CSWR_isOnDebugPara";
 	publicVariable "CSWR_isOnDebugBooking";
+	publicVariable "CSWR_isOnDebugSectors";
 	publicVariable "CSWR_isOnDebugHold";
 	publicVariable "CSWR_isOnBLU";
 	publicVariable "CSWR_isOnOPF";
