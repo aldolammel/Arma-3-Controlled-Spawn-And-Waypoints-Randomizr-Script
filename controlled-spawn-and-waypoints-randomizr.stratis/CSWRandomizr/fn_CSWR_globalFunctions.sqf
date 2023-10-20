@@ -54,7 +54,8 @@ THY_fnc_CSWR_marker_name_splitter = {
 	// if the _spacer is NOT been used correctly:
 	if ( count _mkrNameStructure < 4 || count _mkrNameStructure > 5 ) then {
 		// Warning message:
-		["%1 MARKER '%2' > This marker name's structure look's NOT correct! %4", CSWR_txtWarnHeader, _mkrName, _spacer, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > This marker name's structure look's NOT correct! %4",
+		CSWR_txtWarnHeader, _mkrName, _spacer, _txt1] call BIS_fnc_error; sleep 5;
 		// Update to return as failed:
 		_mkrNameStructure = [];
 	};
@@ -109,7 +110,7 @@ THY_fnc_CSWR_marker_name_section_type = {
 	// Returns _mkrType: when valid, type tag as string. When invalid, an empty string ("").
 
 	params ["_mkrNameStructure", "_mkr", "_prefix", "_spacer"];
-	private ["_mkrType", "_spwnTypes", "_destTypes", "_allTypesAvailable", "_mkrTypeToCheck", "_txt1"];
+	private ["_mkrType", "_spwnTypes", "_destTypes", "_allTypesAvailable", "_mkrTypeToCheck"];
 
 	// Initial values:
 	_mkrType = "";
@@ -121,14 +122,16 @@ THY_fnc_CSWR_marker_name_section_type = {
 	_allTypesAvailable = _spwnTypes + _destTypes;
 	_mkrTypeToCheck = _mkrNameStructure # 1;  // it should be one of _allTypesAvailable.
 	// Debug texts:
-	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2BLU%2anynumber' or '%1%2MOVE%2BLU%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example. This marker has been ignored.", _prefix, _spacer];
+		// reserved space.
 	// If the marker type is valid:
 	if ( _mkrTypeToCheck in _allTypesAvailable ) then {
 		// Update to return:
 		_mkrType = _mkrTypeToCheck;
-	// If not valid, warning message:
+	// If not valid:
 	} else {
-		["%1 MARKER '%2' > The TYPE name's section looks wrong. There's NO any '%3' type available. The type tags are: %4.", CSWR_txtWarnHeader, _mkr, _mkrTypeToCheck, _allTypesAvailable] call BIS_fnc_error; sleep 5;
+		// Warning message:
+		["%1 MARKER '%2' > The TYPE name's section looks wrong. There's NO any '%3' type available. The type tags are: %4.", 
+		CSWR_txtWarnHeader, _mkr, _mkrTypeToCheck, _allTypesAvailable] call BIS_fnc_error; sleep 5;
 	}; 
 	// Return:
 	_mkrType;
@@ -173,10 +176,12 @@ THY_fnc_CSWR_marker_name_section_owner = {
 		};
 	};
 	// Debug texts:
-	_txt1 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2OPF%2anynumber' or '%1%2MOVE%2IND%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' for example.", _prefix, _spacer];
+	_txt1 = format [
+		"CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2anynumber' or '%1%2MOVE%2PUBLIC%2anynumber' or '%1%2SPAWNVEH%2BLU%2anynumber' or '%1%2MOVE%2BLU%2anynumber' or '%1%2SPAWNHELI%2BLU%2anynumber' or '%1%2SPAWNPARADROP%2BLU%2anynumber' or '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example. This marker has been ignored", _prefix, _spacer];
 	// Errors handling:
 	if ( count _mkrNameStructure < 3 ) exitWith {  // cswr_spawn_blu_1   or   cswr_move_public_1
-		["%1 MARKER '%2' > The OWNER TAG looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The OWNER TAG looks missing. %3",
+		CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_mkrTag;
 	};
@@ -186,7 +191,8 @@ THY_fnc_CSWR_marker_name_section_owner = {
 		_mkrTag = _mkrTagToCheck;
 	// If NOT valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The OWNER name's section looks wrong. There's NO '%3' option available when '%4' marker. Meanwhile this marker is ignored, here's the options: %5", CSWR_txtWarnHeader, _mkr, _mkrTagToCheck, _mkrTypeToCheck, _tagsAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The OWNER name's section looks wrong. There's NO '%3' option available when '%4' marker. Meanwhile this marker is ignored, here's the options: %5",
+		CSWR_txtWarnHeader, _mkr, _mkrTagToCheck, _mkrTypeToCheck, _tagsAvailable] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
 	_mkrTag;
@@ -217,7 +223,8 @@ THY_fnc_CSWR_marker_name_section_sector = {
 		_mkrSector = _mkrSectorToCheck;
 	// If NOT valid, warning message:
 	} else {
-		["%1 MARKER '%2' > The SECTOR name's section looks wrong. There's NO '%3' option available when you're using SECTOR letter. Meanwhile this marker is ignored, here's the options: %4. Fix it on Eden.", CSWR_txtWarnHeader, _mkr, _mkrSectorToCheck, _sectorsAvailable] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The SECTOR name's section looks wrong. There's NO '%3' option available when you're using SECTOR letter. Meanwhile this marker is ignored, here's the options: %4. Fix it on Eden.",
+		CSWR_txtWarnHeader, _mkr, _mkrSectorToCheck, _sectorsAvailable] call BIS_fnc_error; sleep 5;
 	}; 
 	// Return:
 	_mkrSector;
@@ -243,13 +250,15 @@ THY_fnc_CSWR_marker_name_section_number = {
 	_txt2 = format ["CSWR markers must have their structure names like '%1%2SPAWN%2BLU%2sectorletter%2anynumber' or '%1%2MOVE%2BLU%2sectorletter%2anynumber' for example.", _prefix, _spacer];
 	// Escape > If name's structure has no sector declared, and less than 4 sections:
 	if ( !_hasSector && count _mkrNameStructure < 4 ) exitWith {  // e.g cswr_spawn_blu_1
-		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3",
+		CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_isNum;
 	};
 	// Escape > If name's structure has sector declared, and less than 5 sections:
 	if ( _hasSector && count _mkrNameStructure < 5 ) exitWith {  // e.g cswr_spawn_blu_A_1
-		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3", CSWR_txtWarnHeader, _mkr, _txt2] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > The NUMBER name's section looks missing. %3",
+		CSWR_txtWarnHeader, _mkr, _txt2] call BIS_fnc_error; sleep 5;
 		// Returning:
 		_isNum;
 	};
@@ -264,7 +273,8 @@ THY_fnc_CSWR_marker_name_section_number = {
 	// If is NOT a number (will be zero):
 	} else {
 		// Warning message:
-		["%1 MARKER '%2' > It has no a valid name. %3", CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
+		["%1 MARKER '%2' > It has no a valid name. %3",
+		CSWR_txtWarnHeader, _mkr, _txt1] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
 	_isNum;
@@ -624,7 +634,8 @@ THY_fnc_CSWR_marker_booking = {
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNVEH":  { _bookedLoc = CSWR_bookedLocSpwnVeh };   // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
-		default { ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_booking' function.", CSWR_txtWarnHeader, _mkrType] call BIS_fnc_error; _isError = true };
+		default { ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_booking' function.",
+		CSWR_txtWarnHeader, _mkrType] call BIS_fnc_error; _isError = true };
 	};
 	// Escape - part 2/2:
 	if _isError exitWith { _bookingInfo /* Returning */ };
@@ -690,7 +701,8 @@ THY_fnc_CSWR_marker_booking_undo = {
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNVEH":  { _bookedLoc = CSWR_bookedLocSpwnVeh };   // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
-		default { ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_booking_undo' function.", CSWR_txtWarnHeader, _mkrType] call BIS_fnc_error; _isError = true };
+		default { ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_booking_undo' function.",
+		CSWR_txtWarnHeader, _mkrType] call BIS_fnc_error; _isError = true };
 	};
 	// Escape - part 2/2:
 	if _isError exitWith {};
@@ -805,7 +817,8 @@ THY_fnc_CSWR_is_valid_classname = {
 		/* // Update the validation flag:
 		_isValid = false;
 		// Warning message:
-		["%1 %2 > The variable '%3' looks EMPTY. Fix it to avoid errors.", CSWR_txtWarnHeader, _tag, _var] call BIS_fnc_error;
+		["%1 %2 > The variable '%3' looks EMPTY. Fix it to avoid errors.",
+		CSWR_txtWarnHeader, _tag, _var] call BIS_fnc_error;
 		// Breath:
 		sleep 5; */
 		// Return:
@@ -817,7 +830,8 @@ THY_fnc_CSWR_is_valid_classname = {
 			// Update the validation flag:
 			_isValid = false;
 			// Warning message:
-			["%1 %2 > One or more items of '%3' are NOT string types. Fix it to avoid errors.", CSWR_txtWarnHeader, _tag, _var] call BIS_fnc_error;
+			["%1 %2 > One or more items of '%3' are NOT string types. Fix it to avoid errors.",
+			CSWR_txtWarnHeader, _tag, _var] call BIS_fnc_error;
 			// Breath:
 			sleep 5;
 		};
@@ -840,7 +854,8 @@ THY_fnc_CSWR_is_valid_classname = {
 					// Update the validation flag:
 					_isValid = false;
 					// Warning message:
-					["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
+					["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5",
+					CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
 					// Breath:
 					sleep 5;
 				};
@@ -854,7 +869,8 @@ THY_fnc_CSWR_is_valid_classname = {
 				// Update the validation flag:
 				_isValid = false;
 				// Warning message:
-				["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5", CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
+				["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5",
+				CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
 				// Breath:
 				sleep 5;
 			};
@@ -879,8 +895,8 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 	_delta = 0;
 	// Declarations:
 	_classnamesAmount = count _classnames;
-	_whatIndividual = if _isVeh then { "VEHICLE" } else { "UNIT" };
-	_whatColletive = if _isVeh then { "VEHICLE" } else { "GROUP" };
+	_whatIndividual   = if _isVeh then { "VEHICLE" } else { "UNIT" };
+	_whatColletive    = if _isVeh then { "VEHICLE" } else { "GROUP" };
 	// Escape:
 	if ( _classnamesAmount isEqualTo 0 ) exitWith { _isValid = false; _isValid /* Returning... */ };
 	// Debug texts:
@@ -913,12 +929,16 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 		// Warning message:
 		if ( _delta isEqualTo 1 ) then {
 			// singular message:
-			["%1 %2 > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+			["%1 %2 > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
+			CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
 		} else {
 			// plural message:
-			["%1 %2 > %3 classnames used to build a %2 %5 are NOT %4 CLASSNAMES, then they CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+			["%1 %2 > %3 classnames used to build a %2 %5 are NOT %4 CLASSNAMES, then they CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
+			CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
 		};
-		// WIP - better message: ["%1 %2 > '%3' is NOT a %4 CLASSNAME, then it CANNOT to be spawned as a %2 %5. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, str _x, _whatIndividual, _whatColletive] call BIS_fnc_error;
+		// WIP - better message: 
+		/* ["%1 %2 > '%3' is NOT a %4 CLASSNAME, then it CANNOT to be spawned as a %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, str _x, _whatIndividual, _whatColletive] call BIS_fnc_error; */
 		// Message breath:
 		sleep 5;
 	};
@@ -951,7 +971,8 @@ THY_fnc_CSWR_is_valid_behavior = {
 	// Otherwise:
 	} else {
 		// Warning message:
-		["%1 %2 > One or more %3s HAS NO BEHAVIOR properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the %3 WON'T BE CREATED.", CSWR_txtWarnHeader, _tag, if _isVeh then {"vehicle"} else {"group"}] call BIS_fnc_error; sleep 5;
+		["%1 %2 > One or more %3s HAS NO BEHAVIOR properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the %3 WON'T BE CREATED.",
+		CSWR_txtWarnHeader, _tag, if _isVeh then {"vehicle"} else {"group"}] call BIS_fnc_error; sleep 5;
 	};
 	// Return:
 	_return;
@@ -989,7 +1010,8 @@ THY_fnc_CSWR_is_valid_destination = {
 		case "MOVE_WATCH":      { _minAmount = CSWR_minDestWatch };
 		case "MOVE_OCCUPY":     { _minAmount = CSWR_minDestOccupy };
 		case "MOVE_HOLD":       { _minAmount = CSWR_minDestHold };
-		default                 { ["%1 There is NO '%2' in 'THY_fnc_CSWR_is_valid_destination' function.", CSWR_txtWarnHeader, _destType] call BIS_fnc_error; _isError = true };
+		default                 { ["%1 There is NO '%2' in 'THY_fnc_CSWR_is_valid_destination' function.",
+		CSWR_txtWarnHeader, _destType] call BIS_fnc_error; _isError = true };
 	};
 	// Escape - part 2/2:
 	if _isError exitWith { _return /* Returning */ };
@@ -1158,7 +1180,8 @@ THY_fnc_CSWR_is_valid_formation = {
 	// Otherwise:
 	} else {
 		// Warning message:
-		["%1 GROUP > One or more %2 groups HAS NO FORMATION properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 GROUP > One or more %2 groups HAS NO FORMATION properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		sleep 5;
 	};
 	// Return:
@@ -1322,7 +1345,8 @@ THY_fnc_CSWR_group_type_rules = {
 			_heliLight  = [CSWR_vehicle_CIV_heli_light];
 			_heliHeavy  = [CSWR_vehicle_CIV_heli_heavy];
 		};
-		default { ["%1 SIDE > There is no side called '%2'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _side] call BIS_fnc_error; _isError = true };
+		default { ["%1 SIDE > There is no side called '%2'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _side] call BIS_fnc_error; _isError = true };
 	};
 	// Escape:
 	if _isError exitWith { _grpInfo /* Returning */ };
@@ -1355,7 +1379,8 @@ THY_fnc_CSWR_group_type_rules = {
 	// Errors handling > Sniper group cannot execute WatchMove with more than 2 members:
 	if ( _grpType isEqualTo "teamS" && _destType isEqualTo "MOVE_WATCH" && _grpSize > 2 ) then {
 		// Warning message:
-		["%1 WATCH > %2 SNIPER group CANNOT have more than 2 units! The group WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 WATCH > %2 SNIPER group CANNOT have more than 2 units! The group WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		sleep 5;
 		// Flag to invalid this group:
 		_grpInfo = [];
@@ -1365,7 +1390,8 @@ THY_fnc_CSWR_group_type_rules = {
 		// Errors handling > Helicopters cannot execute Watch, Hold, nor Occupy:
 		if ( _destType isEqualTo "MOVE_WATCH" || _destType isEqualTo "MOVE_HOLD" || _destType isEqualTo "MOVE_OCCUPY" ) then {
 			// Warning message:
-			["%1 WATCH > %2 HELICOPTER CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _destType] call BIS_fnc_error;
+			["%1 WATCH > %2 HELICOPTER CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.",
+			CSWR_txtWarnHeader, _tag, _destType] call BIS_fnc_error;
 			sleep 5;
 			// Flag to invalid this group:
 			_grpInfo = [];
@@ -1458,7 +1484,8 @@ THY_fnc_CSWR_group_join_to_survive = {
 				side _x isEqualTo (side (leader _grp)) && _x isNotEqualTo (leader _grp) && _x distance (leader _grp) <= _distance && _x isEqualTo (leader (group _x)) && alive _x && !isNull objectParent _x;
 			};
 		};
-		default { if CSWR_isOnDebugGlobal then { ["%1 THY_fnc_CSWR_group_join_to_survive > There's NO '%2' option in _targetToJoin var.", CSWR_txtWarnHeader, _targetToJoin] call BIS_fnc_error; sleep 5 } };
+		default { if CSWR_isOnDebugGlobal then { ["%1 THY_fnc_CSWR_group_join_to_survive > There's NO '%2' option in _targetToJoin var.",
+		CSWR_txtWarnHeader, _targetToJoin] call BIS_fnc_error; sleep 5 } };
 	};
 	// Breath:
 	sleep 3;
@@ -1517,7 +1544,8 @@ THY_fnc_CSWR_group_behavior = {
 	// Errors handling:
 	if ( side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) then {
 		// warning message:
-		["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _behavior] call BIS_fnc_error; sleep 3;
+		["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _behavior] call BIS_fnc_error; sleep 3;
 		// Fixing:
 		_behavior = "BE_AWARE";
 	};
@@ -1561,7 +1589,8 @@ THY_fnc_CSWR_group_behavior = {
 			_grp setCombatMode "RED";  // Mandatory if the waypoint is "SAD" type (for helicopters/air crew). Never remove it!
 			_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
 		};
-		default { ["%1 %2 > THERE IS NO behavior called '%3'. Check the documentation and fix it in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, side (leader _grp), _behavior] call BIS_fnc_error };
+		default { ["%1 %2 > THERE IS NO behavior called '%3'. Check the documentation and fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, side (leader _grp), _behavior] call BIS_fnc_error };
 	};
 	// CPU breath
 	sleep 0.1;
@@ -2125,7 +2154,8 @@ THY_fnc_CSWR_gear_uniform = {
 					// Add the generic gear:
 					_unit forceAddUniform _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.",
+					CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2184,7 +2214,8 @@ THY_fnc_CSWR_gear_vest = {
 					// Add the generic gear:
 					_unit addVest _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.",
+					CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2257,7 +2288,8 @@ THY_fnc_CSWR_gear_backpack = {
 					// Add the generic gear:
 					_unit addBackpack _genericGear;
 					// Warning message:
-					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.", CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
+					["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.",
+					CSWR_txtWarnHeader, _tag, str (group _unit), _grpType] call BIS_fnc_error; sleep 5;
 				};
 			};
 		// Otherwise, not mandatory:
@@ -2339,7 +2371,8 @@ THY_fnc_CSWR_weaponry_sniper = {
 	};
 	// WIP - Check the mag compability with rifle:
 		// If not compatibl  warning message:
-		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.",
+		// CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	// Muzzle:
 	if ( _newMuzzle isNotEqualTo "REMOVED" ) then {
 		// If there's a new accessory:
@@ -2442,7 +2475,8 @@ THY_fnc_CSWR_loadout_infantry_basicGroup = {
 			// Warning message:
 			// The msg shows up just once:
 			if ( _unit isEqualTo (leader (group _unit))) then {
-				["%1 %2 > Only CIV side can use the command 'RANDOM' in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+				["%1 %2 > Only CIV side can use the command 'RANDOM' in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.",
+				CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 			};
 			// Delete the unit:
 			deleteVehicle _unit;
@@ -2495,14 +2529,16 @@ THY_fnc_CSWR_loadout_infantry_specialityParachuting = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	// WIP - Not working propperly. Always one group member is reaching the ground with no any goggles when editor doesn't set some.
 	if ( _newGoggles isEqualTo "REMOVED" || {_newGoggles isEqualTo "" && !(goggles _unit in CSWR_paraAcceptableGoggles)} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 PARACHUTE group member was deleted coz a mandatory gear (GOGGLES) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no valid goggles for parachuting. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2605,25 +2641,29 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newMag isEqualTo "REMOVED" || {_newMag isEqualTo "" && primaryWeaponMagazine _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning message:
-		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
@@ -2951,7 +2991,8 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Flag to abort the group/vehicle spawn:
 		//_canSpwn = false;  // not necessary!
 		// Warning message:
-		["%1 SPAWN > %2 group-type '%3' is NOT ALLOWED to spawn in the selected spawns-type: %4.", CSWR_txtWarnHeader, _tag, _grpType, str (_spwnsInfo # 0)] call BIS_fnc_error;
+		["%1 SPAWN > %2 group-type '%3' is NOT ALLOWED to spawn in the selected spawns-type: %4.",
+		CSWR_txtWarnHeader, _tag, _grpType, str (_spwnsInfo # 0)] call BIS_fnc_error;
 		// Message breath:
 		sleep 5;
 	};
@@ -2969,7 +3010,8 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Flag to abort the group/vehicle spawn:
 					_canSpwn = false;
 					// Warning message:
-					["%1 SPAWN DELAY > %2 Make sure you SPELLED the trigger or target name(s) CORRECTLY. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
+					["%1 SPAWN DELAY > %2 Make sure you SPELLED the trigger or target name(s) CORRECTLY. %3",
+					CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 			// If the object doesn't exist, the spawn isn't available, so there's no reason the keep the validation process running:
@@ -2982,7 +3024,8 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Flag to abort the group/vehicle spawn:
 					_canSpwn = false;
 					// Warning message:
-					["%1 SPAWN DELAY > %2 It's NOT allowed a group with more than 1 TIMER. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
+					["%1 SPAWN DELAY > %2 It's NOT allowed a group with more than 1 TIMER. %3",
+					CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 			// If the object doesn't exist, the spawn isn't available, so there's no reason the keep the validation process running:
@@ -3005,7 +3048,8 @@ THY_fnc_CSWR_spawn_and_go = {
 					// Flag to abort the group/vehicle spawn:
 					_canSpwn = false;
 					// Warning message:
-					["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [5] or [varname_1] or [varname_1, varname_2] or [5, varname_1, varname_2]. %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
+					["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [5] or [varname_1] or [varname_1, varname_2] or [5, varname_1, varname_2]. %3",
+					CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error; sleep 5;
 				};
 			} forEach _spwnDelayMethods;
 
@@ -3030,7 +3074,8 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Flag to abort the group/vehicle spawn:
 		_canSpwn = false;
 		// Warning message:
-		["%1 SPAWN DELAY > %2 %3", CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error;
+		["%1 SPAWN DELAY > %2 %3",
+		CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error;
 		// Message breath:
 		sleep 5;
 	};
@@ -3096,10 +3141,12 @@ THY_fnc_CSWR_spawn_and_go = {
 					if CSWR_isOnDebugGlobal then {
 						// If ground vehicle:
 						if !_isAirCrew then {
-							["%1 VEHICLE > A %2 vehicle selected a spawn-point already booked for another vehicle. Next try soon...", CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
+							["%1 VEHICLE > A %2 vehicle selected a spawn-point already booked for another vehicle. Next try soon...",
+							CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
 						// Otherwise, if helicopter:
 						} else {
-							["%1 HELICOPTER > A %2 helicopter selected a helipad already booked for another helicopter. Next try soon...", CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
+							["%1 HELICOPTER > A %2 helicopter selected a helipad already booked for another helicopter. Next try soon...",
+							CSWR_txtDebugHeader, _tag] call BIS_fnc_error;
 						};
 					};
 					// CPU breath to prevent crazy loopings:
@@ -4012,7 +4059,11 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Error handling:
-	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
+	if ( _tag isEqualTo "CIV" ) exitWith {
+		// Warning message:
+		["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.",
+		CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5;
+	};
 	// Initial values:
 		// Reserved space.
 	// Declarations:
@@ -4094,7 +4145,11 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Error handling:
-	if ( _tag isEqualTo "CIV" ) exitWith { ["%1 MOVE RESTRICTED > Civilians CANNOT use '_move_RESTRICTED'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.", CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5 };
+	if ( _tag isEqualTo "CIV" ) exitWith {
+		// Warning message:
+		["%1 MOVE RESTRICTED > Civilians CANNOT use '_move_RESTRICTED'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.",
+		CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5;
+	};
 	// Initial values:
 		// Reserved space.
 	// Declarations:
@@ -4233,7 +4288,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			if !_isBooked then {
 				// Debug message:
 				if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
-					["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
+					["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...",
+					CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
 				};
 				// CPU breath to prevent craze loopings:
 				sleep _wait;
@@ -4250,7 +4306,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 			// Delete the sniper group:
 			{ deleteVehicle _x } forEach units _grp;
 			// Warning message:
-			["%1 WATCH > All locations found by %2 watch-markers look already watched. A sniper group without watch-marker was deleted. CONSIDER TO ADD more watch-markers OR TO REMOVE a %2 sniper group in 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+			["%1 WATCH > All locations found by %2 watch-markers look already watched. A sniper group without watch-marker was deleted. CONSIDER TO ADD more watch-markers OR TO REMOVE a %2 sniper group in 'fn_CSWR_population.sqf' file.",
+			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 		};
 	
 		// SETTING A POSITION:
@@ -4279,7 +4336,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 					// Restart the counter:
 					_counter = 0;
 					// Message:
-					if CSWR_isOnDebugGlobal then { ["%1 WATCH > %2 '%3' group has no good spot. Next try soon...", CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error };
+					if CSWR_isOnDebugGlobal then { ["%1 WATCH > %2 '%3' group has no good spot. Next try soon...",
+					CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error };
 					// A good additional cooldown for Server CPU:
 					sleep _wait;
 				};
@@ -4287,14 +4345,16 @@ THY_fnc_CSWR_go_dest_WATCH = {
 				sleep 1;
 			};  // While-loop ends.
 			// Debug message:
-			if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %3 location(s) found, %2 '%4' moving: %5.", CSWR_txtDebugHeader, _tag, count _locations, str _grp, _location] };
+			if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %3 location(s) found, %2 '%4' moving: %5.",
+			CSWR_txtDebugHeader, _tag, count _locations, str _grp, _location] };
 		};
 	// If didn't find even one location:
 	} else {
 		// Delete the sniper group:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning message:
-		["%1 WATCH > A %2 WATCH-MARKER (%3) looks has no natural high locations to scan around. Change its position! A sniper group was deleted!", CSWR_txtWarnHeader, _tag, str _areaToWatch] call BIS_fnc_error;
+		["%1 WATCH > A %2 WATCH-MARKER (%3) looks has no natural high locations to scan around. Change its position! A sniper group was deleted!",
+		CSWR_txtWarnHeader, _tag, str _areaToWatch] call BIS_fnc_error;
 	};
 	// Escape:
 	if ( isNull _grp || _areaPos isEqualTo [] ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
@@ -4307,7 +4367,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Debug message:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
 		{  // forEach units _grp:
-			["%1 WATCH > %2 '%3' unit has their: aimingAccuracy = %4 | spotDistance = %5 | aimingSpeed = %6 | endurance = %7", CSWR_txtDebugHeader, _tag, str _x, (_x skill "aimingAccuracy"), (_x skill "spotDistance"), (_x skill "aimingSpeed"), (_x skill "endurance")] call BIS_fnc_error; sleep 5;
+			["%1 WATCH > %2 '%3' unit has their: aimingAccuracy = %4 | spotDistance = %5 | aimingSpeed = %6 | endurance = %7",
+			CSWR_txtDebugHeader, _tag, str _x, (_x skill "aimingAccuracy"), (_x skill "spotDistance"), (_x skill "aimingSpeed"), (_x skill "endurance")] call BIS_fnc_error; sleep 5;
 		} forEach units _grp;
 	};
 	// Wait the sniper group gets closer:
@@ -4318,7 +4379,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 		// Debug message:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.", CSWR_txtDebugHeader, _tag];
+			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.",
+			CSWR_txtDebugHeader, _tag];
 		};
 	};
 	// From here, keep stealth to make sure the spot is clear:
@@ -4338,7 +4400,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 		// Debug message:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) almost in their watching position.", CSWR_txtDebugHeader, _tag];
+			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) almost in their watching position.",
+			CSWR_txtDebugHeader, _tag];
 		};
 	};
 	// Make the arrival smooth:
@@ -4396,7 +4459,10 @@ THY_fnc_CSWR_WATCH_doWatching = {
 		// Stay in position:
 		_x disableAI "PATH";
 		// Debug message:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / leader '%8'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 3 };
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+			["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / leader '%8'",
+			CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 3;
+		};
 	} forEach units _grp;
 	
 	
@@ -4407,7 +4473,10 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	while { behaviour (leader _grp) isNotEqualTo "COMBAT" } do {
 		{  // forEach units _grp;:
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1 };
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'",
+				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
+			};
 			// Forcing the sniper/leader 
 			if ( _x isEqualTo leader _grp ) then {
 				// leader behavior aware if they're feel safe:
@@ -4435,7 +4504,10 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			// Error handling:
 			if ( !alive _x || incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { break };
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { ["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'", CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1 };
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'",
+				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
+			};
 			// If enemy revealed is too close, unit can move again:
 			if ( !isNull (getAttackTarget _x) && _x distance (getAttackTarget _x) < _enemyDangerClose ) then { _x doFollow leader _grp };
 			// Remember the leader (or new leader):
@@ -4671,7 +4743,8 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		// Delete the group:
 		//{ deleteVehicle _x } forEach units _grp;  // Dont delete the group coz maybe all buildings are destroyed during the game.
 		// Warning message:
-		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.", CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
+		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Breath:
 		sleep _wait;
 	};
@@ -4756,10 +4829,12 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 	_building = selectRandom _bldgsStillExist;
 	// When debug mode on:
 	if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' going to 1 of %4 building(s) found.", CSWR_txtDebugHeader, _tag, str _grp, count _bldgsAvailable] };
-	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { 
+	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then {
 		if ( alive _building || typeOf _building in CSWR_occupyAcceptableRuins ) then {
-			["%1 OCCUPY > '%2' chosen building: %3 / Loc: %4", CSWR_txtDebugHeader, str _grp, typeOf _building, getPosATL _building] call BIS_fnc_error; sleep 5 };
+			["%1 OCCUPY > '%2' chosen building: %3 / Loc: %4",
+			CSWR_txtDebugHeader, str _grp, typeOf _building, getPosATL _building] call BIS_fnc_error; sleep 5;
 		};
+	};
 	// Return:
 	_building;
 };
@@ -5060,7 +5135,8 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// If a building is NOT found:
 	} else {
 		// Warning message:
-		["%1 %2 > OCCUPY > The building doesn't exist anymore. New search in %4 secs.", CSWR_txtWarnHeader, _tag, str _grp, _wait] call BIS_fnc_error; sleep 5;
+		["%1 %2 > OCCUPY > The building doesn't exist anymore. New search in %4 secs.",
+		CSWR_txtWarnHeader, _tag, str _grp, _wait] call BIS_fnc_error; sleep 5;
 		// Restart the first OCCUPY step:
 		[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 	};
@@ -5254,7 +5330,10 @@ THY_fnc_CSWR_go_dest_HOLD = {
 				// Restart the counter:
 				_counter = 0;
 				// Message:
-				if CSWR_isOnDebugGlobal then { ["%1 HOLD > Looks %2 '%3' ISN'T finding a save spot to maneuver in '%4' position. They keep trying...", CSWR_txtWarnHeader, _tag, str _grp, _areaToHold] call BIS_fnc_error };
+				if CSWR_isOnDebugGlobal then {
+					["%1 HOLD > Looks %2 '%3' ISN'T finding a save spot to maneuver in '%4' position. They keep trying...",
+					CSWR_txtWarnHeader, _tag, str _grp, _areaToHold] call BIS_fnc_error;
+				};
 			};
 			// Cooldown to prevent crazy loops:
 			if _isVeh then { sleep _waitForVeh } else { sleep _wait };
@@ -5403,9 +5482,11 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 		if CSWR_isOnDebugGlobal then {
 			// Warning messages:
 			if ( _attemptCounter < _attemptLimiter ) then {
-				["%1 HOLD > %2 '%3' tracked-vehicle is WAITING NO BLOCKERS to execute the 'setDir' Hold-move! Current blockers: %4", CSWR_txtWarnHeader, _tag, str _grp, str _blockers] call BIS_fnc_error;
+				["%1 HOLD > %2 '%3' tracked-vehicle is WAITING NO BLOCKERS to execute the 'setDir' Hold-move! Current blockers: %4",
+				CSWR_txtWarnHeader, _tag, str _grp, str _blockers] call BIS_fnc_error;
 			} else {
-				["%1 HOLD > %2 '%3' tracked-vehicle has been %4 times to execute the hold-move but blocker(s) still there. Hold- to be aborted.", CSWR_txtWarnHeader, _tag, str _grp, _attemptLimiter] call BIS_fnc_error;
+				["%1 HOLD > %2 '%3' tracked-vehicle has been %4 times to execute the hold-move but blocker(s) still there. Hold- to be aborted.",
+				CSWR_txtWarnHeader, _tag, str _grp, _attemptLimiter] call BIS_fnc_error;
 			};
 		};
 		// long breath to the next loop check:
