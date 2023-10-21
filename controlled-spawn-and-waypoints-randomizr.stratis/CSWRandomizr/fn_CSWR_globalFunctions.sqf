@@ -1437,7 +1437,7 @@ THY_fnc_CSWR_group_formation = {
 	// Errors handling:
 		// reserved space.
 	// Declarations:
-	_grp = _grpInfo # 2;
+	_grp  = _grpInfo # 2;
 	_form = _grpInfo # 6;
 	// Escape:
 	if ( _form isEqualTo "" ) exitWith {};
