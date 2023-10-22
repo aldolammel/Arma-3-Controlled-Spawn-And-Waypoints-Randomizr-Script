@@ -69,7 +69,7 @@ if (!isServer) exitWith {};
             // [ Side; [Spawns: CSWR_spwnsBLU, CSWR_spwnsVehBLU, CSWR_spwnsParadropBLU]; Group type; Group formation: _form_BLU_1, _form_BLU_2; Initial group behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_OCCUPY, _move_WATCH, _move_HOLD]; [Spawn delay: timer, trigger activation, target status] ];
 		
             /* [BLUFOR, [CSWR_spwnsBLU], CSWR_group_BLU_sniper, _form_BLU_1, _be_COMBAT, [_move_WATCH], []] call THY_fnc_CSWR_add_group; */
-            [BLUFOR, [CSWR_spwnsBLU, "A"], CSWR_group_BLU_light, _form_BLU_2, _be_SAFE, [_move_RESTRICTED, "A"], []] call THY_fnc_CSWR_add_group;  // WIP estou nascendo correndo mesmo quando _be_SAFE.
+            [BLUFOR, [CSWR_spwnsBLU], CSWR_group_BLU_light, _form_BLU_2, _be_SAFE, [_move_RESTRICTED], []] call THY_fnc_CSWR_add_group;  // WIP estou nascendo correndo mesmo quando _be_SAFE.
             /* [BLUFOR, [CSWR_spwnsBLU], CSWR_group_BLU_light, _form_BLU_2, _be_AWARE, [_move_ANY], []] call THY_fnc_CSWR_add_group;
             [BLUFOR, [CSWR_spwnsBLU], CSWR_group_BLU_light, _form_BLU_1, _be_COMBAT, [_move_ANY], []] call THY_fnc_CSWR_add_group;
             [BLUFOR, [CSWR_spwnsBLU], CSWR_group_BLU_light, _form_BLU_1, _be_COMBAT, [_move_ANY], []] call THY_fnc_CSWR_add_group;

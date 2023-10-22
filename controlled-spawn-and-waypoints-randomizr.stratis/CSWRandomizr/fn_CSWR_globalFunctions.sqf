@@ -984,165 +984,235 @@ THY_fnc_CSWR_is_valid_destination = {
 	// Return _return: bool.
 
 	params ["_tag", "_isVeh", "_destInfo"];
-	private ["_destType", "_destSector", "_return", "_isValid", "_destMarkers", "_minAmount", "_requester", "_isError", "_txt1", "_txt2", "_txt3", "_txt4"];
+	private ["_destType", "_destSector", "_requester", "_return", "_isValid", "_dests", "_minAmount", "_txt1", "_txt2", "_txt3", "_txt4"];
 
-	// Declarations - part 1/2:
+	// Declarations:
 	_destType   = _destInfo # 0;
 	_destSector = _destInfo # 1;
+	_requester  = if _isVeh then { "vehicle" } else { "group" };
 	// Initial value:
-	_return = [[_destType, _destSector], false];  // [[destination-type original typing, sector original typing], isValid];
-	_isValid = false;
-	_destMarkers = [];
-	_minAmount = nil;
-	_isError = false;
+	_return     = [[_destType, _destSector], false];  // [[destination-type original typing, sector original typing], isValid];
+	_isValid    = false;
+	_dests      = [];
+	_minAmount  = nil;
 	// Errors handling:
 	if ( typeName _destType isEqualTo "STRING" ) then { _destType = toUpper _destType };
 	if ( typeName _destSector isEqualTo "STRING" ) then { _destSector = toUpper _destSector };
-	// Escape - part 1/2:
-	// Civilians cannot use restricted markers, nor watch markers, so abort:
-	if ( _tag isEqualTo "CIV" && _destType in ["MOVE_RESTRICTED", "MOVE_WATCH"] ) exitWith { _return /* Returning */ };
-	// Declarations - part 2/2:
-	_requester = if _isVeh then { "vehicle" } else { "group" };
-	switch _destType do {
-		case "MOVE_ANY":        { _minAmount = CSWR_minDestAny };
-		case "MOVE_PUBLIC":     { _minAmount = CSWR_minDestPublic };
-		case "MOVE_RESTRICTED": { _minAmount = CSWR_minDestRestricted };
-		case "MOVE_WATCH":      { _minAmount = CSWR_minDestWatch };
-		case "MOVE_OCCUPY":     { _minAmount = CSWR_minDestOccupy };
-		case "MOVE_HOLD":       { _minAmount = CSWR_minDestHold };
-		default                 { ["%1 There is NO '%2' in 'THY_fnc_CSWR_is_valid_destination' function.",
-		CSWR_txtWarnHeader, _destType] call BIS_fnc_error; _isError = true };
-	};
-	// Escape - part 2/2:
-	if _isError exitWith { _return /* Returning */ };
+	// Escape:
+		// Reserved space.
 	// Debug texts:
-	_txt1 = format ["A %1 %2 won't be created coz the DESTINATION TYPE '%3' HAS NO %4 or more markers dropped on the map.", _tag, _requester, _destType, _minAmount];
+	_txt1 = format ["A %1 %2 won't be created coz the DESTINATION TYPE '%3' HAS NO", _tag, _requester, _destType];
 	_txt2 = format ["One or more %1 %2s HAS NO DESTINATION properly configured in 'fn_CSWR_population.sqf' file. For script integrity, the %2 won't be created.", _tag, _requester];
 	_txt3 = format ["%1 %2 CANNOT use '%3' destinations. Check the 'fn_CSWR_population.sqf' file. For script integrity, the %2 won't be created.", _tag, _requester, _destType];
 	_txt4 = format ["Civilians CANNOT use '%1' destinations. Check the 'fn_CSWR_population.sqf' file. For script integrity, the civilian group won't be created.", _destType];
 	// Main validation:
 	switch _destType do {
 		case "MOVE_ANY": {
-			// if at least X destinations of this type, and the side IS NOT civilian:
-			if ( count ((CSWR_destsANYWHERE # 0)+(CSWR_destsANYWHERE # 1)) >= CSWR_minDestAny && _tag isNotEqualTo "CIV" ) then { 
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
-			} else {
-				// If civilian:
-				if ( _tag isEqualTo "CIV" ) then {
-					// Warning message:
-					["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5;
+			// Escape
+			if ( _tag isEqualTo "CIV" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestAny;
+			_dests     = CSWR_destsANYWHERE;
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
 				} else {
 					// Warning message:
-					["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			}; 
-		};
-		case "MOVE_PUBLIC": { 
-			// if at least X destinations of this type:
-			if ( count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1)) >= CSWR_minDestPublic ) then {
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
+			// There sector letter:
 			} else {
-				// Warning message:
-				["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
-			}; 
-		};
-		case "MOVE_RESTRICTED": { 
-			// Checking which side is here:
-			switch _tag do {
-				case "BLU": { _destMarkers = (CSWR_destBLU # 0) + (CSWR_destBLU # 1) };
-				case "OPF": { _destMarkers = (CSWR_destOPF # 0) + (CSWR_destOPF # 1) };
-				case "IND": { _destMarkers = (CSWR_destIND # 0) + (CSWR_destIND # 1) };
-				//case "CIV": { _destMarkers = (CSWR_destCIV # 0) + (CSWR_destCIV # 1) };  // Civilian only public places.
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
 			};
-			// if at least X destinations of this type:
-			if ( count _destMarkers >= CSWR_minDestRestricted ) then {
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
+		};
+		case "MOVE_PUBLIC": {
+			// Escape
+				// Reserved space.
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestPublic;
+			_dests     = CSWR_destsPUBLIC;
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
+				};
+			// There sector letter:
 			} else {
-				// Warning message:
-				["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
-			}; 
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
+			};
+		};
+		case "MOVE_RESTRICTED": {
+			// Escape
+			if ( _tag isEqualTo "CIV" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestRestricted;
+			switch _tag do {
+				case "BLU": { _dests = CSWR_destRestrictBLU };
+				case "OPF": { _dests = CSWR_destRestrictOPF };
+				case "IND": { _dests = CSWR_destRestrictIND };
+				//case "CIV": { _dests = CSWR_destRestrictCIV };  // CIV cannot use this kind of destinations.
+			};
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( count (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
+				};
+			// There sector letter:
+			} else {
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
+			};
 		};
 		case "MOVE_WATCH": { 
-			// Checking which side is here:
+			// Escape
+			if ( _tag isEqualTo "CIV" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
+			if ( _requester isEqualTo "vehicle" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5 };
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestWatch;
 			switch _tag do {
-				case "BLU": { _destMarkers = (CSWR_destWatchBLU # 0) + (CSWR_destWatchBLU # 1) };
-				case "OPF": { _destMarkers = (CSWR_destWatchOPF # 0) + (CSWR_destWatchOPF # 1) };
-				case "IND": { _destMarkers = (CSWR_destWatchIND # 0) + (CSWR_destWatchIND # 1) };
-				//case "CIV": { _destMarkers = (CSWR_destWatchCIV # 0) + (CSWR_destWatchCIV # 1) };  // civilians doesnt watch.
+				case "BLU": { _dests = CSWR_destWatchBLU };
+				case "OPF": { _dests = CSWR_destWatchOPF };
+				case "IND": { _dests = CSWR_destWatchIND };
+				//case "CIV": { _dests = CSWR_destWatchCIV };  // CIV cannot use this kind of destinations.
 			};
-			// if at least X destinations of this type, and the requester IS NOT a vehicle, and the side IS NOT civilian:
-			if ( count _destMarkers >= CSWR_minDestWatch && _requester isNotEqualTo "vehicle" && _tag isNotEqualTo "CIV" ) then {
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
-			} else {
-				// If NOT a vehicle, and NOT civilian:
-				if ( _requester isNotEqualTo "vehicle" && _tag isNotEqualTo "CIV" ) then {
-					// Warning message:
-					["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
-				// Otherwise:
-				} else {
-					// If vehicle:
-					if ( _requester isEqualTo "vehicle" ) then {
-						// Warning message:
-						["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5;
-					};
-					// If civilian:
-					if ( _tag isEqualTo "CIV" ) then {
-						// Warning message:
-						["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5;
-					};
-				};
-			}; 
-		};
-		case "MOVE_OCCUPY": { 
-			// Checking which side is here:
-			switch _tag do {
-				case "BLU": { _destMarkers = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1) };
-				case "OPF": { _destMarkers = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1) };
-				case "IND": { _destMarkers = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1) };
-				case "CIV": { _destMarkers = (CSWR_destOccupyCIV # 0) + (CSWR_destOccupyCIV # 1) };
-			};
-			// if at least X destinations of this type (and the requester IS NOT a vehicle):
-			if ( count _destMarkers >= CSWR_minDestOccupy && _requester isNotEqualTo "vehicle" ) then { 
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
-			} else {
-				// If NOT a vehicle:
-				if ( _requester isNotEqualTo "vehicle" ) then {
-					// Warning message:
-					["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
-				// Otherwise, if vehicle:
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( count (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
 				} else {
 					// Warning message:
-					["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5;
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			}; 
-		};
-		case "MOVE_HOLD": { 
-			// Checking which side is here:
-			switch _tag do {
-				case "BLU": { _destMarkers = (CSWR_destHoldBLU # 0) + (CSWR_destHoldBLU # 1) };
-				case "OPF": { _destMarkers = (CSWR_destHoldOPF # 0) + (CSWR_destHoldOPF # 1) };
-				case "IND": { _destMarkers = (CSWR_destHoldIND # 0) + (CSWR_destHoldIND # 1) };
-				case "CIV": { _destMarkers = (CSWR_destHoldCIV # 0) + (CSWR_destHoldCIV # 1) };
-			};
-			// if at least X destinations of this type:
-			if ( count _destMarkers >= CSWR_minDestHold ) then {
-				// Prepare to return, saying there are available destinations:
-				_return = [[_destType, _destSector], true];
-			// Otherwise:
+			// There sector letter:
 			} else {
-				// Warning message:
-				["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
-			}; 
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
+			};
+		};
+		case "MOVE_OCCUPY": {
+			// Escape
+			if ( _requester isEqualTo "vehicle" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5 };
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestOccupy;
+			switch _tag do {
+				case "BLU": { _dests = CSWR_destOccupyBLU };
+				case "OPF": { _dests = CSWR_destOccupyOPF };
+				case "IND": { _dests = CSWR_destOccupyIND };
+				case "CIV": { _dests = CSWR_destOccupyCIV };
+			};
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( count (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
+				};
+			// There sector letter:
+			} else {
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
+			};
+		};
+		case "MOVE_HOLD": {
+			// Escape
+				// Reserved space.
+			// WIP - Function:
+			// Definitions:
+			_minAmount = CSWR_minDestHold;
+			switch _tag do {
+				case "BLU": { _dests = CSWR_destHoldBLU };
+				case "OPF": { _dests = CSWR_destHoldOPF };
+				case "IND": { _dests = CSWR_destHoldIND };
+				case "CIV": { _dests = CSWR_destHoldCIV };
+			};
+			// There's NO sector letter:
+			if ( _destSector isEqualTo "" ) then {
+				// if at least X destinations of this type:
+				if ( count (_dests # 0) >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
+				};
+			// There sector letter:
+			} else {
+				// Check only the correct sector letter:
+				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// if at least X destinations of this type:
+				if ( count _dests >= _minAmount ) then {
+					// Prepare to return:
+					_return = [[_destType, _destSector], true];
+				} else {
+					// Warning message:
+					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
+				};
+			};
 		};
 		default {
 			// If the declarated destination type in fn_CSWR_population file IS NOT recognized:
@@ -2950,18 +3020,18 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Escape:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
 	// Initial values:
-	_canSpwn         = true;
-	_veh             = objNull;
-	_spwn            = "";
-	_bookingInfo     = [];
-	_isBooked        = false;
-	_spwnPosChecker  = [];
-	_spwnPos         = [];
-	_isPara          = false;
-	_serverBreath    = 0;
-	_blockers        = [];
-	_time            = 0;
-	_nvg             = "";
+	_canSpwn        = true;
+	_veh            = objNull;
+	_spwn           = "";
+	_bookingInfo    = [];
+	_isBooked       = false;
+	_spwnPosChecker = [];
+	_spwnPos        = [];
+	_isPara         = false;
+	_serverBreath   = 0;
+	_blockers       = [];
+	_time           = 0;
+	_nvg            = "";
 	// Errors handling:
 		// reserved space.
 	// Declarations:
@@ -3695,7 +3765,7 @@ THY_fnc_CSWR_add_vehicle = {
 
 
 THY_fnc_CSWR_go = {
-	// This function select the type of movement the group/vehicle will execute in a row.
+	// This function select the type of movement the group/vehicle will execute in a row. This function runs only once by group/vehicle, except when a vehicle request RTB function.
 	// Returns nothing.
 
 	params["_spwns", "_destType", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAirCrew"];
@@ -3713,108 +3783,134 @@ THY_fnc_CSWR_go = {
 		// reserved space.
 	// Main functionality:
 	switch _destType do {
-		case "MOVE_ANY": {  // Important: Civilians are not able to do this.
+		case "MOVE_ANY": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
 				// Updating:
 				_dests = (CSWR_destsANYWHERE # 0);
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
+				// Looks for only for right letter in sectorized ones:
 				_dests = +(CSWR_destsANYWHERE # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move looping:
 			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_ANYWHERE;
 		};
 		case "MOVE_PUBLIC": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
 				// Updating:
 				_dests = (CSWR_destsPUBLIC # 0);
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
+				// Looks for only for right letter in sectorized ones:
 				_dests = +((CSWR_destsPUBLIC # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 });
 			};
 			// Start the move looping:
 			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_PUBLIC;
 		};
-		case "MOVE_RESTRICTED": {  // Important: Civilians are not able to do this.
-			// Defining the destination side markers to be considered:
-			switch _tag do {
-				case "BLU": { _dests = +CSWR_destBLU };
-				case "OPF": { _dests = +CSWR_destOPF };
-				case "IND": { _dests = +CSWR_destIND };
-				//case "CIV": { _dests = +CSWR_destCIV };
-			};
+		case "MOVE_RESTRICTED": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
-				// Updating:
-				_dests = _dests # 0;
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = CSWR_destRestrictBLU # 0 };
+					case "OPF": { _dests = CSWR_destRestrictOPF # 0 };
+					case "IND": { _dests = CSWR_destRestrictIND # 0 };
+					//case "CIV": { _dests = CSWR_destRestrictCIV # 0 };  // CIV cannot use this kind of destination.
+				};
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
-				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = +(CSWR_destRestrictBLU # 1) };
+					case "OPF": { _dests = +(CSWR_destRestrictOPF # 1) };
+					case "IND": { _dests = +(CSWR_destRestrictIND # 1) };
+					//case "CIV": { _dests = +(CSWR_destRestrictCIV # 1) };  // CIV cannot use this kind of destination.
+				};
+				// Looks for only for right letter in sectorized ones:
+				_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move looping:
 			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAirCrew, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
 		};
-		case "MOVE_WATCH": {  // Important: Vehicles and Civilian side are not able to do this.
-			// Defining the destination side markers to be considered:
-			switch _tag do {
-				case "BLU": { _dests = +CSWR_destWatchBLU };
-				case "OPF": { _dests = +CSWR_destWatchOPF };
-				case "IND": { _dests = +CSWR_destWatchIND };
-				//case "CIV": { _dests = +CSWR_destWatchCIV };
-			};
+		case "MOVE_WATCH": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
-				// Updating:
-				_dests = _dests # 0;
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = CSWR_destWatchBLU # 0 };
+					case "OPF": { _dests = CSWR_destWatchOPF # 0 };
+					case "IND": { _dests = CSWR_destWatchIND # 0 };
+					//case "CIV": { _dests = CSWR_destWatchCIV # 0 };  // CIV cannot use this kind of destination.
+				};
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
-				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = +(CSWR_destWatchBLU # 1) };
+					case "OPF": { _dests = +(CSWR_destWatchOPF # 1) };
+					case "IND": { _dests = +(CSWR_destWatchIND # 1) };
+					//case "CIV": { _dests = +(CSWR_destWatchCIV # 1) };  // CIV cannot use this kind of destination.
+				};
+				// Looks for only for right letter in sectorized ones:
+				_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move (this is not a looping):
 			[_dests, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH;
 		};
-		case "MOVE_OCCUPY": {  // Important: Vehicles are not able to do this.
-			// Defining the destination side markers to be considered:
-			switch _tag do {
-				case "BLU": { _dests = +CSWR_destOccupyBLU };
-				case "OPF": { _dests = +CSWR_destOccupyOPF };
-				case "IND": { _dests = +CSWR_destOccupyIND };
-				//case "CIV": { _dests = +CSWR_destOccupyCIV };
-			};
+		case "MOVE_OCCUPY": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
-				// Updating:
-				_dests = _dests # 0;
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = CSWR_destOccupyBLU # 0 };
+					case "OPF": { _dests = CSWR_destOccupyOPF # 0 };
+					case "IND": { _dests = CSWR_destOccupyIND # 0 };
+					case "CIV": { _dests = CSWR_destOccupyCIV # 0 };
+				};
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
-				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = +(CSWR_destOccupyBLU # 1) };
+					case "OPF": { _dests = +(CSWR_destOccupyOPF # 1) };
+					case "IND": { _dests = +(CSWR_destOccupyIND # 1) };
+					case "CIV": { _dests = +(CSWR_destOccupyCIV # 1) };
+				};
+				// Looks for only for right letter in sectorized ones:
+				_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move looping:
 			[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 		};
-		case "MOVE_HOLD": {  // Important: Helicopters are not able to do this.
-			// Defining the destination side markers to be considered:
-			switch _tag do {
-				case "BLU": { _dests = +CSWR_destHoldBLU };
-				case "OPF": { _dests = +CSWR_destHoldOPF };
-				case "IND": { _dests = +CSWR_destHoldIND };
-				case "CIV": { _dests = +CSWR_destHoldCIV };
-			};
+		case "MOVE_HOLD": {
+			// WIP the same function of that used in THY_fnc_CSWR_is_valid_destination
 			// If there's NO sectorized destination:
 			if ( _destSector isEqualTo "" ) then {
-				// Updating:
-				_dests = _dests # 0;
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = CSWR_destHoldBLU # 0 };
+					case "OPF": { _dests = CSWR_destHoldOPF # 0 };
+					case "IND": { _dests = CSWR_destHoldIND # 0 };
+					case "CIV": { _dests = CSWR_destHoldCIV # 0 };
+				};
 			// If there's sectorized destination:
 			} else {
-				// Looks for only for sectorized ones:
-				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
+				// Which side is consulting:
+				switch _tag do {
+					case "BLU": { _dests = +(CSWR_destHoldBLU # 1) };
+					case "OPF": { _dests = +(CSWR_destHoldOPF # 1) };
+					case "IND": { _dests = +(CSWR_destHoldIND # 1) };
+					case "CIV": { _dests = +(CSWR_destHoldCIV # 1) };
+				};
+				// Looks for only for right letter in sectorized ones:
+				_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
 			};
 			// Start the move looping:
 			[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
@@ -4155,6 +4251,8 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Declarations:
 	_isHunting = selectRandom [true, false, false];
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
+	diag_log _dests;
+	systemChat format ["Aqui: %1", str _dests];
 	_areaToPass = markerPos (selectRandom _dests);
 	// Check the waypoint altitude:
 	_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _shouldRTB] call THY_fnc_CSWR_go_altitude;

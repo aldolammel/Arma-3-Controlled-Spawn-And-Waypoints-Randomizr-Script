@@ -310,7 +310,7 @@ if (!isServer) exitWith {};
 	],
 	[1 destination types
 		[0 blu
-			[0 CSWR_destBLU
+			[0 CSWR_destRestrictBLU
 				[0 non-sectorized],
 				[1 sectorized]
 			],
@@ -328,7 +328,7 @@ if (!isServer) exitWith {};
 			]
 		],
 		[1 opf
-			[0 CSWR_destOPF
+			[0 CSWR_destRestrictOPF
 				[0 non-sectorized],
 				[1 sectorized]
 			],
@@ -346,7 +346,7 @@ if (!isServer) exitWith {};
 			]
 		],
 		[2 ind
-			[0 CSWR_destIND
+			[0 CSWR_destRestrictIND
 				[0 non-sectorized],
 				[1 sectorized]
 			],
@@ -364,7 +364,7 @@ if (!isServer) exitWith {};
 			]
 		],
 		[3 civ
-			[0 CSWR_destCIV
+			[0 CSWR_destRestrictCIV
 				[0 non-sectorized],
 				[1 sectorized]
 			],
@@ -390,41 +390,41 @@ if (!isServer) exitWith {};
 	];
 	*/
 	// Only BluFor destinations:
-	CSWR_destBLU       = ((CSWR_confirmedMarkers # 1) # 0) # 0;
+	CSWR_destRestrictBLU = ((CSWR_confirmedMarkers # 1) # 0) # 0;
 	CSWR_destWatchBLU  = ((CSWR_confirmedMarkers # 1) # 0) # 1;
 	CSWR_destOccupyBLU = ((CSWR_confirmedMarkers # 1) # 0) # 2;
 	CSWR_destHoldBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 3;
-	_destBLU           = (CSWR_destBLU # 0)       + (CSWR_destBLU # 1);
+	_destBLU           = (CSWR_destRestrictBLU # 0)       + (CSWR_destRestrictBLU # 1);
 	_destWatchBLU      = (CSWR_destWatchBLU # 0)  + (CSWR_destWatchBLU # 1);
 	_destOccupyBLU     = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1);
 	_destHoldBLU       = (CSWR_destHoldBLU # 0)   + (CSWR_destHoldBLU # 1);
 	_destsAllBLU       = _destBLU + _destWatchBLU + _destOccupyBLU + _destHoldBLU;  // NEVER include PUBLICs in this calc!
 	// Only OpFor destinations:
-	CSWR_destOPF       = ((CSWR_confirmedMarkers # 1) # 1) # 0;
+	CSWR_destRestrictOPF = ((CSWR_confirmedMarkers # 1) # 1) # 0;
 	CSWR_destWatchOPF  = ((CSWR_confirmedMarkers # 1) # 1) # 1;
 	CSWR_destOccupyOPF = ((CSWR_confirmedMarkers # 1) # 1) # 2;
 	CSWR_destHoldOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 3;
-	_destOPF           = (CSWR_destOPF # 0)       + (CSWR_destOPF # 1);
+	_destOPF           = (CSWR_destRestrictOPF # 0)       + (CSWR_destRestrictOPF # 1);
 	_destWatchOPF      = (CSWR_destWatchOPF # 0)  + (CSWR_destWatchOPF # 1);
 	_destOccupyOPF     = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1);
 	_destHoldOPF       = (CSWR_destHoldOPF # 0)   + (CSWR_destHoldOPF # 1);
 	_destsAllOPF       = _destOPF + _destWatchOPF + _destOccupyOPF + _destHoldOPF;  // NEVER include PUBLICs in this calc!
 	// Only Independent destinations:
-	CSWR_destIND       = ((CSWR_confirmedMarkers # 1) # 2) # 0;
+	CSWR_destRestrictIND = ((CSWR_confirmedMarkers # 1) # 2) # 0;
 	CSWR_destWatchIND  = ((CSWR_confirmedMarkers # 1) # 2) # 1;
 	CSWR_destOccupyIND = ((CSWR_confirmedMarkers # 1) # 2) # 2;
 	CSWR_destHoldIND   = ((CSWR_confirmedMarkers # 1) # 2) # 3;
-	_destIND           = (CSWR_destIND # 0)       + (CSWR_destIND # 1);
+	_destIND           = (CSWR_destRestrictIND # 0)       + (CSWR_destRestrictIND # 1);
 	_destWatchIND      = (CSWR_destWatchIND # 0)  + (CSWR_destWatchIND # 1);
 	_destOccupyIND     = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1);
 	_destHoldIND       = (CSWR_destHoldIND # 0)   + (CSWR_destHoldIND # 1);
 	_destsAllIND       = _destIND + _destWatchIND + _destOccupyIND + _destHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
-	CSWR_destCIV       = ((CSWR_confirmedMarkers # 1) # 3) # 0;  // CIV has no restricted-move, actually. Reserved space only.
+	CSWR_destRestrictCIV = ((CSWR_confirmedMarkers # 1) # 3) # 0;  // CIV has no restricted-move, actually. Reserved space only.
 	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually. Reserved space only.
 	CSWR_destOccupyCIV = ((CSWR_confirmedMarkers # 1) # 3) # 2;
 	CSWR_destHoldCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 3;
-	_destCIV           = (CSWR_destCIV # 0)       + (CSWR_destCIV # 1);
+	_destCIV           = (CSWR_destRestrictCIV # 0)       + (CSWR_destRestrictCIV # 1);
 	_destWatchCIV      = (CSWR_destWatchCIV # 0)  + (CSWR_destWatchCIV # 1);
 	_destOccupyCIV     = (CSWR_destOccupyCIV # 0) + (CSWR_destOccupyCIV # 1);
 	_destHoldCIV       = (CSWR_destHoldCIV # 0)   + (CSWR_destHoldCIV # 1);
@@ -437,8 +437,8 @@ if (!isServer) exitWith {};
 					_destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
 	// All destinations, except the specialized/special ones:
 	CSWR_destsANYWHERE  = [
-		(CSWR_destsPUBLIC # 0) + (CSWR_destBLU # 0) + (CSWR_destOPF # 0) + (CSWR_destIND # 0) + (CSWR_destCIV # 0),  // nonSectorized
-		(CSWR_destsPUBLIC # 1) + (CSWR_destBLU # 1) + (CSWR_destOPF # 1) + (CSWR_destIND # 1) + (CSWR_destCIV # 1)   // Sectorized
+		(CSWR_destsPUBLIC # 0) + (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictIND # 0) + (CSWR_destRestrictCIV # 0),  // nonSectorized
+		(CSWR_destsPUBLIC # 1) + (CSWR_destRestrictBLU # 1) + (CSWR_destRestrictOPF # 1) + (CSWR_destRestrictIND # 1) + (CSWR_destRestrictCIV # 1)   // Sectorized
 	];
 	// Occupy-move validations:
 	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, _destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
@@ -590,19 +590,19 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_groupTypesForSpwnsVehCIV";
 	publicVariable "CSWR_groupTypesForSpwnsHeliCIV";
 	publicVariable "CSWR_groupTypesForSpwnsParaCIV";
-	publicVariable "CSWR_destBLU";
+	publicVariable "CSWR_destRestrictBLU";
 	publicVariable "CSWR_destWatchBLU";
 	publicVariable "CSWR_destOccupyBLU";
 	publicVariable "CSWR_destHoldBLU";
-	publicVariable "CSWR_destOPF";
+	publicVariable "CSWR_destRestrictOPF";
 	publicVariable "CSWR_destWatchOPF";
 	publicVariable "CSWR_destOccupyOPF";
 	publicVariable "CSWR_destHoldOPF";
-	publicVariable "CSWR_destIND";
+	publicVariable "CSWR_destRestrictIND";
 	publicVariable "CSWR_destWatchIND";
 	publicVariable "CSWR_destOccupyIND";
 	publicVariable "CSWR_destHoldIND";
-	publicVariable "CSWR_destCIV";
+	publicVariable "CSWR_destRestrictCIV";
 	publicVariable "CSWR_destWatchCIV";
 	publicVariable "CSWR_destOccupyCIV";
 	publicVariable "CSWR_destHoldCIV";
