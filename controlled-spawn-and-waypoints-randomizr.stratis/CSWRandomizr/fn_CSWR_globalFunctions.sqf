@@ -1017,7 +1017,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			// There's NO sector letter:
 			if ( _destSector isEqualTo "" ) then {
 				// if at least X destinations of this type:
-				if ( (_dests # 0) >= _minAmount ) then {
+				if ( count (_dests # 0) >= _minAmount ) then {
 					// Prepare to return:
 					_return = [[_destType, _destSector], true];
 				} else {
@@ -1048,7 +1048,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			// There's NO sector letter:
 			if ( _destSector isEqualTo "" ) then {
 				// if at least X destinations of this type:
-				if ( (_dests # 0) >= _minAmount ) then {
+				if ( count (_dests # 0) >= _minAmount ) then {
 					// Prepare to return:
 					_return = [[_destType, _destSector], true];
 				} else {
@@ -4251,8 +4251,6 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Declarations:
 	_isHunting = selectRandom [true, false, false];
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
-	diag_log _dests;
-	systemChat format ["Aqui: %1", str _dests];
 	_areaToPass = markerPos (selectRandom _dests);
 	// Check the waypoint altitude:
 	_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _shouldRTB] call THY_fnc_CSWR_go_altitude;

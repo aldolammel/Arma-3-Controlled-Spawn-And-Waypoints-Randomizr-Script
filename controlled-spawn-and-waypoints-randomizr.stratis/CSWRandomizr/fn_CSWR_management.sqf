@@ -103,7 +103,7 @@ if (!isServer) exitWith {};
 // When the mission starts:
 [] spawn {
 	// Local object declarations:
-	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
+	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
 	// Debug txts:
 	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
 	CSWR_txtWarnHeader  = toUpper "CSWR WARNING >";
@@ -391,54 +391,54 @@ if (!isServer) exitWith {};
 	*/
 	// Only BluFor destinations:
 	CSWR_destRestrictBLU = ((CSWR_confirmedMarkers # 1) # 0) # 0;
-	CSWR_destWatchBLU  = ((CSWR_confirmedMarkers # 1) # 0) # 1;
-	CSWR_destOccupyBLU = ((CSWR_confirmedMarkers # 1) # 0) # 2;
-	CSWR_destHoldBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 3;
-	_destBLU           = (CSWR_destRestrictBLU # 0)       + (CSWR_destRestrictBLU # 1);
-	_destWatchBLU      = (CSWR_destWatchBLU # 0)  + (CSWR_destWatchBLU # 1);
-	_destOccupyBLU     = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1);
-	_destHoldBLU       = (CSWR_destHoldBLU # 0)   + (CSWR_destHoldBLU # 1);
-	_destsAllBLU       = _destBLU + _destWatchBLU + _destOccupyBLU + _destHoldBLU;  // NEVER include PUBLICs in this calc!
+	CSWR_destWatchBLU    = ((CSWR_confirmedMarkers # 1) # 0) # 1;
+	CSWR_destOccupyBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 2;
+	CSWR_destHoldBLU     = ((CSWR_confirmedMarkers # 1) # 0) # 3;
+	_destRestrictBLU     = (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictBLU # 1);
+	_destWatchBLU        = (CSWR_destWatchBLU # 0)  + (CSWR_destWatchBLU # 1);
+	_destOccupyBLU       = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1);
+	_destHoldBLU         = (CSWR_destHoldBLU # 0)   + (CSWR_destHoldBLU # 1);
+	_destsAllBLU         = _destRestrictBLU + _destWatchBLU + _destOccupyBLU + _destHoldBLU;  // NEVER include PUBLICs in this calc!
 	// Only OpFor destinations:
 	CSWR_destRestrictOPF = ((CSWR_confirmedMarkers # 1) # 1) # 0;
-	CSWR_destWatchOPF  = ((CSWR_confirmedMarkers # 1) # 1) # 1;
-	CSWR_destOccupyOPF = ((CSWR_confirmedMarkers # 1) # 1) # 2;
-	CSWR_destHoldOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 3;
-	_destOPF           = (CSWR_destRestrictOPF # 0)       + (CSWR_destRestrictOPF # 1);
-	_destWatchOPF      = (CSWR_destWatchOPF # 0)  + (CSWR_destWatchOPF # 1);
-	_destOccupyOPF     = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1);
-	_destHoldOPF       = (CSWR_destHoldOPF # 0)   + (CSWR_destHoldOPF # 1);
-	_destsAllOPF       = _destOPF + _destWatchOPF + _destOccupyOPF + _destHoldOPF;  // NEVER include PUBLICs in this calc!
+	CSWR_destWatchOPF    = ((CSWR_confirmedMarkers # 1) # 1) # 1;
+	CSWR_destOccupyOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 2;
+	CSWR_destHoldOPF     = ((CSWR_confirmedMarkers # 1) # 1) # 3;
+	_destRestrictOPF     = (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictOPF # 1);
+	_destWatchOPF        = (CSWR_destWatchOPF # 0)  + (CSWR_destWatchOPF # 1);
+	_destOccupyOPF       = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1);
+	_destHoldOPF         = (CSWR_destHoldOPF # 0)   + (CSWR_destHoldOPF # 1);
+	_destsAllOPF         = _destRestrictOPF + _destWatchOPF + _destOccupyOPF + _destHoldOPF;  // NEVER include PUBLICs in this calc!
 	// Only Independent destinations:
 	CSWR_destRestrictIND = ((CSWR_confirmedMarkers # 1) # 2) # 0;
-	CSWR_destWatchIND  = ((CSWR_confirmedMarkers # 1) # 2) # 1;
-	CSWR_destOccupyIND = ((CSWR_confirmedMarkers # 1) # 2) # 2;
-	CSWR_destHoldIND   = ((CSWR_confirmedMarkers # 1) # 2) # 3;
-	_destIND           = (CSWR_destRestrictIND # 0)       + (CSWR_destRestrictIND # 1);
-	_destWatchIND      = (CSWR_destWatchIND # 0)  + (CSWR_destWatchIND # 1);
-	_destOccupyIND     = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1);
-	_destHoldIND       = (CSWR_destHoldIND # 0)   + (CSWR_destHoldIND # 1);
-	_destsAllIND       = _destIND + _destWatchIND + _destOccupyIND + _destHoldIND;  // NEVER include PUBLICs in this calc!
+	CSWR_destWatchIND    = ((CSWR_confirmedMarkers # 1) # 2) # 1;
+	CSWR_destOccupyIND   = ((CSWR_confirmedMarkers # 1) # 2) # 2;
+	CSWR_destHoldIND     = ((CSWR_confirmedMarkers # 1) # 2) # 3;
+	_destRestrictIND     = (CSWR_destRestrictIND # 0) + (CSWR_destRestrictIND # 1);
+	_destWatchIND        = (CSWR_destWatchIND # 0)  + (CSWR_destWatchIND # 1);
+	_destOccupyIND       = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1);
+	_destHoldIND         = (CSWR_destHoldIND # 0)   + (CSWR_destHoldIND # 1);
+	_destsAllIND         = _destRestrictIND + _destWatchIND + _destOccupyIND + _destHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
 	CSWR_destRestrictCIV = ((CSWR_confirmedMarkers # 1) # 3) # 0;  // CIV has no restricted-move, actually. Reserved space only.
-	CSWR_destWatchCIV  = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually. Reserved space only.
-	CSWR_destOccupyCIV = ((CSWR_confirmedMarkers # 1) # 3) # 2;
-	CSWR_destHoldCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 3;
-	_destCIV           = (CSWR_destRestrictCIV # 0)       + (CSWR_destRestrictCIV # 1);
-	_destWatchCIV      = (CSWR_destWatchCIV # 0)  + (CSWR_destWatchCIV # 1);
-	_destOccupyCIV     = (CSWR_destOccupyCIV # 0) + (CSWR_destOccupyCIV # 1);
-	_destHoldCIV       = (CSWR_destHoldCIV # 0)   + (CSWR_destHoldCIV # 1);
-	_destsAllCIV       = _destCIV + _destWatchCIV + _destOccupyCIV + _destHoldCIV;  // NEVER include PUBLICs in this calc!
+	CSWR_destWatchCIV    = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually. Reserved space only.
+	CSWR_destOccupyCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 2;
+	CSWR_destHoldCIV     = ((CSWR_confirmedMarkers # 1) # 3) # 3;
+	_destRestrictCIV     = (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);
+	_destWatchCIV        = (CSWR_destWatchCIV # 0)  + (CSWR_destWatchCIV # 1);
+	_destOccupyCIV       = (CSWR_destOccupyCIV # 0) + (CSWR_destOccupyCIV # 1);
+	_destHoldCIV         = (CSWR_destHoldCIV # 0)   + (CSWR_destHoldCIV # 1);
+	_destsAllCIV         = _destRestrictCIV + _destWatchCIV + _destOccupyCIV + _destHoldCIV;  // NEVER include PUBLICs in this calc!
 	// Civilian and soldier destinations:
-	CSWR_destsPUBLIC   = ((CSWR_confirmedMarkers # 1) # 4) # 0;
+	CSWR_destsPUBLIC     = ((CSWR_confirmedMarkers # 1) # 4) # 0;
 	// Specialized destinations:
 	_destsSpecial = _destWatchBLU  + _destWatchOPF  + _destWatchIND  + _destWatchCIV  +    // watch
 					_destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV +    // occupy
 					_destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
 	// All destinations, except the specialized/special ones:
 	CSWR_destsANYWHERE  = [
-		(CSWR_destsPUBLIC # 0) + (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictIND # 0) + (CSWR_destRestrictCIV # 0),  // nonSectorized
-		(CSWR_destsPUBLIC # 1) + (CSWR_destRestrictBLU # 1) + (CSWR_destRestrictOPF # 1) + (CSWR_destRestrictIND # 1) + (CSWR_destRestrictCIV # 1)   // Sectorized
+		(CSWR_destsPUBLIC # 0)+(CSWR_destRestrictBLU # 0)+(CSWR_destRestrictOPF # 0)+(CSWR_destRestrictIND # 0)+(CSWR_destRestrictCIV # 0),  // nonSectorized
+		(CSWR_destsPUBLIC # 1)+(CSWR_destRestrictBLU # 1)+(CSWR_destRestrictOPF # 1)+(CSWR_destRestrictIND # 1)+(CSWR_destRestrictCIV # 1)   // Sectorized
 	];
 	// Occupy-move validations:
 	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, _destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
@@ -618,35 +618,31 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_minDestOccupy";
 	publicVariable "CSWR_minDestHold";
 	publicVariable "CSWR_minDestPublic";
-	// Debug messages:
+	// Debug:
 	if CSWR_isOnDebugGlobal then {
-		// If the specific side is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnBLU && count CSWR_spwnsAllBLU > 0 ) then {
-			// If one of each side destination type has at least 2 destination points, show the debug message:
-			if ( count _destBLU >= CSWR_minDestRestricted || count _destWatchBLU >= CSWR_minDestWatch || count _destOccupyBLU >= CSWR_minDestOccupy || count _destHoldBLU >= CSWR_minDestHold || count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1)) >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 SIDE BLU > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count _destsAllBLU, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
-			};
+			// Message:
+			systemChat format ["%1 SIDE BLU > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
+			CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count _destsAllBLU, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
 		};
-		// If the specific side is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnOPF && count CSWR_spwnsAllOPF > 0 ) then {
-			// If one of each side destination type has at least 2 destination points, show the debug message:
-			if ( count _destOPF >= CSWR_minDestRestricted || count _destWatchOPF >= CSWR_minDestWatch || count _destOccupyOPF >= CSWR_minDestOccupy || count _destHoldOPF >= CSWR_minDestHold || count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1)) >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 SIDE OPF > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count _destsAllOPF, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
-			};
+			// Message:
+			systemChat format ["%1 SIDE OPF > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
+			CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count _destsAllOPF, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
 		};
-		// If the specific side is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnIND && count CSWR_spwnsAllIND > 0 ) then {
-			// If one of each side destination type has at least 2 destination points, show the debug message:
-			if ( count _destIND >= CSWR_minDestRestricted || count _destWatchIND >= CSWR_minDestWatch || count _destOccupyIND >= CSWR_minDestOccupy || count _destHoldIND >= CSWR_minDestHold || count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1)) >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 SIDE IND > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count _destsAllIND, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
-			};
+			// Message:
+			systemChat format ["%1 SIDE IND > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
+			CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count _destsAllIND, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
 		};
-		// If the specific side is ON and has at least 1 spawnpoint, keep going:
+		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnCIV && count CSWR_spwnsAllCIV > 0 ) then {
-			// If one of each side destination type has at least 2 destination points, show the debug message:
-			if ( /* count _destCIV >= CSWR_minDestRestricted || count _destWatchCIV >= CSWR_minDestWatch || */ count _destOccupyCIV >= CSWR_minDestOccupy || count _destHoldCIV >= CSWR_minDestHold || count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1)) >= CSWR_minDestPublic ) then {
-				systemChat format ["%1 SIDE CIV > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).", CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count _destsAllCIV, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
-			};
+			// Message:
+			systemChat format ["%1 SIDE CIV > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
+			CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count _destsAllCIV, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
 		};
 	};
 	// Debug monitor looping:
