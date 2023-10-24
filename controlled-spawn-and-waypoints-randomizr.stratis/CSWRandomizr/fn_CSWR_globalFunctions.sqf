@@ -3528,22 +3528,31 @@ THY_fnc_CSWR_add_group = {
 	// Escape > If some issue with the side declaration, abort:
 	if ( _tag isEqualTo "" ) exitWith {
 		// Warning message:
-		["%1 One or more groups have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.", 
+		["%1 SPAWN > One or more groups have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.", 
 		CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5;
 	};
-	// Escape > If _spwnsInfo is not array or it's first element is not array, abort:
-	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" || typeName _spwnsNonSector isNotEqualTo "ARRAY" ) exitWith {
+	// Escape > If _spwnsInfo is not array, abort:
+	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" ) exitWith {
 		// Warning message:
-		["%1 %2 > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
+		["%1 SPAWN > One or more %2 group lines have no '[ ]' in spawn-points-type column. Fix it in 'fn_CSWR_population.sqf' file, e.g: [CSWR_spwnsBLU] or [CSWR_spwnsOPF].",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
-	// Escape > If _spwnsInfo first element doesn't exist, abort:
+	// Escape > If nonexistent spawn-points-type, abort:
+	if ( isNil "_spwnsInfo # 0" ) exitWith {
 		// Warning message:
-		// WIP if ( xxxxxx ) exitWith {};
+		["%1 SPAWN > One or more %2 group lines got an invalid type of spawn-points. Check your fn_CSWR_population.sqf file. The %2 group won't be created.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
+	// Escape > first element is not array, abort:
+	if ( typeName _spwnsNonSector isNotEqualTo "ARRAY" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+	};
 	// Escape > If _spwnsAll is empty, abort:
 	if ( count _spwnsAll isEqualTo 0 ) exitWith {
 		// Warning message:
-		["%1 SPAWN > %2 > There IS NO SPAWNPOINT to create a group. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden.", 
+		["%1 SPAWN > There IS NO %2 SPAWNPOINT to create a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the side tag is not found in the first spawn-marker inside _spwnsAll, abort to avoid a side spawning through spawnpoint from another side:
@@ -3555,7 +3564,7 @@ THY_fnc_CSWR_add_group = {
 	// Escape > If the spawn sector letter is not a string, even when empty, abort:
 	if ( typeName _spwnsSectorLetter isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 SPAWN > %2 > Make sure the SPAWN-POINT SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwns%2, 'X'].", 
+		["%1 SPAWN > Make sure the %2 SPAWN-POINT SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwns%2, 'X'].", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the spawn sector letter has more than one character, abort:
@@ -3664,7 +3673,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Escape > If _spwnsInfo is not array or it's first element is not array, abort:
 	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" || typeName _spwnsNonSector isNotEqualTo "ARRAY" ) exitWith {
 		// Warning message:
-		["%1 %2 > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
+		["%1 SPAWN > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If _spwnsInfo first element doesn't exist, abort:
@@ -3674,10 +3683,10 @@ THY_fnc_CSWR_add_vehicle = {
 	if ( count _spwnsAll isEqualTo 0 ) exitWith {
 		// Warning messages:
 		if !_isHeli then {
-			["%1 SPAWN > %2 > There's NO SPAWNPOINT to create a vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwnsVeh%2' or 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden. For script integrity, the vehicle WON'T SPAWN!",
+			["%1 SPAWN > There's NO %2 SPAWNPOINT to create a %2 vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwnsVeh%2' or 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden. For script integrity, the vehicle WON'T SPAWN!",
 			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 		} else {
-			["%1 SPAWN > %2 > A HELICOPTER HAS NO SPAWNPOINT. Add at least one SPAWN-MARKER for helicopters on Eden, e.g. 'cswr_spawnheli_%2_1'. For script integrity, the vehicle WON'T SPAWN!",
+			["%1 SPAWN > A %2 HELICOPTER HAS NO SPAWNPOINT. Add at least one SPAWN-MARKER for helicopters on Eden, e.g. 'cswr_spawnheli_%2_1'. For script integrity, the vehicle WON'T SPAWN!",
 			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 		};
 	};
@@ -3690,7 +3699,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Escape > If the spawn sector letter is not a string, even when empty, abort:
 	if ( typeName _spwnsSectorLetter isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 SPAWN > %2 > Make sure the SPAWN-POINT SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwnsVeh%2, 'X'].",
+		["%1 SPAWN > Make sure the %2 SPAWN-POINT SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwnsVeh%2, 'X'].",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the spawn sector letter has more than one character, abort:
@@ -3702,13 +3711,13 @@ THY_fnc_CSWR_add_vehicle = {
 	// Escape > If has something declared as vehicle classname, but is not string, abort:
 	if ( _vehClass isNotEqualTo "" && typeName _vehClass isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
-		["%1 VEHICLE CUSTOMIZATION > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
+		["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If the vehicle variable is empty, abort:
 	if ( _vehClass isEqualTo "" ) exitWith {
 		// Warning message:
-		["%1 VEHICLE CUSTOMIZATION > At least one %2 vehicle type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script gets to know which vehicle should be created. Fix it!", 
+		["%1 VEHICLE > At least one %2 vehicle type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script gets to know which vehicle should be created. Fix it!", 
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	};
 	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:

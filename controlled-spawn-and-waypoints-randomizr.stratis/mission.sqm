@@ -8,7 +8,7 @@ class EditorData
 	toggles=1537;
 	class ItemIDProvider
 	{
-		nextID=609;
+		nextID=611;
 	};
 	class MarkerIDProvider
 	{
@@ -21,9 +21,9 @@ class EditorData
 	class Camera
 	{
 		pos[]={1921.6674,65.824791,5818.063};
-		dir[]={-0.6365726,-0.50383204,-0.58389097};
-		up[]={-0.37129554,0.86380166,-0.34056777};
-		aside[]={-0.67595494,0,0.73694307};
+		dir[]={-0.63657272,-0.50383204,-0.5838908};
+		up[]={-0.3712956,0.86380166,-0.34056768};
+		aside[]={-0.67595476,1.4901161e-008,0.73694319};
 	};
 };
 binarizationWanted=0;
@@ -627,7 +627,7 @@ class Mission
 			name="CSWR Destinations";
 			class Entities
 			{
-				items=36;
+				items=38;
 				class Item0
 				{
 					dataType="Marker";
@@ -1019,9 +1019,29 @@ class Mission
 					colorName="ColorBlue";
 					id=608;
 				};
+				class Item36
+				{
+					dataType="Marker";
+					position[]={1616.7574,5.5,5469.8047};
+					name="cswr_move_blu_1";
+					text="Move restricted";
+					type="Empty";
+					colorName="ColorBlue";
+					id=609;
+				};
+				class Item37
+				{
+					dataType="Marker";
+					position[]={1809.0869,5.5,5416.3906};
+					name="cswr_move_blu_2";
+					text="Move restricted";
+					type="Empty";
+					colorName="ColorBlue";
+					id=610;
+				};
 			};
 			id=51;
-			atlOffset=-42.068062;
+			atlOffset=2.8965182;
 		};
 		class Item4
 		{
