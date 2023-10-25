@@ -3501,12 +3501,192 @@ THY_fnc_CSWR_spawn_delay = {
 };
 
 
+THY_fnc_CSWR_add_validation = {
+	// This function <doc string>.
+	// Returns _isInvalid: bool.
+
+	params ["_requester", "_tag", "_spwnsInfo", "_requesterClass", "_destsInfo"];
+	private ["_isInvalid"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_isInvalid = false;
+	// Declarations:
+	_requester = if ( _requester isEqualTo "group") then { "group" } else { "vehicle" };
+	// Debug texts:
+		// reserved space.
+	// Main functionality:
+	// Escape > If some issue with the side declaration, abort:
+	if ( _tag isEqualTo "" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > One or more %2s have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The %2 WON'T be created.",
+		CSWR_txtWarnHeader, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If _spwnsInfo is not array, abort:
+	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > One or more %2 %3 lines have no '[ ]' in spawn-points-type column. Fix it in 'fn_CSWR_population.sqf' file, e.g: [CSWR_spwns%2]. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If nonexistent spawn-points-type, abort:
+	if ( isNil { typeName (_spwnsInfo # 0) isEqualTo "ARRAY" } || count _spwnsInfo isEqualTo 0 ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+		// Warning message:
+		["%1 SPAWN > One or more %2 %3 lines got an invalid type of spawn-points or the spawn-points-type column has its '[ ]' empty. Fix it in fn_CSWR_population.sqf file, e.g: [CSWR_spwns%2]. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > if first element is a string, abort:
+	if ( typeName (_spwnsInfo # 0) isEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > Looks you didn't type the %2 spawn-points in its column, only the sector. Use that inside the '[ ]' like this for example: [CSWR_spwns%2, ''A''] in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > first element is not array, abort:
+	if ( typeName ((_spwnsInfo # 0) # 0) isNotEqualTo "ARRAY" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > Looks you declared the %2 spawn-points without '[ ]' in spawn-points-type column in 'fn_CSWR_population.sqf' file at least in one of the %2 %3 lines creation.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If the sum of non-sectorized markers and the sectorized markers is empty, abort:
+	if ( count (((_spwnsInfo # 0) # 0)+((_spwnsInfo # 0) # 1)) isEqualTo 0 ) exitWith {
+		// Warning message:
+		["%1 SPAWN > There IS NO %2 SPAWNPOINT to create a %2 %3. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden.", 
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > test if there is at least one marker string-name in exactly that structure of arrays. If not, abort:
+	if ( typeName (((_spwnsInfo # 0) # 0) # 0) isNotEqualTo "STRING" || typeName (((_spwnsInfo # 0) # 0) # 1) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 SPAWN > Somehow, %2 non-sectorized-spawn-points or %2 sectorized-spawn-points have no valid markers. Check the 'fn_CSWR_population.sqf' file and make sure you're using the structure like this: [CSWR_spwns%2] or [CSWR_spwns%2, ''A'']",
+		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If the side tag is not found in the first spawn-marker inside the sum of non and sectorized markers, abort to avoid a side spawning through spawnpoint from another side:
+	if ( ((((((_spwnsInfo # 0) # 0)+((_spwnsInfo # 0) # 1)) # 0) splitString CSWR_spacer) # 2) isNotEqualTo _tag ) exitWith {
+		// Warning message:
+		["%1 SPAWN > NOT ALLOWED to spawn a %2 %3 in spawn-points of another side. Check 'fn_CSWR_population.sqf' file and make sure all %2 %3 lines have the spawn-point assigned to %2.", 
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;  // splitString results e.g: ["CSWR","SPAWN","BLU","1"]
+		// Return:
+		true;
+	};
+	// Escape > If spawn sector is not a string, abort:
+	if ( isNil { typeName (_spwnsInfo # 1) isEqualTo "STRING" } ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+		// Warning message:
+		["%1 SPAWN > Spawn-points SECTOR must be a letter between QUOTES. Fix it in fn_CSWR_population.sqf file, e.g: [CSWR_spwns%2, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If the spawn sector letter has more than one character, abort:
+	if ( (_spwnsInfo # 1) isNotEqualTo "" && count (_spwnsInfo # 1) isNotEqualTo 1 ) exitWith {
+		// Warning message:
+		["%1 SPAWN > At least one %2 %3 has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spwns%2, ''A'']. Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+
+
+
+
+
+
+	if ( _requester isEqualTo "group" ) then {
+		// Escape > If has something declared as unit classname, but the first element is not string, abort:
+		if ( count _requesterClass > 0 && typeName (_requesterClass # 0) isNotEqualTo "STRING" ) exitWith {
+			// Warning message:
+			["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
+			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+			// Preparing to return:
+			_isInvalid = true;
+		};
+		// Escape > If the group is empty, abort:
+		if ( count _requesterClass isEqualTo 0 ) exitWith {
+			// Warning message:
+			["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
+			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+			// Preparing to return:
+			_isInvalid = true;
+		};
+	} else {
+		// Escape > If has something declared as vehicle classname, but is not string, abort:
+		if ( _requesterClass isNotEqualTo "" && typeName _requesterClass isNotEqualTo "STRING" ) exitWith {
+			// Warning message:
+			["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
+			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		};
+		// Escape > If the vehicle variable is empty, abort:
+		if ( _requesterClass isEqualTo "" ) exitWith {
+			// Warning message:
+			["%1 VEHICLE > At least one %2 vehicle type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script gets to know which vehicle should be created. Fix it!", 
+			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		};
+	};
+	// Escape > Returning if the conditional above ran:
+	if _isInvalid exitWith {};
+	// Escape > If _destsInfo is not array, abort:
+	if ( typeName _destsInfo isNotEqualTo "ARRAY" ) exitWith {
+		// Warning message:
+		["%1 DESTIN. > One or more %2 %3 lines have no '[ ]' in destination-type column. Fix it in 'fn_CSWR_population.sqf' file, e.g: [_move_ANY]. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If nonexistent spawn-points-type, abort:
+	if ( isNil { typeName (_destsInfo # 0) isEqualTo "STRING" } || count _destsInfo isEqualTo 0 ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+		// Warning message:
+		["%1 DESTIN. > One or more %2 %3 lines got an invalid type of destination or the destination-type column has its '[ ]' empty. Fix it in fn_CSWR_population.sqf file, e.g: [_move_ANY]. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If _destsInfo first element is not a string, abort:
+	if ( typeName (_destsInfo # 0) isNotEqualTo "STRING" ) exitWith {
+		// Warning message:
+		["%1 DESTIN. > There IS NO DESTINATION to send a %2 %3. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' or '_move_RESTRICTED' is configured.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If destination sector is not a string, abort:
+	if ( isNil { typeName (_destsInfo # 1) isEqualTo "STRING" } ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+		// Warning message:
+		["%1 DESTIN. > Destination SECTOR must be a letter between QUOTES. Fix it in fn_CSWR_population.sqf file, e.g: [_move_ANY, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If the destination-sector letter has more than one character, abort:
+	if ( (_destsInfo # 1) isNotEqualTo "" && count (_destsInfo # 1) isNotEqualTo 1 ) exitWith {
+		// Warning message:
+		["%1 DESTIN. > At least one %2 %3 has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, ''A'']. Fix it in 'fn_CSWR_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
+	};
+	// Return:
+	_isInvalid;
+};
+
+
 THY_fnc_CSWR_add_group = {
 	// This function requests and prepares the basic of the creation of a group of AI soldiers.
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_grpClasses", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSectorLetter", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
+	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
 	
 	// Initial values:
 		// reserved space.
@@ -3515,94 +3695,12 @@ THY_fnc_CSWR_add_group = {
 	// Errors handling > If _destsInfo is empty or has just one element, fix it including the sector empty:
 	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""] };
 	// Declarations - part 1/2:
-	_tag               = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
-	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
-	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
-	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
-	_spwnsAll          = _spwnsNonSector + _spwnsWithSector;
-	_destType          = _destsInfo # 0;
-	_destSectorLetter  = toUpper (_destsInfo # 1);
+	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes because during Escape tests easily the declarations will print out errors that will stop the creation of other units/vehicles.
+	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;  // if somethng wrong with _side, it will return empty.
 	// Debug texts:
 		// reserved space.
 	// Escape - part 1/2:
-	// Escape > If some issue with the side declaration, abort:
-	if ( _tag isEqualTo "" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > One or more groups have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The group WON'T be created.", 
-		CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _spwnsInfo is not array, abort:
-	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > One or more %2 group lines have no '[ ]' in spawn-points-type column. Fix it in 'fn_CSWR_population.sqf' file, e.g: [CSWR_spwnsBLU] or [CSWR_spwnsOPF].",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If nonexistent spawn-points-type, abort:
-	if ( isNil "_spwnsInfo # 0" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > One or more %2 group lines got an invalid type of spawn-points. Check your fn_CSWR_population.sqf file. The %2 group won't be created.",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > first element is not array, abort:
-	if ( typeName _spwnsNonSector isNotEqualTo "ARRAY" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _spwnsAll is empty, abort:
-	if ( count _spwnsAll isEqualTo 0 ) exitWith {
-		// Warning message:
-		["%1 SPAWN > There IS NO %2 SPAWNPOINT to create a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the side tag is not found in the first spawn-marker inside _spwnsAll, abort to avoid a side spawning through spawnpoint from another side:
-	if ( (((_spwnsAll # 0) splitString CSWR_spacer) # 2) isNotEqualTo _tag ) exitWith {
-		// Warning message:
-		["%1 SPAWN > NOT ALLOWED to spawn a %2 group in spawn-points of another side. Check 'fn_CSWR_population.sqf' file and make sure all %2 group lines have the spawn-point assigned to %2.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;  // splitString results e.g: ["CSWR","SPAWN","BLU","1"]
-	};
-	// Escape > If the spawn sector letter is not a string, even when empty, abort:
-	if ( typeName _spwnsSectorLetter isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > Make sure the %2 SPAWN-POINT SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwns%2, 'X'].", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the spawn sector letter has more than one character, abort:
-	if ( _spwnsSectorLetter isNotEqualTo "" && count _spwnsSectorLetter isNotEqualTo 1 ) exitWith {
-		// Warning message:
-		["%1 SPAWN > At least one %2 group has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spwns%2, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If has something declared as unit classname, but the first element is not string, abort:
-	if ( count _grpClasses > 0 && typeName (_grpClasses # 0) isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the group is empty, abort:
-	if ( count _grpClasses isEqualTo 0 ) exitWith {
-		// Warning message:
-		["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:
-	if ( typeName _destsInfo isNotEqualTo "ARRAY" || typeName _destType isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > There IS NO DESTINATION to send a %2 group. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If destination-sector is not a string, even when empty, abort:
-	if ( typeName _destSectorLetter isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 group lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the destination-sector letter has more than one character, abort:
-	if ( _destSectorLetter isNotEqualTo "" && count _destSectorLetter isNotEqualTo 1 ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > At least one %2 group has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
+	if ( ["group", _tag, _spwnsInfo, _grpClasses, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
 	// Errors handling:
 	_isValidClasses    = [_tag, "CfgVehicles", "unit", "_grpClasses", _grpClasses] call THY_fnc_CSWR_is_valid_classname;
 	_isValidClassTypes = [_tag, _grpClasses, ["Man"], false] call THY_fnc_CSWR_is_valid_classnames_type;
@@ -3615,6 +3713,10 @@ THY_fnc_CSWR_add_group = {
 	_grpInfo = [_side, _tag, _grpClasses, (_validDest # 0) # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
+	// Declarations - part2/2:
+	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
+	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
+	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
 	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
 		// Message:
@@ -3644,7 +3746,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_spwnsAll", "_destType", "_destSectorLetter", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
+	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
 	
 	// Initial values:
 		// reserved space.
@@ -3653,91 +3755,12 @@ THY_fnc_CSWR_add_vehicle = {
 	// Errors handling > If _destsInfo is empty or has just one element, fix it including the sector empty:
 	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""] };
 	// Declarations - part 1/2:
-	_tag               = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
-	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
-	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
-	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
-	_spwnsAll          = _spwnsNonSector + _spwnsWithSector;
-	_destType          = _destsInfo # 0;
-	_destSectorLetter  = toUpper (_destsInfo # 1);
-	_isHeli            = if ( _vehClass isKindOf "Helicopter" ) then { true } else { false };
+	_tag    = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
+	_isHeli = if ( _vehClass isKindOf "Helicopter" ) then { true } else { false };
 	// Debug texts:
 		// reserved space.
 	// Escape - part 1/2:
-	// Escape > If some issue with the side declaration, abort:
-	if ( _tag isEqualTo "" ) exitWith {
-		// Warning message:
-		["%1 One or more vehicles have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The vehicle WON'T be created.", 
-		CSWR_txtWarnHeader] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _spwnsInfo is not array or it's first element is not array, abort:
-	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" || typeName _spwnsNonSector isNotEqualTo "ARRAY" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > Something looks wrong about one or more %2 spawn-point group lines in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _spwnsInfo first element doesn't exist, abort:
-		// Warning message:
-		// WIP if ( xxxxxx ) exitWith {};
-	// Escape > If _spwnsAll is empty, abort:
-	if ( count _spwnsAll isEqualTo 0 ) exitWith {
-		// Warning messages:
-		if !_isHeli then {
-			["%1 SPAWN > There's NO %2 SPAWNPOINT to create a %2 vehicle. In 'fn_CSWR_population.sqf' check if 'CSWR_spwnsVeh%2' or 'CSWR_spwns%2' is spelled correctly and make sure there's at least 1 %2 spawn marker of this side on Eden. For script integrity, the vehicle WON'T SPAWN!",
-			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-		} else {
-			["%1 SPAWN > A %2 HELICOPTER HAS NO SPAWNPOINT. Add at least one SPAWN-MARKER for helicopters on Eden, e.g. 'cswr_spawnheli_%2_1'. For script integrity, the vehicle WON'T SPAWN!",
-			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-		};
-	};
-	// Escape > If the side tag is not found in the first spawn-marker inside _spwnsAll, abort to avoid a side spawning through spawnpoint from another side:
-	if ( (((_spwnsAll # 0) splitString CSWR_spacer) # 2) isNotEqualTo _tag ) exitWith {
-		// Warning message:
-		["%1 SPAWN > NOT ALLOWED to spawn a %2 vehicle in spawn-points of another side. Check 'fn_CSWR_population.sqf' file and make sure all %2 vehicle lines have the spawn-point assigned to %2.",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;  // splitString results e.g: ["CSWR","SPAWNVEH","BLU","1"]
-	};
-	// Escape > If the spawn sector letter is not a string, even when empty, abort:
-	if ( typeName _spwnsSectorLetter isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 SPAWN > Make sure the %2 SPAWN-POINT SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [CSWR_spwnsVeh%2, 'X'].",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the spawn sector letter has more than one character, abort:
-	if ( _spwnsSectorLetter isNotEqualTo "" && count _spwnsSectorLetter isNotEqualTo 1 ) exitWith {
-		// Warning message:
-		["%1 SPAWN > At least one %2 vehicle has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spwnsVeh%2, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If has something declared as vehicle classname, but is not string, abort:
-	if ( _vehClass isNotEqualTo "" && typeName _vehClass isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the vehicle variable is empty, abort:
-	if ( _vehClass isEqualTo "" ) exitWith {
-		// Warning message:
-		["%1 VEHICLE > At least one %2 vehicle type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script gets to know which vehicle should be created. Fix it!", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If _destsInfo is not an array, or its first element is not a string, abort:
-	if ( typeName _destsInfo isNotEqualTo "ARRAY" || typeName _destType isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > There IS NO DESTINATION to send a %2 vehicle. In 'fn_CSWR_population.sqf' check if (e.g.) '_move_ANY' or '_move_PUBLIC' is configured.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If destination-sector is not a string, even when empty, abort:
-	if ( typeName _destSectorLetter isNotEqualTo "STRING" ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > %2 > Make sure the DESTINATION SECTOR declared is between quotes in %2 vehicle lines in 'fn_CSWR_population.sqf' file. Right way e.g: [_move_ANY, 'X'].", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
-	// Escape > If the destination-sector letter has more than one character, abort:
-	if ( _destSectorLetter isNotEqualTo "" && count _destSectorLetter isNotEqualTo 1 ) exitWith {
-		// Warning message:
-		["%1 DESTIN. > At least one %2 vehicle has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_ANY, 'X']. Fix it in 'fn_CSWR_population.sqf' file.", 
-		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
-	};
+	if ( ["vehicle", _tag, _spwnsInfo, _vehClass, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
 	// Errors handling:
 	_isValidClasses    = [_tag, "CfgVehicles", "vehicle", "_vehClass", [_vehClass]] call THY_fnc_CSWR_is_valid_classname;
 	_isValidClassTypes = [_tag, [_vehClass], ["Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "Helicopter"], true] call THY_fnc_CSWR_is_valid_classnames_type;
@@ -3749,6 +3772,10 @@ THY_fnc_CSWR_add_vehicle = {
 	_grpInfo = [_side, _tag, [_vehClass], (_validDest # 0) # 0, _validBehavior # 0, ""] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
+	// Declarations - part2/2:
+	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
+	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
+	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
 	// Debug:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugSectors ) then {
 		// Message:

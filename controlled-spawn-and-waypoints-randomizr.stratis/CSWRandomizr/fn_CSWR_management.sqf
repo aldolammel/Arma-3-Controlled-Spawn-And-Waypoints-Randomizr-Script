@@ -17,7 +17,7 @@ if (!isServer) exitWith {};
 	CSWR_isOnDebugSectors = false;   // true = shows deeper which markers are sectorized / false = turn it off. Default: false.
 // Factions:
     CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
-    CSWR_isOnOPF = false;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
+    CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
     CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this side.
     CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this side.
 // Loadout global:
@@ -79,13 +79,13 @@ if (!isServer) exitWith {};
         CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
         CSWR_heliTakeoffDelay     = [10, 30, 60];        // In seconds, how long each helicopter can stay before takeoff. Default: 10 sec, 30 sec, 60 sec.
     // Ranges:
-        CSWR_watchMarkerRange  = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
-        CSWR_occupyMarkerRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
+        CSWR_watchMarkerRange     = 1000;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 1000.
+        CSWR_occupyMarkerRange    = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
     // Altitudes:
         CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
         CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
-        CSWR_heliLightAlt     = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
-        CSWR_heliHeavyAlt     = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
+        CSWR_heliLightAlt         = 150;  // In meters, cruising altitude for helicopters of light class. Default: 150.
+        CSWR_heliHeavyAlt         = 300;  // In meters, cruising altitude for helicopters of heavy class. Default: 300.
     // Exceptions management:
         // What specific building positions must be ignored for all sides. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
         CSWR_occupyIgnoredPositions = [  ];
