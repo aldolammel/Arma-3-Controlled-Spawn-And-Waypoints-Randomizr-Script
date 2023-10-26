@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v5.5
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.0
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -18,22 +18,24 @@ __
 
 - No dependencies from other mods or scripts;
 - Manually define which markers the faction can use as spawn-points;
+- NEW! - Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
 - Create unlimited different types of spawn-points (including air paradrop) for one or more factions;
-- Spawn-points can be triggered by mission starts, Timer delay (down count), Trigger delay (trigger activation), and Target delay (unit killed or building destroyed). For more details, check the documentation;
-- Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns;
-- There is no re-spawn. Death is death for units and vehicles spawned by CSWR; 
-- Vehicles with turrets spawned by CSWR, when damaged, their gunners never leave the vehicle, doing the last standing in combat until death;
+- Spawn-points can be triggered by mission starts, Timer delay (down count), Trigger activation, and Target status (unit killed or building destroyed);
+- Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
+- There's no re-spawn. Death is death for units and vehicles spawned by CSWR; 
+- Vehicles with turrets spawned by CSWR, when damaged, their gunners will try to never leave the vehicle, doing the last standing in combat;
 - Manually define which markers will be used as one type of destinations (waypoints) for AI units and vehicles;
-- There are 4 types of destinations: move, watch, hold, and occupy. For more details, check the documentation;
+- There are 4 types of destinations: move, watch, hold, and occupy;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
+- NEW! - Sectorize which groups can move through many sectorized destination options of their faction;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
 - Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
-- Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos. For more details, check the documentation;
+- Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos;
 - All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
 - Set if the CSWR should wait for another script load first on the server;
-- Debugging: friendly error handling;
-- Debugging: hint monitor to control some AI numbers;
+- Debugging: Mission Editor has a friendly error handling;
+- Debugging: Mission Editor has a hint monitor to control some AI numbers during the tests;
 - Debugging: full documentation available.
 
 __
@@ -45,6 +47,19 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Oct, 25th 2023 | v6.0**
+- Added > Markers scan > Now CSWR knows how to sectorize spawns and destinations, so Editor can define which groups and vehicles must consider those sectors or not;
+- Added > Vehicles > When a vehicle's lost but its crewmen survive, if allies are close, the crew will join them, taking their mission to themselves;
+- Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
+- Fixed > Debug > Small fix about marker message's examples;
+- Fixed > Occupy > Vehicles configured to use Occupy-move markers were able badly to try to occypy a building;
+- Improved > Helipcoter > Besides the regular move to the waypoint, now helicopter has 33% of chance to approach the current waypoint with Seek & Destroy style;
+- Improved > Hold > Small improvement during the hold maneuver validation when solid objects around and group leader is out of the vehicle;
+- Improved > Hold > Civilian tracked-vehicle cannot booked center marker position anymore as a tank or trackedAPC;
+- Improved > Destinations > All infantry and vehicles are able to restore their waypoints (doing a new search) if they are accidentally deleted;
+- Improved > Markers scan > Small improvements;
+- Documentation has been updated.
 
 **Oct, 11th 2023 | v5.5**
 - Added > Spawn for helicopters can be set over the ship floors or platforms in water. Check the documentation;
