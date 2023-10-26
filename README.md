@@ -48,21 +48,16 @@ __
 
 ## CHANGELOG
 
-**Oct, XXth 2023 | v6.0**
+**Oct, 25th 2023 | v6.0**
 - Added > Markers scan > Now CSWR knows how to sectorize spawns and destinations, so Editor can define which groups and vehicles must consider those sectors or not;
 - Added > Vehicles > When a vehicle's lost but its crewmen survive, if allies are close, the crew will join them, taking their mission to themselves;
 - Fixed > Paradrop > Civilian parachuters are landing without stuck in crouched position (panic);
 - Fixed > Debug > Small fix about marker message's examples;
 - Fixed > Occupy > Vehicles configured to use Occupy-move markers were able badly to try to occypy a building;
-- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-- Fixed > xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 - Improved > Helipcoter > Besides the regular move to the waypoint, now helicopter has 33% of chance to approach the current waypoint with Seek & Destroy style;
 - Improved > Hold > Small improvement during the hold maneuver validation when solid objects around and group leader is out of the vehicle;
 - Improved > Hold > Civilian tracked-vehicle cannot booked center marker position anymore as a tank or trackedAPC;
-- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
-- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
-- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
-- Improved > xxxxxxxxxxxxxxxxxxxxxxxx;
+- Improved > Destinations > All infantry and vehicles are able to restore their waypoints (doing a new search) if they are accidentally deleted;
 - Improved > Markers scan > Small improvements;
 - Documentation has been updated.
 

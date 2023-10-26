@@ -104,9 +104,7 @@ if (!isServer) exitWith {};
 [] spawn {
 	// Local object declarations:
 	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
-	// Debug txts:
-	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
-	CSWR_txtWarnHeader  = toUpper "CSWR WARNING >";
+	
 	// Initial values:
 	CSWR_bookedLocWatch    = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocHold     = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
@@ -115,11 +113,14 @@ if (!isServer) exitWith {};
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
 	_helipad = "";
 	// Declarations:
+	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
+	CSWR_txtWarnHeader  = toUpper "CSWR WARNING >";
 	CSWR_prefix         = toUpper "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
 	CSWR_spacer         = toUpper "_";  // CAUTION: try do not change it!
 	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
 	_genericNVG         = "NVGoggles";
 	_genericFlashlight  = "acc_flashlight";
+	// Debug txts:
 	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="side, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied."; _txt7="GEAR > FLASHLIGHT > You turned the Flashlight usage 'true' for"; _txt8="FLASHLIGHTS. Fix it in 'fn_CSWR_management.sqf' file. Generic Flashlight was applied.";
 
 	// Main markers validation:

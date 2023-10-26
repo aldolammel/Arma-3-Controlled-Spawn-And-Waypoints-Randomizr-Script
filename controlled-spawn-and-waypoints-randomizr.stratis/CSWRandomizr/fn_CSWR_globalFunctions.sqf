@@ -622,11 +622,11 @@ THY_fnc_CSWR_marker_booking = {
 		// reserved space.
 	// Initial values:
 	_mkr = "";
-	//_mkrPos = [0,0,0];
-	_isBooked = false;
+	//_mkrPos    = [0,0,0];
+	_isBooked    = false;
 	_bookingInfo = [_mkr, _mkrPos, _isBooked];
-	_bookedLoc = [];
-	_isError = false;
+	_bookedLoc   = [];
+	_isError     = false;
 	// Declarations:
 	_counter = 0;
 	switch _mkrType do {
@@ -854,7 +854,7 @@ THY_fnc_CSWR_is_valid_classname = {
 					// Update the validation flag:
 					_isValid = false;
 					// Warning message:
-					["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5",
+					["%1 GROUP or VEHICLE > %2 '%3' is NOT a VALID %4 CLASSNAME. %5",
 					CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
 					// Breath:
 					sleep 5;
@@ -862,19 +862,25 @@ THY_fnc_CSWR_is_valid_classname = {
 			};
 			if !_isValid exitWith {};  // WIP - to remove this line, test this forEach using BREAK inside that "if" above (if-!isClass-configFile...)
 		} forEach _classnames;
-	// Otherwise, if the classname doesn't belong some Arma Official cfgClass, do it: ()
+	// Otherwise:
 	} else {
-		{  // forEach _classnames:
-			if ( isNil _x ) then {
-				// Update the validation flag:
-				_isValid = false;
-				// Warning message:
-				["%1 %2 > '%3' is NOT a VALID %4 CLASSNAME. %5",
-				CSWR_txtWarnHeader, _tag, _x, _what, _txt1] call BIS_fnc_error;
-				// Breath:
-				sleep 5;
-			};
-		} forEach _classnames;
+		// Update the validation flag:
+		_isValid = false;
+		// if _cfgClass is NOT empty, but doesn't belong some Arma Official cfgClass:
+		if ( _cfgClass isNotEqualTo "" ) then {
+			// Warning message:
+			["%1 THY_fnc_CSWR_is_valid_classname > _cfgClass ('%2') declaration is not known. Check if CfgClass you're using doesn't come from a not loaded mod.",
+			CSWR_txtWarnHeader, _cfgClass] call BIS_fnc_error;
+			// Breath:
+			sleep 5;
+		// If _cfgClass empty:
+		} else {
+			// Warning message:
+			["%1 THY_fnc_CSWR_is_valid_classname > _cfgClass declaration is empty.",
+			CSWR_txtWarnHeader, _cfgClass] call BIS_fnc_error;
+			// Breath:
+			sleep 5;
+		};
 	};
 	// Return:
 	_isValid;
@@ -882,17 +888,17 @@ THY_fnc_CSWR_is_valid_classname = {
 
 
 THY_fnc_CSWR_is_valid_classnames_type = {
-	// This function checks if each classname in an array is one of the classname types abled.
+	// This function checks if each classname in an array is one of the classname types allowed.
 	// Returns _isValid. Bool.
 
-	params ["_tag", "_classnames", "_ableTypes", "_isVeh"];
-	private ["_isValid", "_classnameType", "_classnamesOk", "_delta", "_classnamesAmount", "_whatIndividual", "_whatColletive", "_eachAbleType"];
+	params ["_tag", "_classnames", "_allowedTypes", "_isVeh"];
+	private ["_isValid", "_classnameType", "_classnamesOk", "_delta", "_classnamesAmount", "_whatIndividual", "_whatColletive", "_eachAllowedType"];
 
 	// Initial values:
-	_isValid = true;
+	_isValid       = true;
 	_classnameType = [];
-	_classnamesOk = [];
-	_delta = 0;
+	_classnamesOk  = [];
+	_delta         = 0;
 	// Declarations:
 	_classnamesAmount = count _classnames;
 	_whatIndividual   = if _isVeh then { "VEHICLE" } else { "UNIT" };
@@ -902,45 +908,54 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 	// Debug texts:
 		// reserved space.
 	
-	{  // forEach _ableTypes:
-		_eachAbleType = _x;
+	{  // forEach _allowedTypes:
+		_eachAllowedType = _x;
 		{  // forEach _classnames:
 			// if group members:
 			if !_isVeh then {
 				// If the classname is an abled type, include this valid classname in another array:
-				if ( _x isKindOf _eachAbleType ) then { _classnamesOk pushBack _x };
+				if ( _x isKindOf _eachAllowedType ) then { _classnamesOk pushBack _x };
 			// otherwise, if vehicle:
 			} else {
 				// Using this method for vehicles to prevent the insertion of nautical vehicles or planes, etc:
 				_classnameType = (_x call BIS_fnc_objectType) # 1;  //  Returns like ['vehicle','Tank']
 				// If the classname is an abled type, include this valid classname in another array:
-				if ( _classnameType in _eachAbleType ) then { _classnamesOk pushBack _x };
+				if ( _classnameType in _eachAllowedType ) then { _classnamesOk pushBack _x };
 			};
 		} forEach _classnames;
 		// CPU breath:
 		sleep 0.1;
-	} forEach _ableTypes;
-	// If there's difference between the size of both arrays, it's coz some classname is not an abled type:
+	} forEach _allowedTypes;
+	// If there's difference between the size of both arrays, it's coz some classname is not an allowed type:
 	if ( count _classnames isNotEqualTo count _classnamesOk ) then {
 		// Update the validation flag:
 		_isValid = false;
-		//
-		_delta = (count _classnames) - (count _classnamesOk);
-		// Warning message:
-		if ( _delta isEqualTo 1 ) then {
-			// singular message:
-			["%1 %2 > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
-			CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+		// if group (array):
+		if !_isVeh then {
+			// Declarations:
+			_delta = (count _classnames) - (count _classnamesOk);
+			// Warning message:
+			if ( _delta isEqualTo 1 ) then {
+				// singular message:
+				["%1 GROUP > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
+				CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+				// Message breath:
+				sleep 5;
+			} else {
+				// plural message:
+				["%1 GROUP > %3 classnames used to build a %2 %5 are NOT %4 CLASSNAMES, then they CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
+				CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+				// Message breath:
+				sleep 5;
+			};
+		// if vehicle (string):
 		} else {
-			// plural message:
-			["%1 %2 > %3 classnames used to build a %2 %5 are NOT %4 CLASSNAMES, then they CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
-			CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
+			// Warning message:
+			["%1 VEHICLE > A classname used to build a %2 %4 is NOT a %3 CLASSNAME, then it CANNOT to be spawned as %2 %4. Fix it in 'fn_CSWR_population.sqf' file.",
+			CSWR_txtWarnHeader, _tag, _whatIndividual, _whatColletive] call BIS_fnc_error;
+			// Breath:
+			sleep 5;
 		};
-		// WIP - better message: 
-		/* ["%1 %2 > '%3' is NOT a %4 CLASSNAME, then it CANNOT to be spawned as a %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
-		CSWR_txtWarnHeader, _tag, str _x, _whatIndividual, _whatColletive] call BIS_fnc_error; */
-		// Message breath:
-		sleep 5;
 	};
 	// Return:
 	_isValid;
@@ -1304,7 +1319,12 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 	// Debug texts:
 		// reserved space.
 	// If _spwns are the side paradrop spawns, keep going:
-	if ( _spwns isEqualTo CSWR_spwnsParadropBLU || _spwns isEqualTo CSWR_spwnsParadropOPF || _spwns isEqualTo CSWR_spwnsParadropIND || _spwns isEqualTo CSWR_spwnsParadropCIV ) then { 
+	if ( _spwns in [
+		CSWR_spwnsParadropBLU # 0, CSWR_spwnsParadropBLU # 1,  // non-sectorized-spawns, sectorized-spawns
+		CSWR_spwnsParadropOPF # 0, CSWR_spwnsParadropOPF # 1,
+		CSWR_spwnsParadropIND # 0, CSWR_spwnsParadropIND # 1,
+		CSWR_spwnsParadropCIV # 0, CSWR_spwnsParadropCIV # 1
+		] ) then {
 		// Update the validation flag:
 		_isPara = true;
 		// Update the altitude of _spwnPos:
@@ -1480,8 +1500,7 @@ THY_fnc_CSWR_group_type_isAirCrew = {
 	private ["_irAirCrew"];
 
 	// Escape:
-	// WIP - when the 'isNil' is here, the exitWith is activated badly. Working on...
-	if ( /* isNil _grpType || */ _grpType isEqualTo "" ) exitWith { false };
+	if ( isNil "_grpType" || _grpType isEqualTo "" ) exitWith { false };
 	// Initial values:
 	_irAirCrew = false;
 	// Declarations:
@@ -3058,8 +3077,6 @@ THY_fnc_CSWR_spawn_and_go = {
 	_isValidToSpwnHere = [_spwns, _grpType] call THY_fnc_CSWR_spawn_type_checker;
 	// Escape > if group-type is NOT valid to spawn here:
 	if !_isValidToSpwnHere exitWith {
-		// Flag to abort the group/vehicle spawn:
-		//_canSpwn = false;  // not necessary!
 		// Warning message:
 		["%1 SPAWN > %2 group-type '%3' is NOT ALLOWED to spawn in the selected spawns-type: %4.",
 		CSWR_txtWarnHeader, _tag, _grpType, str (_spwnsInfo # 0)] call BIS_fnc_error;
@@ -3245,7 +3262,8 @@ THY_fnc_CSWR_spawn_and_go = {
 				// Not a good performance solution at all (by GOM, 2014 July):
 					// Horrible for server performance: BIS_fnc_spawnVehicle;  // https://community.bistudio.com/wiki/BIS_fnc_spawnVehicle
 				// Only ground vehicle config > Features:
-				_veh setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners never will leave the their vehicle.
+				_veh setUnloadInCombat [true, false];  // [allowCargo, allowTurrets] / Gunners will try to not leave their vehicle.
+				_veh allowCrewInImmobile [true, false]  // [brokenWheels, upsideDown]  / Gunners will try to not leave their vehicle.
 			// Otherwise, if the vehicle is a helicopter:
 			} else {
 
@@ -3502,18 +3520,18 @@ THY_fnc_CSWR_spawn_delay = {
 
 
 THY_fnc_CSWR_add_validation = {
-	// This function <doc string>.
+	// This function validate most part of the parameters of THY_fnc_CSWR_add_group and THY_fnc_CSWR_add_vehicle.
 	// Returns _isInvalid: bool.
 
-	params ["_requester", "_tag", "_spwnsInfo", "_requesterClass", "_destsInfo"];
-	private ["_isInvalid"];
+	params ["_isVeh", "_tag", "_spwnsInfo", "_requesterClass", "_destsInfo"];
+	private ["_isInvalid", "_requester"];
 
 	// Escape:
 		// reserved space.
 	// Initial values:
 	_isInvalid = false;
 	// Declarations:
-	_requester = if ( _requester isEqualTo "group") then { "group" } else { "vehicle" };
+	_requester = if !_isVeh then { "group" } else { "vehicle" };
 	// Debug texts:
 		// reserved space.
 	// Main functionality:
@@ -3597,14 +3615,9 @@ THY_fnc_CSWR_add_validation = {
 		// Return:
 		true;
 	};
-
-
-
-
-
-
-	if ( _requester isEqualTo "group" ) then {
-		// Escape > If has something declared as unit classname, but the first element is not string, abort:
+	// If group:
+	if !_isVeh then {
+		// If has something declared as unit classname, but the first element is not string, abort:
 		if ( count _requesterClass > 0 && typeName (_requesterClass # 0) isNotEqualTo "STRING" ) exitWith {
 			// Warning message:
 			["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
@@ -3612,7 +3625,7 @@ THY_fnc_CSWR_add_validation = {
 			// Preparing to return:
 			_isInvalid = true;
 		};
-		// Escape > If the group is empty, abort:
+		// If the group is empty, abort:
 		if ( count _requesterClass isEqualTo 0 ) exitWith {
 			// Warning message:
 			["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
@@ -3620,21 +3633,22 @@ THY_fnc_CSWR_add_validation = {
 			// Preparing to return:
 			_isInvalid = true;
 		};
+	// If vehicle:
 	} else {
-		// Escape > If has something declared as vehicle classname, but is not string, abort:
+		// If has something declared as vehicle classname, but is not string, abort:
 		if ( _requesterClass isNotEqualTo "" && typeName _requesterClass isNotEqualTo "STRING" ) exitWith {
 			// Warning message:
 			["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
 			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 		};
-		// Escape > If the vehicle variable is empty, abort:
+		// If the vehicle variable is empty, abort:
 		if ( _requesterClass isEqualTo "" ) exitWith {
 			// Warning message:
 			["%1 VEHICLE > At least one %2 vehicle type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR script gets to know which vehicle should be created. Fix it!", 
 			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 		};
 	};
-	// Escape > Returning if the conditional above ran:
+	// Escape > Returning if one conditional right above flags _isInvalid as true:
 	if _isInvalid exitWith {};
 	// Escape > If _destsInfo is not array, abort:
 	if ( typeName _destsInfo isNotEqualTo "ARRAY" ) exitWith {
@@ -3686,7 +3700,7 @@ THY_fnc_CSWR_add_group = {
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_grpClasses", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo"];
+	private ["_tag", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_validForm", "_grpInfo", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter"];
 	
 	// Initial values:
 		// reserved space.
@@ -3695,12 +3709,12 @@ THY_fnc_CSWR_add_group = {
 	// Errors handling > If _destsInfo is empty or has just one element, fix it including the sector empty:
 	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""] };
 	// Declarations - part 1/2:
-	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes because during Escape tests easily the declarations will print out errors that will stop the creation of other units/vehicles.
-	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;  // if somethng wrong with _side, it will return empty.
+	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other groups.
+	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;  // if something wrong with _side, it will return empty.
 	// Debug texts:
 		// reserved space.
 	// Escape - part 1/2:
-	if ( ["group", _tag, _spwnsInfo, _grpClasses, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
+	if ( [false, _tag, _spwnsInfo, _grpClasses, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
 	// Errors handling:
 	_isValidClasses    = [_tag, "CfgVehicles", "unit", "_grpClasses", _grpClasses] call THY_fnc_CSWR_is_valid_classname;
 	_isValidClassTypes = [_tag, _grpClasses, ["Man"], false] call THY_fnc_CSWR_is_valid_classnames_type;
@@ -3713,7 +3727,7 @@ THY_fnc_CSWR_add_group = {
 	_grpInfo = [_side, _tag, _grpClasses, (_validDest # 0) # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
-	// Declarations - part2/2:
+	// Declarations - part 2/2:
 	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
 	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
 	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
@@ -3746,7 +3760,7 @@ THY_fnc_CSWR_add_vehicle = {
 	// Returns nothing.
 	
 	params ["_side", ["_spwnsInfo", [[], ""]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", 0]];
-	private ["_tag", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo"];
+	private ["_tag", "_isHeli", "_isValidClasses", "_isValidClassTypes", "_validBehavior", "_validDest", "_grpInfo", "_spwnsNonSector", "_spwnsWithSector", "_spwnsSectorLetter"];
 	
 	// Initial values:
 		// reserved space.
@@ -3755,12 +3769,13 @@ THY_fnc_CSWR_add_vehicle = {
 	// Errors handling > If _destsInfo is empty or has just one element, fix it including the sector empty:
 	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""] };
 	// Declarations - part 1/2:
+	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other vehicles.
 	_tag    = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	_isHeli = if ( _vehClass isKindOf "Helicopter" ) then { true } else { false };
 	// Debug texts:
 		// reserved space.
 	// Escape - part 1/2:
-	if ( ["vehicle", _tag, _spwnsInfo, _vehClass, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
+	if ( [true, _tag, _spwnsInfo, _vehClass, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
 	// Errors handling:
 	_isValidClasses    = [_tag, "CfgVehicles", "vehicle", "_vehClass", [_vehClass]] call THY_fnc_CSWR_is_valid_classname;
 	_isValidClassTypes = [_tag, [_vehClass], ["Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "Helicopter"], true] call THY_fnc_CSWR_is_valid_classnames_type;
@@ -3772,7 +3787,7 @@ THY_fnc_CSWR_add_vehicle = {
 	_grpInfo = [_side, _tag, [_vehClass], (_validDest # 0) # 0, _validBehavior # 0, ""] call THY_fnc_CSWR_group_type_rules;
 	// Escape > Invalid group:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
-	// Declarations - part2/2:
+	// Declarations - part 2/2:
 	_spwnsNonSector    = (_spwnsInfo # 0) # 0;
 	_spwnsWithSector   = (_spwnsInfo # 0) # 1;
 	_spwnsSectorLetter = toUpper (_spwnsInfo # 1);
@@ -4025,9 +4040,9 @@ THY_fnc_CSWR_go_next_condition = {
 		// If ground vehicle:
 		if !_isAirCrew then {
 			// waiting the vehicle gets close enough of the waypoint position:
-			waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || !alive _veh || leader _grp distance _areaToPass < random 30 };
+			waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || !alive _veh || leader _grp distance _areaToPass < (10 + random 20) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 			// When there, cooldown:
-			_time = time + (random CSWR_destCommonTakeabreak);
+			_time = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (random CSWR_destCommonTakeabreak) } else { 0 };
 			waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || !alive _veh || time > _time };
 		// If helicopter:
 		} else {
@@ -4043,7 +4058,7 @@ THY_fnc_CSWR_go_next_condition = {
 					["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0  |  Hunting: %8", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh, _isHunting] call BIS_fnc_error;
 				};
 				// Allows the heli to go to the next waypoint:
-				isNull _grp || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1 || { if !_isHunting then {_veh distance _areaToPass < 300 || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "MOVE" } else { (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "SAD" } };
+				isNull _grp || damage _veh > 0.4 || fuel _veh < 0.3 || damage _driver > 0.1 || { if !_isHunting then {_veh distance _areaToPass < 300 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" } else { (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" } };
 			};
 			// If the group still alive, the vehicle or crew has some of these conditions, the next waypoint must be the base:
 			if ( alive (leader _grp) && { damage _veh > 0.4 ||  fuel _veh < 0.3 || damage _driver > 0.1 } ) then { 
@@ -4054,9 +4069,9 @@ THY_fnc_CSWR_go_next_condition = {
 	// Otherwise, if a group:
 	} else {
 		// waiting the group gets close enough of the waypoint position:
-		waitUntil { sleep 20; isNull _grp || !alive (leader _grp) || leader _grp distance _areaToPass < random 30 };
+		waitUntil { sleep 20; isNull _grp || !alive (leader _grp) || leader _grp distance _areaToPass < (5 + random 30) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 		// When there, cooldown:
-		_time = time + (random CSWR_destCommonTakeabreak); 
+		_time = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (random CSWR_destCommonTakeabreak) } else { 0 };
 		waitUntil { sleep 10; isNull _grp || !alive (leader _grp) || time > _time };
 	};
 	// Return:
@@ -4197,9 +4212,9 @@ THY_fnc_CSWR_go_ANYWHERE = {
 		CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5;
 	};
 	// Initial values:
-		// Reserved space.
+	_isHunting = false;
 	// Declarations:
-	_isHunting = selectRandom [true, false, false];
+	if ( _tag isNotEqualTo "CIV" ) then { _isHunting = selectRandom [true, false, false] };
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
 	_areaToPass = markerPos (selectRandom _dests);
 	// Check the waypoint altitude:
@@ -4238,9 +4253,9 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 	// Error handling:
 		// reserved space.
 	// Initial values:
-		// reserved space.
+	_isHunting = false;
 	// Declarations:
-	_isHunting = selectRandom [true, false, false];
+	if ( _tag isNotEqualTo "CIV" ) then { _isHunting = selectRandom [true, false, false] };
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
 	_areaToPass = markerPos (selectRandom _dests);
 	// Check the waypoint altitude:
@@ -4283,9 +4298,9 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 		CSWR_txtWarnHeader] call BIS_fnc_error; { deleteVehicle _x } forEach units _grp; sleep 5;
 	};
 	// Initial values:
-		// Reserved space.
+	_isHunting = false;
 	// Declarations:
-	_isHunting = selectRandom [true, false, false];
+	if ( _tag isNotEqualTo "CIV" ) then { _isHunting = selectRandom [true, false, false] };
 	// Randomizes to where the group/vehicle goes into the specific destination-type:
 	_areaToPass = markerPos (selectRandom _dests);
 	// Check the waypoint altitude:
@@ -4828,7 +4843,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 					break;
 				};
 				// Check if the waypoint was lost (sometimes bugs or misclick by zeus can delete the waypoint):
-				if ( waypointType _wp isEqualTo "" || currentWaypoint _grp isEqualTo 0 ) then {
+				if ( waypointType _wp isEqualTo "" || currentWaypoint _grp isEqualTo 0 ) then {  // WIP - check if not better the use ((waypointType [_grp, currentWaypoint _grp]) isEqualTo "")
 					// Debug message:
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' group lost the waypoint for unknown reason. New search in %6 secs.", CSWR_txtDebugHeader, _tag, str _grp, count (units _grp), count _spots, _wait]; sleep 1 };
 					// Small cooldown to prevent crazy loopings:
@@ -5479,11 +5494,11 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// If infantry/people:
 	if !_isVeh then {
 		// Check if the group is already on their destination:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	// If vehicle:
 	} else {
 		// Wait 'til getting really closer:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 		// if crew still in vehicle:
 		if ( !isNull (objectParent (leader _grp)) ) then {
 			// If there's still the original waypoint:
@@ -5501,7 +5516,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 			[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
 		};
 		// Wait 'til the vehicle is over the waypoint:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	};
 	// Escape > if NOT a vehicle, and if the group doesn't exist or the leader was killed, abort:
 	if ( !_isVeh && { isNull _grp || !alive (leader _grp) } ) exitWith {};
@@ -5511,7 +5526,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 	};
 	// Escape > if the group/vehicle lost its hold-waypoint:
-	if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" ) exitWith { 
+	if ( (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" ) exitWith { 
 		// Undo the booking:
 		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 		// Restart:
@@ -5601,7 +5616,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// Wait the vehicle to brake:
 	waitUntil { sleep 2; speed _veh <= 0.1 };
 	// Check if there is some blocker around the vehicle. A simple unit around can make a tank get to fly like a rocket if too much close during the setDir command:
-	while { alive _veh && _attemptCounter < _attemptLimiter && !isNull (objectParent (leader _grp)) && (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "HOLD" } do {
+	while { alive _veh && _attemptCounter < _attemptLimiter && !isNull (objectParent (leader _grp)) && (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" } do {
 		// Check if something relevant is blocking the Hold-marker position:
 		_blockers = (getPos _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Helicopter", "Plane"], 10];
 		// Removing the group vehicle itself from the calc as blocker:
