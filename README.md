@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.0
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.0.1
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -49,6 +49,9 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Nov, 12th 2023 | v6.0.1**
+- Hotfix > Fixed a typo in "fn_CSWR_globalFunctions.sqf" (line 3587) that was printing out an error specific if only sectorized spawns were dropped on the map, without any non-sectorized ones (Thanks to reporting, VR_NotKilled);
 
 **Oct, 25th 2023 | v6.0**
 - Added > Markers scan > Now CSWR knows how to sectorize spawns and destinations, so Editor can define which groups and vehicles must consider those sectors or not;

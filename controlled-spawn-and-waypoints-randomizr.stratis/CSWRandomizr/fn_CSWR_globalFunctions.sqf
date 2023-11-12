@@ -1,4 +1,4 @@
-// CSWR v6.0
+// CSWR v6.0.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
@@ -3583,8 +3583,8 @@ THY_fnc_CSWR_add_validation = {
 		// Return:
 		true;
 	};
-	// Escape > test if there is at least one marker string-name in exactly that structure of arrays. If not, abort:
-	if ( typeName (((_spwnsInfo # 0) # 0) # 0) isNotEqualTo "STRING" || typeName (((_spwnsInfo # 0) # 0) # 1) isNotEqualTo "STRING" ) exitWith {
+	// Escape > test if there is at least one marker string-name in non-sectorized markers, OR, the same in sectorized markers. If not, abort:
+	if ( typeName (((_spwnsInfo # 0) # 0) # 0) isNotEqualTo "STRING" || typeName (((_spwnsInfo # 0) # 1) # 0) isNotEqualTo "STRING" ) exitWith {
 		// Warning message:
 		["%1 SPAWN > Somehow, %2 non-sectorized-spawn-points or %2 sectorized-spawn-points have no valid markers. Check the 'fn_CSWR_population.sqf' file and make sure you're using the structure like this: [CSWR_spwns%2] or [CSWR_spwns%2, ''A'']",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
