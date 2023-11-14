@@ -1,4 +1,4 @@
-// CSWR v6.0.1
+// CSWR v6.2
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
@@ -14,7 +14,7 @@ if (!isServer) exitWith {};
     CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
-	CSWR_isOnDebugSectors = false;   // true = shows deeper which markers are sectorized / false = turn it off. Default: false.
+	CSWR_isOnDebugSectors = false;   // true = shows deeper info about sectors when it's used / false = turn it off. Default: false.
 // Factions:
     CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
     CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
@@ -40,7 +40,7 @@ if (!isServer) exitWith {};
         CSWR_flashlightDeviceOPF = "acc_flashlight";  // Set the flashlight classname for OPF army. Empty ("") means no changes in original soldier loadout.
     // Ind
         CSWR_canNvgInfantryIND   = false;   // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
-        CSWR_canNvgParatroopsIND = true;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
+        CSWR_canNvgParatroopsIND = false;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
         CSWR_canNvgSnipersIND    = true;    // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
         CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
         CSWR_canFlashlightIND    = true;    // true = IND units with no NVG will get flashlights for their primary weapons / false = no flashlights.
@@ -90,7 +90,7 @@ if (!isServer) exitWith {};
         // What specific building positions must be ignored for all sides. Use getPosATL ([ [x1,y1,z1], [x2,y2,z2] ]) to exclude the position:
         CSWR_occupyIgnoredPositions = [  ];
         // What building classnames must be ignored for all sides:
-        CSWR_occupyIgnoredBuildings = ["Land_Cargo_Tower_V1_F", "Land_Cargo_Tower_V1_No1_F", "Land_Cargo_Tower_V1_No2_F", "Land_Cargo_Tower_V1_No3_F", "Land_Cargo_Tower_V1_No4_F", "Land_Cargo_Tower_V1_No5_F", "Land_Cargo_Tower_V1_No6_F", "Land_Cargo_Tower_V1_No7_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V3_F", "Land_Radar_01_cooler_F", "Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
+        CSWR_occupyIgnoredBuildings = ["Land_Cargo_Tower_V1_F", "Land_Cargo_Tower_V1_No1_F", "Land_Cargo_Tower_V1_No2_F", "Land_Cargo_Tower_V1_No3_F", "Land_Cargo_Tower_V1_No4_F", "Land_Cargo_Tower_V1_No5_F", "Land_Cargo_Tower_V1_No6_F", "Land_Cargo_Tower_V1_No7_F", "Land_Cargo_Tower_V2_F", "Land_Radar_01_cooler_F", "Land_Pier_F", "Land_Pier_small_F", "Land_Lighhouse_small_F", "Land_PowerPoleWooden_L_F", "Land_LampStreet_small_F", "Land_dp_smallTank_F", "Land_LampHalogen_F", "Land_LampDecor_F", "Land_FuelStation_Feed_F", "Land_spp_Transformer_F", "Land_FuelStation_Build_F", "Land_Addon_01_F", "Land_u_Addon_01_V1_F", "Land_Addon_03_F", "Land_Shed_Big_F", "Land_Shed_03_F", "Land_Shed_05_F", "Land_Track_01_bridge_F", "Land_SCF_01_storageBin_small_F", "Land_SCF_01_storageBin_medium_F", "Land_StorageTank_01_small_F", "Land_StorageTank_01_large_F", "Land_Shop_City_04_F", "Land_Shop_City_05_F", "Land_Shop_City_06_F", "Land_Shop_City_07_F", "Land_Shop_Town_02_F", "Land_Shop_Town_05_F", "Land_FireEscape_01_tall_F", "Land_FireEscape_01_short_F", "Land_Offices_01_V1_F", "Land_MultistoryBuilding_03_F", "Land_MultistoryBuilding_04_F", "Land_Hotel_02_F", "Land_House_Big_05_F", "Land_Workshop_04_F", "Land_Church_01_F", "Land_Church_01_V2_F", "Land_Church_02_F", "Land_ContainerLine_01_F", "Land_ContainerLine_02_F", "Land_ContainerLine_03_F", "Land_Warehouse_02_F", "Land_Warehouse_01_F", "Land_Tents_Refugee_Red_lxWS", "Land_Tents_Refugee_Green_lxWS", "Land_Tents_Refugee_Orange_lxWS", "Land_Tents_Refugee_lxWS", "Land_Tents_Refugee_Pattern_lxWS", "Land_Tents_Refugee_Blue_lxWS", "Land_Tents_Refugee_Dirty_lxWS", "Land_Tents_Refugee_DBrown_lxWS"];
         // What ruins should be considered for occupy-movement (Important: if the ruin has no spots in its 3D, CSWR won't include it as option):
         CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F", "Land_HouseRuin_Big_01_half_F", "Land_HouseRuin_Big_02_half_F", "Land_HouseRuin_Big_02_F", "Land_HouseRuin_Big_04_F", "Land_OrthodoxChurch_03_ruins_F", "Land_ControlTower_01_ruins_F", "Land_ChurchRuin_01_F", "Land_Shop_Town_01_ruins_F", "Land_House_Big_01_V1_ruins_F", "Land_BellTower_02_V2_ruins_F", "Land_HouseRuin_Small_02_F", "Land_HouseRuin_Small_04_F", "Land_HouseRuin_Big_03_half_F", "Land_HouseRuin_Big_03_F", "Land_House_Small_01_b_brown_ruins_F", "Land_House_Small_01_b_yellow_ruins_F", "Land_Barn_01_grey_ruins_F", "Land_Barn_01_brown_ruins_F", "Land_Shop_02_b_yellow_ruins_F", "Land_House_Big_02_b_brown_ruins_F", "Land_House_Big_02_b_pink_ruins_F", "Land_House_Big_02_b_blue_ruins_F", "Land_House_Big_01_b_blue_ruins_F", "Land_House_Big_01_b_brown_ruins_F", "Land_House_Big_01_b_pink_ruins_F"];
         // WIP : What goggles are acceptable for parachuters inherit from infantry if the editor doesn't set a specific one to parachuters:
@@ -103,15 +103,15 @@ if (!isServer) exitWith {};
 // When the mission starts:
 [] spawn {
 	// Local object declarations:
-	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
+	private ["_helipad", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial", "_debugMkrWatch"];
 	
 	// Initial values:
-	CSWR_bookedLocWatch    = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
-	CSWR_bookedLocHold     = [[],[],[],[]];     // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocWatch    = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
+	CSWR_bookedLocHold     = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnVeh  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnHeli = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
-	_helipad = "";
+	_helipad = ""; _debugMkrWatch = "";
 	// Declarations:
 	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
 	CSWR_txtWarnHeader  = toUpper "CSWR WARNING >";
@@ -396,9 +396,9 @@ if (!isServer) exitWith {};
 	CSWR_destOccupyBLU   = ((CSWR_confirmedMarkers # 1) # 0) # 2;
 	CSWR_destHoldBLU     = ((CSWR_confirmedMarkers # 1) # 0) # 3;
 	_destRestrictBLU     = (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictBLU # 1);
-	_destWatchBLU        = (CSWR_destWatchBLU # 0)  + (CSWR_destWatchBLU # 1);
-	_destOccupyBLU       = (CSWR_destOccupyBLU # 0) + (CSWR_destOccupyBLU # 1);
-	_destHoldBLU         = (CSWR_destHoldBLU # 0)   + (CSWR_destHoldBLU # 1);
+	_destWatchBLU        = (CSWR_destWatchBLU # 0)    + (CSWR_destWatchBLU # 1);
+	_destOccupyBLU       = (CSWR_destOccupyBLU # 0)   + (CSWR_destOccupyBLU # 1);
+	_destHoldBLU         = (CSWR_destHoldBLU # 0)     + (CSWR_destHoldBLU # 1);
 	_destsAllBLU         = _destRestrictBLU + _destWatchBLU + _destOccupyBLU + _destHoldBLU;  // NEVER include PUBLICs in this calc!
 	// Only OpFor destinations:
 	CSWR_destRestrictOPF = ((CSWR_confirmedMarkers # 1) # 1) # 0;
@@ -406,9 +406,9 @@ if (!isServer) exitWith {};
 	CSWR_destOccupyOPF   = ((CSWR_confirmedMarkers # 1) # 1) # 2;
 	CSWR_destHoldOPF     = ((CSWR_confirmedMarkers # 1) # 1) # 3;
 	_destRestrictOPF     = (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictOPF # 1);
-	_destWatchOPF        = (CSWR_destWatchOPF # 0)  + (CSWR_destWatchOPF # 1);
-	_destOccupyOPF       = (CSWR_destOccupyOPF # 0) + (CSWR_destOccupyOPF # 1);
-	_destHoldOPF         = (CSWR_destHoldOPF # 0)   + (CSWR_destHoldOPF # 1);
+	_destWatchOPF        = (CSWR_destWatchOPF # 0)    + (CSWR_destWatchOPF # 1);
+	_destOccupyOPF       = (CSWR_destOccupyOPF # 0)   + (CSWR_destOccupyOPF # 1);
+	_destHoldOPF         = (CSWR_destHoldOPF # 0)     + (CSWR_destHoldOPF # 1);
 	_destsAllOPF         = _destRestrictOPF + _destWatchOPF + _destOccupyOPF + _destHoldOPF;  // NEVER include PUBLICs in this calc!
 	// Only Independent destinations:
 	CSWR_destRestrictIND = ((CSWR_confirmedMarkers # 1) # 2) # 0;
@@ -416,9 +416,9 @@ if (!isServer) exitWith {};
 	CSWR_destOccupyIND   = ((CSWR_confirmedMarkers # 1) # 2) # 2;
 	CSWR_destHoldIND     = ((CSWR_confirmedMarkers # 1) # 2) # 3;
 	_destRestrictIND     = (CSWR_destRestrictIND # 0) + (CSWR_destRestrictIND # 1);
-	_destWatchIND        = (CSWR_destWatchIND # 0)  + (CSWR_destWatchIND # 1);
-	_destOccupyIND       = (CSWR_destOccupyIND # 0) + (CSWR_destOccupyIND # 1);
-	_destHoldIND         = (CSWR_destHoldIND # 0)   + (CSWR_destHoldIND # 1);
+	_destWatchIND        = (CSWR_destWatchIND # 0)    + (CSWR_destWatchIND # 1);
+	_destOccupyIND       = (CSWR_destOccupyIND # 0)   + (CSWR_destOccupyIND # 1);
+	_destHoldIND         = (CSWR_destHoldIND # 0)     + (CSWR_destHoldIND # 1);
 	_destsAllIND         = _destRestrictIND + _destWatchIND + _destOccupyIND + _destHoldIND;  // NEVER include PUBLICs in this calc!
 	// Only Civilians destinations:
 	CSWR_destRestrictCIV = ((CSWR_confirmedMarkers # 1) # 3) # 0;  // CIV has no restricted-move, actually. Reserved space only.
@@ -426,9 +426,9 @@ if (!isServer) exitWith {};
 	CSWR_destOccupyCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 2;
 	CSWR_destHoldCIV     = ((CSWR_confirmedMarkers # 1) # 3) # 3;
 	_destRestrictCIV     = (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);
-	_destWatchCIV        = (CSWR_destWatchCIV # 0)  + (CSWR_destWatchCIV # 1);
-	_destOccupyCIV       = (CSWR_destOccupyCIV # 0) + (CSWR_destOccupyCIV # 1);
-	_destHoldCIV         = (CSWR_destHoldCIV # 0)   + (CSWR_destHoldCIV # 1);
+	_destWatchCIV        = (CSWR_destWatchCIV # 0)    + (CSWR_destWatchCIV # 1);
+	_destOccupyCIV       = (CSWR_destOccupyCIV # 0)   + (CSWR_destOccupyCIV # 1);
+	_destHoldCIV         = (CSWR_destHoldCIV # 0)     + (CSWR_destHoldCIV # 1);
 	_destsAllCIV         = _destRestrictCIV + _destWatchCIV + _destOccupyCIV + _destHoldCIV;  // NEVER include PUBLICs in this calc!
 	// Civilian and soldier destinations:
 	CSWR_destsPUBLIC     = ((CSWR_confirmedMarkers # 1) # 4) # 0;
@@ -437,15 +437,13 @@ if (!isServer) exitWith {};
 					_destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV +    // occupy
 					_destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
 	// All destinations, except the specialized/special ones:
-	CSWR_destsANYWHERE  = [
-		(CSWR_destsPUBLIC # 0)+(CSWR_destRestrictBLU # 0)+(CSWR_destRestrictOPF # 0)+(CSWR_destRestrictIND # 0)+(CSWR_destRestrictCIV # 0),  // nonSectorized
-		(CSWR_destsPUBLIC # 1)+(CSWR_destRestrictBLU # 1)+(CSWR_destRestrictOPF # 1)+(CSWR_destRestrictIND # 1)+(CSWR_destRestrictCIV # 1)   // Sectorized
-	];
+	CSWR_destsANYWHERE  =  (CSWR_destsPUBLIC # 0)     + (CSWR_destsPUBLIC # 1) +
+						   (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictBLU # 1) +
+						   (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictOPF # 1) +
+						   (CSWR_destRestrictIND # 0) + (CSWR_destRestrictIND # 1) +
+						   (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);
 	// Occupy-move validations:
-	CSWR_bldgsAvailableBLU = [CSWR_isOnBLU, _destOccupyBLU, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
-	CSWR_bldgsAvailableOPF = [CSWR_isOnOPF, _destOccupyOPF, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
-	CSWR_bldgsAvailableIND = [CSWR_isOnIND, _destOccupyIND, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
-	CSWR_bldgsAvailableCIV = [CSWR_isOnCIV, _destOccupyCIV, CSWR_occupyMarkerRange, CSWR_occupyIgnoredBuildings, CSWR_occupyIgnoredPositions] call THY_fnc_CSWR_OCCUPY_find_buildings_by_side;
+	
 	// Hold-move ground cleaner:
 	if CSWR_isOnBLU then { [_destHoldBLU] call THY_fnc_CSWR_HOLD_ground_cleaner };
 	if CSWR_isOnOPF then { [_destHoldOPF] call THY_fnc_CSWR_HOLD_ground_cleaner };
@@ -462,8 +460,23 @@ if (!isServer) exitWith {};
 		// Shapes:
 		{ _x setMarkerType "mil_destroy";        _x setMarkerAlpha 0.5 } forEach _destWatchBLU + _destWatchOPF + _destWatchIND + _destWatchCIV;
 		{ _x setMarkerType "mil_start_noShadow"; _x setMarkerAlpha 0.5 } forEach _destHoldBLU  + _destHoldOPF  + _destHoldIND  + _destHoldCIV;
+		// Specialy for Occupy:
+		if CSWR_isOnDebugOccupy then {
+			{ _x setMarkerShape "ELLIPSE"; _x setMarkerBrush "Border"; _x setMarkerAlpha 0.8; _x setMarkerSize [CSWR_occupyMarkerRange, CSWR_occupyMarkerRange] } forEach _destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV;
+		};
+		// WIP - Specialy for Watch:
+		if CSWR_isOnDebugWatch then {
+			{
+				_debugMkrWatch = createMarker ["debug_" + _x, markerPos _x];
+				_debugMkrWatch setMarkerShape "ELLIPSE";
+				_debugMkrWatch setMarkerBrush "Border";
+				_debugMkrWatch setMarkerAlpha 0.8;
+				_debugMkrWatch setMarkerColor "ColorUNKNOWN";
+				_debugMkrWatch setMarkerSize [CSWR_watchMarkerRange, CSWR_watchMarkerRange];
+			} forEach _destWatchBLU + _destWatchOPF + _destWatchIND + _destWatchCIV;
+		};
 	// Otherwise, hiding the spawn and destination markers:
-	} else { {_x setMarkerAlpha 0} forEach _spwnsAll + _destsSpecial + ((CSWR_destsANYWHERE # 0)+(CSWR_destsANYWHERE # 1)) };
+	} else { {_x setMarkerAlpha 0} forEach _spwnsAll + _destsSpecial + CSWR_destsANYWHERE };
 	// Delete the useless spawn markers only, preserving the destinations:
 	if !CSWR_isOnBLU then { { deleteMarker _x } forEach CSWR_spwnsAllBLU + _destsAllBLU };
 	if !CSWR_isOnOPF then { { deleteMarker _x } forEach CSWR_spwnsAllOPF + _destsAllOPF };
@@ -609,10 +622,6 @@ if (!isServer) exitWith {};
 	publicVariable "CSWR_destHoldCIV";
 	publicVariable "CSWR_destsPUBLIC";
 	publicVariable "CSWR_destsANYWHERE";
-	publicVariable "CSWR_bldgsAvailableBLU";
-	publicVariable "CSWR_bldgsAvailableOPF";
-	publicVariable "CSWR_bldgsAvailableIND";
-	publicVariable "CSWR_bldgsAvailableCIV";
 	publicVariable "CSWR_minDestAny";
 	publicVariable "CSWR_minDestRestricted";
 	publicVariable "CSWR_minDestWatch";

@@ -120,7 +120,7 @@ switch _tag do {
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
                 "",                         // infantry uniform
-                "",                         // infantry helmet
+                "REMOVED",                  // infantry helmet
                 "",                         // infantry goggles
                 "V_Chestrig_khk",           // infantry vest (only units with vest will take the custom one)
                 "B_Kitbag_cbr",             // infantry backpack (only units with backpack will take the custom one)

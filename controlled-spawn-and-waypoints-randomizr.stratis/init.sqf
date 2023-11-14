@@ -2,6 +2,6 @@
 
 
 
-// CSWR > HIDE ITS OWN MARKERS > This hides all CSWR markers from the Briefing screen:
+// CSWR > HIDE THE SCRIPT MARKERS:
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
-{private _mkr = toUpper _x; private _mkrChecking = _mkr splitString "_"; if (_mkrChecking find "CSWR" != -1) then {_x setMarkerAlpha 0}} forEach allMapMarkers;
+if !CSWR_isOnDebugGlobal then {{private _mkr = toUpper _x; private _mkrChecking = _mkr splitString "_"; if (_mkrChecking find "CSWR" != -1) then {_x setMarkerAlpha 0}} forEach allMapMarkers};

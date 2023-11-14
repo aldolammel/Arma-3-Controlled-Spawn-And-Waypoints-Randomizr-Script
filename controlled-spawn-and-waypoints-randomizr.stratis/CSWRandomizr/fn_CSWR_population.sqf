@@ -1,4 +1,4 @@
-// CSWR v6.0
+// CSWR v6.2
 // File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
