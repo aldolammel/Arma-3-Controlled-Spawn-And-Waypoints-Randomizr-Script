@@ -4321,7 +4321,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grpType", "_grp", "_behavior"];
-	private ["_areaPos", "_locationPos", "_obj", "_disLocToArea", "_counter", "_bookingInfo", "_location", "_isBooked", "_roadsAround", "_mkrDebugWatch", "_attemptLimit", "_wait", "_areaToWatch", "_locations", "_wp"];
+	private ["_isToBooking", "_mkrDebugWatch", "_counter", "_bookingInfo", "_location", "_locationPos", "_isBooked", "_obj", "_disLocToArea", "_areaPos", "_roadsAround", "_attemptLimit", "_wait", "_areaToWatch", "_locations", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -4355,16 +4355,17 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		sleep 5;
 	};
 	// Initial values:
-	_areaPos       = [];
-	_locationPos   = [];
-	_obj           = objNull;
-	_disLocToArea  = nil;
+	_isToBooking   = true;
+	_mkrDebugWatch = "";  // Debug purposes.
 	_counter       = 0;
 	_bookingInfo   = [];
 	_location      = nil;
+	_locationPos   = [];
 	_isBooked      = false;
+	_obj           = objNull;
+	_disLocToArea  = nil;
+	_areaPos       = [];
 	_roadsAround   = [];
-	_mkrDebugWatch = "";  // Debug purposes.
 	// Declarations:
 	_attemptLimit = 5;
 	_wait         = 10;
@@ -4376,31 +4377,31 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Finding out specific types of locations around:
 	_locations = nearestLocations [_areaToWatch, ["RockArea", "Hill", "ViewPoint", "Flag"], CSWR_watchMarkerRange];
+	// Plan B is to find any mount around but closer:
+	if ( count _locations isEqualTo 0 ) then { _locations = nearestLocations [_areaToWatch, ["Mount"], (CSWR_watchMarkerRange / 1.5)]; _isToBooking = false };
 	// If found at least one location:
-	if ( count _locations isNotEqualTo 0 ) then {
+	if ( count _locations > 0 ) then {
 		// Debug watch-markers:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
 			{  // forEach _locations:
 				// Show me all locations found on the map with visible markers:
 				_mkrDebugWatch = createMarker ["debug_" + str _x, locationPosition _x];
 				_mkrDebugWatch setMarkerType "hd_dot";
+				_mkrDebugWatch setMarkerAlpha 0.7;
 				switch _tag do {
 					case "BLU": { 
-						_mkrDebugWatch setMarkerAlpha 0.7;
 						_mkrDebugWatch setMarkerColor "colorBLUFOR";
-						_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
+						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
 						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0];
 					};
 					case "OPF": {
-						_mkrDebugWatch setMarkerAlpha 0.7;
 						_mkrDebugWatch setMarkerColor "colorOPFOR";
-						_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
+						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
 						_mkrDebugWatch setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0];
 					};
 					case "IND": {
-						_mkrDebugWatch setMarkerAlpha 0.7;
 						_mkrDebugWatch setMarkerColor "colorIndependent";
-						_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
+						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
 						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0];
 					};
 					//case "CIV": {}; // not appliable here!
@@ -4409,37 +4410,45 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		};
 		
 		// BOOKING A LOCATION:
-		// Looping to booking (mandatory in Watch) a location:
-		while { !isNull _grp && _counter <= _attemptLimit } do {
-			// Counter to prevent crazy loops:
-			_counter = _counter + 1;
-			// Try to booking a marker:
-			_bookingInfo = ["BOOKING_WATCH", getPos (leader _grp), _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
-			// Which marker to go:
-			_location    = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
-			// Marker position:
-			_locationPos = _bookingInfo # 1;  // [x,y,z]
-			// Is booked?
-			_isBooked    = _bookingInfo # 2;
-			// If not booked:
-			if !_isBooked then {
-				// Debug message:
-				if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
-					["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...",
-					CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
+		if _isToBooking then {
+			// Looping to booking (mandatory in Watch) a location:
+			while { !isNull _grp && _counter <= _attemptLimit } do {
+				// Counter to prevent crazy loops:
+				_counter = _counter + 1;
+				// Try to booking a marker:
+				_bookingInfo = ["BOOKING_WATCH", getPos (leader _grp), _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
+				// Which marker to go:
+				_location    = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
+				// Marker position:
+				_locationPos = _bookingInfo # 1;  // [x,y,z]
+				// Is booked?
+				_isBooked    = _bookingInfo # 2;
+				// If not booked:
+				if !_isBooked then {
+					// Debug message:
+					if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
+						["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...",
+						CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
+					};
+					// CPU breather to prevent crazy loopings:
+					sleep _wait;
+				// Otherwise, it's booked:
+				} else { 
+					// Clean counter:
+					_counter = 0;
+					// Stop the loop:
+					break;
 				};
-				// CPU breather to prevent craze loopings:
-				sleep _wait;
-			// Otherwise, it's booked:
-			} else { 
-				// Clean counter:
-				_counter = 0;
-				// Stop the loop:
-				break;
-			};
-		};  // While-loop ends.
+			};  // While-loop ends.
+		// If booking is not needed:
+		} else {
+			// Which marker to go:
+			_location = selectRandom _locations;
+			// Marker position:
+			_locationPos = [locationPosition _location # 0, locationPosition _location # 1, 0];  // [x,y,z]
+		};
 		// Error handling:
-		if ( _counter > _attemptLimit ) exitWith {
+		if ( _isToBooking && _counter > _attemptLimit ) exitWith {
 			// Delete the sniper group:
 			{ deleteVehicle _x } forEach units _grp;
 			// Warning message:
@@ -4448,8 +4457,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		};
 	
 		// SETTING A POSITION:
-		// If booked:
-		if _isBooked then {
+		// If booked or not needed to booking:
+		if ( _isBooked || !_isToBooking ) then {
 			// Creating a generic asset on-the map to provide an object (and, next, check its position):
 			_obj = createSimpleObject ["Land_Canteen_F", _locationPos, false];  // false = global / true = local.
 			// Figuring out the distance between the location found (a hill peak, for example) and the area-target to watch:

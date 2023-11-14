@@ -54,6 +54,7 @@ __
 - Fixed > Occupy-destination-markers weren't working fine when they were sectorized;
 - Fixed > Missions with respawn system applied were hidden CSWR markers even when debug mode was True (init.sqf updated);
 - Fixed > When a group (spawned in a sectorized spawn) assigned with _move_ANY destination command without sector declared to destination too, an error was printed out;
+- Improved > Watch > Now, if the sniper group doesn't find any peak or hill, they will search for secondary high places (mounts);
 - Improved > Waiting time for the next vehicle spawn when it's been used spawn delay for that decrease from 10 to 1 second;
 - Hotfix 11th > Fixed a typo in "fn_CSWR_globalFunctions.sqf" (line 3587) that was printing out an error specific if only sectorized spawns were dropped on the map, without any non-sectorized ones (Thanks to reporting, VR_NotKilled);
 
