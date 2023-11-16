@@ -3330,7 +3330,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			} forEach allCurators;
 		};
 		// Only helicopter config > Takeoff delay:
-		if _isAirCrew then {
+		if (_isAirCrew && !CSWR_isHeliSpwningInAir ) then {
 			// Wait a bit:
 			_time = time + (random CSWR_heliTakeoffDelay); waitUntil { sleep 5; time > _time };
 			// Debug message:
