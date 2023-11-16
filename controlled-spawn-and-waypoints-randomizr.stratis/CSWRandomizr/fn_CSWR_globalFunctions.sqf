@@ -1,4 +1,4 @@
-// CSWR v6.2.1
+// CSWR v6.5
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
