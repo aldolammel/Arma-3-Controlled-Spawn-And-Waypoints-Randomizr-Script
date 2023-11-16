@@ -1,4 +1,4 @@
-// CSWR v6.2
+// CSWR v6.2.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
@@ -3034,7 +3034,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	// Returns nothing.
 
 	params ["_spwnsInfo", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destsInfo"];
-	private ["_canSpwn", "_veh", "_spwn", "_spwns", "_bookingInfo", "_isBooked", "_spwnPosChecker", "_spwnPos", "_isPara", "_serverBreath", "_blockers", "_time", "_nvg", "_spwnsSector", "_destType", "_destSector", "_side", "_tag", "_grp", "_grpType", "_grpClasses", "_isAirCrew", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3", "_isValidToSpwnHere"];
+	private ["_canSpwn", "_veh", "_spwn", "_spwns", "_bookingInfo", "_isBooked", "_spwnPosChecker", "_spwnPos", "_unit", "_isPara", "_serverBreath", "_blockers", "_time", "_nvg", "_spwnsSector", "_destType", "_destSector", "_side", "_tag", "_grp", "_grpType", "_grpClasses", "_isAirCrew", "_grpSize", "_requester", "_safeDis", "_txt1", "_txt2", "_txt3", "_isValidToSpwnHere"];
 
 	// Escape:
 	if ( count _grpInfo isEqualTo 0 ) exitWith {};
@@ -3046,6 +3046,7 @@ THY_fnc_CSWR_spawn_and_go = {
 	_isBooked       = false;
 	_spwnPosChecker = [];
 	_spwnPos        = [];
+	_unit           = objNull;
 	_isPara         = false;
 	_serverBreath   = 0;
 	_blockers       = [];
@@ -3192,17 +3193,16 @@ THY_fnc_CSWR_spawn_and_go = {
 			// SPAWNING GROUP OF PEOPLE:
 			// Create the group id:
 			_grp = createGroup _side;
-			// Create the units:
-			if !_isPara then {
-				// People on ground:
-				{ _grp createUnit [_x, _spwnPos, [], 20, "NONE"]; sleep _serverBreath } forEach _grpClasses;
-			} else {
-				// People on air (parachuters):
-				{ _grp createUnit [_x, _spwnPos, [], 200, "NONE"]; sleep _serverBreath } forEach _grpClasses;
-			};
+			{  // forEach _grpClasses:
+				// Creating a unit:
+				_unit = _grp createUnit [_x, _spwnPos, [], if !_isPara then {20} else {200}, "NONE"];
+				// Checking if the unitclassname is the right side, if not, fix it:
+				if ( side _unit isNotEqualTo _side) then { [_unit] joinSilent _grp };
+				// Dynamic breather:
+				sleep _serverBreath;
+			} forEach _grpClasses;
 			// Not a good performance solution at all (by GOM, 2014 July):
 				//_grp = [_spwnPos, _side, _grpClasses, [],[],[],[],[], markerDir _spwn, false, 0] call BIS_fnc_spawnGroup; // https://community.bistudio.com/wiki/BIS_fnc_spawnGroup
-			
 		// Otherwise, if vehicle:
 		} else {
 
