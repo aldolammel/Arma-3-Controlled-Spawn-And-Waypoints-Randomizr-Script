@@ -3,7 +3,7 @@
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
-if (!isServer) exitWith {};
+if !isServer exitWith {};
 
 // PARAMETERS OF EDITOR'S OPTIONS:
 // Debug:
