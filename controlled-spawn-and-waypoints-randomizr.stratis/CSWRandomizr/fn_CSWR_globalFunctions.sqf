@@ -999,7 +999,7 @@ THY_fnc_CSWR_is_valid_destination = {
 	// Return _return: bool.
 
 	params ["_tag", "_isVeh", "_destInfo"];
-	private ["_destType", "_destSector", "_requester", "_return", "_isValid", "_dests", "_minAmount", "_txt1", "_txt2", "_txt3", "_txt4"];
+	private ["_destType", "_destSector", "_requester", "_return", "_isValid", "_dests", "_minAmount", "_txt1", "_txt3", "_txt4"];
 
 	// Declarations:
 	_destType   = _destInfo # 0;
@@ -1017,7 +1017,6 @@ THY_fnc_CSWR_is_valid_destination = {
 		// Reserved space.
 	// Debug texts:
 	_txt1 = format ["A %1 %2 won't be created coz the DESTINATION TYPE '%3' HAS NO", _tag, _requester, _destType];
-	_txt2 = format ["One or more %1 %2s HAS NO DESTINATION properly configured in 'fn_CSWR_population.sqf' file. For script integrity, the %2 won't be created.", _tag, _requester];
 	_txt3 = format ["%1 %2 CANNOT use '%3' destinations. Check the 'fn_CSWR_population.sqf' file. For script integrity, the %2 won't be created.", _tag, _requester, _destType];
 	_txt4 = format ["Civilians CANNOT use '%1' destinations. Check the 'fn_CSWR_population.sqf' file. For script integrity, the civilian group won't be created.", _destType];
 	// Main validation:
@@ -1039,18 +1038,10 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
-				// Check only the correct sector letter:
-				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-				// if at least X destinations of this type:
-				if ( count _dests >= _minAmount ) then {
-					// Prepare to return:
-					_return = [[_destType, _destSector], true];
-				} else {
-					// Warning message:
-					["%1 %2 %3 or more destination markers (sector '%4') dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount, _destSector] call BIS_fnc_error; sleep 5;
-				};
+				// Warning message:
+				["%1 A %2 %3 is trying to sectorize ('%4') a '%5' and it's forbidden. Fix it in 'fn_CSWR_population.sqf' file. This %3 won't be created.", CSWR_txtWarnHeader, _tag, _requester, _destSector, _destType] call BIS_fnc_error; sleep 5;
 			};
 		};
 		case "MOVE_PUBLIC": {
@@ -1070,7 +1061,7 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
 				// Check only the correct sector letter:
 				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
@@ -1106,7 +1097,7 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
 				// Check only the correct sector letter:
 				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
@@ -1143,7 +1134,7 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
 				// Check only the correct sector letter:
 				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
@@ -1179,7 +1170,7 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
 				// Check only the correct sector letter:
 				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
@@ -1215,7 +1206,7 @@ THY_fnc_CSWR_is_valid_destination = {
 					// Warning message:
 					["%1 %2 %3 or more destination markers dropped on the map.", CSWR_txtWarnHeader, _txt1, _minAmount] call BIS_fnc_error; sleep 5;
 				};
-			// There sector letter:
+			// There is a sector letter:
 			} else {
 				// Check only the correct sector letter:
 				_dests = (_dests # 1) select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
@@ -1232,7 +1223,8 @@ THY_fnc_CSWR_is_valid_destination = {
 		default {
 			// If the declarated destination type in fn_CSWR_population file IS NOT recognized:
 			// Warming message:
-			["%1 %2", CSWR_txtWarnHeader, _txt2] call BIS_fnc_error; sleep 5;
+			["%1 One or more %2 %3s HAS NO DESTINATION properly configured in 'fn_CSWR_population.sqf' file. For script integrity, the %3 won't be created.",
+			CSWR_txtWarnHeader, _tag, _requester] call BIS_fnc_error; sleep 5;
 		};
 	};  // switch ends.
 	// Return:
@@ -1579,7 +1571,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 	// Breather:
 	sleep 3;
 	// Delete their waypoint(s):
-	for "_i" from ((count waypoints _grp) - 1) to 0 step -1 do { deleteWaypoint [_grp, _i]; sleep 0.2 };
+	for "_i" from ((count waypoints _grp) - 1) to 1 step -1 do { deleteWaypoint [_grp, _i]; sleep 0.2 };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).
 	// If another group has been found to join:
 	if ( count _availableGroups > 0 ) then {
 		// Go to the new group:
@@ -4470,7 +4462,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 				// Counter to prevent crazy loops:
 				_counter = _counter + 1;
 				// Finding a empty spot based on selected location position. 10m from _pos but not further 100m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
-				_areaPos = [_locationPos, 10, 100, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;  // https://community.bistudio.com/wiki/BIS_fnc_findSafePos
+				_areaPos = [_locationPos, 10, 100, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
 				// Check if there's road around the sniper spot:
 				_roadsAround = _areaPos nearRoads 20;  // meters
 				// WIP: trying to identify if there's a terrain between the sniper eyes and the area-target:
@@ -4745,7 +4737,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grp", "_behavior"];
-	private ["_bldgPos", "_spots", "_wp", "_leadStuckCounter", "_getOutPos", "_disLimiterFromBldg", "_disLimiterFrndPlayer", "_disLimiterEnemy", "_wait", "_grpSize", "_regionToSearch", "_building"];
+	private ["_bldgPos", "_wp", "_leadStuckCounter", "_getOutPos", "_disLimiterFromBldg", "_disLimiterFrndPlayer", "_disLimiterEnemy", "_wait", "_building"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -4771,125 +4763,109 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	};
 	// Initial values:
 	_bldgPos          = [];
-	_spots            = [];
 	_wp               = [];
 	_leadStuckCounter = 0;
 	_getOutPos        = [];
 	// Declarations:
-	_disLimiterFromBldg   = 10;  // Distance to activate occupy functions validations to group leader.
+	_disLimiterFromBldg   = 20;  // Distance to activate occupy functions validations to group leader. CRITICAL: less than 20 no occupy happens in some towers.
 	_disLimiterFrndPlayer = 40;  // Distance to desactivate the AI teleport when player is around.
 	_disLimiterEnemy      = 200;  // Distance to desactivate the AI teleport when enemies (including player) are around.
 	_wait                 = 10;  // Avoid crazy loopings in entery occupy functions. Be careful.
-	_grpSize              = count (units _grp);
 	// Forcing unit basic setup to start the Occupy movement to prevent anomalies:
 	{  // forEach of units _grp:
 		_x enableAI "PATH";
 		_x doFollow (leader _grp);
 		sleep 0.25;
 	} forEach units _grp;
-	// Randomizes to where the group/vehicle goes into the specific destination-type:
-	_regionToSearch = markerPos (selectRandom _dests);
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Selecting one building from probably many others found in that range:
-	_building = [_dests, _grp, _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
+	_building = [_dests, _grp, count (units _grp), _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
+
 	// If there's a building:
 	if ( !isNull _building ) then {
 		// Building position:
 		_bldgPos = getPosATL _building;
-		// Figure out if the selected building has enough spots for current group size:
-		_spots = [_building, _grpSize] call BIS_fnc_buildingPositions;
-		// If has enough spots for the whole current group size:
-		if ( count _spots >= _grpSize ) then {
-			// Delete old waypoints to prevent anomalies:
-			//for "_i" from count waypoints _grp -1 to 1 step -1 do { deleteWaypoint [_grp, _i] };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).
-			// Go to the specific building:
-			_wp = _grp addWaypoint [_bldgPos, 0];
-			_wp setWaypointType "MOVE";
-			_wp setWaypointCombatMode "YELLOW";  // Open fire, but keep formation, trying to avoid those units stay far away from the group leader.
-			//_wp setWaypointSpeed "NORMAL";  // (aug/2023 = v4.0.2 = fixed the bug where this line was replacing the original group speed defined in fn_CSWR_population file.
-			_grp setCurrentWaypoint _wp;
-			// Meanwhile the group leader is alive or their group to exist:
-			while { alive (leader _grp) || !isNull _grp } do {
-				// if the leader is NOT awake:
-				if ( incapacitatedState (leader _grp) isEqualTo "UNCONSCIOUS" ) then {
-					// Kill the AI leader to renew the group leadership:
-					(leader _grp) setDamage 1;
-					// Stop the while-looping:
-					break;
-				};
-				// If the leader notice (distance) the building doesn't exist anymore:
-				if ( (leader _grp) distance _bldgPos < 80 ) then {  // distance should use building position because, in case the building doesnt exist, distance not works with objNull but works with position.
-					// If destroyed but not part of the exception building list:
-					if ( !alive _building && !(typeOf _building in CSWR_occupyAcceptableRuins) ) then {
-						// Debug message:
-						if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' group had its building destroyed.", CSWR_txtDebugHeader, _tag, str _grp]; };
-						// Small cooldown to prevent crazy loopings:
-						sleep 1;
-						// Restart the first OCCUPY step:
-						[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
-						// Stop the while-looping:
-						break;
-					};
-				};
-				// if group leader is close enough to the chosen building:
-				if ( (leader _grp) distance _bldgPos < _disLimiterFromBldg ) then {
-					// When there, execute the occupy function:
-					[_building, _bldgPos, _dests, _grp, _tag, _behavior, _disLimiterFromBldg, _disLimiterEnemy, _disLimiterFrndPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
-					// Stop the while-looping:
-					break;
-				};
-				// Check if the waypoint was lost (sometimes bugs or misclick by zeus can delete the waypoint):
-				if ( waypointType _wp isEqualTo "" || currentWaypoint _grp isEqualTo 0 ) then {  // WIP - check if not better the use ((waypointType [_grp, currentWaypoint _grp]) isEqualTo "")
+		// Delete old waypoints to prevent anomalies:
+		//for "_i" from (count waypoints _grp - 1) to 1 step -1 do { deleteWaypoint [_grp, _i] };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).
+		// Go to the specific building:
+		_wp = _grp addWaypoint [_bldgPos, 0];
+		_wp setWaypointType "MOVE";
+		_wp setWaypointCombatMode "YELLOW";  // Open fire, but keep formation, trying to avoid those units stay far away from the group leader.
+		//_wp setWaypointSpeed "NORMAL";  // (aug/2023 = v4.0.2 = fixed the bug where this line was replacing the original group speed defined in fn_CSWR_population file.
+		_grp setCurrentWaypoint _wp;
+		// Meanwhile the group leader is alive or their group exists:
+		while { alive (leader _grp) || !isNull _grp } do {
+			// if the leader is NOT awake:
+			if ( incapacitatedState (leader _grp) isEqualTo "UNCONSCIOUS" ) then {
+				// Kill the AI leader to renew the group leadership:
+				(leader _grp) setDamage 1;
+				// Stop the while-looping:
+				break;
+			};
+			// If the leader notice (distance) the building doesn't exist anymore:
+			if ( (leader _grp) distance _bldgPos < 80 ) then {  // distance should use building position because, in case the building doesnt exist, distance not works with objNull but works with position.
+				// If destroyed but not part of the exception building list:
+				if ( !alive _building && !(typeOf _building in CSWR_occupyAcceptableRuins) ) then {
 					// Debug message:
-					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' group lost the waypoint for unknown reason. New search in %6 secs.", CSWR_txtDebugHeader, _tag, str _grp, count (units _grp), count _spots, _wait]; sleep 1 };
+					if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' group had its building destroyed.", CSWR_txtDebugHeader, _tag, str _grp]; };
 					// Small cooldown to prevent crazy loopings:
-					sleep 3;
+					sleep 1;
 					// Restart the first OCCUPY step:
 					[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 					// Stop the while-looping:
 					break;
 				};
-				// Check if the leader is alive, is not stuck in their way to the building and not injured, not engaging, they're awake, give a timeout to restart the whole function again:
-				if ( alive (leader _grp) && unitReady (leader _grp) && lifeState (leader _grp) isNotEqualTo "INJURED" && incapacitatedState (leader _grp) isNotEqualTo "SHOOTING" && incapacitatedState (leader _grp) isEqualTo "UNCONSCIOUS" ) then {
-					_leadStuckCounter = _leadStuckCounter + 1;
-					// Debug message:
-					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader looks stuck %4 time(s).", CSWR_txtDebugHeader, _tag, str _grp, _leadStuckCounter] };
-					// After timeout and leader looks stuck, teleport them to a free space:
-					if ( _leadStuckCounter isEqualTo 5 ) then {
-						if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader apparently was stuck, but now he's free.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
-						// Find pos min 10m (_disLimiterFromBldg) from (leader _grp) but not further 20m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
-						_getOutPos = [(leader _grp), _disLimiterFromBldg, (_disLimiterFromBldg * 2), 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
-						// Teleport to the safe position out:
-						(leader _grp) setPosATL [_getOutPos # 0, _getOutPos # 1, 0];
-						// Destroying the position just in case:
-						_getOutPos = nil;
-						// Restart the first OCCUPY step:
-						[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
-						// Stop the while-looping:
-						break;
-					};
+			};
+			// if group leader is close enough to the chosen building:
+			if ( (leader _grp) distance _bldgPos < _disLimiterFromBldg ) then {
+				// When there, execute the occupy function:
+				[_building, _bldgPos, _dests, _grp, _tag, _behavior, _disLimiterFromBldg, _disLimiterEnemy, _disLimiterFrndPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
+				// Stop the while-looping:
+				break;
+			};
+			// Check if the waypoint was lost (sometimes bugs or misclick by zeus can delete the waypoint):
+			if ( (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" ) then {
+				// Debug message:
+				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' group lost the waypoint for unknown reason. New search soon.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
+				// Small cooldown to prevent crazy loopings:
+				sleep 2;
+				// Restart the first OCCUPY step:
+				[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+				// Stop the while-looping:
+				break;
+			};
+			// Check if the leader is alive, is not stuck in their way to the building and not injured, not engaging, they're awake, give a timeout to restart the whole function again:
+			if ( alive (leader _grp) && unitReady (leader _grp) && lifeState (leader _grp) isNotEqualTo "INJURED" && incapacitatedState (leader _grp) isNotEqualTo "SHOOTING" && incapacitatedState (leader _grp) isEqualTo "UNCONSCIOUS" ) then {
+				_leadStuckCounter = _leadStuckCounter + 1;
+				// Debug message:
+				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader looks stuck %4 time(s).", CSWR_txtDebugHeader, _tag, str _grp, _leadStuckCounter] };
+				// After timeout and leader looks stuck, teleport them to a free space:
+				if ( _leadStuckCounter isEqualTo 5 ) then {
+					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader apparently was stuck, but now he's free.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
+					// Find pos min 10m (_disLimiterFromBldg) from (leader _grp) but not further 20m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
+					_getOutPos = [(leader _grp), 10, 12, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
+					// Teleport to the safe position out:
+					(leader _grp) setPosATL [_getOutPos # 0, _getOutPos # 1, 0];
+					// Destroying the position just in case:
+					_getOutPos = nil;
+					// Restart the first OCCUPY step:
+					[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
+					// Stop the while-looping:
+					break;
 				};
-				// If leader not close enough to the building, let's CPU breather to the next distance checking:
-				sleep _wait;
-			};  // While-loop ends.
-		// If has NO spots for the whole group:
-		} else {
-			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 %2 > OCCUPY > Failed: '%3' has %4 spot(s) to %5 men.", CSWR_txtDebugHeader, _tag, typeOf _building, count _spots, count (units _grp)] };
-			// Cooldown to prevent crazy loopings:
+			};
+			// Breather to avoid crazy loops:
 			sleep _wait;
-			// Restart the first OCCUPY step:
-			[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
-		};
+		};  // While-loop ends.
 	// If a building is NOT found:
 	} else {
 		// Delete the group:
 		//{ deleteVehicle _x } forEach units _grp;  // Dont delete the group coz maybe all buildings are destroyed during the game.
 		// Warning message:
-		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.",
+		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or the group size doesn't fit in the buildings, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Breather:
 		sleep _wait;
@@ -4903,7 +4879,7 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 	// This function checks what buildings are available around a specific marker range and selects one of them to be used for the group.
 	// Return _building: object.
 
-	params ["_dests", "_grp", "_tag"];
+	params ["_dests", "_grp", "_grpSize", "_tag"];
 	private ["_bldgsAvailable", "_building", "_bldgsByMkr", "_bldgsToCheck", "_spots", "_isWaterSurrounding"];
 
 	// Escape:
@@ -4925,12 +4901,11 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 	} forEach _dests;
 	// SECOND STEP: among the buildings found, select only those specific ones:
 	{  // forEach _bldgsToCheck:
-		// If the building is NOT an ignored one, NOT got its position as ignored also, and it wasn't destroyed (or it's an acceptible ruin):
-		if ( !(typeOf _x in CSWR_occupyIgnoredBuildings) && !(getPosATL _x in CSWR_occupyIgnoredPositions) && { alive _x || typeOf _x in CSWR_occupyAcceptableRuins } ) then {
-			// Check how much spot the building got:
-			_spots = [_x] call BIS_fnc_buildingPositions;
-			// Crucial: if at least one spot available:
-			if ( count _spots > 0 ) then { 
+		// If the building is NOT an ignored one, NOT got its position as ignored also, it's not invisible, and it wasn't destroyed (or it's an acceptible ruin):
+		if ( !(typeOf _x in CSWR_occupyIgnoredBuildings) && !(getPosATL _x in CSWR_occupyIgnoredPositions) && !isObjectHidden _x && { alive _x || typeOf _x in CSWR_occupyAcceptableRuins } ) then {
+			// Check how much spot the building got and if it fits the group size:
+			_spots = [_x, _grpSize] call BIS_fnc_buildingPositions;
+			if ( count _spots >= _grpSize ) then { 
 				// Check if the building is over water:
 				_isWaterSurrounding = surfaceIsWater (getPosATL _x);  // specialy ignoring Tanoa's riverside houses issue.
 				// If not over the water or the building is an exception, do it:
@@ -4969,11 +4944,11 @@ THY_fnc_CSWR_OCCUPY_remove_unit_from_group = {
 	// This function removes a specific unit left behind, and set them to a new group that's abled to execute also the occupy-movement by itself.
 	// Returns nothing.
 
-	params ["_unit", "_tag", "_behavior", "_wait"];
+	params ["_dests", "_unit", "_tag", "_behavior", "_wait"];
 	private ["_newGrp"];
 
 	// Debug message:
-	if (CSWR_isOnDebugGlobal) then {
+	if CSWR_isOnDebugGlobal then {
 		systemChat format ["%1 OCCUPY > A unit of %2 '%3' has been removed as member to preserve the group movement.", CSWR_txtDebugHeader, _tag, str (group _unit)];
 		sleep 5;
 	};
@@ -4995,17 +4970,46 @@ THY_fnc_CSWR_OCCUPY_nearEnemies = {
 	// Returns _isEnemyNear: bool.
 
 	params ["_unit", "_disLimiterEnemy"];
-	private ["_isEnemyNear", "_nearUnits", "_nearEnemies"];
+	private ["_isEnemyNear", "_nearEnemies"];
 
 	// WIP IMPORTANT: the command findNearestEnemy is not working in my tests Feb/2023. Even in Wiki has mistakes with the examples:  https://forums.bohemia.net/forums/topic/241587-solved-findnearestenemy-command-looks-not-okay-for-me-a-noob/
 	// Initial values:
 	_isEnemyNear = false;
 	// Searching:
-	_nearUnits = _unit nearEntities ["Man", _disLimiterEnemy];
-	_nearEnemies = _nearUnits select { side _unit isNotEqualTo side _x && side _unit isNotEqualTo CIVILIAN && alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" };
+	_nearEnemies = (_unit nearEntities ["Man", _disLimiterEnemy]) select { _x isKindOf "CAManBase" && side _unit isNotEqualTo (side _x) && side _unit isNotEqualTo CIVILIAN && alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" };
 	if ( count _nearEnemies > 0 ) then { _isEnemyNear = true };
 	// Return:
 	_isEnemyNear;
+};
+
+
+THY_fnc_CSWR_OCCUPY_unitBodyPosition_getIn = {
+	// This function prepares the unit basic settings to stay in a building during the occupy movement.
+	// Returns nothing.
+
+	params ["_unit", "_compass", "_isRuin"];
+	// After the arrival on spot, it removes the man's movement capacible:
+	_unit disableAI "PATH";
+	// Set the direction:
+	[_unit, selectRandom _compass] remoteExec ["setDir"];
+	// If unit inside a ruin, so stay on knees to get low their profile:
+	if _isRuin then { _unit setUnitPos "MIDDLE" };
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_OCCUPY_unitBodyPosition_getOut = {
+	// This function prepares the unit basic settings to leave a building after the occupy movement.
+	// Returns nothing.
+
+	params ["_unit"];
+	// Stand up:
+	_unit setUnitPos "UP";
+	// Animation breather:
+	sleep 0.5;
+	// Return:
+	true;
 };
 
 
@@ -5014,14 +5018,14 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// Returns nothing.
 
 	params ["_building", "_bldgPos", "_dests", "_grp", "_tag", "_behavior", "_disLimiterFromBldg", "_disLimiterEnemy", "_disLimiterFrndPlayer", "_wait"];
-	private ["_spots", "_spot", "_isFrndPlayerNear", "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_time", "_grpSize", "_compass"];
+	private ["_spots", "_spot", /* "_isFrndPlayerNear", */ "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_time", "_grpSize", "_compass", "_isRuin"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
 	_spots            = [];
 	_spot             = [];
-	_isFrndPlayerNear = false;
+	//_isFrndPlayerNear = false;
 	_isEnemyNear      = false;
 	_timeOutToUnit    = nil;
 	_canTeleport      = true;
@@ -5031,11 +5035,12 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// Declarations:
 	_grpSize = count (units _grp);
 	_compass = [0, 45, 90, 135, 180, 225, 270, 315];  // Better final-result than 'random 360'.
+	_isRuin  = typeOf _building in CSWR_occupyAcceptableRuins;
 	// If there's a building:
 	if ( !isNull _building ) then {
 		{  // forEach _grp members:
 			// Declarations:
-			_orderCounter = 0;
+			_orderCounter  = 0;
 			_timeOutToUnit = 15;  // secs to the unit get-in the building before be ignored.
 			// Meanwhile the unit is alive or their group to exist:
 			while { alive _x || !isNull _grp } do {
@@ -5050,14 +5055,14 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 					};
 					// if group leader is close enough to the chosen building:
 					if ( _x distance _building < _disLimiterFromBldg + 2 ) then {
-						// Figure out if the selected building has enough spots for current group size:
-						_spots = [_building, _grpSize] call BIS_fnc_buildingPositions;
+						// This time take all spots available in the building:
+						_spots = [_building] call BIS_fnc_buildingPositions;
 						// For script integrity, check again right after the arrival if there are enough spots to the whole group:
 						if ( count _spots >= _grpSize ) then {
 							// if the building is free to be occupied:
 							if ( !(_bldgPos in CSWR_occupyIgnoredPositions) ) then {
 								// If the building wasn't completely destroyed or it's an exception (like a specific ruin):
-								if ( alive _building || typeOf _building in CSWR_occupyAcceptableRuins ) then {
+								if ( alive _building || _isRuin ) then {
 									// Flag the building for other groups that this building is ours:
 									CSWR_occupyIgnoredPositions pushBack _bldgPos;
 									// Update the global variable:
@@ -5078,7 +5083,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 							// if the building is already occupied for someone else:
 							} else {
 								// Debug message:
-								if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' building is already occupied for someone else.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
+								if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' building is already occupied!", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
 								// Small cooldown to prevent crazy loopings:
 								sleep 3;
 								// Restart the first OCCUPY step:
@@ -5087,11 +5092,11 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 								break;
 							};
 							// Check if there are friendly players around:
-							_isFrndPlayerNear = [_x, "friendlyPlayers", _disLimiterFrndPlayer] call THY_fnc_CSWR_is_playerNear;
+							//_isFrndPlayerNear = [_x, "friendlyPlayers", _disLimiterFrndPlayer] call THY_fnc_CSWR_is_playerNear;  // It doesn't needed anymore because when the building is a tower, the AI has too much difficult to get in without teleportation. So avoid to use traditional/natural get-in moviment.
 							// Check if there are enemies around:
 							_isEnemyNear = [_x, _disLimiterEnemy] call THY_fnc_CSWR_OCCUPY_nearEnemies;
-							// If a friendly player NOT around, and enemy NOT around, and leader is NOT engaging:
-							if ( !_isFrndPlayerNear && !_isEnemyNear && incapacitatedState _x isNotEqualTo "SHOOTING" ) then {
+							// If an enemy is NOT around, and leader is NOT engaging:
+							if ( /* !_isFrndPlayerNear &&  */!_isEnemyNear && incapacitatedState _x isNotEqualTo "SHOOTING" ) then {
 								// flags:
 								_canTeleport = true;
 								// force the leader to stop and prevent them to died when they are teleported to the new position:
@@ -5100,10 +5105,8 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 								sleep 1;
 								// Teleport the unit to their spot inside the building:
 								_x setPosATL _spot;
-								// After the arrival on spot, it removes the man's movement capacible:
-								_x disableAI "PATH";
-								// Set the direction:
-								[_x, selectRandom _compass] remoteExec ["setDir"];
+								// Configure the unit body position inside the building:
+								[_x, _compass, _isRuin] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getIn;
 								// Wait to confirm the unit still alive before remove the current spot position from the list of spots available:
 								sleep 1;
 								// Delete that occupied spot to avoid more than one man there:
@@ -5112,7 +5115,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 								_alreadySheltered pushBackUnique _x;
 								// Stop the while-looping:
 								break;
-							// Otherwise, if a friendly player around, or enemy around, or leader is engaging:
+							// Otherwise, if an enemy around, or leader is engaging:
 							} else {
 								// Debug message:
 								if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > The context asks to %2 '%3' goes-in without teleport.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 3 };
@@ -5124,10 +5127,8 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 								if ( alive _x ) then { _spots deleteAt (_spots find _spot) };
 								// Wait the leader arrives inside the building or be killed:
 								waitUntil { sleep 1; moveToCompleted _x || moveToFailed _x || !alive _x };
-								// After the arrival on spot, it removes the man's movement capacible:
-								_x disableAI "PATH";
-								// Set the direction:
-								[_x, selectRandom _compass] remoteExec ["setDir"];
+								// Configure the unit body position inside the building:
+								[_x, _compass, _isRuin] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getIn;
 								// Report the leader is sheltered:
 								_alreadySheltered pushBackUnique _x;
 								// Stop the while-loop:
@@ -5157,7 +5158,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						_orderCounter = _orderCounter + 1;
 					};
 					// if the unit is unconscious:
-					if ( (incapacitatedState _x) isEqualTo "UNCONSCIOUS" ) then {
+					if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then {
 						// Debug message:
 						if CSWR_isOnDebugGlobal then { systemChat format ["%1 > OCCUPY > An incapacitated %2 unit has been killed to preserve the group mobility.", CSWR_txtDebugHeader, _tag] };
 						// Kill the AI unit:
@@ -5168,7 +5169,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 					// if the unit is too far away from the leader:
 					if ( _x distance leader _grp > 120 ) then {
 						// Remove the unit from the current group:
-						[_x, _tag, _behavior, _wait] spawn THY_fnc_CSWR_OCCUPY_remove_unit_from_group;
+						[_dests, _x, _tag, _behavior, _wait] spawn THY_fnc_CSWR_OCCUPY_remove_unit_from_group;
 						// Stop the while-looping:
 						break;
 					};
@@ -5193,10 +5194,8 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						};
 						// If still alive (because it has a waitUntil case above):
 						if ( alive _x ) then {
-							// After the arrival on spot, it removes the man's movement capacible:
-							_x disableAI "PATH";
-							// Set the direction:
-							[_x, selectRandom _compass] remoteExec ["setDir"];
+							// Configure the unit body position inside the building:
+							[_x, _compass, _isRuin] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getIn;
 							// Delete that occupied spot to avoid more than one man there:
 							_spots deleteAt (_spots find _spot);
 							// Report the unit is sheltered:
@@ -5249,7 +5248,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 				};
 			};
 			// Next planned move cooldown:
-			_time = time + (random CSWR_destOccupyTakeabreak); waitUntil { sleep 60; time > _time };
+			_time = time + (random CSWR_destOccupyTakeabreak); waitUntil { if (!CSWR_isOnDebugGlobal && !CSWR_isOnDebugHold) then { sleep 60 } else { sleep 3 }; time > _time };
 		// Otherwise:
 		} else {
 			// Debug message:
@@ -5275,7 +5274,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 	// Returns nothing.
 
 	params ["_dests", "_grp", "_tag", "_behavior", "_disLimiterFromBldg", "_disLimiterEnemy", "_disLimiterFrndPlayer", "_bldgPos", "_wait"];
-	private ["_isFrndPlayerNear", "_isEnemyNear", "_getOutPos", "_canTeleport"];
+	private ["_isFrndPlayerNear", "_isEnemyNear", "_getOutPos", "_canTeleport", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -5284,7 +5283,9 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 	_isEnemyNear      = false;
 	_getOutPos        = [];
 	_canTeleport      = true;
-
+	_wp               = [];
+	// Delete the old waypoints to avoid waypoint bugs, even if Zeus accidently added waypoints:
+	for "_i" from (count waypoints _grp - 1) to 1 step -1 do { deleteWaypoint [_grp, _i] };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).
 	{  // forEach _grp members:
 		// Meanwhile the unit is alive or their group to exist:
 		while { alive _x || !isNull _grp } do {
@@ -5306,7 +5307,9 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					// flag:
 					_canTeleport = true;
 					// Find pos min 10m (_disLimiterFromBldg) from _x but not further 20m, not closer 4m to other object, not in water, max gradient 0.7, not on shoreline:
-					_getOutPos = [_x, _disLimiterFromBldg, (_disLimiterFromBldg * 2), 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
+					_getOutPos = [_x, 10, 12, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
+					// Configure the unit body position when leave the building:
+					[_x] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getOut;
 					// Teleport to the safe position out:
 					_x setPosATL [_getOutPos # 0, _getOutPos # 1, 0];
 					// Destroying the position just in case:
@@ -5314,7 +5317,11 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					// Give back AI hability to find their way:
 					_x enableAI "PATH";  // crucial after use disableAI.
 					// Give back the movement hability to the unit, sending them to leader position:
-					_x doFollow _x;  // crucial after use doStop.
+					_x doMove (getPos _x);  // crucial after use doStop.
+					// Force the unit stay out, doesn't going back into the old building:
+					_wp = _grp addWaypoint [getPos _x, 0]; 
+					_wp setWaypointType "MOVE";
+					_grp setCurrentWaypoint _wp;
 					// Stop the while-loop:
 					break;
 				// Otherwise, if a friendly player around, or enemy around, or leader engaging:
@@ -5323,10 +5330,12 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > The context asks to %2 '%3' goes-out without teleport.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 3 };
 					// flag:
 					_canTeleport = false;
+					// Configure the unit body position when leave the building:
+					[_x] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getOut;
 					// Give back AI hability to find their way:
 					_x enableAI "PATH";  // crucial after use disableAI.
 					// Give back the movement hability to the unit, sending them to leader position:
-					_x doFollow _x;  // crucial after use doStop.
+					_x doMove (getPos _x);  // crucial after use doStop.
 					// Stop the while-loop:
 					break;
 				};
@@ -5336,8 +5345,10 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 			} else {
 				// If the leader is ready to get out the building, and the unit is NOT engaging:
 				if ( leader _grp checkAIFeature "PATH" && incapacitatedState _x isNotEqualTo "SHOOTING" ) then {
+					// Configure the unit body position when leave the building:
+					[_x] call THY_fnc_CSWR_OCCUPY_unitBodyPosition_getOut;
 					// If the group member can teleport:
-					if ( _canTeleport ) then {
+					if _canTeleport then {
 						// Teleport to the leader position:
 						_x setPosATL (getPosATL (leader _grp));
 					};
@@ -5346,7 +5357,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					// Wait the unit react to the change:
 					sleep 2;
 					// Give back the movement hability to the unit, sending them to leader position:
-					_x doFollow leader _grp;  // crucial after use doStop.
+					_x doFollow (leader _grp);  // crucial after use doStop.
 					// Stop the while-loop:
 					break;
 				// If something wrong, wait a bit:
