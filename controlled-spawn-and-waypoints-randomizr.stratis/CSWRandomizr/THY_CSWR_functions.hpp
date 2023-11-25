@@ -1,4 +1,4 @@
-// CSWR v4.0
+// CSWR v6.5
 // File: your_mission\CSWRandomizr\THY_CSWR_functions.hpp
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)

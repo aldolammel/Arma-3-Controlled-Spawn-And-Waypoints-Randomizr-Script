@@ -20,7 +20,7 @@ __
 
 - No dependencies from other mods or scripts;
 - Manually define which markers the faction can use as spawn-points;
-- NEW! - Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
+- Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
 - Create unlimited different types of spawn-points (including air paradrop) for one or more factions;
 - Spawn-points can be triggered by mission starts, Timer delay (down count), Trigger activation, and Target status (unit killed or building destroyed);
 - Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
@@ -29,7 +29,7 @@ __
 - Manually define which markers will be used as one type of destinations (waypoints) for AI units and vehicles;
 - There are 4 types of destinations: move, watch, hold, and occupy;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
-- NEW! - Sectorize which groups can move through many sectorized destination options of their faction;
+- Sectorize which groups can move through many sectorized destination options of their faction;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
 - Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
