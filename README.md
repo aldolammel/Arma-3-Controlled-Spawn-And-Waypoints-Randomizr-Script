@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.2
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.5
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
@@ -50,8 +50,19 @@ __
 
 ## CHANGELOG
 
+**Nov, 25th 2023 | v6.5**
+- Fixed > Sectorizing > Now is forbidden to sectorize the moviment "_move_ANY" because it doesn't make sense at all;
+- Fixed > Occupy > When the mission editor hid a building, the group still considered that building as a possible location to occupy;
+- Fixed > Occupy > An error (caused only in v6.0) when the group leader kicked an unit out of the group if the unit was too far from them;
+- Improved > Occupy > Now groups are able to occupy big towers like Military Cargo Towers;
+- Improved > Occupy > If the building is a ruin, and its type is an accepted one, the group when into it will stay in a crouch to units get a lower profile on it;
+- Improved > Occupy > Expanded the amount of forbidden buildings and acceptable ruins based of Western Sahara DLC map;
+- Improved > Occupy > Expanded the amount of forbidden buildings and acceptable ruins based of Global Mobilization DLC maps;
+- Improved > Occupy > If a building is badly added by Editor as forbidden and acceptable building at the same time, CSWR in debug mode will point this;
+- Documentation has been updated.
+
 **Nov, 14th 2023 | v6.2**
-- Fixed > Occupy-destination-markers weren't working fine when they were sectorized;
+- Fixed > Ocuppy > Occupy-destination-markers weren't working fine when they were sectorized;
 - Fixed > Missions with respawn system applied were hidden CSWR markers even when debug mode was True (init.sqf updated);
 - Fixed > When a group (spawned in a sectorized spawn) assigned with _move_ANY destination command without sector declared to destination too, an error was printed out;
 - Improved > Watch > Now, if the sniper group doesn't find any peak or hill, they will search for secondary high places (mounts);
