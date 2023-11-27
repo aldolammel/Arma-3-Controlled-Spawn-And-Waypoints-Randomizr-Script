@@ -1776,29 +1776,32 @@ THY_fnc_CSWR_unit_skills = {
 		if ( _grpType isEqualTo "teamS" ) then {
 			// skills:
 			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
-				_x setSkill ["spotTime", 0.6];
-				_x setSkill ["aimingAccuracy", 0.8];
+				_x setSkill ["spotTime", 0.70];
+				
 			} else {
-				_x setSkill ["spotTime", 0.8];  // The other member is the spotter.
-				_x setSkill ["aimingAccuracy", 0.7];
+				_x setSkill ["spotTime", 0.80];  // The other member is the spotter.
 			};
-			_x setSkill ["spotDistance", 0.7];
-			_x setSkill ["aimingShake", 0.8];
-			_x setSkill ["reloadSpeed", 0.4];  // a bit faster than when watching.
+			_x setSkill ["aimingAccuracy", 0.75];
+			_x setSkill ["spotDistance", 0.75];
+			_x setSkill ["aimingShake", 0.75];
+			_x setSkill ["reloadSpeed", 0.75];  // a bit faster than when watching.
 		};
 		// Updating the settings if Sniper group in watch strategy:
 		if ( _grpType isEqualTo "teamS" && _destType isEqualTo "MOVE_WATCH" ) then {
+			/*
 			// skills:
 			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
-				_x setSkill ["spotTime", 0.8];
-				_x setSkill ["aimingAccuracy", 0.9];
+				_x setSkill ["spotTime", 0.80];
+				
 			} else {
-				_x setSkill ["spotTime", 1];  // The other member is the spotter.
-				_x setSkill ["aimingAccuracy", 0.8];
+				_x setSkill ["spotTime", 0.90];  // The other member is the spotter.
 			};
-			_x setSkill ["spotDistance", 1];
-			_x setSkill ["aimingShake", 0.9];
-			_x setSkill ["reloadSpeed", 0.3];  // a bit slower than when not watching.
+			_x setSkill ["aimingAccuracy", 0.85];
+			_x setSkill ["spotDistance", 0.85];
+			_x setSkill ["aimingShake", 0.85];
+			_x setSkill ["reloadSpeed", 0.85];  // a bit faster than when watching.
+			*/
+			_x setSkill 0.90;
 		};
 		// If crewman of Vehicle Light:
 			//if ( _grpType isEqualTo "vehL" ) then {   };
@@ -1816,7 +1819,7 @@ THY_fnc_CSWR_unit_skills = {
 		if ( _grpType isEqualTo "heliL" ) then {
 			// skills:
 			if ( _x isEqualTo leader _grp ) then {
-				_x setSkill ["commanding", 0.8];
+				_x setSkill ["commanding", 0.90];
 			};
 			_x setSkill ["spotDistance", 1];  // as Heli Light is closer from the ground (flyInHeight), it's easier to spot the enemy than Heli Heavy.
 			_x setSkill ["courage", 0.9];
@@ -1832,7 +1835,7 @@ THY_fnc_CSWR_unit_skills = {
 			} else {
 				// reserved space.
 			}; */
-			_x setSkill ["spotDistance", 0.8];  // as Heli Heavy is further from the ground (flyInHeight), it's harder to spot the enemy than Heli Light
+			_x setSkill ["spotDistance", 0.85];  // as Heli Heavy is further from the ground (flyInHeight), it's harder to spot the enemy than Heli Light
 			_x setSkill ["courage", 0.9];
 		};
 		// CPU breather
@@ -4313,10 +4316,10 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grpType", "_grp", "_behavior"];
-	private ["_isToBooking", "_mkrDebugWatch", "_counter", "_bookingInfo", "_location", "_locationPos", "_isBooked", "_obj", "_disLocToArea", "_areaPos", "_roadsAround", "_attemptLimit", "_wait", "_areaToWatch", "_locations", "_wp"];
+	private ["_unitFinalPos", "_objWatcher", "_mkrDebugWatch", "_isGoodHeight", "_visibility", "_isVisibleEnough", "_minRange", "_minHeigh", "_mkr", "_posToWatch", "_objTarget", "_tries", "_tryLimiter", "_wp"];
 
 	// Escape:
-	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	if ( isNull _grp || !alive (leader _grp) ) exitWith { true /* Return */ };
 	// Error handling > If it's not a Sniper group:
 	if ( _grpType isNotEqualTo "teamS" ) exitWith {
 		// Warning message:
@@ -4325,6 +4328,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Deleting the units:
 		{ deleteVehicle _x } forEach units _grp;
 		sleep 5;
+		// Return:
+		true;
 	};
 	// Error handling > If it's a civilian:
 	if ( _tag isEqualTo "CIV" ) exitWith {
@@ -4334,6 +4339,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Deleting the units:
 		{ deleteVehicle _x } forEach units _grp;
 		sleep 5;
+		// Return:
+		true;
 	};
 	// Error handling > If sniper group got a vehicle:
 	if ( !isNull (objectParent (leader _grp)) ) exitWith {
@@ -4345,181 +4352,142 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Deleting the units:
 		{ deleteVehicle _x } forEach units _grp;
 		sleep 5;
+		// Return:
+		true;
 	};
 	// Initial values:
-	_isToBooking   = true;
-	_mkrDebugWatch = "";  // Debug purposes.
-	_counter       = 0;
-	_bookingInfo   = [];
-	_location      = nil;
-	_locationPos   = [];
-	_isBooked      = false;
-	_obj           = objNull;
-	_disLocToArea  = nil;
-	_areaPos       = [];
-	_roadsAround   = [];
-	// Declarations:
-	_attemptLimit = 5;
-	_wait         = 10;
-	// Randomizes to where the group goes into the specific destination-type:
-	_areaToWatch = markerPos (selectRandom _dests);
+	_unitFinalPos    = [];
+	_objWatcher      = objNull;
+	_mkrDebugWatch   = "";  // Debug purposes.
+	_isGoodHeight    = false;
+	_visibility      = 0;
+	_isVisibleEnough = false;
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
-	// Finding out specific types of locations around:
-	_locations = nearestLocations [_areaToWatch, ["RockArea", "Hill", "ViewPoint", "Flag"], CSWR_watchMarkerRange];
-	// Plan B is to find any mount around but closer:
-	if ( count _locations isEqualTo 0 ) then { _locations = nearestLocations [_areaToWatch, ["Mount"], (CSWR_watchMarkerRange / 1.5)]; _isToBooking = false };
-	// If found at least one location:
-	if ( count _locations > 0 ) then {
-		// Debug watch-markers:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			{  // forEach _locations:
-				// Show me all locations found on the map with visible markers:
-				_mkrDebugWatch = createMarker ["debug_" + str _x, locationPosition _x];
-				_mkrDebugWatch setMarkerType "hd_dot";
-				_mkrDebugWatch setMarkerAlpha 0.7;
-				switch _tag do {
-					case "BLU": { 
-						_mkrDebugWatch setMarkerColor "colorBLUFOR";
-						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
-						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) + 10, locationPosition _x # 1, 0];
-					};
-					case "OPF": {
-						_mkrDebugWatch setMarkerColor "colorOPFOR";
-						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
-						_mkrDebugWatch setMarkerPos [locationPosition _x # 0, (locationPosition _x # 1) + 10, 0];
-					};
-					case "IND": {
-						_mkrDebugWatch setMarkerColor "colorIndependent";
-						//_mkrDebugWatch setMarkerText format ["%1 sniper pos", _tag];
-						_mkrDebugWatch setMarkerPos [(locationPosition _x # 0) - 10, locationPosition _x # 1, 0];
-					};
-					//case "CIV": {}; // not appliable here!
-				};
-			} forEach _locations;
+	// Declarations:
+	_minRange   = 100;
+	_minHeigh   = 20;  // over the target heigh.
+	_mkr        = selectRandom _dests;
+	_posToWatch = markerPos _mkr;  // returns a AGL pos, so [x, y, 0], z is always 0
+	_posToWatch = AGLToASL _posToWatch;  // needed to create a simpleObject.
+	_posToWatch = [_posToWatch # 0, _posToWatch # 1, (_posToWatch # 2) + 1];  // rising Z a bit from the ground, advising from BI forum's mentors.
+	// Creating a generic asset on the map to provide a visual watching zone:
+	_objTarget  = createSimpleObject ["Sign_Arrow_Large_F", _posToWatch, false];  // false = global / true = local.
+	// Hide the target if debug mode is OFF:
+	if ( !CSWR_isOnDebugGlobal || !CSWR_isOnDebugWatch ) then { hideObjectGlobal _objTarget };  // Important: don't delete it becouse the setDir for gunner will be necessary.
+	_tries      = 1;
+	_tryLimiter = 60;
+	// Searching the watcher-group spot with good visibility to the position to overwatch:
+	while { alive (leader _grp) && _tries <= _tryLimiter } do {
+		// Try a random empty spot:
+		_unitFinalPos = [_posToWatch, _minRange, CSWR_watchMarkerRange, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // returns [x,y]
+		// Escape > if there's road around the watcher spot, forget and search again:
+		if ( count (_unitFinalPos nearRoads 20) isNotEqualTo 0 ) then { sleep 0.2; continue };
+		// Converting to ASL position:
+		_unitFinalPos = ATLToASL [_unitFinalPos # 0, _unitFinalPos # 1, 0];
+		// Rising Z a bit from the ground, simulation unit eye pos when laid down:
+		_unitFinalPos = [_unitFinalPos # 0, _unitFinalPos # 1, (_unitFinalPos # 2) + 0.3];
+		// Creating a generic and temporary asset on the map to provide the unit point-of-view to the watching zone:
+		_objWatcher = createSimpleObject ["Sign_Arrow_Direction_F", _unitFinalPos, false];  // false = global / true = local.
+		// Check if the selected spot is enough higher than the zone to watch:
+		_isGoodHeight = getTerrainHeightASL _unitFinalPos > (getTerrainHeightASL _posToWatch) + _minHeigh;
+		// Escape > If the spot's not high enough, jump to the next random spot:
+		if !_isGoodHeight then { sleep 0.2; continue };
+		// Debug purposes:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _isGoodHeight ) then { 
+			// Show me all locations found on the map with visible markers:
+			_mkrDebugWatch = createMarker [("debug_" + _mkr + "_" + str _tries), _unitFinalPos];
+			_mkrDebugWatch setMarkerType "hd_dot";
+			_mkrDebugWatch setMarkerAlpha 0.25;
+			_mkrDebugWatch setMarkerColor "ColorBlack";
+			//_mkrDebugWatch setMarkerText format ["%1 No visibility", _tag];
+			[_objWatcher, _objWatcher getDir _objTarget] remoteExec ["setDir"];
 		};
-		
-		// BOOKING A LOCATION:
-		if _isToBooking then {
-			// Looping to booking (mandatory in Watch) a location:
-			while { !isNull _grp && _counter <= _attemptLimit } do {
-				// Counter to prevent crazy loops:
-				_counter = _counter + 1;
-				// Try to booking a marker:
-				_bookingInfo = ["BOOKING_WATCH", getPos (leader _grp), _tag, _locations, 10, 3] call THY_fnc_CSWR_marker_booking;
-				// Which marker to go:
-				_location    = _bookingInfo # 0;  // return a location in this format: "Location Hill at 3999, 7028"
-				// Marker position:
-				_locationPos = _bookingInfo # 1;  // [x,y,z]
-				// Is booked?
-				_isBooked    = _bookingInfo # 2;
-				// If not booked:
-				if !_isBooked then {
-					// Debug message:
-					if (CSWR_isOnDebugGlobal && _counter <= _attemptLimit ) then {
-						["%1 WATCH > %2 '%3' sniper group selected a location already booked for another group. Next try soon...",
-						CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error;
-					};
-					// CPU breather to prevent crazy loopings:
-					sleep _wait;
-				// Otherwise, it's booked:
-				} else { 
-					// Clean counter:
-					_counter = 0;
-					// Stop the loop:
-					break;
-				};
-			};  // While-loop ends.
-		// If booking is not needed:
-		} else {
-			// Which marker to go:
-			_location = selectRandom _locations;
-			// Marker position:
-			_locationPos = [locationPosition _location # 0, locationPosition _location # 1, 0];  // [x,y,z]
+		// Check the visibility of 2 objects (0 = not visible, 0.2 = barely visible, 0.7 = visible, 1 = fully visible):
+		_visibility = [objNull, "VIEW"] checkVisibility [getPosASL _objWatcher, getPosASL _objTarget];  // CRITICAL: positions need to be ASL
+		_isVisibleEnough = _visibility >= 0.7;
+		// Debug purposes:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _visibility > 0.2 ) then {
+			switch _tag do {
+				case "BLU": { _mkrDebugWatch setMarkerColor "colorBLUFOR" };
+				case "OPF": { _mkrDebugWatch setMarkerColor "colorOPFOR" };
+				case "IND": { _mkrDebugWatch setMarkerColor "colorIndependent" };
+				//case "CIV": {}; // not appliable here!
+			};
+			_mkrDebugWatch setMarkerText format ["%1 visibility %2", _tag, (str _visibility) select [0,4]];
+			_mkrDebugWatch setMarkerAlpha 1;
 		};
-		// Error handling:
-		if ( _isToBooking && _counter > _attemptLimit ) exitWith {
-			// Delete the sniper group:
-			{ deleteVehicle _x } forEach units _grp;
-			// Warning message:
-			["%1 WATCH > All locations found by %2 watch-markers look already watched. A sniper group without watch-marker was deleted. CONSIDER TO ADD more watch-markers OR TO REMOVE a %2 sniper group in 'fn_CSWR_population.sqf' file.",
-			CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
+		// If the spot has enough visibility of the target zone:
+		if _isVisibleEnough then {
+			// Debug:
+			if CSWR_isOnDebugGlobal then {
+				// Message:
+				systemChat format ["%1 WATCH > %2 %3 moving to spot with %4/1 visibility.",
+				CSWR_txtDebugHeader, _tag, str _grp, (str _visibility) select [0,4]];
+			};
+			// Debug:
+			if ( !CSWR_isOnDebugGlobal || !CSWR_isOnDebugWatch ) then {
+				// Remove each temporary obj in watcher positions:
+				deleteVehicle _objWatcher;
+			};
+			// Stop the searching:
+			break;
 		};
-	
-		// SETTING A POSITION:
-		// If booked or not needed to booking:
-		if ( _isBooked || !_isToBooking ) then {
-			// Creating a generic asset on-the map to provide an object (and, next, check its position):
-			_obj = createSimpleObject ["Land_Canteen_F", _locationPos, false];  // false = global / true = local.
-			// Figuring out the distance between the location found (a hill peak, for example) and the area-target to watch:
-			_disLocToArea = _obj distance _areaToWatch;
-			// Delete the asset used as reference:
-			deleteVehicle _obj;
-			// Looping to find a good spot in selected location > if the group still exists:
-			while { !isNull _grp } do {
-				// Counter to prevent crazy loops:
-				_counter = _counter + 1;
-				// Finding a empty spot based on selected location position. 10m from _pos but not further 100m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
-				_areaPos = [_locationPos, 10, 100, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
-				// Check if there's road around the sniper spot:
-				_roadsAround = _areaPos nearRoads 20;  // meters
-				// WIP: trying to identify if there's a terrain between the sniper eyes and the area-target:
-				//private _isTerrainBlockingView = terrainIntersect [_areaPos, _areaToWatch];  // High cost for Engine/server (info from wiki);
-				// If the spot is within target range and there's No any road too close, it potencialy is a good spot:
-				if ( _areaPos distance _areaToWatch <= _disLocToArea /* && (!isOnRoad _areaPos) */ && count _roadsAround isEqualTo 0 /* && (!_isTerrainBlockingView) */ ) then { break };
-				// Warning message:
-				if ( _counter > 20 ) then {
-					// Restart the counter:
-					_counter = 0;
-					// Message:
-					if CSWR_isOnDebugGlobal then { ["%1 WATCH > %2 '%3' group has no good spot. Next try soon...",
-					CSWR_txtDebugHeader, _tag, str _grp] call BIS_fnc_error };
-					// A good additional cooldown for Server CPU:
-					sleep _wait;
-				};
-				// CPU breather to prevent craze loopings:
-				sleep 1;
-			};  // While-loop ends.
-			// Debug message:
-			if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %3 location(s) found, %2 '%4' moving: %5.",
-			CSWR_txtDebugHeader, _tag, count _locations, str _grp, _location] };
-		};
-	// If didn't find even one location:
-	} else {
-		// Delete the sniper group:
+		// Remove each temporary obj in watcher positions:
+		deleteVehicle _objWatcher;
+		// Tries amount control:
+		_tries = _tries + 1;
+		// Breather:
+		sleep 0.33;
+	};  // While-loop ends.
+	//
+	if ( _tries > _tryLimiter ) exitWith {
+		// Delete the watcher group:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning message:
-		["%1 WATCH > A %2 WATCH-MARKER (%3) looks has no natural high locations to scan around. Change its position! A sniper group was deleted!",
-		CSWR_txtWarnHeader, _tag, str _areaToWatch] call BIS_fnc_error;
+		["%1 WATCH > The '%2' marker looks bad positioned for this kind of terrain. CONSIDER repositioning '%2' marker, or increase a bit 'CSWR_watchMarkerRange' in 'fn_CSWR_management.sqf' file. The group has been deleted.",
+		CSWR_txtWarnHeader, _mkr, _tag] call BIS_fnc_error; sleep 5;
+		// Return:
+		true;
 	};
-	// Escape:
-	if ( isNull _grp || _areaPos isEqualTo [] ) exitWith { ["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo };
-
-	// WAYPOINT AND GO:
-	_wp = _grp addWaypoint [_areaPos, 0];
+	// Recovering the regular pos (otherwise, the wp would be unreachable):
+	_unitFinalPos = ASLToAGL _unitFinalPos;
+	// Creating the waypoint to set the watching position in-game:
+	_wp = _grp addWaypoint [_unitFinalPos, 0];
 	_wp setWaypointType "MOVE";
-	_wp setWaypointCombatMode "WHITE";  // Important: forcing this for snipers out of their watch location // hold fire, kill only if own position spotted.
+	_wp setWaypointCombatMode "WHITE";  // Important: forcing this for units when out of their watch location // hold fire, kill only if own position spotted.
 	_grp setCurrentWaypoint _wp;
 	// Debug message:
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
 		{  // forEach units _grp:
-			["%1 WATCH > %2 '%3' unit has their: aimingAccuracy = %4 | spotDistance = %5 | aimingSpeed = %6 | endurance = %7",
-			CSWR_txtDebugHeader, _tag, str _x, (_x skill "aimingAccuracy"), (_x skill "spotDistance"), (_x skill "aimingSpeed"), (_x skill "endurance")] call BIS_fnc_error; sleep 5;
+			["%1 WATCH > %2 '%3' unit has their: aimingAccuracy = %4 | spotDistance = %5 | aimingSpeed = %6 | overall = %7 (0.85=expert/1=superAi)",
+			CSWR_txtDebugHeader, _tag, str _x, (_x skill "aimingAccuracy"), (_x skill "spotDistance"), (_x skill "aimingSpeed"), skill _x] call BIS_fnc_error; sleep 4;
 		} forEach units _grp;
 	};
-	// Wait the sniper group gets closer:
-	waitUntil {sleep 5; isNull _grp || leader _grp distance _areaPos < 100 };
-	// Escape:
-	if ( isNull _grp ) exitWith { 
-		// undo the booking:
-		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	// Wait the group gets closer, or doesn't exist anymore, or loses its waypoint:
+	waitUntil {sleep 5; isNull _grp || leader _grp distance _unitFinalPos < 100 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+	// Escape > group doesn't exist anymore:
+	if ( isNull _grp ) exitWith {
 		// Debug message:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.",
+			systemChat format ["%1 WATCH > A few moments earlier, a %2 watcher group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.",
 			CSWR_txtDebugHeader, _tag];
 		};
+		// Return:
+		true;
+	};
+	// Escape > check if the waypoint was lost (sometimes bugs or misclick by zeus can delete the waypoint):
+	if ( (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" ) exitWith {
+		// Debug message:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { systemChat format ["%1 WATCH > %2 '%3' group lost the waypoint for unknown reason. New search soon.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
+		// Small cooldown to prevent crazy loopings:
+		sleep 2;
+		// Restart the first OCCUPY step:
+		[_dests, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH;
+		// Return:
+		true;
 	};
 	// From here, keep stealth to make sure the spot is clear:
 	_grp setBehaviourStrong "STEALTH";  // Every unit in the group, and the group itself.
@@ -4531,21 +4499,13 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		_x setSpeaker "NoVoice";
 	} forEach units _grp;
 	// Wait the sniper group arrival in the area for to stay watching the marker direction:
-	waitUntil { sleep 5; isNull _grp || leader _grp distance _areaPos < 3 };
+	waitUntil { sleep 5; isNull _grp || leader _grp distance _unitFinalPos < 3 };
 	// Escape:
-	if ( isNull _grp ) exitWith {
-		// undo the booking:
-		["BOOKING_WATCH", _tag, _location, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
-		// Debug message:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			systemChat format ["%1 WATCH > A few moments earlier, a %2 sniper group HAS BEEN KILLED (or deleted) almost in their watching position.",
-			CSWR_txtDebugHeader, _tag];
-		};
-	};
+	if ( isNull _grp ) exitWith { true /* Return */ };
 	// Make the arrival smooth:
 	sleep 1;
 	// Go to the next WATCH stage:
-	[_grp, _areaToWatch, _behavior, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
+	[_grp, _posToWatch, _objTarget, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
 	// Return:
 	true;
 };
@@ -4555,7 +4515,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	// This function organizes the sniper/marksman group during the overwatching. It's a recursive loop..
 	// Returns nothing.
 
-	params ["_grp", "_areaToWatch", "_behavior", "_tag"];
+	params ["_grp", "_posToWatch", "_objTarget", "_tag"];
 	private ["_enemyDangerClose"];
 
 	// Escape:
@@ -4580,15 +4540,19 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			// Better formation for sniper group during overwatch:
 			_grp setFormation "DIAMOND";
 			// Stay focus on the target-area:
-			_x doWatch _areaToWatch;
+			_x doWatch _posToWatch;
+			// Force the unit to stay straight to the target zone:
+			[_x, _x getDir _objTarget] remoteExec ["setDir"];
 		// If member is the SPOTTER:
 		} else {
 			// Forcing this approach:
 			_x setUnitCombatMode "GREEN";  // hold fire, keep formation.
 			// Wait the spotter get their position:
 			waitUntil { sleep 3; speed _x isEqualTo 0 || !alive _x };
+			// Force the unit to stay straight to the target zone:
+			[_x, _x getDir _objTarget] remoteExec ["setDir"];
 			// Stay focus on the target-area:
-			_x doWatch _areaToWatch;
+			_x doWatch _posToWatch;
 			// Spotter uses binoculars:
 			_x selectWeapon (binocular _x);
 		};
@@ -4598,21 +4562,20 @@ THY_fnc_CSWR_WATCH_doWatching = {
 		_x disableAI "PATH";
 		// Debug message:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / leader '%8'",
+			["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / isLeader '%8'",
 			CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 3;
 		};
 	} forEach units _grp;
 	
-	
 	// STEP 2/4: SEEKING TARGETS
 	// Debug message:
-	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 Sniper in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
+	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 watcher-lead in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
 	// Seek looping:
 	while { behaviour (leader _grp) isNotEqualTo "COMBAT" } do {
 		{  // forEach units _grp;:
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'",
+				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / isLeader '%7'",
 				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
 			};
 			// Forcing the sniper/leader 
@@ -4635,7 +4598,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 
 	// STEP 3/4: ENGAGING
 	// Debug message:
-	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 Sniper leader in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
+	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 watcher-lead in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
 	// Combat looping:
 	while { behaviour (leader _grp) isEqualTo "COMBAT" } do {
 		{  // forEach units _grp;:
@@ -4643,7 +4606,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			if ( !alive _x || incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { break };
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / leader '%7'",
+				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / isLeader '%7'",
 				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
 			};
 			// If enemy revealed is too close, unit can move again:
@@ -4657,7 +4620,10 @@ THY_fnc_CSWR_WATCH_doWatching = {
 				[_grp, _x, _enemyDangerClose] call THY_fnc_CSWR_WATCH_spotter_fire_support;
 			};
 			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && !isNull (getAttackTarget _x) ) then { systemChat format ["%1 WATCH > %2 '%3' unit has a target: '%4'.", CSWR_txtDebugHeader, _tag, str _x, getAttackTarget _x]; sleep 1 };
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && !isNull (getAttackTarget _x) ) then {
+				systemChat format ["%1 WATCH > %2 '%3' unit has a target: '%4'.",
+				CSWR_txtDebugHeader, _tag, str _x, getAttackTarget _x]; sleep 1;
+			};
 			// CPU breather:
 			sleep 1;
 		} forEach units _grp;
@@ -4666,7 +4632,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	};  // While-loop TWO ends.
 
 	// STEP 4/4: RESTART FROM STEP 1:
-	[_grp, _areaToWatch, _behavior, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
+	[_grp, _posToWatch, _objTarget, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
 	// Return:
 	true;
 };
@@ -4678,8 +4644,9 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 
 	params ["_grp", "_unit", "_enemyDangerClose"];
 
-	// Escape:
+	// Escape > if the unit is the leader (main gunner), abort:
 	if ( _unit isEqualTo (leader _grp) ) exitWith {};
+	// Escape > if spotter has a target, and target is too close the spotter group, abort:
 	if ( !isNull (getAttackTarget _unit) && _unit distance (getAttackTarget _unit) < _enemyDangerClose ) exitWith {
 		// Spotter get combat mode:
 		_unit setCombatBehaviour "COMBAT";
@@ -4689,7 +4656,7 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 		_unit selectWeapon (primaryWeapon _unit);
 	};
 	// If there's NOT combat and everyone is fine:
-	if ( behaviour (leader _grp) isNotEqualTo "COMBAT" && (lifeState _unit) isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
+	if ( behaviour (leader _grp) isNotEqualTo "COMBAT" && lifeState _unit isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
 		// Spotter hold fire:
 		_unit setUnitCombatMode "GREEN";
 		// Spotter uses only binoculars:
@@ -4699,14 +4666,14 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 		// When in combat:
 		if ( behaviour (leader _grp) isEqualTo "COMBAT" ) then {
 			// if everyone if fine:
-			if ( (lifeState _unit) isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
+			if ( lifeState _unit isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
 				// Spotter hold fire:
 				_unit setUnitCombatMode "GREEN";
 				// Spotter uses only binoculars:
 				_unit selectWeapon (binocular _unit);
 			};
 			// if sniper is wounded:
-			if ( (lifeState (leader _grp) isEqualTo "INJURED") ) then {
+			if ( lifeState (leader _grp) isEqualTo "INJURED" ) then {
 				// Spotter get combat mode:
 				_unit setCombatBehaviour "COMBAT";
 				// Spotter can fire at will:
@@ -5385,7 +5352,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_areaPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
+	private ["_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_unitFinalPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -5399,7 +5366,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	_bookingInfo     = [];
 	_areaToHold      = "";
 	_isBooked        = false;
-	_areaPos         = [];
+	_unitFinalPos         = [];
 	_wp              = [];
 	_time            = 0;
 	_counter         = 0;
@@ -5434,7 +5401,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// Which marker to go:
 		_areaToHold  = _bookingInfo # 0;
 		// Marker position:
-		_areaPos     = _bookingInfo # 1;  // [x,y,z]
+		_unitFinalPos     = _bookingInfo # 1;  // [x,y,z]
 		// Is booked?
 		_isBooked    = _bookingInfo # 2;
 		// Debug message:
@@ -5458,9 +5425,9 @@ THY_fnc_CSWR_go_dest_HOLD = {
 			// Counter to prevent crazy loops:
 			_counter = _counter + 1;
 			// Find pos min 0m from center (_areaToHold) but not further 30m, not closer 3m to other obj, not in water, max gradient 0.7, no (0) on shoreline:
-			_areaPos = [markerPos _areaToHold, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // https://community.bistudio.com/wiki/BIS_fnc_findSafePos
+			_unitFinalPos = [markerPos _areaToHold, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // https://community.bistudio.com/wiki/BIS_fnc_findSafePos
 			// if troops are not over a road, good position and stop the while-loop:
-			if ( !isOnRoad _areaPos ) then { break };
+			if ( !isOnRoad _unitFinalPos ) then { break };
 			// Warning message:
 			if ( _counter > 5 ) then {
 				// Restart the counter:
@@ -5477,23 +5444,23 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	};
 	
 	// WAYPOINT AND GO:
-	_wp = _grp addWaypoint [_areaPos, 0]; 
+	_wp = _grp addWaypoint [_unitFinalPos, 0]; 
 	_wp setWaypointType "HOLD";
 	_grp setCurrentWaypoint _wp;
 	// If infantry/people:
 	if !_isVeh then {
 		// Check if the group is already on their destination:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _areaPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _unitFinalPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	// If vehicle:
 	} else {
 		// Wait 'til getting really closer:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _unitFinalPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 		// if crew still in vehicle:
 		if ( !isNull (objectParent (leader _grp)) ) then {
 			// If there's still the original waypoint:
 			if ( waypointType [_grp, currentWaypoint _grp] isEqualTo "HOLD" ) then {
 				// it forces the crew order to drive as closer as possible the waypoint:
-				(leader _grp) doMove _areaPos;
+				(leader _grp) doMove _unitFinalPos;
 			};
 		// crew by foot:
 		} else {
@@ -5505,7 +5472,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 			[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
 		};
 		// Wait 'til the vehicle is over the waypoint:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _areaPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _unitFinalPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	};
 	// Escape > if NOT a vehicle, and if the group doesn't exist or the leader was killed, abort:
 	if ( !_isVeh && { isNull _grp || !alive (leader _grp) } ) exitWith {};
