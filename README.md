@@ -59,7 +59,7 @@ __
 - Improved > Occupy > Expanded the amount of forbidden buildings and acceptable ruins based of Western Sahara DLC map;
 - Improved > Occupy > Expanded the amount of forbidden buildings and acceptable ruins based of Global Mobilization DLC maps;
 - Improved > Occupy > If a building is badly added by Editor as forbidden and acceptable building at the same time, CSWR in debug mode will point this;
-- Improved > Watch > Watch logic was total overhauled, making the watch-destination more feasible and reliable (For urban places still WIP);
+- Improved > Watch > Watch logic was total overhauled, making the watch-destination more feasible and reliable in wild and urban environments;
 - Improved > Watch > Sniper group are able to set position in urban places too as secondary approach;
 - Improved > Watch > Minimal range to sniper group sets watching position was increase from 100 to 200m;
 - Documentation has been updated.

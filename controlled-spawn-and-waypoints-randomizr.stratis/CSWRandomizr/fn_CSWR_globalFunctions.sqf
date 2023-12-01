@@ -4456,7 +4456,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 				systemChat format ["%1 WATCH > %2 %3 moving to a wild spot with visual %4/1.",
 				CSWR_txtDebugHeader, _tag, str _grp, (str _visual) select [0,4]];
 			};
-			// Debug:
+			// If debug is OFF:
 			if ( !CSWR_isOnDebugGlobal || !CSWR_isOnDebugWatch ) then {
 				// Hide the marker obj in watcher positions:
 				hideObjectGlobal _objWatcher;
