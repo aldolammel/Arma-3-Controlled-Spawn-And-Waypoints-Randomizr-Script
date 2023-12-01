@@ -9,42 +9,48 @@ if !isServer exitWith {};
 // Debug:
     CSWR_isOnDebugGlobal  = true;    // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
     CSWR_isOnDebugOccupy  = false;   // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-    CSWR_isOnDebugWatch   = false;   // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugWatch   = true;   // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
     CSWR_isOnDebugHold    = false;   // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
     CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
     CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off. Default: false.
 	CSWR_isOnDebugSectors = false;   // true = shows deeper info about sectors when it's used / false = turn it off. Default: false.
-// Factions:
-    CSWR_isOnBLU = true;   // true = if you wanna spawn BluFor/West through CSWR / false = don't spawn this side.
-    CSWR_isOnOPF = true;   // true = if you wanna spawn OpFor/East through CSWR / false = don't spawn this side.
-    CSWR_isOnIND = false;  // true = if you wanna spawn Indepdentent/Resistence through CSWR / false = don't spawn this side.
-    CSWR_isOnCIV = false;  // true = if you wanna spawn Civilians through CSWR / false = don't spawn this side.
-// Loadout global:
+// Sides:
+    CSWR_isOnBLU = true;   // true = spawn BluFor/West through CSWR / false = don't spawn this side.
+    CSWR_isOnOPF = true;   // true = spawn OpFor/East through CSWR / false = don't spawn this side.
+    CSWR_isOnIND = false;  // true = spawn Indepdentent/Resistence through CSWR / false = don't spawn this side.
+    CSWR_isOnCIV = false;  // true = spawn Civilians through CSWR / false = don't spawn this side.
+// For all sides:
     CSWR_isBackpackForAllByFoot = false;  // true = all units by foot (including CIV) will get it / false = only units originally with backpacks. Default: false.
     CSWR_isVestForAll           = false;  // true = all units (including CIV) will get it / false = only units originally with vests. Default: false.
-// Loadout by side:
+// By side:
     // Blu
         CSWR_canNvgInfantryBLU   = false;   // true = BLU infantry/armoured will receive NightVision / false = BLU infantry NVG will be removed.
         CSWR_canNvgParatroopsBLU = true;    // true = BLU paratroops will receive NightVision / false = BLU paratroops NVG will be removed.
         CSWR_canNvgSnipersBLU    = true;    // true = BLU snipers will receive NightVision / false = BLU snipers NVG will be removed.
         CSWR_nvgDeviceBLU        = "NVGoggles";  // Set the NightVision classname for BlU army. Empty ("") means no changes in original soldier loadout.
         CSWR_canFlashlightBLU    = true;    // true = BLU units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+		CSWR_isForcedFlashlBLU   = false;   // WIP / true = force BLU stay with flashlight always On / false = AI decides when On and Off.
         CSWR_flashlightDeviceBLU = "acc_flashlight";  // Set the flashlight classname for BlU army. Empty ("") means no changes in original soldier loadout.
+		CSWR_watcherAccuranceBLU = "V";     //  WIP / Gunner's group accurance when executing Watch-Destination. "R" for recruit, "V" for Veteran, "E" for Expert.
     // Opf
         CSWR_canNvgInfantryOPF   = false;   // true = OPF infantry/armoured will receive NightVision / false = OPF infantry NVG will be removed.
         CSWR_canNvgParatroopsOPF = true;    // true = OPF paratroops will receive NightVision / false = OPF paratroops NVG will be removed.
         CSWR_canNvgSnipersOPF    = true;    // true = OPF snipers will receive NightVision / false = OPF snipers NVG will be removed.
         CSWR_nvgDeviceOPF        = "NVGoggles_OPFOR";  // Set the NightVision classname for OPF army. Empty ("") means no changes in original soldier loadout.
         CSWR_canFlashlightOPF    = true;    // true = OPF units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+		CSWR_isForcedFlashlOPF   = false;   // WIP / true = force OPF stay with flashlight always On / false = AI decides when On and Off.
         CSWR_flashlightDeviceOPF = "acc_flashlight";  // Set the flashlight classname for OPF army. Empty ("") means no changes in original soldier loadout.
+		CSWR_watcherAccuranceOPF = "V";     //  WIP / Gunner's group accurance when executing Watch-Destination. "R" for recruit, "V" for Veteran, "E" for Expert.
     // Ind
         CSWR_canNvgInfantryIND   = false;   // true = IND infantry/armoured will receive NightVision / false = IND infantry NVG will be removed.
         CSWR_canNvgParatroopsIND = false;    // true = IND paratroops will receive NightVision / false = IND paratroops NVG will be removed.
         CSWR_canNvgSnipersIND    = true;    // true = IND snipers will receive NightVision / false = IND snipers NVG will be removed.
         CSWR_nvgDeviceIND        = "NVGoggles_INDEP";  // Set the NightVision classname for IND army. Empty ("") means no changes in original soldier loadout.
         CSWR_canFlashlightIND    = true;    // true = IND units with no NVG will get flashlights for their primary weapons / false = no flashlights.
+		CSWR_isForcedFlashlIND   = false;   // WIP / true = force IND stay with flashlight always On / false = AI decides when On and Off.
         CSWR_flashlightDeviceIND = "acc_flashlight";  // Set the flashlight classname for IND army. Empty ("") means no changes in original soldier loadout.
+		CSWR_watcherAccuranceIND = "V";     //  WIP / Gunner's group accurance when executing Watch-Destination. "R" for recruit, "V" for Veteran, "E" for Expert.
     // civ
         CSWR_canNvgCIV    = false;          // true = CIV people will receive NightVision / false = CIV people NVG will be removed.
         CSWR_nvgDeviceCIV = "NVGoggles";    // Set the NightVision classname for CIV people. Empty ("") means no changes in original people outfit.
@@ -79,8 +85,8 @@ if !isServer exitWith {};
         CSWR_destHoldTakeabreak   = [1800, 3600, 7200];  // In seconds, how long each group can stay on its Hold-markers. Default: 30min (1800), 1h (3600), 2h (7200).
         CSWR_heliTakeoffDelay     = [10, 30, 60];        // In seconds, how long each helicopter can stay before takeoff. Default: 10 sec, 30 sec, 60 sec.
     // Ranges:
-        CSWR_watchMarkerRange     = 600;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 600.
-        CSWR_occupyMarkerRange    = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
+        CSWR_watchMkrRange  = 600;  // In meters, size of marker range used to find buildings to watch/sniper group. Default: 600.
+        CSWR_occupyMkrRange = 200;   // In meters, size of marker range used to find buildings to occupy. Default: 200.
     // Altitudes:
         CSWR_spwnsParadropUnitAlt = 1000;  // In meters, the initial unit paradrop altitude. Default: 1000.
         CSWR_spwnsParadropVehAlt  = 300;   // In meters, the initial vehicle paradrop altitude. Default: 300.
@@ -95,6 +101,8 @@ if !isServer exitWith {};
 		CSWR_occupyAcceptableRuins = ["Land_HouseRuin_Big_01_F","Land_HouseRuin_Big_01_half_F","Land_HouseRuin_Big_02_half_F","Land_HouseRuin_Big_02_F","Land_HouseRuin_Big_04_F","Land_OrthodoxChurch_03_ruins_F","Land_ControlTower_01_ruins_F","Land_ChurchRuin_01_F","Land_Shop_Town_01_ruins_F","Land_House_Big_01_V1_ruins_F","Land_BellTower_02_V2_ruins_F","Land_HouseRuin_Small_02_F","Land_HouseRuin_Small_04_F","Land_HouseRuin_Big_03_half_F","Land_HouseRuin_Big_03_F","Land_House_Small_01_b_brown_ruins_F","Land_House_Small_01_b_yellow_ruins_F","Land_Barn_01_grey_ruins_F","Land_Barn_01_brown_ruins_F","Land_Shop_02_b_yellow_ruins_F","Land_Shop_02_b_pink_ruins_F","Land_House_Big_02_b_brown_ruins_F","Land_House_Big_02_b_pink_ruins_F","Land_House_Big_02_b_blue_ruins_F","Land_House_Big_01_b_blue_ruins_F","Land_House_Big_01_b_brown_ruins_F","Land_House_Big_01_b_pink_ruins_F","Land_House_C_11_ruins_EP1_lxWS","Land_House_C_12_ruins_EP1_lxWS","Land_House_C_5_ruins_EP1_lxWS","Land_Factory_Main_ruins_F","Land_WIP_ruins_F","Land_Barracks_ruins_F","Land_House_Big_02_V1_ruins_F","Land_Cargo_HQ_V3_derelict_F","Land_Airport_Tower_ruins_F","Land_Stone_Shed_01_b_white_ruins_F","Land_House_Small_03_V1_ruins_F","land_gm_euro_house_05_e_rubble","land_gm_euro_house_08_e_rubble","land_gm_euro_house_12_w_rubble","land_gm_euro_church_02_rubble","land_gm_euro_house_02_e_rubble","land_gm_euro_house_13_e_rubble","land_gm_euro_office_03_rubble","land_gm_euro_house_09_w_rubble","land_gm_euro_house_02_w_rubble","land_gm_euro_house_12_e_rubble","land_gm_euro_pub_02_rubble","land_gm_euro_shed_04_rubble","land_gm_euro_house_08_w_rubble","land_gm_euro_office_01_rubble","land_gm_euro_house_06_e_rubble","land_gm_euro_house_11_w_rubble","land_gm_euro_house_13_w_rubble","land_gm_euro_house_10_e_rubble"];
        // WIP : What goggles are acceptable for parachuters inherit from infantry if the editor doesn't set a specific one to parachuters:
 		CSWR_paraAcceptableGoggles = ["G_Balaclava_combat","G_Balaclava_lowprofile","G_Lowprofile","G_Combat","G_Goggles_VR","G_Combat_Goggles_tna_F","G_Balaclava_TI_G_blk_F","G_Balaclava_TI_G_tna_F","G_AirPurifyingRespirator_02_black_F","G_AirPurifyingRespirator_02_olive_F","G_AirPurifyingRespirator_02_sand_F","G_AirPurifyingRespirator_01_F","G_RegulatorMask_F","G_EyeProtectors_F","UK3CB_Glasses","rhs_ess_black","rhsusf_shemagh_gogg_grn","rhsusf_shemagh2_gogg_grn","rhsusf_shemagh_gogg_od","rhsusf_shemagh2_gogg_od","rhsusf_shemagh_gogg_tan","rhsusf_shemagh2_gogg_tan","rhsusf_shemagh_gogg_white","rhsusf_shemagh2_gogg_white","rhsusf_oakley_goggles_blk","rhsusf_oakley_goggles_clr","rhsusf_oakley_goggles_ylw"];
+		// Buildings that watcher groups can use when they are in urban position:
+		CSWR_acceptableTowersForWatch = ["Land_Cargo_Tower_V1_No1_F","Land_ControlTower_01_F","Land_Cargo_Tower_V1_No2_F","Land_Cargo_Tower_V1_No3_F","Land_Cargo_Tower_V1_No4_F","Land_Cargo_Tower_V1_No5_F","Land_Cargo_Tower_V1_No6_F","Land_Cargo_Tower_V1_No7_F","Land_Cargo_Tower_V4_F","Land_Cargo_Tower_V1_F","Land_Cargo_Tower_V3_F","Land_Cargo_Tower_V2_F","Land_Cargo_Tower_V3_ruins_F","Land_Cargo_Tower_V1_ruins_F","Land_Cargo_Tower_V2_ruins_F","Land_ControlTower_01_F","Land_Airport_01_controlTower_F","Land_GuardTower_01_F","Land_Airport_02_controlTower_F","Land_Airport_Tower_F","Land_ControlTower_02_F","Land_LightHouse_F","Land_Lighthouse_03_green_F","Land_Lighthouse_03_red_F","Land_Church_04_lightblue_F","Land_Church_04_lightblue_damaged_F","Land_Church_04_white_red_F","Land_Church_04_white_red_damaged_F","Land_Church_04_lightyellow_F","Land_Church_04_lightyellow_damaged_F","Land_Church_04_white_F","Land_Church_04_white_damaged_F","Land_Church_04_yellow_F","Land_Church_04_yellow_damaged_F","Land_Church_04_red_F","Land_Church_04_red_damaged_F","Land_cmp_Tower_F","Land_dp_smallTank_old_F","Land_SCF_01_chimney_F","Land_SCF_01_storageBin_big_F","Land_SCF_01_storageBin_small_F","Land_SCF_01_storageBin_medium_F","Land_Castle_01_tower_F"];
 		// What uniforms/outfits civilians can use if the editor uses "RANDOM" at fn_CSWR_loadout.sqf file (only A3 original content already included):
 		CSWR_civOutfits = ["U_C_Poor_1","U_C_Poloshirt_burgundy","U_C_Poloshirt_salmon","U_Competitor","U_C_HunterBody_grn","U_Marshal","U_Rangemaster","U_I_C_Soldier_Bandit_5_F","U_I_C_Soldier_Bandit_4_F","U_C_Man_casual_3_F","U_C_Man_casual_1_F","U_C_Man_casual_5_F","U_C_man_sport_3_F","U_C_Uniform_Farmer_01_F","U_I_L_Uniform_01_tshirt_black_F","U_C_Uniform_Scientist_02_formal_F","U_C_ConstructionCoverall_Red_F","U_C_ArtTShirt_01_v2_F","U_C_FormalSuit_01_gray_F","U_C_ArtTShirt_01_v6_F"];
 
@@ -106,11 +114,11 @@ if !isServer exitWith {};
 	private ["_helipad", "_debugMkrWatch", "_debugOccupyInters", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
 	
 	// Initial values:
-	CSWR_bookedLocWatch    = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocHold     = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnVeh  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnHeli = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
+	CSWR_watchMkrRangeStart   = 200;
 	_helipad = ""; _debugMkrWatch = ""; _debugOccupyInters = [];
 	// Declarations:
 	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
@@ -134,8 +142,8 @@ if !isServer exitWith {};
 			systemChat format ["%1 OCCUPY > The follow asset's listed as 'Ignored Buildings' and 'Acceptable Ruins' at the same time in 'fn_CSWR_management.sqf'. Fix them: %2", CSWR_txtWarnHeader, str _debugOccupyInters] };
 			{ CSWR_occupyAcceptableRuins deleteAt (CSWR_occupyAcceptableRuins find _x) } forEach _debugOccupyInters;
 	} else {
-		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[600,1200,2400]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2, _txt1, _txt2, _txt3] }; if ( CSWR_destHoldTakeabreak # 0 < 900 OR CSWR_destHoldTakeabreak # 1 < 1800 OR CSWR_destHoldTakeabreak # 2 < 3600 ) then { CSWR_destHoldTakeabreak=[1800,3600,7200]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] }; if ( CSWR_watchMarkerRange < 200 ) then { CSWR_watchMarkerRange=200; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_watchMarkerRange, _txt1, _txt2, _txt3] };
-		if ( CSWR_watchMarkerRange > 900 ) then { CSWR_watchMarkerRange=900; systemChat format ["%1 WATCH > %3 'CSWR_watchMarkerRange' bigger than %2 meters out of debug mode. %2 has been applied.", CSWR_txtWarnHeader, CSWR_watchMarkerRange, _txt1] }; if ( CSWR_occupyMarkerRange < 100 ) then { CSWR_occupyMarkerRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMarkerRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_occupyMarkerRange, _txt1, _txt2, _txt3] }; if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParadropUnitAlt, _txt1, _txt2, _txt3] };
+		if ( CSWR_destOccupyTakeabreak # 0 < 300 OR CSWR_destOccupyTakeabreak # 1 < 600 OR CSWR_destOccupyTakeabreak # 2 < 1200 ) then { CSWR_destOccupyTakeabreak=[600,1200,2400]; systemChat format ["%1 OCCUPY > %5 'CSWR_destOccupyTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destOccupyTakeabreak # 0, CSWR_destOccupyTakeabreak # 1, CSWR_destOccupyTakeabreak # 2, _txt1, _txt2, _txt3] }; if ( CSWR_destHoldTakeabreak # 0 < 900 OR CSWR_destHoldTakeabreak # 1 < 1800 OR CSWR_destHoldTakeabreak # 2 < 3600 ) then { CSWR_destHoldTakeabreak=[1800,3600,7200]; systemChat format ["%1 HOLD > %5 'CSWR_destHoldTakeabreak' %6 [%2 secs, %3 secs, %4 secs] %7s have been applied.", CSWR_txtWarnHeader, CSWR_destHoldTakeabreak # 0, CSWR_destHoldTakeabreak # 1, CSWR_destHoldTakeabreak # 2, _txt1, _txt2, _txt3] }; if ( CSWR_watchMkrRange < (CSWR_watchMkrRangeStart + 50) ) then { CSWR_watchMkrRange=(CSWR_watchMkrRangeStart + 50); systemChat format ["%1 WATCH > %3 'CSWR_watchMkrRange' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_watchMkrRange, _txt1, _txt2, _txt3] };
+		if ( CSWR_watchMkrRange > 900 ) then { CSWR_watchMkrRange=900; systemChat format ["%1 WATCH > %3 'CSWR_watchMkrRange' bigger than %2 meters out of debug mode. %2 has been applied.", CSWR_txtWarnHeader, CSWR_watchMkrRange, _txt1] }; if ( CSWR_occupyMkrRange < 100 ) then { CSWR_occupyMkrRange=100; systemChat format ["%1 OCCUPY > %3 'CSWR_occupyMkrRange' %4 %2 %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_occupyMkrRange, _txt1, _txt2, _txt3] }; if ( CSWR_spwnsParadropUnitAlt < 500 ) then { CSWR_spwnsParadropUnitAlt=500; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropUnitAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParadropUnitAlt, _txt1, _txt2, _txt3] };
 		if ( CSWR_spwnsParadropVehAlt < 200 ) then { CSWR_spwnsParadropVehAlt=200; systemChat format ["%1 PARADROP > %3 'CSWR_spwnsParadropVehAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_spwnsParadropVehAlt, _txt1, _txt2, _txt3] }; if (CSWR_heliLightAlt < 100 ) then { CSWR_heliLightAlt=100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliLightAlt' %4 %2 meters %5 (%2) has been applied.", CSWR_txtWarnHeader, CSWR_heliLightAlt, _txt1, _txt2, _txt3] }; if (CSWR_heliHeavyAlt < CSWR_heliLightAlt+100 ) then { CSWR_heliHeavyAlt=CSWR_heliLightAlt+100; systemChat format ["%1 HELICOPTER > %3 'CSWR_heliHeavyAlt' %4 100 meters of altitude higher than 'CSWR_heliLightAlt' %5 (%2) for this case has been applied.", CSWR_txtWarnHeader, CSWR_heliHeavyAlt, _txt1, _txt2, _txt3] };
 	};
 	// Some classname validations:
@@ -461,18 +469,42 @@ if !isServer exitWith {};
 		{ _x setMarkerType "mil_start_noShadow"; _x setMarkerAlpha 0.5 } forEach _destHoldBLU  + _destHoldOPF  + _destHoldIND  + _destHoldCIV;
 		// Specialy for Occupy:
 		if CSWR_isOnDebugOccupy then {
-			{ _x setMarkerShape "ELLIPSE"; _x setMarkerBrush "Border"; _x setMarkerAlpha 0.8; _x setMarkerSize [CSWR_occupyMarkerRange, CSWR_occupyMarkerRange] } forEach _destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV;
+			{ _x setMarkerShape "ELLIPSE"; _x setMarkerBrush "Border"; _x setMarkerAlpha 0.8; _x setMarkerSize [CSWR_occupyMkrRange, CSWR_occupyMkrRange] } forEach _destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV;
 		};
-		// WIP - Specialy for Watch:
+		// Specialy for Watch:
 		if CSWR_isOnDebugWatch then {
-			{
-				_debugMkrWatch = createMarker ["debug_" + _x, markerPos _x];
-				_debugMkrWatch setMarkerShape "ELLIPSE";
-				_debugMkrWatch setMarkerBrush "Border";
-				_debugMkrWatch setMarkerAlpha 0.8;
-				_debugMkrWatch setMarkerColor "ColorUNKNOWN";
-				_debugMkrWatch setMarkerSize [CSWR_watchMarkerRange, CSWR_watchMarkerRange];
-			} forEach _destWatchBLU + _destWatchOPF + _destWatchIND + _destWatchCIV;
+			for "_i" from 1 to 2 do {
+				if CSWR_isOnBLU then {
+					{
+						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
+						_debugMkrWatch setMarkerShape "ELLIPSE";
+						_debugMkrWatch setMarkerBrush "Border";
+						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerColor "colorBLUFOR";
+						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
+					} forEach _destWatchBLU;
+				};
+				if CSWR_isOnOPF then {
+					{
+						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
+						_debugMkrWatch setMarkerShape "ELLIPSE";
+						_debugMkrWatch setMarkerBrush "Border";
+						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerColor "colorOPFOR";
+						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
+					} forEach _destWatchOPF;
+				};
+				if CSWR_isOnIND then {
+					{
+						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
+						_debugMkrWatch setMarkerShape "ELLIPSE";
+						_debugMkrWatch setMarkerBrush "Border";
+						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerColor "colorIndependent";
+						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
+					} forEach _destWatchIND;
+				};
+			};
 		};
 	// Otherwise, hiding the spawn and destination markers:
 	} else { {_x setMarkerAlpha 0} forEach _spwnsAll + _destsSpecial + CSWR_destsANYWHERE };
@@ -511,19 +543,25 @@ if !isServer exitWith {};
 	publicVariable "CSWR_canNvgSnipersBLU";
 	publicVariable "CSWR_nvgDeviceBLU";
 	publicVariable "CSWR_canFlashlightBLU";
+	//publicVariable "CSWR_isForcedFlashlBLU";
 	publicVariable "CSWR_flashlightDeviceBLU";
+	//publicVariable "CSWR_watcherAccuranceBLU";
 	publicVariable "CSWR_canNvgInfantryOPF";
 	publicVariable "CSWR_canNvgParatroopsOPF";
 	publicVariable "CSWR_canNvgSnipersOPF";
 	publicVariable "CSWR_nvgDeviceOPF";
 	publicVariable "CSWR_canFlashlightOPF";
+	//publicVariable "CSWR_isForcedFlashlOPF";
 	publicVariable "CSWR_flashlightDeviceOPF";
+	//publicVariable "CSWR_watcherAccuranceOPF";
 	publicVariable "CSWR_canNvgInfantryIND";
 	publicVariable "CSWR_canNvgParatroopsIND";
 	publicVariable "CSWR_canNvgSnipersIND";
 	publicVariable "CSWR_nvgDeviceIND";
 	publicVariable "CSWR_canFlashlightIND";
+	//publicVariable "CSWR_isForcedFlashlIND";
 	publicVariable "CSWR_flashlightDeviceIND";
+	//publicVariable "CSWR_watcherAccuranceIND";
 	publicVariable "CSWR_canNvgCIV";
 	publicVariable "CSWR_nvgDeviceCIV";
 	/* publicVariable "CSWR_voiceBLU";
@@ -548,8 +586,8 @@ if !isServer exitWith {};
 	publicVariable "CSWR_destOccupyTakeabreak";
 	publicVariable "CSWR_destHoldTakeabreak";
 	publicVariable "CSWR_heliTakeoffDelay";
-	publicVariable "CSWR_watchMarkerRange";
-	publicVariable "CSWR_occupyMarkerRange";
+	publicVariable "CSWR_watchMkrRange";
+	publicVariable "CSWR_occupyMkrRange";
 	publicVariable "CSWR_spwnsParadropUnitAlt";
 	publicVariable "CSWR_spwnsParadropVehAlt";
 	publicVariable "CSWR_heliLightAlt";
@@ -558,15 +596,16 @@ if !isServer exitWith {};
 	publicVariable "CSWR_occupyIgnoredPositions";
 	publicVariable "CSWR_occupyAcceptableRuins";
 	publicVariable "CSWR_paraAcceptableGoggles";
+	publicVariable "CSWR_acceptableTowersForWatch";
 	publicVariable "CSWR_civOutfits";
 	publicVariable "CSWR_wait";
 	publicVariable "CSWR_txtDebugHeader";
 	publicVariable "CSWR_txtWarnHeader";
-	publicVariable "CSWR_bookedLocWatch";
 	publicVariable "CSWR_bookedLocHold";
 	publicVariable "CSWR_bookedLocSpwnVeh";
 	publicVariable "CSWR_bookedLocSpwnHeli";
 	publicVariable "CSWR_spwnDelayQueueAmount";
+	publicVariable "CSWR_watchMkrRangeStart";
 	publicVariable "CSWR_prefix";
 	publicVariable "CSWR_spacer";
 	publicVariable "CSWR_vehGroundHeavy";

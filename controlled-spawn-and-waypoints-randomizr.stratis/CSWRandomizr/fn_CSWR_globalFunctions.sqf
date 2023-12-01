@@ -616,7 +616,7 @@ THY_fnc_CSWR_marker_booking = {
 	// Returns _bookingInfo. Array [string, bool].
 
 	params ["_mkrType", "_mkrPos", "_tag", "_markers", "_attemptLimit", "_cooldown"];
-	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_isError", "_counter"];
+	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_isError", "_ctr"];
 
 	// Escape - part 1/2:
 		// reserved space.
@@ -628,9 +628,8 @@ THY_fnc_CSWR_marker_booking = {
 	_bookedLoc   = [];
 	_isError     = false;
 	// Declarations:
-	_counter = 0;
+	_ctr = 0;
 	switch _mkrType do {
-		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNVEH":  { _bookedLoc = CSWR_bookedLocSpwnVeh };   // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
@@ -642,7 +641,7 @@ THY_fnc_CSWR_marker_booking = {
 	// Debug texts:
 		// reserved space.
 	// Looping for select the marker:
-	while { _counter <= _attemptLimit } do {
+	while { _ctr <= _attemptLimit } do {
 		// Pick a marker:
 		_mkr = selectRandom _markers;
 		// For each case, check which booked-list the marker should be included:
@@ -656,7 +655,6 @@ THY_fnc_CSWR_marker_booking = {
 		// if booked, update the public variable and create the marker position:
 		if _isBooked then {
 			switch _mkrType do {
-				case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch";    _mkrPos = [locationPosition _mkr # 0, locationPosition _mkr # 1, 0] };
 				case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold";     _mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0] };
 				case "BOOKING_SPAWNVEH":  { CSWR_bookedLocSpwnVeh  = _bookedLoc; publicVariable "CSWR_bookedLocSpwnVeh";  _mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0] };
 				case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli"; _mkrPos = [markerPos _mkr # 0, markerPos _mkr # 1, 0] };
@@ -671,7 +669,7 @@ THY_fnc_CSWR_marker_booking = {
 			_mkr = "";
 		};
 		// Counter to prevent crazy loops:
-		_counter = _counter + 1;
+		_ctr = _ctr + 1;
 		// Important: if it's vehicles using the function right after spawn, be fast to avoid explosions:
 		sleep _cooldown;
 	};  // While-loop ends.
@@ -697,7 +695,6 @@ THY_fnc_CSWR_marker_booking_undo = {
 	_bookedAmount = 0;  // debug purposes.
 	// All cases where booking can be applied:
 	switch _mkrType do {
-		case "BOOKING_WATCH":     { _bookedLoc = CSWR_bookedLocWatch };     // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_HOLD":      { _bookedLoc = CSWR_bookedLocHold };      // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNVEH":  { _bookedLoc = CSWR_bookedLocSpwnVeh };   // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };  // [[blu],[opf],[ind],[civ]]
@@ -717,7 +714,6 @@ THY_fnc_CSWR_marker_booking_undo = {
 	};
 	// After that, update the public variable with the new reservation:
 	switch _mkrType do {
-		case "BOOKING_WATCH":     { CSWR_bookedLocWatch    = _bookedLoc; publicVariable "CSWR_bookedLocWatch" };
 		case "BOOKING_HOLD":      { CSWR_bookedLocHold     = _bookedLoc; publicVariable "CSWR_bookedLocHold" };
 		case "BOOKING_SPAWNVEH":  { CSWR_bookedLocSpwnVeh  = _bookedLoc; publicVariable "CSWR_bookedLocSpwnVeh" };
 		case "BOOKING_SPAWNHELI": { CSWR_bookedLocSpwnHeli = _bookedLoc; publicVariable "CSWR_bookedLocSpwnHeli" };
@@ -939,13 +935,13 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 				// singular message:
 				["%1 GROUP > %3 classname used to build a %2 %5 is NOT a %4 CLASSNAME, then it CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
 				CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
-				// Message breather:
+				// Reading breather:
 				sleep 5;
 			} else {
 				// plural message:
 				["%1 GROUP > %3 classnames used to build a %2 %5 are NOT %4 CLASSNAMES, then they CANNOT to be spawned as %2 %5. Fix it in 'fn_CSWR_population.sqf' file.",
 				CSWR_txtWarnHeader, _tag, _delta, _whatIndividual, _whatColletive] call BIS_fnc_error;
-				// Message breather:
+				// Reading breather:
 				sleep 5;
 			};
 		// if vehicle (string):
@@ -1575,7 +1571,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 	// If another group has been found to join:
 	if ( count _availableGroups > 0 ) then {
 		// Go to the new group:
-		{ _x doMove (getPos leader (_availableGroups # 0)); sleep 0.2 } forEach units _grp;
+		{ _x doMove (getPosATL (leader (_availableGroups # 0))); sleep 0.2 } forEach units _grp;
 		// Make the crew join in the first found ally group:
 		(units _grp) joinSilent (_availableGroups # 0);
 		// Debug message:
@@ -1638,11 +1634,11 @@ THY_fnc_CSWR_group_behavior = {
 	switch _behavior do {
 		case "BE_SAFE": {
 			_grp setBehaviourStrong "SAFE";  // calm.
-			_grp setSpeedMode "LIMITED";  // walk.
+			_grp setSpeedMode "LIMITED";  // walk, wait for the group members.
 		};
 		case "BE_AWARE": {
 			_grp setBehaviourStrong "AWARE";  // consern.
-			_grp setSpeedMode "LIMITED";  // walk, but guns ready.
+			_grp setSpeedMode "LIMITED";  // walk, but guns ready, wait for the group members.
 		};
 		case "BE_COMBAT": {
 			// If crew group:
@@ -1730,6 +1726,7 @@ THY_fnc_CSWR_unit_behavior = {
 THY_fnc_CSWR_unit_skills = {
 	// This function defines the unit skills inside their Group Type.
 	// Check this out: https://community.bistudio.com/wiki/Arma_3:_AI_Skill#Sub-Skills
+	// Info: 0.6
 	// Returns nothing.
 
 	params ["_grpType", "_grp", "_destType"];
@@ -1776,32 +1773,41 @@ THY_fnc_CSWR_unit_skills = {
 		if ( _grpType isEqualTo "teamS" ) then {
 			// skills:
 			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
-				_x setSkill ["spotTime", 0.70];
+				_x setSkill ["commanding", 0.85];
+				_x setSkill ["aimingSpeed", 0.85];
 				
-			} else {
-				_x setSkill ["spotTime", 0.80];  // The other member is the spotter.
+			} else {  // The other member is the spotter.
+				_x setSkill ["commanding", 0.70];
+				_x setSkill ["aimingSpeed", 0.75];
 			};
-			_x setSkill ["aimingAccuracy", 0.75];
-			_x setSkill ["spotDistance", 0.75];
+			_x setSkill ["general", 0.75];
+			//_x setSkill ["endurance", 0.85];  // disabled in Arma 3
+			_x setSkill ["courage", 0.75];
+			_x setSkill ["spotDistance", 0.80];
+			_x setSkill ["spotTime", 0.70];
 			_x setSkill ["aimingShake", 0.75];
+			_x setSkill ["aimingAccuracy", 0.75];
 			_x setSkill ["reloadSpeed", 0.75];  // a bit faster than when watching.
 		};
 		// Updating the settings if Sniper group in watch strategy:
 		if ( _grpType isEqualTo "teamS" && _destType isEqualTo "MOVE_WATCH" ) then {
-			/*
 			// skills:
 			if ( _x isEqualTo leader _grp ) then {  // leader is the main gunner.
-				_x setSkill ["spotTime", 0.80];
+				_x setSkill ["commanding", 1];
+				_x setSkill ["aimingSpeed", 1];
 				
-			} else {
-				_x setSkill ["spotTime", 0.90];  // The other member is the spotter.
+			} else {  // The other member is the spotter.
+				_x setSkill ["commanding", 0.85];
+				_x setSkill ["aimingSpeed", 0.9];
 			};
-			_x setSkill ["aimingAccuracy", 0.85];
-			_x setSkill ["spotDistance", 0.85];
+			_x setSkill ["general", 0.9];
+			//_x setSkill ["endurance", 1];  // disabled in Arma 3
+			_x setSkill ["courage", 0.85];
+			_x setSkill ["spotDistance", 1];
+			_x setSkill ["spotTime", 1];
 			_x setSkill ["aimingShake", 0.85];
-			_x setSkill ["reloadSpeed", 0.85];  // a bit faster than when watching.
-			*/
-			_x setSkill 0.90;
+			_x setSkill ["aimingAccuracy", 0.85];
+			_x setSkill ["reloadSpeed", 0.85];
 		};
 		// If crewman of Vehicle Light:
 			//if ( _grpType isEqualTo "vehL" ) then {   };
@@ -1902,8 +1908,8 @@ THY_fnc_CSWR_veh_paradrop = {
 	};
 	// Creating the main vehicle parachute:
 	_mainChute = createVehicle [_colorChute, [0,0,0], [], 0, "FLY"];
-	[_mainChute, getDir _veh] remoteExec ["setDir"];
-	_mainChute setPos (getPos _veh);
+	_mainChute setDir (getDir _veh);  // always before the setPos to avoid odd behaviors about collisions (killzone_kid tip).
+	_mainChute setPos (getPos _veh);  // getPos was designed to take the altitude pos obj from the surface below it.
 	_veh attachTo [_mainChute, [0,2,0]];
 
 	// Additionals if probably a heavy vehicle:
@@ -1930,7 +1936,7 @@ THY_fnc_CSWR_veh_paradrop = {
 	// Force the crewmen to hold-fire if they see an enemy (hehehe):
 	{ _x disableAI "all" } forEach units _grp;
 	// Waiting the vechile get closer to the ground:
-	waitUntil { sleep 0.1; ((getPos _veh) # 2) < 4 || !alive _veh };
+	waitUntil { sleep 0.1; ((getPosATL _veh) # 2) < 4 || !alive _veh };
 	// Adjust to vehicle velocity after the parachutes detachment:
 	_velocity = velocity _veh;  // [x,y,z]
 	detach _veh;
@@ -2931,12 +2937,12 @@ THY_fnc_CSWR_base_service_station = {
 		sleep _wait;
 	// Refueling:
 		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
-		[_veh, 1] remoteExec ["setFuel", _veh];  //the same as "_veh setFuel 1;" but for multiplayer when the variable (setFuel) is not global variable.
+		[_veh, 1] remoteExec ["setFuel", _veh];  // as 'setFuel' is a LA, and some player can be inside the veh (perhaps never but...), send the command to current PC that has the veh owership.
 		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_refuel.wss", _veh];
 		sleep _wait;
 	// Rearming:
 		if ( !alive _veh || !alive driver _veh ) exitWith {};  // escape.
-		[_veh, 1] remoteExec ["setVehicleAmmo", _veh];  //the same as "_veh setVehicleAmmo 1;" but for multiplayer when the variable (setVehicleAmmo) is not global variable.
+		[_veh, 1] remoteExec ["setVehicleAmmo", _veh];  // as 'setVehicleAmmo' is a LA, and some player can be inside the veh (perhaps never but...), send the command to current PC that has the veh owership.
 		playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_rearm.wss", _veh];
 		sleep _wait;
 	// Preparing to return to the battle:
@@ -3076,7 +3082,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Warning message:
 		["%1 SPAWN > %2 group-type '%3' is NOT ALLOWED to spawn in the selected spawns-type: %4.",
 		CSWR_txtWarnHeader, _tag, _grpType, str (_spwnsInfo # 0)] call BIS_fnc_error;
-		// Message breather:
+		// Reading breather:
 		sleep 5;
 	};
 	// Check if _spwnDelayMethods is in the correct format:
@@ -3145,7 +3151,7 @@ THY_fnc_CSWR_spawn_and_go = {
 					publicVariable "CSWR_spwnDelayQueueAmount";
 					// Debug message:
 					systemChat format ["%1 SPAWN DELAY > %2", CSWR_txtDebugHeader, _txt3];
-					// Message breather:
+					// Reading breather:
 					sleep 2;
 				};
 				// Verify all Spawn Delay methods the group will use:
@@ -3159,7 +3165,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Warning message:
 		["%1 SPAWN DELAY > %2 %3",
 		CSWR_txtWarnHeader, _txt1, _txt2] call BIS_fnc_error;
-		// Message breather:
+		// Reading breather:
 		sleep 5;
 	};
 
@@ -3293,7 +3299,7 @@ THY_fnc_CSWR_spawn_and_go = {
 				if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight abs CSWR_heliHeavyAlt };
 			};
 			// Only vehicle config > Setting the vehicle direction:
-			[_veh, markerDir _spwn] remoteExec ["setDir"];
+			_veh setDir (markerDir _spwn);
 			// Creating the group and its ground vehicle crew:
 			_grp = _side createVehicleCrew _veh;  // CRITICAL: never remove _side to avoid inconscistences when mission editor to use vehicles from another side.
 			// Additional CPU Breather for all vehicles:
@@ -3336,7 +3342,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			// If group of people:
 			if !_isVeh then {
 				// Wait the leader touch the ground:
-				waitUntil { sleep 10; (getPos (leader _grp) # 2) < 0.2 || !alive leader _grp };
+				waitUntil { sleep 10; (getPosATL (leader _grp) # 2) < 0.2 || !alive leader _grp };
 				// As civilian gets panic after landing (crouched), this will restart their leader body animation, making them get "UP" again:
 				if ( _tag isEqualTo "CIV" ) then { leader _grp switchmove "" };
 				// If the group has more than one unit alive:
@@ -3357,7 +3363,7 @@ THY_fnc_CSWR_spawn_and_go = {
 						// Otherwise, if another group member:
 						} else {
 							// Wait the own unit (_x) touch the ground if not yet:
-							waitUntil { sleep 3; (getPos _x # 2) < 0.2 || !alive _x };
+							waitUntil { sleep 3; (getPosATL _x # 2) < 0.2 || !alive _x };
 							// Wait the parachute detchament animation gets finished:
 							sleep 1;
 							// If civilian and not the leader:
@@ -3426,7 +3432,7 @@ THY_fnc_CSWR_spawn_delay = {
 	// Returns nothing.
 
 	params ["_tag", "_spwnDelayMethods", "_isVeh", "_grpSize"];
-	private ["_isReadyToSpwn", "_timeLoop", "_time", "_counter", "_wait", "_requester", "_txt1"];
+	private ["_isReadyToSpwn", "_timeLoop", "_time", "_ctr", "_wait", "_requester", "_txt1"];
 
 	// Escape:
 		// reserved space.
@@ -3437,7 +3443,7 @@ THY_fnc_CSWR_spawn_delay = {
 	_timeLoop      = 0;
 	// Declarations:
 	_time      = time;
-	_counter   = _time;
+	_ctr   = _time;
 	_wait      = 10;  // CAUTION: this number is used to calcs the TIMER too.
 	_requester = if _isVeh then {"vehicle"} else {"group"};
 	
@@ -3457,15 +3463,15 @@ THY_fnc_CSWR_spawn_delay = {
 			// If Spawn Delay has a timer, check if it's a number:
 			if ( typeName _x isEqualTo "SCALAR" ) then {
 				// Counter increase:
-				_counter = _counter + _wait;
+				_ctr = _ctr + _wait;
 				// Timer checker:
-				if ( _counter >= _time + ((abs _x) * 60) ) exitWith {
+				if ( _ctr >= _time + ((abs _x) * 60) ) exitWith {
 					// Function completed:
 					_isReadyToSpwn = true;
 					// Debug message:
 					if CSWR_isOnDebugGlobal then {
 						systemChat format ["%1 SPAWN DELAY > %2 by TIMER (it was %3 minutes).", CSWR_txtDebugHeader, _txt1, _x];
-						// Message breather:
+						// Reading breather:
 						sleep 5;
 					};
 				};
@@ -3481,7 +3487,7 @@ THY_fnc_CSWR_spawn_delay = {
 						// Debug message:
 						if CSWR_isOnDebugGlobal then {
 							systemChat format ["%1 SPAWN DELAY > %2 by TRIGGER activation (%3).", CSWR_txtDebugHeader, _txt1, str _x];
-							// Message breather:
+							// Reading breather:
 							sleep 5;
 						};
 					};
@@ -3495,7 +3501,7 @@ THY_fnc_CSWR_spawn_delay = {
 						// Debug message:
 						if CSWR_isOnDebugGlobal then {
 							systemChat format ["%1 SPAWN DELAY > %2 by TARGET elimination/destruction (%3).", CSWR_txtDebugHeader, _txt1, str _x];
-							// Message breather:
+							// Reading breather:
 							sleep 5;
 						};
 					};
@@ -4039,7 +4045,7 @@ THY_fnc_CSWR_go_next_condition = {
 				// Breather for the next loop check:
 				sleep 10;
 				// Debug message > If helicopter is flighting (over 1 meter high):
-				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && ((getPos _veh) # 2) > 1 ) then {
+				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugHeli && ((getPosATL _veh) # 2) > 1 ) then {
 					["%1 HELICOPTER > %2 '%3' > Pilot wounds: %4/1  |  Gunner wounds: %5/1  |  Heli damages: %6/1  |  Heli fuel: %7/0  |  Hunting: %8", CSWR_txtDebugHeader, _tag, str _grp, str damage _driver, str damage _gunner, damage _veh, fuel _veh, _isHunting] call BIS_fnc_error;
 				};
 				// Allows the heli to go to the next waypoint:
@@ -4171,7 +4177,7 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 		// Large breather to the next loop check:
 		sleep 30;
 		// Check the helicopter touch the ground:
-		((getPos _veh) # 2) < 0.2 || !alive _veh || isNull _grp;
+		((getPosATL _veh) # 2) < 0.2 || !alive _veh || isNull _grp;
 	};
 	// Helicopter needs service:
 	[_spwns, _tag, _grpType, _grp, _veh, true, _destType, _destSector, _behavior] spawn THY_fnc_CSWR_base_service_station;
@@ -4316,7 +4322,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grpType", "_grp", "_behavior"];
-	private ["_unitFinalPos", "_objWatcher", "_mkrDebugWatch", "_isGoodHeight", "_visibility", "_isVisibleEnough", "_minRange", "_minHeigh", "_mkr", "_posToWatch", "_objTarget", "_tries", "_tryLimiter", "_wp"];
+	private ["_posWatcherATLAGL", "_posWatcherASL", "_objWatcher", "_mkrDebug", "_isGoodHeight", "_visual", "_bldg", "_spots", "_unit", "_isWildPos", "_tol", "_ctr", "_timeout", "_isCanceled", "_minHeight", "_mkr", "_grpId", "_posTargetAGL", "_posTargetASL", "_objTarget", "_tries", "_tryLimiter", "_disLimiterFromBldg", "_wp"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith { true /* Return */ };
@@ -4356,122 +4362,145 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		true;
 	};
 	// Initial values:
-	_unitFinalPos    = [];
-	_objWatcher      = objNull;
-	_mkrDebugWatch   = "";  // Debug purposes.
-	_isGoodHeight    = false;
-	_visibility      = 0;
-	_isVisibleEnough = false;
+	_posWatcherATLAGL = [];
+	_posWatcherASL = [];
+	_objWatcher    = objNull;
+	_mkrDebug      = "";  // Debug purposes.
+	_isGoodHeight  = false;
+	_visual        = 0;
+	_bldg          = objNull;
+	_spots         = [];
+	_unit          = objNull;
+	_isWildPos     = true;
+	_tol           = 0;
+	_ctr           = 0;
+	_timeout       = 0;
+	_isCanceled    = false;
 	// Load the original group behavior (Editor's choice):
 	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
-	_minRange   = 100;
-	_minHeigh   = 20;  // over the target heigh.
-	_mkr        = selectRandom _dests;
-	_posToWatch = markerPos _mkr;  // returns a AGL pos, so [x, y, 0], z is always 0
-	_posToWatch = AGLToASL _posToWatch;  // needed to create a simpleObject.
-	_posToWatch = [_posToWatch # 0, _posToWatch # 1, (_posToWatch # 2) + 1];  // rising Z a bit from the ground, advising from BI forum's mentors.
+	_minHeight    = 20;  // over the target heigh.
+	_mkr          = selectRandom _dests;
+	_grpId        = netId _grp;  // string, Debug purposes.
+	_posTargetAGL = markerPos _mkr;  // returns a AGL pos, so [x, y, 0], z is always 0
+	_posTargetASL = AGLToASL _posTargetAGL;  // needed to create a simpleObject.
+	_posTargetASL set [2, (_posTargetASL # 2) + 1];  // CRITICAL: Rising Z a bit from the ground, advising from BI forum's mentors.
 	// Creating a generic asset on the map to provide a visual watching zone:
-	_objTarget  = createSimpleObject ["Sign_Arrow_Large_F", _posToWatch, false];  // false = global / true = local.
+	_objTarget  = createSimpleObject ["Sign_Arrow_Large_F", _posTargetASL, true];  // false = global / true = local.
 	// Hide the target if debug mode is OFF:
 	if ( !CSWR_isOnDebugGlobal || !CSWR_isOnDebugWatch ) then { hideObjectGlobal _objTarget };  // Important: don't delete it becouse the setDir for gunner will be necessary.
-	_tries      = 1;
-	_tryLimiter = 60;
+	_tries              = 0;
+	_tryLimiter         = 400;  // default 400 / Important: more than 400 to a deep search in rough terrain coz 300 doesn't work well in that case.
+	_disLimiterFromBldg = 20;
+
+	// STEP 1/2 > SEARCHING:
 	// Searching the watcher-group spot with good visibility to the position to overwatch:
 	while { alive (leader _grp) && _tries <= _tryLimiter } do {
+		// Watch Debug:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+			// Message:
+			["%1 WATCH > %2 '%3' Searching (nº %4/%5) a wild spot around the target zone '%6'...",
+			CSWR_txtDebugHeader, _tag, str _grp, _tries, _tryLimiter, _mkr] call BIS_fnc_error;
+		};
+		// Tries amount control:
+		_tries = _tries + 1;
 		// Try a random empty spot:
-		_unitFinalPos = [_posToWatch, _minRange, CSWR_watchMarkerRange, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // returns [x,y]
+		_posWatcherATLAGL = [_posTargetAGL, CSWR_watchMkrRangeStart, CSWR_watchMkrRange, 3, 0, 0.8, 0] call BIS_fnc_findSafePos;  // returns 2D pos: [x,y]
+		// Adding Z as 0 to make it a real ATL/AGL:
+		_posWatcherATLAGL set [2, 0];
+		// Converting to ASL:
+		_posWatcherASL = ATLToASL _posWatcherATLAGL;
+		// Rising only the ASL Z a bit from the ground to simulate exactly the unit eyes pos when laid down over there:
+		_posWatcherASL set [2, (_posWatcherASL # 2) + 0.3];  // CRITICAL!
 		// Escape > if there's road around the watcher spot, forget and search again:
-		if ( count (_unitFinalPos nearRoads 20) isNotEqualTo 0 ) then { sleep 0.2; continue };
-		// Converting to ASL position:
-		_unitFinalPos = ATLToASL [_unitFinalPos # 0, _unitFinalPos # 1, 0];
-		// Rising Z a bit from the ground, simulation unit eye pos when laid down:
-		_unitFinalPos = [_unitFinalPos # 0, _unitFinalPos # 1, (_unitFinalPos # 2) + 0.3];
-		// Creating a generic and temporary asset on the map to provide the unit point-of-view to the watching zone:
-		_objWatcher = createSimpleObject ["Sign_Arrow_Direction_F", _unitFinalPos, false];  // false = global / true = local.
+		if ( count (_posWatcherATLAGL nearRoads 20) isNotEqualTo 0 ) then { sleep 0.33; continue };
+		// Creating a generic asset on the map to provide the unit point-of-view to the watching zone:
+		_objWatcher = createSimpleObject ["Sign_Arrow_Direction_F", _posWatcherASL, true];  // false = global / true = local.
 		// Check if the selected spot is enough higher than the zone to watch:
-		_isGoodHeight = getTerrainHeightASL _unitFinalPos > (getTerrainHeightASL _posToWatch) + _minHeigh;
+		_isGoodHeight = getTerrainHeightASL _posWatcherASL > (getTerrainHeightASL _posTargetASL) + _minHeight;
 		// Escape > If the spot's not high enough, jump to the next random spot:
-		if !_isGoodHeight then { sleep 0.2; continue };
-		// Debug purposes:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _isGoodHeight ) then { 
+		if !_isGoodHeight then { sleep 0.33; deleteVehicle _objWatcher; continue };
+		// Escape > If between the spot pos and the target zone is blocked by terrain itself, abort:
+		if ( terrainIntersectASL [_posWatcherASL, _posTargetASL] ) then { sleep 0.33; deleteVehicle _objWatcher; continue };
+		// Watch Debug:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { 
+			// Puts the arrow (obj-watcher) to point exactly to the obj-target direction:
+			_objWatcher setDir (_objWatcher getDir _objTarget);
 			// Show me all locations found on the map with visible markers:
-			_mkrDebugWatch = createMarker [("debug_" + _mkr + "_" + str _tries), _unitFinalPos];
-			_mkrDebugWatch setMarkerType "hd_dot";
-			_mkrDebugWatch setMarkerAlpha 0.25;
-			_mkrDebugWatch setMarkerColor "ColorBlack";
-			//_mkrDebugWatch setMarkerText format ["%1 No visibility", _tag];
-			[_objWatcher, _objWatcher getDir _objTarget] remoteExec ["setDir"];
+			_mkrDebug = createMarker [("debug_" + _tag + _grpId + str _tries), _posWatcherATLAGL];
+			_mkrDebug setMarkerType "hd_dot";
+			_mkrDebug setMarkerAlpha 0.5;
+			_mkrDebug setMarkerColor "ColorBlack";
+			_mkrDebug setMarkerText "No visual";
 		};
 		// Check the visibility of 2 objects (0 = not visible, 0.2 = barely visible, 0.7 = visible, 1 = fully visible):
-		_visibility = [objNull, "VIEW"] checkVisibility [getPosASL _objWatcher, getPosASL _objTarget];  // CRITICAL: positions need to be ASL
-		_isVisibleEnough = _visibility >= 0.7;
-		// Debug purposes:
-		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _visibility > 0.2 ) then {
+		_visual = [objNull, "VIEW"] checkVisibility [_posWatcherASL, _posTargetASL];  // CRITICAL: dont use "FIRE" to avoid vision blocked by plants/bushes.
+		// Watch Debug:
+		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _visual > 0.2 ) then {
 			switch _tag do {
-				case "BLU": { _mkrDebugWatch setMarkerColor "colorBLUFOR" };
-				case "OPF": { _mkrDebugWatch setMarkerColor "colorOPFOR" };
-				case "IND": { _mkrDebugWatch setMarkerColor "colorIndependent" };
+				case "BLU": { _mkrDebug setMarkerColor "colorBLUFOR" };
+				case "OPF": { _mkrDebug setMarkerColor "colorOPFOR" };
+				case "IND": { _mkrDebug setMarkerColor "colorIndependent" };
 				//case "CIV": {}; // not appliable here!
 			};
-			_mkrDebugWatch setMarkerText format ["%1 visibility %2", _tag, (str _visibility) select [0,4]];
-			_mkrDebugWatch setMarkerAlpha 1;
+			_mkrDebug setMarkerText format ["Visual %2/1", _tag, (str _visual) select [0,4]];
+			_mkrDebug setMarkerAlpha 1;
 		};
 		// If the spot has enough visibility of the target zone:
-		if _isVisibleEnough then {
+		if ( _visual >= 0.7 ) then {
 			// Debug:
 			if CSWR_isOnDebugGlobal then {
 				// Message:
-				systemChat format ["%1 WATCH > %2 %3 moving to spot with %4/1 visibility.",
-				CSWR_txtDebugHeader, _tag, str _grp, (str _visibility) select [0,4]];
+				systemChat format ["%1 WATCH > %2 %3 moving to a wild spot with visual %4/1.",
+				CSWR_txtDebugHeader, _tag, str _grp, (str _visual) select [0,4]];
 			};
 			// Debug:
 			if ( !CSWR_isOnDebugGlobal || !CSWR_isOnDebugWatch ) then {
-				// Remove each temporary obj in watcher positions:
-				deleteVehicle _objWatcher;
+				// Hide the marker obj in watcher positions:
+				hideObjectGlobal _objWatcher;
 			};
 			// Stop the searching:
 			break;
 		};
-		// Remove each temporary obj in watcher positions:
-		deleteVehicle _objWatcher;
-		// Tries amount control:
-		_tries = _tries + 1;
 		// Breather:
 		sleep 0.33;
 	};  // While-loop ends.
-	//
-	if ( _tries > _tryLimiter ) exitWith {
+	// If the group didn't find a good spot in the terrain:
+	if ( _tries > _tryLimiter ) then {
+		// Search for an acceptable building for watcher groups:
+		_bldg = [_mkr, _grp, _tag, _posTargetASL] call THY_fnc_CSWR_WATCH_find_towers;
+		// Declarating whether the unit position will be in the wild:
+		_isWildPos = isNull _bldg;
+		// If a building was found, update the group final position:
+		if !_isWildPos then { _posWatcherATLAGL = getPosATL _bldg };
+	};
+	// Escape > if already tried spots in nature and urban, and nothing was found, abort:
+	if ( _tries > _tryLimiter && isNull _bldg ) exitWith {
 		// Delete the watcher group:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning message:
-		["%1 WATCH > The '%2' marker looks bad positioned for this kind of terrain. CONSIDER repositioning '%2' marker, or increase a bit 'CSWR_watchMarkerRange' in 'fn_CSWR_management.sqf' file. The group has been deleted.",
-		CSWR_txtWarnHeader, _mkr, _tag] call BIS_fnc_error; sleep 5;
+		["%1 WATCH > The '%2' marker looks bad positioned for this kind of terrain. CONSIDER repositioning '%2' marker, or increase a bit 'CSWR_watchMkrRange' in 'fn_CSWR_management.sqf' file, or include one or more of those 'CSWR_acceptableTowersForWatch' assets around the watch-marker on Eden, respecting the range between %4m (min) and %5m (max). The group has been deleted.",
+		CSWR_txtWarnHeader, _mkr, _tag, CSWR_watchMkrRangeStart, CSWR_watchMkrRange] call BIS_fnc_error; sleep 5;
 		// Return:
 		true;
 	};
-	// Recovering the regular pos (otherwise, the wp would be unreachable):
-	_unitFinalPos = ASLToAGL _unitFinalPos;
-	// Creating the waypoint to set the watching position in-game:
-	_wp = _grp addWaypoint [_unitFinalPos, 0];
+
+	// STEP 2/2 > GOING:
+	// Creating the waypoint to set the watching position:
+	_wp = _grp addWaypoint [ _posWatcherATLAGL, 0];
 	_wp setWaypointType "MOVE";
-	_wp setWaypointCombatMode "WHITE";  // Important: forcing this for units when out of their watch location // hold fire, kill only if own position spotted.
+	_wp setWaypointSpeed "FULL";  // Important: because sometimes members get stuck in the map and badly prevent the leader to reach the watch position.
+	_wp setWaypointCombatMode "GREEN";  // Important: forcing this for units when out of their watch location // hold fire, kill only if own position spotted.
 	_grp setCurrentWaypoint _wp;
-	// Debug message:
-	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-		{  // forEach units _grp:
-			["%1 WATCH > %2 '%3' unit has their: aimingAccuracy = %4 | spotDistance = %5 | aimingSpeed = %6 | overall = %7 (0.85=expert/1=superAi)",
-			CSWR_txtDebugHeader, _tag, str _x, (_x skill "aimingAccuracy"), (_x skill "spotDistance"), (_x skill "aimingSpeed"), skill _x] call BIS_fnc_error; sleep 4;
-		} forEach units _grp;
-	};
 	// Wait the group gets closer, or doesn't exist anymore, or loses its waypoint:
-	waitUntil {sleep 5; isNull _grp || leader _grp distance _unitFinalPos < 100 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+	waitUntil {sleep 5; isNull _grp || leader _grp distance _posWatcherATLAGL < 100 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	// Escape > group doesn't exist anymore:
 	if ( isNull _grp ) exitWith {
-		// Debug message:
+		// Watch Debug:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+			// Message:
 			systemChat format ["%1 WATCH > A few moments earlier, a %2 watcher group HAS BEEN KILLED (or deleted) BEFORE to reach 100m close to set their watching.",
 			CSWR_txtDebugHeader, _tag];
 		};
@@ -4484,30 +4513,260 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then { systemChat format ["%1 WATCH > %2 '%3' group lost the waypoint for unknown reason. New search soon.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
 		// Small cooldown to prevent crazy loopings:
 		sleep 2;
-		// Restart the first OCCUPY step:
+		// Restart the first WATCH step:
 		[_dests, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH;
 		// Return:
 		true;
 	};
+	// Dont speak anymore:
+	{ _x setSpeaker "NoVoice" } forEach units _grp;
+	// Straight on to the position:
+	_grp setSpeedMode "FULL";  // Important: because sometimes members get stuck in the map and badly prevent the leader to reach the watch position.
 	// From here, keep stealth to make sure the spot is clear:
-	_grp setBehaviourStrong "STEALTH";  // Every unit in the group, and the group itself.
-	_grp setSpeedMode "LIMITED";
-	{  // forEach units _grp:
-		// Prone:
-		_x setUnitPos "DOWN";
-		// Dont speak anymore:
-		_x setSpeaker "NoVoice";
-	} forEach units _grp;
-	// Wait the sniper group arrival in the area for to stay watching the marker direction:
-	waitUntil { sleep 5; isNull _grp || leader _grp distance _unitFinalPos < 3 };
+	_grp setBehaviourStrong "COMBAT";  // Every unit in the group, and the group itself.
+	// If the fire position is in the nature:
+	if _isWildPos then {
+		// Get prone:
+		{ _x setUnitPos "DOWN" } forEach units _grp;
+		// Wait the sniper group arrival in the area for to stay watching the marker direction:
+		waitUntil { sleep 5; isNull _grp || leader _grp distance _posWatcherATLAGL < 3 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+	// If in urban position:
+	} else {
+		// Wait the sniper group arrival in the area for to stay watching the marker direction:
+		waitUntil { sleep 5; isNull _grp || leader _grp distance _posWatcherATLAGL < _disLimiterFromBldg || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+	};
 	// Escape:
 	if ( isNull _grp ) exitWith { true /* Return */ };
 	// Make the arrival smooth:
 	sleep 1;
+	// If watcher group is going to a spot in the wild:
+	if _isWildPos then {
+		// Force the leader to stay exactly where is the obj marker (sometimes, in rough terrains, there is an unknown misposition between waypoint and obj marker):
+		leader _grp setPosASL (getPosASL _objWatcher);
+	// If watcher group is going to urban enviroment:
+	} else {
+		// Before to get in, check again (WIP) to see if the best spots keeps available:
+		_spots = [_bldg, _objTarget] call THY_fnc_CSWR_WATCH_spots_selector;
+		// If there are spots enough for the current group size:
+		if ( count _spots >= count units _grp ) then {
+			// Repeat the action for the number of times of the group members amount:
+			for "_i" from 0 to (count units _grp - 1) do {
+				// Internal declarations:
+				_unit = (units _grp) # _i;
+				// If it's the leader:
+				if ( _unit isEqualTo (leader _grp) ) then {
+					// Wait until the leader to be near enough to the building:
+					waitUntil { sleep 5; isNull _grp || !alive _unit || incapacitatedState _unit isEqualTo "UNCONSCIOUS" || _unit distance _posWatcherATLAGL < _disLimiterFromBldg };
+					// if the unit is NOT awake:
+					if ( incapacitatedState _unit isEqualTo "UNCONSCIOUS" ) then {
+						// Kill the unit to renew the group leadership:
+						_unit setDamage 1;
+					};
+					// Leader opens all doors and windows of the building:
+					for "_i" from 1 to (getNumber (configFile >> "CfgVehicles" >> typeOf _bldg >> "numberofdoors")) do {
+						_bldg animate [ format ["door_%1_rot", _i], 1 ]; // 1 = Open
+					};
+				// If it's a ordinary member:
+				} else {
+					// Internal declarations:
+					_tol     = 60;
+					_timeout = time + _tol;
+					// Wait the unit to be near enough to the building (or the timeout's gone, so in this case the unit will forced to be teleported):
+					waitUntil {
+						// Looping breather:
+						sleep 5;
+						// if the leader is already inside the building in position, and the unit WAS NOT FORCED ONCE yet to go there, do it:
+						if ( !(leader _grp checkAIFeature "PATH") && _ctr isEqualTo 0 ) then {
+							// Move to the building:
+							_unit doMove _posWatcherATLAGL;
+							// Updating the counter:
+							_ctr = _ctr + 1;
+						};
+						// Countdown:
+						_tol = _tol - 5;
+						// Watch Debug:
+						if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && _tol > 0 && _tol <= 40 ) then {
+							// Message:
+							systemChat format ["%1 WATCH > %2 '%3' mate has %4s before to be forced to get in the building.",
+							CSWR_txtDebugHeader, _tag, str _grp, _tol];
+						};
+						// Conditions:
+						isNull _grp || !alive _unit || incapacitatedState _unit isEqualTo "UNCONSCIOUS" || _unit distance _posWatcherATLAGL < _disLimiterFromBldg || time > _timeout };
+					// if the unit is NOT awake:
+					if ( incapacitatedState _unit isEqualTo "UNCONSCIOUS" ) then {
+						// Kill the unit to sniper goes on:
+						_unit setDamage 1;
+					};
+				};
+				// Escape:
+				if ( isNull _grp ) exitWith { true /* Return */ };
+				// Force the unit to stop:
+				doStop _unit;
+				// wait a bit until the unit stops completely:
+				sleep 1;
+				// Teleport the unit to their spot inside the building:
+				_unit setPosATL (_spots # _i # 2);
+				// Reset the unit body movement:
+				_unit setDir (_unit getDir _objTarget);  // not need remoteexec here coz this unit is always local for server.
+				// Stay in position:
+				_unit disableAI "PATH";
+				// Force to get up:
+				_unit setUnitPos "UP";
+			};
+		// Otherwise, if there is NO enough spots for the current group size:
+		} else {
+			// Watch Debug:
+			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
+				// Message:
+				systemChat format ["%1 WATCH > The building (%2) of %3 '%4' group has NO SPOTS available anymore. New search soon.",
+				CSWR_txtDebugHeader, typeOf _bldg, _tag, str _grp];
+				// Breather:
+				sleep 1;
+			};
+			// Restart the first WATCH step:
+			[_dests, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH;
+			// Update the flag:
+			_isCanceled = true;
+		};
+	};
+	// Escape:
+	if _isCanceled exitWith { true /* Returning */ };
 	// Go to the next WATCH stage:
-	[_grp, _posToWatch, _objTarget, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
+	[_grp, _posTargetAGL, _objTarget, _tag, _isWildPos] spawn THY_fnc_CSWR_WATCH_doWatching;
 	// Return:
 	true;
+};
+
+
+THY_fnc_CSWR_WATCH_spots_selector = {
+	// This function counts how much spots are available in a specific building. Before this fnc to be called, CSWR made sure the building brings spot(s).
+	// Returns _spots: list of positions.
+
+	params ["_bldg", "_objTarget"];
+	private ["_spots"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+		// reserved space.
+	// Declarations:
+		// reserved space.
+	// Listing all spots found (sorted in reverse):
+	/*
+		// My Solution (slower):
+		_spots = [_bldg] call BIS_fnc_buildingPositions;
+		// Take each spot ([x,y,z]) and its Z axis and sort them by highest to lower (watcher group will occupy always the highest position in a building):
+		_spots = [_spots, [], {_x # 2}, "DESCEND"] call BIS_fnc_sortBy;
+		// Select only the spots of the building end closer to the object-target:
+		_spots = _spots select { _x distance _objTarget < (_bldg distance _objTarget) };
+	*/
+
+	// Pirremgi solution (faster):
+		// buildingPos -1 means to bring all building positions.
+		// Explanation below about that '1/': That's because I'm using the same sort command for highest spot, and not for the nearest 2D distance. '1/x' is higher when x has a shorter distance, and reciprocally. The two levels (Z, then 1/ (2D distance)) are consistent with descending sort.
+		_spots = (_bldg buildingPos -1) apply { [_x # 2, 1 / (_x distance2D _objTarget), _x] };  // [spot height, spot distance to the target, spot position]
+		_spots sort false;  // false = descending sorted.
+
+	// WIP - Check if there is someone in the position before send the _spots as available spots.
+	// Return:
+	_spots;
+};
+
+
+THY_fnc_CSWR_WATCH_check_building_before_to_go = {
+	// This function selects a random option from CSWR_acceptableTowersForWatch already found around the selected marker, and make sure that selected building has spots with no walls between the sniper position inside and the target-zone.
+	// Return _bldg: object.
+
+	params ["_bldg", "_bldgsByMkr", "_objTarget", "_grp"];
+	private ["_spots", "_ctr"];
+
+	// Escape:
+		// reserved space.
+	// Initial values:
+	_spots = [];
+	_ctr   = 0;
+	// Declarations:
+		// reserved space.
+	// Check until the building is defined with no more than 10 tries:
+	while { isNull _bldg && _ctr <= 10 } do {
+		// Counting the try:
+		_ctr = _ctr + 1;
+		// Pick up one building randomly:
+		_bldg = selectRandom _bldgsByMkr;
+		// Check the quality of each building spots:
+		// Important: without this check, the group take a risk to arrive in the building and to notice that the highest building positions has no clear visual to the target.
+		_spots = [_bldg, _objTarget] call THY_fnc_CSWR_WATCH_spots_selector;
+		// If the building has enough spots for the whole watcher-group, stop the loop:
+		if ( count _spots >= count units _grp ) then { break } else { _bldg = objNull };
+		// CPU Breather in cause new loop:
+		sleep 3;
+	};  // While-loop ends.
+	// Return:
+	_bldg;
+};
+
+
+THY_fnc_CSWR_WATCH_find_towers = {
+	// This function checks what buildings are available around a specific watch-marker range and selects one of them to be used for the watcher-group. Similar function: THY_fnc_CSWR_OCCUPY_find_buildings_by_group.
+	// Return _bldg: object.
+
+	params ["_mkr", "_grp", "_tag", "_posTargetASL"];
+	private ["_bldg", "_bldgsByMkr"];
+
+	// Escape:
+	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	// Initial values:
+	_bldg = objNull;
+	// Declarations:
+		// Reserved space;
+
+	// STEP 1/2: find the buildings:
+	_bldgsByMkr = nearestObjects [[markerPos _mkr # 0, markerPos _mkr # 1, 0], ["HOUSE", "BUILDING"], CSWR_watchMkrRange] select {
+		// If the building is one of the acceptable ones:
+		typeOf _x in CSWR_acceptableTowersForWatch &&
+		// and the building is not so close to the target:
+		_x distance2D (markerPos _mkr) >= CSWR_watchMkrRangeStart &&
+		// and the building is not invisible:
+		!isObjectHidden _x &&
+		// and the building ground is higher than the target ground (Xm artificially lower):
+		getTerrainHeightASL (getPosASL _x) > (getTerrainHeightASL _posTargetASL) - 2 &&
+		// and the building has enough internal spots to the watcher group:
+		count ([_x] call BIS_fnc_buildingPositions) >= count units _grp;
+	};
+	// Escape > No building was found, abort:
+	If ( count _bldgsByMkr isEqualTo 0 ) exitWith { _bldg /* Returning */ };
+
+	// STEP 2/2: check the spot quality:
+	_bldg = [_bldg, _bldgsByMkr, _objTarget, _grp] call THY_fnc_CSWR_WATCH_check_building_before_to_go;
+	// Debug:
+	if CSWR_isOnDebugGlobal then {
+		// If a building was found:
+		if ( !isNull _bldg ) then {
+			// Message:
+			systemChat format ["%1 WATCH > %2 '%3' going to 1 of %4 building(s) found.",
+			CSWR_txtDebugHeader, _tag, str _grp, count _bldgsByMkr];
+			// Watch debug only:
+			if CSWR_isOnDebugWatch then {
+				// Message:
+				systemChat format ["> Chosen building: %1 / Loc: %2",
+				typeOf _bldg, getPosATL _bldg];
+			};
+			// Reading breather:
+			sleep 2;
+		// Otherwise, if no building met the features needed:
+		} else {
+			// Watch debug only:
+			if CSWR_isOnDebugWatch then {
+				// Message:
+				systemChat format ["%1 WATCH > %2 '%3' didn't find any building with spot not blocked by walls.",
+				CSWR_txtDebugHeader, _tag, str _grp, count _bldgsByMkr];
+				// Breather:
+				sleep 2;
+			};
+		};
+	};
+	// Return:
+	_bldg;
 };
 
 
@@ -4515,82 +4774,134 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	// This function organizes the sniper/marksman group during the overwatching. It's a recursive loop..
 	// Returns nothing.
 
-	params ["_grp", "_posToWatch", "_objTarget", "_tag"];
-	private ["_enemyDangerClose"];
+	params ["_grp", "_posTargetAGL", "_objTarget", "_tag", "_isWildPos"];
+	private ["_targets", "_dangerClose"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
+	// Initial values:
+	_targets = [];
 	// Declarations:
-	_enemyDangerClose = 50;
+	_dangerClose = 50;  // used to spotter controls the threats around the group position, and for god's sniper eyes in the target zone.
 	
 	// STEP 1/4: RESETING
-	{ 
-		_x enableAI "PATH";
-		_x doFollow (leader _grp);
+	{
+		// If in the nature:
+		if _isWildPos then {
+			_x enableAI "PATH";
+			_x setUnitPos "DOWN";
+			_x doFollow (leader _grp);
+		// If in a building:
+		} else {
+			_x setUnitPos "UP";
+		};
 	} forEach units _grp;  // reset the movement.
-	// Force awareness on group and units:
+	
+	// Force awareness on group and its units:
 	_grp setBehaviourStrong "AWARE";
-	{  // forEach units _grp;:
+	{  // forEach units _grp:
 		// If member is the SNIPER:
 		if ( _x isEqualTo (leader _grp) ) then {
-			// Forcing this approach:
-			_x setUnitCombatMode "YELLOW";  // fire at will, keep formation.
-			// Make it smooth:
-			sleep 3;
+			// Force the unit to stay straight to the target zone:
+			_x setDir (_x getDir _posTargetAGL);
 			// Better formation for sniper group during overwatch:
 			_grp setFormation "DIAMOND";
+			// Fixing the formation direction:
+			_grp setFormDir (getDir _x);
+			// Forcing this approach:
+			_x setUnitCombatMode "YELLOW";  // fire at will, keep formation.
+			// Leader uses rifle:
+			_x selectWeapon (primaryWeapon _x);
+			// Animation breather:
+			sleep 2;
 			// Stay focus on the target-area:
-			_x doWatch _posToWatch;
-			// Force the unit to stay straight to the target zone:
-			[_x, _x getDir _objTarget] remoteExec ["setDir"];
+			_x doWatch _posTargetAGL;
 		// If member is the SPOTTER:
 		} else {
-			// Forcing this approach:
-			_x setUnitCombatMode "GREEN";  // hold fire, keep formation.
-			// Wait the spotter get their position:
+			// Wait the spotter get their position or just stop to move:
 			waitUntil { sleep 3; speed _x isEqualTo 0 || !alive _x };
 			// Force the unit to stay straight to the target zone:
-			[_x, _x getDir _objTarget] remoteExec ["setDir"];
-			// Stay focus on the target-area:
-			_x doWatch _posToWatch;
+			_x setDir (_x getDir _objTarget);
+			// Forcing this approach:
+			_x setUnitCombatMode "GREEN";  // Hold fire.
 			// Spotter uses binoculars:
 			_x selectWeapon (binocular _x);
+			// Animation breather:
+			sleep 2;
+			// Stay focus on the target-area:
+			_x doWatch _posTargetAGL;
 		};
 		// Make it smooth:
-		sleep 1;
+		sleep 0.5;
 		// Stay in position:
 		_x disableAI "PATH";
-		// Debug message:
+		// Watch Debug:
 		if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-			["%1 WATCH > %2 '%3' unit reseted: unitCombatMode '%4' / behaviour '%5' / elevation '%6' / pos fixed '%7' / isLeader '%8'",
-			CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosATL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 3;
+			// Message:
+			["%1 WATCH > %2 '%3' unit RESETED: isLeader '%8' / behaviour '%5' / unitCombatMode '%4' / elevation %6m / pos fixed '%7' / skill overall: %9/1 / Distance target zone: %11m / hasTarget '%10'",
+			CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, round (getTerrainHeightASL (getPosASL _x)), !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp)), (str (_x skillFinal "general")) select [0,4], !isNull (getAttackTarget _x), round (_x distance _posTargetAGL)] call BIS_fnc_error; 
+			// Reading breather:
+			sleep 3;
 		};
 	} forEach units _grp;
 	
 	// STEP 2/4: SEEKING TARGETS
 	// Debug message:
-	if CSWR_isOnDebugGlobal then { systemChat format ["%1 WATCH > %2 watcher-lead in position and '%3'!", CSWR_txtDebugHeader, _tag, behaviour (leader _grp)]; sleep 1 };
+	if CSWR_isOnDebugGlobal then {
+		if _isWildPos then {
+			// Wild position message:
+			systemChat format ["%1 WATCH > %2 watch-leader in WILD pos and '%3'!",
+			CSWR_txtDebugHeader, _tag, behaviour (leader _grp)];
+		} else {
+			// Urban position message:
+			systemChat format ["%1 WATCH > %2 watch-leader in URBAN pos and '%3'!",
+			CSWR_txtDebugHeader, _tag, behaviour (leader _grp)];
+		};
+		// Reading breather:
+		sleep 1;
+	};
 	// Seek looping:
 	while { behaviour (leader _grp) isNotEqualTo "COMBAT" } do {
-		{  // forEach units _grp;:
-			// Debug message:
+		{  // forEach units _grp:
+			// Watch Debug:
 			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / isLeader '%7'",
-				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
+				// Message:
+				["%1 WATCH > %2 '%3' unit: isLeader '%7' / behaviour '%5' / unitCombatMode '%4' / pos fixed '%6' / skill overall: %8/1 / Distance target zone: %10m / hasTarget '%9'",
+				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp)), (str (_x skillFinal "general")) select [0,4], !isNull (getAttackTarget _x), round (_x distance _posTargetAGL)] call BIS_fnc_error;
+				// Reading breather:
+				sleep 1;
 			};
-			// Forcing the sniper/leader 
-			if ( _x isEqualTo leader _grp ) then {
+			// Forcing the leader/Gunner:
+			if ( _x isEqualTo (leader _grp) ) then {
 				// leader behavior aware if they're feel safe:
 				if ( behaviour _x isEqualTo "SAFE" ) then { _x setCombatBehaviour "AWARE" };
 				// If a spotter is leader after leader death in aware stage:
 				_x setUnitCombatMode "YELLOW";
+				// If enemy around the target zone, watch-gunner will see:
+				_targets = (_posTargetAGL nearEntities ["Man", _dangerClose]) select {
+					// If it's a person:
+					_x isKindOf "CAManBase" &&
+					// If it's alive:
+					alive _x &&
+					// If it's NOT unconscious:
+					incapacitatedState _x isNotEqualTo "UNCONSCIOUS" &&
+					// If it's not the same side of the watcher group:
+					side _x isNotEqualTo (side _grp) &&
+					// If it's NOT civilian:
+					side _x isNotEqualTo CIVILIAN;
+				};
+				// If there's target in target zone, and (watch group has a second operative member, or the watch-gunner has no a current target):
+				if ( count _targets > 0 && { count ((units _grp) select { alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" }) > 1 || isNull (getAttackTarget (leader _grp)) } ) then {
+					// Watch-gunner will see a target:
+					(leader _grp) lookAt (selectRandom _targets);
+				};
 			// If spotter:
 			} else {
 				// Check if spotter needs to help with fire:
-				[_grp, _x, _enemyDangerClose] call THY_fnc_CSWR_WATCH_spotter_fire_support;
+				[_grp, _x, _dangerClose] call THY_fnc_CSWR_WATCH_spotter_fire_support;
 			};
 			// CPU breather:
-			sleep 1;
+			sleep 3;
 		} forEach units _grp;
 		// CPU breather before restart the SEEKING loop:
 		sleep 2;
@@ -4606,23 +4917,28 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			if ( !alive _x || incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then { break };
 			// Debug message:
 			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch ) then {
-				["%1 WATCH > %2 '%3' unit: unitCombatMode '%4' / behaviour '%5' / pos fixed '%6' / isLeader '%7'",
-				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp))] call BIS_fnc_error; sleep 1;
+				["%1 WATCH > %2 '%3' unit: isLeader '%7' / behaviour '%5' / unitCombatMode '%4' / pos fixed '%6' / skill overall: %8/1 / Distance target zone: %10m / hasTarget '%9'",
+				CSWR_txtDebugHeader, _tag, str _x, unitCombatMode _x, behaviour _x, !(_x checkAIFeature "PATH"), (_x isEqualTo (leader _grp)), (str (_x skillFinal "general")) select [0,4], !isNull (getAttackTarget _x), round (_x distance _posTargetAGL)] call BIS_fnc_error; sleep 1;
 			};
 			// If enemy revealed is too close, unit can move again:
-			if ( !isNull (getAttackTarget _x) && _x distance (getAttackTarget _x) < _enemyDangerClose ) then { _x doFollow leader _grp };
+			if ( !isNull (getAttackTarget _x) && _x distance (getAttackTarget _x) < _dangerClose ) then { _x doFollow (leader _grp) };
 			// Remember the leader (or new leader):
 			if ( _x isEqualTo (leader _grp) ) then {
 				_x setUnitCombatMode "YELLOW";
 			// If spotter:
 			} else {
 				// Check if spotter needs to help with fire:
-				[_grp, _x, _enemyDangerClose] call THY_fnc_CSWR_WATCH_spotter_fire_support;
+				[_grp, _x, _dangerClose] call THY_fnc_CSWR_WATCH_spotter_fire_support;
 			};
-			// Debug message:
-			if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugWatch && !isNull (getAttackTarget _x) ) then {
+			// Remind all:
+			if _isWildPos then { _x setUnitPos "DOWN" };
+			// Debug:
+			if ( CSWR_isOnDebugGlobal && !isNull (getAttackTarget _x) ) then {
+				// Message:
 				systemChat format ["%1 WATCH > %2 '%3' unit has a target: '%4'.",
-				CSWR_txtDebugHeader, _tag, str _x, getAttackTarget _x]; sleep 1;
+				CSWR_txtDebugHeader, _tag, str _x, getAttackTarget _x];
+				// Reading breather:
+				sleep 1;
 			};
 			// CPU breather:
 			sleep 1;
@@ -4632,7 +4948,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 	};  // While-loop TWO ends.
 
 	// STEP 4/4: RESTART FROM STEP 1:
-	[_grp, _posToWatch, _objTarget, _tag] spawn THY_fnc_CSWR_WATCH_doWatching;
+	[_grp, _posTargetAGL, _objTarget, _tag, _isWildPos] spawn THY_fnc_CSWR_WATCH_doWatching;
 	// Return:
 	true;
 };
@@ -4642,12 +4958,12 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 	// This function verifies if the unit members of sniper group must provide fire support for the group leader.
 	// Returns nothing.
 
-	params ["_grp", "_unit", "_enemyDangerClose"];
+	params ["_grp", "_unit", "_dangerClose"];
 
 	// Escape > if the unit is the leader (main gunner), abort:
 	if ( _unit isEqualTo (leader _grp) ) exitWith {};
 	// Escape > if spotter has a target, and target is too close the spotter group, abort:
-	if ( !isNull (getAttackTarget _unit) && _unit distance (getAttackTarget _unit) < _enemyDangerClose ) exitWith {
+	if ( !isNull (getAttackTarget _unit) && _unit distance (getAttackTarget _unit) < _dangerClose ) exitWith {
 		// Spotter get combat mode:
 		_unit setCombatBehaviour "COMBAT";
 		// Spotter can fire at will:
@@ -4655,43 +4971,58 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 		// Even if injured, spotter take their primary weapon:
 		_unit selectWeapon (primaryWeapon _unit);
 	};
-	// If there's NOT combat and everyone is fine:
-	if ( behaviour (leader _grp) isNotEqualTo "COMBAT" && lifeState _unit isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
-		// Spotter hold fire:
-		_unit setUnitCombatMode "GREEN";
-		// Spotter uses only binoculars:
-		_unit selectWeapon (binocular _unit);
-	// But if something wrong:
-	} else {
-		// When in combat:
-		if ( behaviour (leader _grp) isEqualTo "COMBAT" ) then {
-			// if everyone if fine:
-			if ( lifeState _unit isNotEqualTo "INJURED" && lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
-				// Spotter hold fire:
-				_unit setUnitCombatMode "GREEN";
-				// Spotter uses only binoculars:
-				_unit selectWeapon (binocular _unit);
-			};
-			// if sniper is wounded:
-			if ( lifeState (leader _grp) isEqualTo "INJURED" ) then {
-				// Spotter get combat mode:
-				_unit setCombatBehaviour "COMBAT";
-				// Spotter can fire at will:
-				_unit setUnitCombatMode "YELLOW";
-				// Even if injured, spotter take their primary weapon:
-				_unit selectWeapon (primaryWeapon _unit);
-			};
-		// If NOT in combat:
+
+	// IN COMBAT:
+	if ( incapacitatedState (leader _grp) isNotEqualTo "UNCONSCIOUS" && { behaviour (leader _grp) isEqualTo "COMBAT" || !isNull (getAttackTarget (leader _grp)) } ) then {
+		// if spotter not injured:
+		if ( lifeState _unit isNotEqualTo "INJURED" ) then {
+			// Spotter stay aware:
+			_unit setCombatBehaviour "AWARE";
+			// Spotter NEVER will fire:
+			_unit setUnitCombatMode "BLUE";  // If set "GREEN", sometimes the spotter will engage, even when long ranges if the target supress back.
+			// Spotter uses only binoculars:
+			_unit selectWeapon (binocular _unit);
+		
+		// if spotter injured:
 		} else {
-			// And sniper is wounded:
-			if ( lifeState (leader _grp) isEqualTo "INJURED" ) then {
-				// Spotter get combat mode:
-				_unit setCombatBehaviour "COMBAT";
-				// Spotter can fire at will:
-				_unit setUnitCombatMode "YELLOW";
-				// Even if injured, spotter take their primary weapon:
-				_unit selectWeapon (primaryWeapon _unit);
+			// Spotter get combat mode:
+			_unit setCombatBehaviour "COMBAT";
+			// Spotter can fire at will:
+			_unit setUnitCombatMode "YELLOW";
+			// Even if injured, spotter take their primary weapon:
+			_unit selectWeapon (primaryWeapon _unit);
+		};
+
+	// STANDBY:
+	} else {
+		// if leader is NOT unconscious, regardless the spotter get injured:
+		if ( incapacitatedState (leader _grp) isNotEqualTo "UNCONSCIOUS" ) then {
+			// Spotter stay aware:
+			_unit setCombatBehaviour "AWARE";
+			// If leader is NOT injured:
+			if ( lifeState (leader _grp) isNotEqualTo "INJURED" ) then {
+				// Spotter NEVER will fire:
+				_unit setUnitCombatMode "BLUE";
+			// If leader wounded:
+			} else {
+				// Spotter Hold fire, but fire if enemy knows the position:
+				_unit setUnitCombatMode "GREEN";
 			};
+			// Spotter uses only binoculars:
+			_unit selectWeapon (binocular _unit);
+			// If spotter has a target, this target is not so close (because if so, spotter jump in action), and watcher leader doesn't:
+			if ( !isNull (getAttackTarget _unit) && _unit distance (getAttackTarget _unit) >= _dangerClose && isNull (getAttackTarget (leader _grp)) ) then {
+				// Gunner must engage the threat spotted by spotter:
+				(leader _grp) doTarget (getAttackTarget _unit);
+			};
+		// if leader is unconscious:
+		} else {
+			// Spotter get combat mode:
+			_unit setCombatBehaviour "COMBAT";
+			// Spotter can fire at will:
+			_unit setUnitCombatMode "YELLOW";
+			// Even if injured, spotter take their primary weapon:
+			_unit selectWeapon (primaryWeapon _unit);
 		};
 	};
 	// Return:
@@ -4704,7 +5035,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grp", "_behavior"];
-	private ["_bldgPos", "_wp", "_leadStuckCounter", "_getOutPos", "_disLimiterFromBldg", "_disLimiterFrndPlayer", "_disLimiterEnemy", "_wait", "_building"];
+	private ["_bldgPos", "_wp", "_leadStuckCtr", "_getOutPos", "_disLimiterFromBldg", "_disLimiterFrndPlayer", "_disLimiterEnemy", "_wait", "_bldg"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -4729,10 +5060,10 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		sleep 5;
 	};
 	// Initial values:
-	_bldgPos          = [];
-	_wp               = [];
-	_leadStuckCounter = 0;
-	_getOutPos        = [];
+	_bldgPos      = [];
+	_wp           = [];
+	_leadStuckCtr = 0;
+	_getOutPos    = [];
 	// Declarations:
 	_disLimiterFromBldg   = 20;  // Distance to activate occupy functions validations to group leader. CRITICAL: less than 20 no occupy happens in some towers.
 	_disLimiterFrndPlayer = 40;  // Distance to desactivate the AI teleport when player is around.
@@ -4749,12 +5080,12 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Selecting one building from probably many others found in that range:
-	_building = [_dests, _grp, count (units _grp), _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
+	_bldg = [_dests, _grp, count (units _grp), _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
 
 	// If there's a building:
-	if ( !isNull _building ) then {
+	if ( !isNull _bldg ) then {
 		// Building position:
-		_bldgPos = getPosATL _building;
+		_bldgPos = getPosATL _bldg;
 		// Delete old waypoints to prevent anomalies:
 		//for "_i" from (count waypoints _grp - 1) to 1 step -1 do { deleteWaypoint [_grp, _i] };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).
 		// Go to the specific building:
@@ -4775,7 +5106,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 			// If the leader notice (distance) the building doesn't exist anymore:
 			if ( (leader _grp) distance _bldgPos < 80 ) then {  // distance should use building position because, in case the building doesnt exist, distance not works with objNull but works with position.
 				// If destroyed but not part of the exception building list:
-				if ( !alive _building && !(typeOf _building in CSWR_occupyAcceptableRuins) ) then {
+				if ( !alive _bldg && !(typeOf _bldg in CSWR_occupyAcceptableRuins) ) then {
 					// Debug message:
 					if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' group had its building destroyed.", CSWR_txtDebugHeader, _tag, str _grp]; };
 					// Small cooldown to prevent crazy loopings:
@@ -4789,7 +5120,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 			// if group leader is close enough to the chosen building:
 			if ( (leader _grp) distance _bldgPos < _disLimiterFromBldg ) then {
 				// When there, execute the occupy function:
-				[_building, _bldgPos, _dests, _grp, _tag, _behavior, _disLimiterFromBldg, _disLimiterEnemy, _disLimiterFrndPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
+				[_bldg, _bldgPos, _dests, _grp, _tag, _behavior, _disLimiterFromBldg, _disLimiterEnemy, _disLimiterFrndPlayer, _wait] spawn THY_fnc_CSWR_OCCUPY_doGetIn;
 				// Stop the while-looping:
 				break;
 			};
@@ -4806,11 +5137,11 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 			};
 			// Check if the leader is alive, is not stuck in their way to the building and not injured, not engaging, they're awake, give a timeout to restart the whole function again:
 			if ( alive (leader _grp) && unitReady (leader _grp) && lifeState (leader _grp) isNotEqualTo "INJURED" && incapacitatedState (leader _grp) isNotEqualTo "SHOOTING" && incapacitatedState (leader _grp) isEqualTo "UNCONSCIOUS" ) then {
-				_leadStuckCounter = _leadStuckCounter + 1;
+				_leadStuckCtr = _leadStuckCtr + 1;
 				// Debug message:
-				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader looks stuck %4 time(s).", CSWR_txtDebugHeader, _tag, str _grp, _leadStuckCounter] };
+				if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader looks stuck %4 time(s).", CSWR_txtDebugHeader, _tag, str _grp, _leadStuckCtr] };
 				// After timeout and leader looks stuck, teleport them to a free space:
-				if ( _leadStuckCounter isEqualTo 5 ) then {
+				if ( _leadStuckCtr isEqualTo 5 ) then {
 					if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 OCCUPY > %2 '%3' leader apparently was stuck, but now he's free.", CSWR_txtDebugHeader, _tag, str _grp]; sleep 1 };
 					// Find pos min 10m (_disLimiterFromBldg) from (leader _grp) but not further 20m, not closer 4m to other obj, not in water, max gradient 0.7, not on shoreline:
 					_getOutPos = [(leader _grp), 10, 12, 4, 0, 0.7, 0] call BIS_fnc_findSafePos;
@@ -4832,7 +5163,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		// Delete the group:
 		//{ deleteVehicle _x } forEach units _grp;  // Dont delete the group coz maybe all buildings are destroyed during the game.
 		// Warning message:
-		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or the group size doesn't fit in the buildings, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMarkerRange'). A %2 group will stand still in its current position.",
+		["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or the group size doesn't fit in the buildings, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMkrRange'). A %2 group will stand still in its current position.",
 		CSWR_txtWarnHeader, _tag] call BIS_fnc_error;
 		// Breather:
 		sleep _wait;
@@ -4843,17 +5174,17 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 
 
 THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
-	// This function checks what buildings are available around a specific marker range and selects one of them to be used for the group.
-	// Return _building: object.
+	// This function checks what buildings are available around a specific occupy-marker range and selects one of them to be used for the occupier-group. Similar function: THY_fnc_CSWR_WATCH_find_towers.
+	// Return _bldg: object.
 
 	params ["_dests", "_grp", "_grpSize", "_tag"];
-	private ["_bldgsAvailable", "_building", "_bldgsByMkr", "_bldgsToCheck", "_spots", "_isWaterSurrounding"];
+	private ["_bldgsAvailable", "_bldg", "_bldgsByMkr", "_bldgsToCheck", "_spots", "_isWaterSurrounding"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
 	_bldgsAvailable     = [];
-	_building           = objNull;
+	_bldg               = objNull;
 	_bldgsByMkr         = [];
 	_bldgsToCheck       = [];
 	_spots              = [];
@@ -4862,8 +5193,8 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 		// Reserved space;
 	// FIRST STEP: find the buildings for marker:
 	{  // forEach _dests:
-		_bldgsByMkr = nearestObjects [[markerPos _x # 0, markerPos _x # 1, 0], ["HOUSE", "BUILDING"], CSWR_occupyMarkerRange];  // Important: assets from 'building' category generally has no ALIVE option, so they cant be destroy in-game. 'building' category is here to be mapped to check further if one of them is in the CSWR_occupyAcceptableRuins list as exception, because basically no assets that cannot be destroy get in the final list, except those ones in CSWR_occupyAcceptableRuins.
-		//_bldgsByMkr = [(markerPos _x) # 0, (markerPos _x) # 1] nearObjects ["HOUSE", CSWR_occupyMarkerRange];  // BACKUP ONLY.
+		_bldgsByMkr = nearestObjects [[markerPos _x # 0, markerPos _x # 1, 0], ["HOUSE", "BUILDING"], CSWR_occupyMkrRange];  // Important: assets from 'building' category generally has no ALIVE option, so they cant be destroy in-game. 'building' category is here to be mapped to check further if one of them is in the CSWR_occupyAcceptableRuins list as exception, because basically no assets that cannot be destroy get in the final list, except those ones in CSWR_occupyAcceptableRuins.
+		//_bldgsByMkr = [(markerPos _x) # 0, (markerPos _x) # 1] nearObjects ["HOUSE", CSWR_occupyMkrRange];  // BACKUP ONLY.
 		_bldgsToCheck append _bldgsByMkr;
 	} forEach _dests;
 	// SECOND STEP: among the buildings found, select only those specific ones:
@@ -4888,22 +5219,22 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 		// Debug message:
 		if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' has no buildings available.", CSWR_txtDebugHeader, _tag, str _grp] };
 		// Return:
-		_building;
+		_bldg;
 	};
 	// From all of them, select one:
-	_building = selectRandom _bldgsAvailable;
+	_bldg = selectRandom _bldgsAvailable;
 	// When debug mode on:
 	if CSWR_isOnDebugGlobal then { systemChat format ["%1 OCCUPY > %2 '%3' going to 1 of %4 building(s) found.", CSWR_txtDebugHeader, _tag, str _grp, count _bldgsAvailable] };
 	if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then {
-		if ( alive _building || typeOf _building in CSWR_occupyAcceptableRuins ) then {
-			["%1 OCCUPY > '%2' chosen building: %3 / Loc: %4",
-			CSWR_txtDebugHeader, str _grp, typeOf _building, getPosATL _building] call BIS_fnc_error;
+		if ( alive _bldg || typeOf _bldg in CSWR_occupyAcceptableRuins ) then {
+			["%1 OCCUPY > Chosen building: %2 / Loc: %3",
+			CSWR_txtDebugHeader, typeOf _bldg, getPosATL _bldg] call BIS_fnc_error;
 			// Breather:
 			sleep 5;
 		};
 	};
 	// Return:
-	_building;
+	_bldg;
 };
 
 
@@ -4958,7 +5289,7 @@ THY_fnc_CSWR_OCCUPY_unitBodyPosition_getIn = {
 	// After the arrival on spot, it removes the man's movement capacible:
 	_unit disableAI "PATH";
 	// Set the direction:
-	[_unit, selectRandom _compass] remoteExec ["setDir"];
+	_unit setDir (selectRandom _compass);
 	// If unit inside a ruin, so stay on knees to get low their profile:
 	if _isRuin then { _unit setUnitPos "MIDDLE" };
 	// Return:
@@ -4984,8 +5315,8 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	// This function will try to make the group get inside the chosen building to occupy it.
 	// Returns nothing.
 
-	params ["_building", "_bldgPos", "_dests", "_grp", "_tag", "_behavior", "_disLimiterFromBldg", "_disLimiterEnemy", "_disLimiterFrndPlayer", "_wait"];
-	private ["_spots", "_spot", /* "_isFrndPlayerNear", */ "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCounter", "_time", "_grpSize", "_compass", "_isRuin"];
+	params ["_bldg", "_bldgPos", "_dests", "_grp", "_tag", "_behavior", "_disLimiterFromBldg", "_disLimiterEnemy", "_disLimiterFrndPlayer", "_wait"];
+	private ["_spots", "_spot", /* "_isFrndPlayerNear", */ "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCtr", "_time", "_grpSize", "_compass", "_isRuin"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -4997,17 +5328,17 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	_timeOutToUnit    = nil;
 	_canTeleport      = true;
 	_alreadySheltered = [];
-	_orderCounter     = nil;
+	_orderCtr     = nil;
 	_time             = 0;
 	// Declarations:
 	_grpSize = count (units _grp);
 	_compass = [0, 45, 90, 135, 180, 225, 270, 315];  // Better final-result than 'random 360'.
-	_isRuin  = typeOf _building in CSWR_occupyAcceptableRuins;
+	_isRuin  = typeOf _bldg in CSWR_occupyAcceptableRuins;
 	// If there's a building:
-	if ( !isNull _building ) then {
+	if ( !isNull _bldg ) then {
 		{  // forEach _grp members:
 			// Declarations:
-			_orderCounter  = 0;
+			_orderCtr  = 0;
 			_timeOutToUnit = 15;  // secs to the unit get-in the building before be ignored.
 			// Meanwhile the unit is alive or their group to exist:
 			while { alive _x || !isNull _grp } do {
@@ -5021,15 +5352,15 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						break;
 					};
 					// if group leader is close enough to the chosen building:
-					if ( _x distance _building < _disLimiterFromBldg + 2 ) then {
+					if ( _x distance _bldg < _disLimiterFromBldg + 2 ) then {
 						// This time take all spots available in the building:
-						_spots = [_building] call BIS_fnc_buildingPositions;
+						_spots = [_bldg] call BIS_fnc_buildingPositions;
 						// For script integrity, check again right after the arrival if there are enough spots to the whole group:
 						if ( count _spots >= _grpSize ) then {
 							// if the building is free to be occupied:
 							if ( !(_bldgPos in CSWR_occupyIgnoredPositions) ) then {
 								// If the building wasn't completely destroyed or it's an exception (like a specific ruin):
-								if ( alive _building || _isRuin ) then {
+								if ( alive _bldg || _isRuin ) then {
 									// Flag the building for other groups that this building is ours:
 									CSWR_occupyIgnoredPositions pushBack _bldgPos;
 									// Update the global variable:
@@ -5104,7 +5435,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						// If has no spots for the whole group:
 						} else {
 							// Debug message:
-							if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 %2 > OCCUPY > Failed: '%3' has %4 spot(s) to %5 men.", CSWR_txtDebugHeader, _tag, typeOf _building, count _spots, count (units _grp)] };
+							if ( CSWR_isOnDebugGlobal && CSWR_isOnDebugOccupy ) then { systemChat format ["%1 %2 > OCCUPY > Failed: '%3' has %4 spot(s) to %5 men.", CSWR_txtDebugHeader, _tag, typeOf _bldg, count _spots, count (units _grp)] };
 							// Cooldown to prevent crazy loopings:
 							sleep _wait;
 							// Restart the first OCCUPY step:
@@ -5118,11 +5449,11 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 				// If the unit is NOT group leader:
 				} else {
 					// if the leader is already inside the building in position, and the unit WAS NOT FORCED ONCE yet to go there, do it:
-					if ( !(leader _grp checkAIFeature "PATH") && _orderCounter < 1 ) then {
+					if ( !(leader _grp checkAIFeature "PATH") && _orderCtr < 1 ) then {
 						// Move to the building:
 						_x doMove _bldgPos;
 						// Updating the counter:
-						_orderCounter = _orderCounter + 1;
+						_orderCtr = _orderCtr + 1;
 					};
 					// if the unit is unconscious:
 					if ( incapacitatedState _x isEqualTo "UNCONSCIOUS" ) then {
@@ -5141,7 +5472,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 						break;
 					};
 					// If the unit's leader is ready, and the unit is close enough the building, even if engaging, just go to inside:
-					if ( !(leader _grp checkAIFeature "PATH") && _x distance _building < _disLimiterFromBldg + 2 ) then {
+					if ( !(leader _grp checkAIFeature "PATH") && _x distance _bldg < _disLimiterFromBldg + 2 ) then {
 						// Select an available spot:
 						_spot = selectRandom _spots;
 						// If the group member can teleport, but NOT engaging:
@@ -5284,9 +5615,9 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					// Give back AI hability to find their way:
 					_x enableAI "PATH";  // crucial after use disableAI.
 					// Give back the movement hability to the unit, sending them to leader position:
-					_x doMove (getPos _x);  // crucial after use doStop.
+					_x doMove (getPosATL _x);  // crucial after use doStop.
 					// Force the unit stay out, doesn't going back into the old building:
-					_wp = _grp addWaypoint [getPos _x, 0]; 
+					_wp = _grp addWaypoint [getPosATL _x, 0];
 					_wp setWaypointType "MOVE";
 					_grp setCurrentWaypoint _wp;
 					// Stop the while-loop:
@@ -5302,7 +5633,7 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 					// Give back AI hability to find their way:
 					_x enableAI "PATH";  // crucial after use disableAI.
 					// Give back the movement hability to the unit, sending them to leader position:
-					_x doMove (getPos _x);  // crucial after use doStop.
+					_x doMove (getPosATL _x);  // crucial after use doStop.
 					// Stop the while-loop:
 					break;
 				};
@@ -5352,7 +5683,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Returns nothing.
 	
 	params ["_dests", "_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_isVehTracked", "_bookingInfo", "_areaToHold", "_isBooked", "_unitFinalPos", "_wp", "_time", "_counter", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
+	private ["_isVehTracked", "_bookingInfo", "_mkrToHold", "_isBooked", "_posHolder", "_wp", "_time", "_ctr", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -5364,12 +5695,12 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Initial values:
 	_isVehTracked    = false;
 	_bookingInfo     = [];
-	_areaToHold      = "";
+	_mkrToHold       = "";
 	_isBooked        = false;
-	_unitFinalPos         = [];
+	_posHolder       = [];
 	_wp              = [];
 	_time            = 0;
-	_counter         = 0;
+	_ctr             = 0;
 	_trackedVehTypes = [];
 	_vehType         = "";
 	_veh             = objNull;
@@ -5397,11 +5728,11 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// if tracked vehicle:
 	if _isVehTracked then { 
 		// Try to booking a marker:
-		_bookingInfo = ["BOOKING_HOLD", getPos (leader _grp), _tag, _dests, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
+		_bookingInfo = ["BOOKING_HOLD", getPosATL (leader _grp), _tag, _dests, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
 		// Which marker to go:
-		_areaToHold  = _bookingInfo # 0;
+		_mkrToHold   = _bookingInfo # 0;
 		// Marker position:
-		_unitFinalPos     = _bookingInfo # 1;  // [x,y,z]
+		_posHolder   = _bookingInfo # 1;  // [x,y,z]
 		// Is booked?
 		_isBooked    = _bookingInfo # 2;
 		// Debug message:
@@ -5411,7 +5742,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// If group or non-tracked-vehicle:
 	} else {
 		// Selecting a hold-marker:
-		_areaToHold = selectRandom _dests;
+		_mkrToHold = selectRandom _dests;
 	};
 
 	// SETTING A POSITION:
@@ -5423,19 +5754,19 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// Looping to find a good spot in selected marker > if the group still exists:
 		while { !isNull _grp } do {
 			// Counter to prevent crazy loops:
-			_counter = _counter + 1;
-			// Find pos min 0m from center (_areaToHold) but not further 30m, not closer 3m to other obj, not in water, max gradient 0.7, no (0) on shoreline:
-			_unitFinalPos = [markerPos _areaToHold, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // https://community.bistudio.com/wiki/BIS_fnc_findSafePos
+			_ctr = _ctr + 1;
+			// Find pos min 0m from center (_mkrToHold) but not further 30m, not closer 3m to other obj, not in water, max gradient 0.7, no (0) on shoreline:
+			_posHolder = [markerPos _mkrToHold, 20, 30, 3, 0, 0.7, 0] call BIS_fnc_findSafePos;  // https://community.bistudio.com/wiki/BIS_fnc_findSafePos
 			// if troops are not over a road, good position and stop the while-loop:
-			if ( !isOnRoad _unitFinalPos ) then { break };
+			if ( !isOnRoad _posHolder ) then { break };
 			// Warning message:
-			if ( _counter > 5 ) then {
+			if ( _ctr > 5 ) then {
 				// Restart the counter:
-				_counter = 0;
+				_ctr = 0;
 				// Message:
 				if CSWR_isOnDebugGlobal then {
 					["%1 HOLD > Looks %2 '%3' ISN'T finding a save spot to maneuver in '%4' position. They keep trying...",
-					CSWR_txtWarnHeader, _tag, str _grp, _areaToHold] call BIS_fnc_error;
+					CSWR_txtWarnHeader, _tag, str _grp, _mkrToHold] call BIS_fnc_error;
 				};
 			};
 			// Cooldown to prevent crazy loops:
@@ -5444,47 +5775,47 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	};
 	
 	// WAYPOINT AND GO:
-	_wp = _grp addWaypoint [_unitFinalPos, 0]; 
+	_wp = _grp addWaypoint [_posHolder, 0]; 
 	_wp setWaypointType "HOLD";
 	_grp setCurrentWaypoint _wp;
 	// If infantry/people:
 	if !_isVeh then {
 		// Check if the group is already on their destination:
-		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _unitFinalPos < 2 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || (leader _grp) distance _posHolder < 2 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	// If vehicle:
 	} else {
 		// Wait 'til getting really closer:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _unitFinalPos < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _posHolder < (_wpDisLimit + 30) || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 		// if crew still in vehicle:
 		if ( !isNull (objectParent (leader _grp)) ) then {
 			// If there's still the original waypoint:
 			if ( waypointType [_grp, currentWaypoint _grp] isEqualTo "HOLD" ) then {
 				// it forces the crew order to drive as closer as possible the waypoint:
-				(leader _grp) doMove _unitFinalPos;
+				(leader _grp) doMove _posHolder;
 			};
 		// crew by foot:
 		} else {
 			// Undo the booking:
-			["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+			["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 			// Update to avoid further checking:
 			_isBooked = false;
 			// Crew with no vehicle should join in a infantry group:
 			[_tag, _grp, "onlyInfantry", 300, true] call THY_fnc_CSWR_group_join_to_survive;
 		};
 		// Wait 'til the vehicle is over the waypoint:
-		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _unitFinalPos < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
+		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _posHolder < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	};
 	// Escape > if NOT a vehicle, and if the group doesn't exist or the leader was killed, abort:
 	if ( !_isVeh && { isNull _grp || !alive (leader _grp) } ) exitWith {};
 	// Escape > Booked or not, it's a vehicle, and if the ground doesn't exist or the leader was killed, or the vehicle has been destroyed, or even the group is out of the vehicle, abort:
 	if ( _isVeh && { isNull _grp || !alive (leader _grp) || !alive _veh || isNull (objectParent (leader _grp)) } ) exitWith {
 		// Undo the booking if booked:
-		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 	};
 	// Escape > if the group/vehicle lost its hold-waypoint:
 	if ( (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" ) exitWith { 
 		// Undo the booking:
-		["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 		// Restart:
 		[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
 	};
@@ -5495,7 +5826,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// if the crewmen is inside the vehicle:
 		if ( !isNull (objectParent (leader _grp)) ) then { 
 			// Function validation is: if vehicle has its crewmen inside and the vehicle is a tracked one, do it:
-			[_areaToHold, _grp, _tag, _isVehTracked] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
+			[_mkrToHold, _grp, _tag, _isVehTracked] call THY_fnc_CSWR_HOLD_tracked_vehicle_direction;
 			// If editors choice was stealth all vehicles on hold:
 			if CSWR_isHoldVehLightsOff then { sleep 5; _grp setBehaviourStrong "STEALTH" };
 		// Otherwise, if the crew is by foot:
@@ -5513,7 +5844,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	waitUntil { sleep _wait; isNull _grp || !alive (leader _grp) || time > _time || { if _isVeh then { !alive _veh } else { false } } };  // Important: dont check the currentWaypoints coz infantry will delete it in their arrival.
 	
 	// UNDO IF BOOKED:
-	["BOOKING_HOLD", _tag, _areaToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
 	
 	// RESTART THE MOVEMENT:
 	[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
@@ -5574,7 +5905,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	// Check if there is some blocker around the vehicle. A simple unit around can make a tank get to fly like a rocket if too much close during the setDir command:
 	while { alive _veh && _attemptCounter < _attemptLimiter && !isNull (objectParent (leader _grp)) && (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" } do {
 		// Check if something relevant is blocking the Hold-marker position:
-		_blockers = (getPos _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Helicopter", "Plane"], 10];
+		_blockers = (getPosATL _veh) nearEntities [["Man", "Car", "Motorcycle", "Tank", "WheeledAPC", "TrackedAPC", "UAV", "Helicopter", "Plane"], 10];
 		// Removing the group vehicle itself from the calc as blocker:
 		_blockers deleteAt (_blockers find _veh);
 		// If no blockers, leave the verification loop:
@@ -5599,8 +5930,9 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 	if ( count _blockers > 0 ) exitWith {};
 	// Set the direction:
 	_vehPos = getPosATL _veh;
+	_veh setDir _directionToHold;  // best practices is make it before to use the setPos because odd things can happen about object collision position.
 	_veh setPosATL [_vehPos # 0, _vehPos # 1, (_vehPos # 2) + 1 ];  // This will lift the veh so, when redirected, it'll avoid wavy grounds that would cause the veh to bounce.
-	[_veh, _directionToHold] remoteExec ["setDir"];
+	
 	// Debug:
 	if CSWR_isOnDebugGlobal then {
 		// Breather to make sure the vehicle already in the new position before the debug message "getDir" calc:

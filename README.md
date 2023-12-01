@@ -50,7 +50,7 @@ __
 
 ## CHANGELOG
 
-**Nov, 27th 2023 | v6.5**
+**Dec, 1st 2023 | v6.5**
 - Fixed > Sectorizing > Now is forbidden to sectorize the moviment "_move_ANY" because it doesn't make sense at all;
 - Fixed > Occupy > When the mission editor hid a building, the group still considered that building as a possible location to occupy;
 - Fixed > Occupy > An error (caused only in v6.0) when the group leader kicked an unit out of the group if the unit was too far from them;
@@ -60,6 +60,7 @@ __
 - Improved > Occupy > Expanded the amount of forbidden buildings and acceptable ruins based of Global Mobilization DLC maps;
 - Improved > Occupy > If a building is badly added by Editor as forbidden and acceptable building at the same time, CSWR in debug mode will point this;
 - Improved > Watch > Watch logic was total overhauled, making the watch-destination more feasible and reliable (For urban places still WIP);
+- Improved > Watch > Sniper group are able to set position in urban places too as secondary approach;
 - Improved > Watch > Minimal range to sniper group sets watching position was increase from 100 to 200m;
 - Documentation has been updated.
 
