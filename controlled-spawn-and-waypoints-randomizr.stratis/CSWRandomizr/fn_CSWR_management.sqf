@@ -1,4 +1,4 @@
-// CSWR v6.5
+// CSWR v6.5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_management.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
@@ -102,7 +102,7 @@ if !isServer exitWith {};
        // WIP : What goggles are acceptable for parachuters inherit from infantry if the editor doesn't set a specific one to parachuters:
 		CSWR_paraAcceptableGoggles = ["G_Balaclava_combat","G_Balaclava_lowprofile","G_Lowprofile","G_Combat","G_Goggles_VR","G_Combat_Goggles_tna_F","G_Balaclava_TI_G_blk_F","G_Balaclava_TI_G_tna_F","G_AirPurifyingRespirator_02_black_F","G_AirPurifyingRespirator_02_olive_F","G_AirPurifyingRespirator_02_sand_F","G_AirPurifyingRespirator_01_F","G_RegulatorMask_F","G_EyeProtectors_F","UK3CB_Glasses","rhs_ess_black","rhsusf_shemagh_gogg_grn","rhsusf_shemagh2_gogg_grn","rhsusf_shemagh_gogg_od","rhsusf_shemagh2_gogg_od","rhsusf_shemagh_gogg_tan","rhsusf_shemagh2_gogg_tan","rhsusf_shemagh_gogg_white","rhsusf_shemagh2_gogg_white","rhsusf_oakley_goggles_blk","rhsusf_oakley_goggles_clr","rhsusf_oakley_goggles_ylw"];
 		// Buildings that watcher groups can use when they are in urban position:
-		CSWR_acceptableTowersForWatch = ["Land_Cargo_Tower_V1_No1_F","Land_ControlTower_01_F","Land_Cargo_Tower_V1_No2_F","Land_Cargo_Tower_V1_No3_F","Land_Cargo_Tower_V1_No4_F","Land_Cargo_Tower_V1_No5_F","Land_Cargo_Tower_V1_No6_F","Land_Cargo_Tower_V1_No7_F","Land_Cargo_Tower_V4_F","Land_Cargo_Tower_V1_F","Land_Cargo_Tower_V3_F","Land_Cargo_Tower_V2_F","Land_Cargo_Tower_V3_ruins_F","Land_Cargo_Tower_V1_ruins_F","Land_Cargo_Tower_V2_ruins_F","Land_ControlTower_01_F","Land_Airport_01_controlTower_F","Land_GuardTower_01_F","Land_Airport_02_controlTower_F","Land_Airport_Tower_F","Land_ControlTower_02_F","Land_LightHouse_F","Land_Lighthouse_03_green_F","Land_Lighthouse_03_red_F","Land_Church_04_lightblue_F","Land_Church_04_lightblue_damaged_F","Land_Church_04_white_red_F","Land_Church_04_white_red_damaged_F","Land_Church_04_lightyellow_F","Land_Church_04_lightyellow_damaged_F","Land_Church_04_white_F","Land_Church_04_white_damaged_F","Land_Church_04_yellow_F","Land_Church_04_yellow_damaged_F","Land_Church_04_red_F","Land_Church_04_red_damaged_F","Land_cmp_Tower_F","Land_dp_smallTank_old_F","Land_SCF_01_chimney_F","Land_SCF_01_storageBin_big_F","Land_SCF_01_storageBin_small_F","Land_SCF_01_storageBin_medium_F","Land_Castle_01_tower_F"];
+		CSWR_acceptableTowersForWatch = ["Land_Cargo_Tower_V1_No1_F","Land_ControlTower_01_F","Land_Cargo_Tower_V1_No2_F","Land_Cargo_Tower_V1_No3_F","Land_Cargo_Tower_V1_No4_F","Land_Cargo_Tower_V1_No5_F","Land_Cargo_Tower_V1_No6_F","Land_Cargo_Tower_V1_No7_F","Land_Cargo_Tower_V4_F","Land_Cargo_Tower_V1_F","Land_Cargo_Tower_V3_F","Land_Cargo_Tower_V2_F","Land_Cargo_Tower_V3_ruins_F","Land_Cargo_Tower_V1_ruins_F","Land_Cargo_Tower_V2_ruins_F","Land_ControlTower_01_F","Land_Airport_01_controlTower_F","Land_GuardTower_01_F","Land_Airport_02_controlTower_F","Land_Airport_Tower_F","Land_ControlTower_02_F","Land_LightHouse_F","Land_Lighthouse_03_green_F","Land_Lighthouse_03_red_F","Land_Church_04_lightblue_F","Land_Church_04_lightblue_damaged_F","Land_Church_04_white_red_F","Land_Church_04_white_red_damaged_F","Land_Church_04_lightyellow_F","Land_Church_04_lightyellow_damaged_F","Land_Church_04_white_F","Land_Church_04_white_damaged_F","Land_Church_04_yellow_F","Land_Church_04_yellow_damaged_F","Land_Church_04_red_F","Land_Church_04_red_damaged_F","Land_cmp_Tower_F","Land_dp_smallTank_old_F","Land_SCF_01_chimney_F","Land_SCF_01_storageBin_big_F","Land_SCF_01_storageBin_small_F","Land_SCF_01_storageBin_medium_F","Land_Castle_01_tower_F","Land_Cargo_Patrol_V3_F","Land_Cargo_Patrol_V1_F","Land_Cargo_Patrol_V2_F","Land_Cargo_Patrol_V4_F"];
 		// What uniforms/outfits civilians can use if the editor uses "RANDOM" at fn_CSWR_loadout.sqf file (only A3 original content already included):
 		CSWR_civOutfits = ["U_C_Poor_1","U_C_Poloshirt_burgundy","U_C_Poloshirt_salmon","U_Competitor","U_C_HunterBody_grn","U_Marshal","U_Rangemaster","U_I_C_Soldier_Bandit_5_F","U_I_C_Soldier_Bandit_4_F","U_C_Man_casual_3_F","U_C_Man_casual_1_F","U_C_Man_casual_5_F","U_C_man_sport_3_F","U_C_Uniform_Farmer_01_F","U_I_L_Uniform_01_tshirt_black_F","U_C_Uniform_Scientist_02_formal_F","U_C_ConstructionCoverall_Red_F","U_C_ArtTShirt_01_v2_F","U_C_FormalSuit_01_gray_F","U_C_ArtTShirt_01_v6_F"];
 
@@ -111,23 +111,23 @@ if !isServer exitWith {};
 // When the mission starts:
 [] spawn {
 	// Local object declarations:
-	private ["_helipad", "_debugMkrWatch", "_debugOccupyInters", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_spwnsAll", "_destsSpecial"];
+	private ["_helipad", "_debugMkrWatch", "_debugOccupyInters", "_genericNVG", "_genericFlashlight", "_txt1", "_txt2", "_txt3", "_txt4", "_txt5", "_txt6", "_txt7", "_txt8", "_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destRestrictBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destRestrictOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destRestrictIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destRestrictCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destsAllBLU", "_destsAllOPF", "_destsAllIND", "_destsAllCIV", "_destPUBLIC", "_spwnsAll", "_destsSpecial"];
 	
 	// Initial values:
 	CSWR_bookedLocHold     = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnVeh  = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_bookedLocSpwnHeli = [[],[],[],[]];  // [[blu],[opf],[ind],[civ]]
 	CSWR_spwnDelayQueueAmount = 0;  // debug proposes.
-	CSWR_watchMkrRangeStart   = 200;
 	_helipad = ""; _debugMkrWatch = ""; _debugOccupyInters = [];
 	// Declarations:
-	CSWR_txtDebugHeader = toUpper "CSWR DEBUG >";
-	CSWR_txtWarnHeader  = toUpper "CSWR WARNING >";
-	CSWR_prefix         = toUpper "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
-	CSWR_spacer         = toUpper "_";  // CAUTION: try do not change it!
-	CSWR_vehGroundHeavy = ["Tank", "TrackedAPC", "WheeledAPC"];
-	_genericNVG         = "NVGoggles";
-	_genericFlashlight  = "acc_flashlight";
+	CSWR_txtDebugHeader     = toUpper "CSWR DEBUG >";
+	CSWR_txtWarnHeader      = toUpper "CSWR WARNING >";
+	CSWR_prefix             = toUpper "CSWR";  // CAUTION: NEVER include/insert the CSWR_spacer character as part of the CSWR_prefix too.
+	CSWR_spacer             = toUpper "_";  // CAUTION: try do not change it!
+	CSWR_watchMkrRangeStart = 200;
+	CSWR_vehGroundHeavy     = ["Tank", "TrackedAPC", "WheeledAPC"];
+	_genericNVG             = "NVGoggles";
+	_genericFlashlight      = "acc_flashlight";
 	// Debug txts:
 	_txt1="For good combat experince, don't use"; _txt2="value less than"; _txt3="out of debug mode. Minimal value"; _txt4="GEAR > NIGHTVISION > You turned the NVG usage 'true' for"; _txt5="side, but in parallel you're trying to force removal of"; _txt6="NVG's. Fix it in 'fn_CSWR_management.sqf' file. Generic NVG was applied."; _txt7="GEAR > FLASHLIGHT > You turned the Flashlight usage 'true' for"; _txt8="FLASHLIGHTS. Fix it in 'fn_CSWR_management.sqf' file. Generic Flashlight was applied.";
 
@@ -251,11 +251,11 @@ if !isServer exitWith {};
 	CSWR_spwnsVehBLU      = ((CSWR_confirmedMarkers # 0) # 0) # 1;
 	CSWR_spwnsHeliBLU     = ((CSWR_confirmedMarkers # 0) # 0) # 2;
 	CSWR_spwnsParadropBLU = ((CSWR_confirmedMarkers # 0) # 0) # 3;
-	_spwnsBLU         = (CSWR_spwnsBLU # 0)         + (CSWR_spwnsBLU # 1);
-	_spwnsVehBLU      = (CSWR_spwnsVehBLU # 0)      + (CSWR_spwnsVehBLU # 1);
-	_spwnsHeliBLU     = (CSWR_spwnsHeliBLU # 0)     + (CSWR_spwnsHeliBLU # 1);
-	_spwnsParaBLU     = (CSWR_spwnsParadropBLU # 0) + (CSWR_spwnsParadropBLU # 1);
-	CSWR_spwnsAllBLU  = _spwnsBLU + _spwnsVehBLU + _spwnsHeliBLU + _spwnsParaBLU;
+	_spwnsBLU             = (CSWR_spwnsBLU # 0) + (CSWR_spwnsBLU # 1);
+	_spwnsVehBLU          = (CSWR_spwnsVehBLU # 0) + (CSWR_spwnsVehBLU # 1);
+	_spwnsHeliBLU         = (CSWR_spwnsHeliBLU # 0) + (CSWR_spwnsHeliBLU # 1);
+	_spwnsParaBLU         = (CSWR_spwnsParadropBLU # 0) + (CSWR_spwnsParadropBLU # 1);
+	CSWR_spwnsAllBLU      = _spwnsBLU + _spwnsVehBLU + _spwnsHeliBLU + _spwnsParaBLU;
 	CSWR_groupTypesForSpwnsBLU     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehBLU  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliBLU = ["heliL", "heliH"];
@@ -265,11 +265,11 @@ if !isServer exitWith {};
 	CSWR_spwnsVehOPF      = ((CSWR_confirmedMarkers # 0) # 1) # 1;
 	CSWR_spwnsHeliOPF     = ((CSWR_confirmedMarkers # 0) # 1) # 2;
 	CSWR_spwnsParadropOPF = ((CSWR_confirmedMarkers # 0) # 1) # 3;
-	_spwnsOPF         = (CSWR_spwnsOPF # 0)         + (CSWR_spwnsOPF # 1);
-	_spwnsVehOPF      = (CSWR_spwnsVehOPF # 0)      + (CSWR_spwnsVehOPF # 1);
-	_spwnsHeliOPF     = (CSWR_spwnsHeliOPF # 0)     + (CSWR_spwnsHeliOPF # 1);
-	_spwnsParaOPF     = (CSWR_spwnsParadropOPF # 0) + (CSWR_spwnsParadropOPF # 1);
-	CSWR_spwnsAllOPF  = _spwnsOPF + _spwnsVehOPF + _spwnsHeliOPF + _spwnsParaOPF;
+	_spwnsOPF             = (CSWR_spwnsOPF # 0) + (CSWR_spwnsOPF # 1);
+	_spwnsVehOPF          = (CSWR_spwnsVehOPF # 0) + (CSWR_spwnsVehOPF # 1);
+	_spwnsHeliOPF         = (CSWR_spwnsHeliOPF # 0) + (CSWR_spwnsHeliOPF # 1);
+	_spwnsParaOPF         = (CSWR_spwnsParadropOPF # 0) + (CSWR_spwnsParadropOPF # 1);
+	CSWR_spwnsAllOPF      = _spwnsOPF + _spwnsVehOPF + _spwnsHeliOPF + _spwnsParaOPF;
 	CSWR_groupTypesForSpwnsOPF     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehOPF  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliOPF = ["heliL", "heliH"];
@@ -279,11 +279,11 @@ if !isServer exitWith {};
 	CSWR_spwnsVehIND      = ((CSWR_confirmedMarkers # 0) # 2) # 1;
 	CSWR_spwnsHeliIND     = ((CSWR_confirmedMarkers # 0) # 2) # 2;
 	CSWR_spwnsParadropIND = ((CSWR_confirmedMarkers # 0) # 2) # 3;
-	_spwnsIND         = (CSWR_spwnsIND # 0)         + (CSWR_spwnsIND # 1);
-	_spwnsVehIND      = (CSWR_spwnsVehIND # 0)      + (CSWR_spwnsVehIND # 1);
-	_spwnsHeliIND     = (CSWR_spwnsHeliIND # 0)     + (CSWR_spwnsHeliIND # 1);
-	_spwnsParaIND     = (CSWR_spwnsParadropIND # 0) + (CSWR_spwnsParadropIND # 1);
-	CSWR_spwnsAllIND  = _spwnsIND + _spwnsVehIND + _spwnsHeliIND + _spwnsParaIND;
+	_spwnsIND             = (CSWR_spwnsIND # 0) + (CSWR_spwnsIND # 1);
+	_spwnsVehIND          = (CSWR_spwnsVehIND # 0) + (CSWR_spwnsVehIND # 1);
+	_spwnsHeliIND         = (CSWR_spwnsHeliIND # 0) + (CSWR_spwnsHeliIND # 1);
+	_spwnsParaIND         = (CSWR_spwnsParadropIND # 0) + (CSWR_spwnsParadropIND # 1);
+	CSWR_spwnsAllIND      = _spwnsIND + _spwnsVehIND + _spwnsHeliIND + _spwnsParaIND;
 	CSWR_groupTypesForSpwnsIND     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "teamS", "vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehIND  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliIND = ["heliL", "heliH"];
@@ -293,11 +293,11 @@ if !isServer exitWith {};
 	CSWR_spwnsVehCIV      = ((CSWR_confirmedMarkers # 0) # 3) # 1;
 	CSWR_spwnsHeliCIV     = ((CSWR_confirmedMarkers # 0) # 3) # 2;
 	CSWR_spwnsParadropCIV = ((CSWR_confirmedMarkers # 0) # 3) # 3;
-	_spwnsCIV         = (CSWR_spwnsCIV # 0)         + (CSWR_spwnsCIV # 1);
-	_spwnsVehCIV      = (CSWR_spwnsVehCIV # 0)      + (CSWR_spwnsVehCIV # 1);
-	_spwnsHeliCIV     = (CSWR_spwnsHeliCIV # 0)     + (CSWR_spwnsHeliCIV # 1);
-	_spwnsParaCIV     = (CSWR_spwnsParadropCIV # 0) + (CSWR_spwnsParadropCIV # 1);
-	CSWR_spwnsAllCIV  = _spwnsCIV + _spwnsVehCIV + _spwnsHeliCIV + _spwnsParaCIV;
+	_spwnsCIV             = (CSWR_spwnsCIV # 0) + (CSWR_spwnsCIV # 1);
+	_spwnsVehCIV          = (CSWR_spwnsVehCIV # 0) + (CSWR_spwnsVehCIV # 1);
+	_spwnsHeliCIV         = (CSWR_spwnsHeliCIV # 0) + (CSWR_spwnsHeliCIV # 1);
+	_spwnsParaCIV         = (CSWR_spwnsParadropCIV # 0) + (CSWR_spwnsParadropCIV # 1);
+	CSWR_spwnsAllCIV      = _spwnsCIV + _spwnsVehCIV + _spwnsHeliCIV + _spwnsParaCIV;
 	CSWR_groupTypesForSpwnsCIV     = ["teamL", "teamM", "teamH", "teamC1", "teamC2", "teamC3", "vehL", "vehM", "vehC1", "vehH", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsVehCIV  = ["vehL", "vehM", "vehH", "vehC1", "vehC2", "vehC3"];
 	CSWR_groupTypesForSpwnsHeliCIV = ["heliL", "heliH"];
@@ -306,7 +306,7 @@ if !isServer exitWith {};
 	_spwnsAll = CSWR_spwnsAllBLU + CSWR_spwnsAllOPF + CSWR_spwnsAllIND + CSWR_spwnsAllCIV;
 	// Spawn special actions > building helipad:
 	if CSWR_shouldAddHelipadSpwn then { _helipad = "Land_HelipadSquare_F" } else { _helipad = "Land_HelipadEmpty_F" };
-	{ _helipad createVehicle markerPos _x } forEach _spwnsHeliBLU + _spwnsHeliOPF + _spwnsHeliIND + _spwnsHeliCIV;
+	{ _helipad createVehicle (markerPos _x) } forEach _spwnsHeliBLU + _spwnsHeliOPF + _spwnsHeliIND + _spwnsHeliCIV;
 
 
 	// DESTINATION:
@@ -432,25 +432,26 @@ if !isServer exitWith {};
 	CSWR_destWatchCIV    = ((CSWR_confirmedMarkers # 1) # 3) # 1;  // CIV has no watch-move, actually. Reserved space only.
 	CSWR_destOccupyCIV   = ((CSWR_confirmedMarkers # 1) # 3) # 2;
 	CSWR_destHoldCIV     = ((CSWR_confirmedMarkers # 1) # 3) # 3;
-	_destRestrictCIV     = (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);
-	_destWatchCIV        = (CSWR_destWatchCIV # 0)    + (CSWR_destWatchCIV # 1);
+	_destRestrictCIV     = (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);  // CIV has no restricted-move, actually. Reserved space only.
+	_destWatchCIV        = (CSWR_destWatchCIV # 0)    + (CSWR_destWatchCIV # 1);     // CIV has no watch-move, actually. Reserved space only.
 	_destOccupyCIV       = (CSWR_destOccupyCIV # 0)   + (CSWR_destOccupyCIV # 1);
 	_destHoldCIV         = (CSWR_destHoldCIV # 0)     + (CSWR_destHoldCIV # 1);
 	_destsAllCIV         = _destRestrictCIV + _destWatchCIV + _destOccupyCIV + _destHoldCIV;  // NEVER include PUBLICs in this calc!
 	// Civilian and soldier destinations:
 	CSWR_destsPUBLIC     = ((CSWR_confirmedMarkers # 1) # 4) # 0;
+	_destPUBLIC          = (CSWR_destsPUBLIC # 0) + (CSWR_destsPUBLIC # 1);
 	// Specialized destinations:
-	_destsSpecial = _destWatchBLU  + _destWatchOPF  + _destWatchIND  + _destWatchCIV  +    // watch
-					_destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV +    // occupy
-					_destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
-	// All destinations, except the specialized/special ones:
-	CSWR_destsANYWHERE  =  (CSWR_destsPUBLIC # 0)     + (CSWR_destsPUBLIC # 1) +
-						   (CSWR_destRestrictBLU # 0) + (CSWR_destRestrictBLU # 1) +
-						   (CSWR_destRestrictOPF # 0) + (CSWR_destRestrictOPF # 1) +
-						   (CSWR_destRestrictIND # 0) + (CSWR_destRestrictIND # 1) +
-						   (CSWR_destRestrictCIV # 0) + (CSWR_destRestrictCIV # 1);
-	// Occupy-move validations:
-	
+	_destsSpecial        = _destWatchBLU  + _destWatchOPF  + _destWatchIND  + _destWatchCIV  +    // watch
+	                       _destOccupyBLU + _destOccupyOPF + _destOccupyIND + _destOccupyCIV +    // occupy
+	                       _destHoldBLU   + _destHoldOPF   + _destHoldIND   + _destHoldCIV;       // hold
+	// All common moves to be used when is applied "_move_ANY" (never including specialized/special destinations):
+	CSWR_destsANYWHERE = [];
+	CSWR_destsANYWHERE append _destPUBLIC;
+	if CSWR_isOnBLU then { CSWR_destsANYWHERE append _destRestrictBLU };
+	if CSWR_isOnOPF then { CSWR_destsANYWHERE append _destRestrictOPF };
+	if CSWR_isOnIND then { CSWR_destsANYWHERE append _destRestrictIND };
+	if CSWR_isOnCIV then { CSWR_destsANYWHERE append _destRestrictCIV };
+	//if CSWR_isOnDebugGlobal then {["%1 All common MOVES available ('public' + 'restricted' used in '_move_ANY'): %2", CSWR_txtDebugHeader, str CSWR_destsANYWHERE] call BIS_fnc_error; sleep 3};
 	// Hold-move ground cleaner:
 	if CSWR_isOnBLU then { [_destHoldBLU] call THY_fnc_CSWR_HOLD_ground_cleaner };
 	if CSWR_isOnOPF then { [_destHoldOPF] call THY_fnc_CSWR_HOLD_ground_cleaner };
@@ -463,7 +464,7 @@ if !isServer exitWith {};
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorOPFOR"       } forEach CSWR_spwnsAllOPF + _destsAllOPF;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorIndependent" } forEach CSWR_spwnsAllIND + _destsAllIND;
 		{ _x setMarkerAlpha 1; _x setMarkerColor "colorCivilian"    } forEach CSWR_spwnsAllCIV + _destsAllCIV;
-		{ _x setMarkerAlpha 1; _x setMarkerColor "colorUNKNOWN"     } forEach (CSWR_destsPUBLIC # 0) + (CSWR_destsPUBLIC # 1);
+		{ _x setMarkerAlpha 1; _x setMarkerColor "colorUNKNOWN"     } forEach _destPUBLIC;
 		// Shapes:
 		{ _x setMarkerType "mil_destroy";        _x setMarkerAlpha 0.5 } forEach _destWatchBLU + _destWatchOPF + _destWatchIND + _destWatchCIV;
 		{ _x setMarkerType "mil_start_noShadow"; _x setMarkerAlpha 0.5 } forEach _destHoldBLU  + _destHoldOPF  + _destHoldIND  + _destHoldCIV;
@@ -473,13 +474,14 @@ if !isServer exitWith {};
 		};
 		// Specialy for Watch:
 		if CSWR_isOnDebugWatch then {
+			// Creation additional markers for debug purposes:
 			for "_i" from 1 to 2 do {
 				if CSWR_isOnBLU then {
 					{
 						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
 						_debugMkrWatch setMarkerShape "ELLIPSE";
 						_debugMkrWatch setMarkerBrush "Border";
-						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerAlpha 0.8;
 						_debugMkrWatch setMarkerColor "colorBLUFOR";
 						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
 					} forEach _destWatchBLU;
@@ -489,7 +491,7 @@ if !isServer exitWith {};
 						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
 						_debugMkrWatch setMarkerShape "ELLIPSE";
 						_debugMkrWatch setMarkerBrush "Border";
-						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerAlpha 0.8;
 						_debugMkrWatch setMarkerColor "colorOPFOR";
 						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
 					} forEach _destWatchOPF;
@@ -499,16 +501,16 @@ if !isServer exitWith {};
 						_debugMkrWatch = createMarker ["debug_" + _x + str _i, markerPos _x];
 						_debugMkrWatch setMarkerShape "ELLIPSE";
 						_debugMkrWatch setMarkerBrush "Border";
-						_debugMkrWatch setMarkerAlpha 1;
+						_debugMkrWatch setMarkerAlpha 0.8;
 						_debugMkrWatch setMarkerColor "colorIndependent";
 						if ( _i isEqualTo 1 ) then { _debugMkrWatch setMarkerSize [CSWR_watchMkrRangeStart, CSWR_watchMkrRangeStart] } else { _debugMkrWatch setMarkerSize [CSWR_watchMkrRange, CSWR_watchMkrRange] };
 					} forEach _destWatchIND;
 				};
-			};
+			};  // for-loop ends.
 		};
 	// Otherwise, hiding the spawn and destination markers:
 	} else { {_x setMarkerAlpha 0} forEach _spwnsAll + _destsSpecial + CSWR_destsANYWHERE };
-	// Delete the useless spawn markers only, preserving the destinations:
+	// Delete the useless CSWR markers dropped on Eden:
 	if !CSWR_isOnBLU then { { deleteMarker _x } forEach CSWR_spwnsAllBLU + _destsAllBLU };
 	if !CSWR_isOnOPF then { { deleteMarker _x } forEach CSWR_spwnsAllOPF + _destsAllOPF };
 	if !CSWR_isOnIND then { { deleteMarker _x } forEach CSWR_spwnsAllIND + _destsAllIND };
@@ -598,9 +600,9 @@ if !isServer exitWith {};
 	publicVariable "CSWR_bookedLocSpwnVeh";
 	publicVariable "CSWR_bookedLocSpwnHeli";
 	publicVariable "CSWR_spwnDelayQueueAmount";
-	publicVariable "CSWR_watchMkrRangeStart";
 	publicVariable "CSWR_prefix";
 	publicVariable "CSWR_spacer";
+	publicVariable "CSWR_watchMkrRangeStart";
 	publicVariable "CSWR_vehGroundHeavy";
 	publicVariable "CSWR_confirmedMarkers";
 	publicVariable "CSWR_spwnsBLU";
@@ -659,25 +661,25 @@ if !isServer exitWith {};
 		if ( CSWR_isOnBLU && count CSWR_spwnsAllBLU > 0 ) then {
 			// Message:
 			systemChat format ["%1 SIDE BLU > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
-			CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count _destsAllBLU, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
+			CSWR_txtDebugHeader, count CSWR_spwnsAllBLU, count _destsAllBLU, count _destPUBLIC];
 		};
 		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnOPF && count CSWR_spwnsAllOPF > 0 ) then {
 			// Message:
 			systemChat format ["%1 SIDE OPF > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
-			CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count _destsAllOPF, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
+			CSWR_txtDebugHeader, count CSWR_spwnsAllOPF, count _destsAllOPF, count _destPUBLIC];
 		};
 		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnIND && count CSWR_spwnsAllIND > 0 ) then {
 			// Message:
 			systemChat format ["%1 SIDE IND > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
-			CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count _destsAllIND, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
+			CSWR_txtDebugHeader, count CSWR_spwnsAllIND, count _destsAllIND, count _destPUBLIC];
 		};
 		// If the specific side is ON and has at least 1 spawnpoint:
 		if ( CSWR_isOnCIV && count CSWR_spwnsAllCIV > 0 ) then {
 			// Message:
 			systemChat format ["%1 SIDE CIV > Got %2 spawn(s), %3 side destination(s), %4 public destination(s).",
-			CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count _destsAllCIV, count ((CSWR_destsPUBLIC # 0)+(CSWR_destsPUBLIC # 1))];
+			CSWR_txtDebugHeader, count CSWR_spwnsAllCIV, count _destsAllCIV, count _destPUBLIC];
 		};
 	};
 	// Debug monitor looping:

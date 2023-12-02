@@ -1,4 +1,4 @@
-// CSWR v6.5
+// CSWR v6.5.1
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
 // Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
@@ -289,15 +289,15 @@ THY_fnc_CSWR_marker_scanner = {
 	private ["_spwnsBLU", "_spwnsVehBLU", "_spwnsHeliBLU", "_spwnsParaBLU", "_spwnsOPF", "_spwnsVehOPF", "_spwnsHeliOPF", "_spwnsParaOPF", "_spwnsIND", "_spwnsVehIND", "_spwnsHeliIND", "_spwnsParaIND", "_spwnsCIV", "_spwnsVehCIV", "_spwnsHeliCIV", "_spwnsParaCIV", "_destMoveBLU", "_destWatchBLU", "_destOccupyBLU", "_destHoldBLU", "_destMoveOPF", "_destWatchOPF", "_destOccupyOPF", "_destHoldOPF", "_destMoveIND", "_destWatchIND", "_destOccupyIND", "_destHoldIND", "_destMoveCIV", "_destWatchCIV", "_destOccupyCIV", "_destHoldCIV", "_destMovePUBLIC", "_confirmedMarkers", "_spwns", "_spwnsVeh", "_spwnsHeli", "_spwnsPara", "_isValid", "_mkr", "_mkrType", "_isValidShape", "_tag", "_destSector", "_isNum", "_realPrefix", "_possibleMarkers", "_mkrNameStructure"];
 
 	// Initial values:
-	_spwnsBLU=[[],[]]; _spwnsVehBLU=[[],[]]; _spwnsHeliBLU=[[],[]]; _spwnsParaBLU=[[],[]];  // spawns=[non-sectorized-spawns, sectorized-spawns]
-	_spwnsOPF=[[],[]]; _spwnsVehOPF=[[],[]]; _spwnsHeliOPF=[[],[]]; _spwnsParaOPF=[[],[]];
-	_spwnsIND=[[],[]]; _spwnsVehIND=[[],[]]; _spwnsHeliIND=[[],[]]; _spwnsParaIND=[[],[]];
-	_spwnsCIV=[[],[]]; _spwnsVehCIV=[[],[]]; _spwnsHeliCIV=[[],[]]; _spwnsParaCIV=[[],[]];
-	_destMoveBLU=[[],[]]; _destWatchBLU=[[],[]]; _destOccupyBLU=[[],[]]; _destHoldBLU=[[],[]];  // destinations=[non-sectorized-dests, sectorized-dests]
-	_destMoveOPF=[[],[]]; _destWatchOPF=[[],[]]; _destOccupyOPF=[[],[]]; _destHoldOPF=[[],[]];
-	_destMoveIND=[[],[]]; _destWatchIND=[[],[]]; _destOccupyIND=[[],[]]; _destHoldIND=[[],[]];
-	_destMoveCIV=[[],[]]; _destWatchCIV=[[],[]]; _destOccupyCIV=[[],[]]; _destHoldCIV=[[],[]];
-	_destMovePUBLIC=[[],[]];
+	_spwnsBLU         = [[],[]];                             _spwnsVehBLU  = [[],[]];                             _spwnsHeliBLU  = [[],[]];  _spwnsParaBLU = [[],[]];  // spawns=[non-sectorized-spawns, sectorized-spawns]
+	_spwnsOPF         = [[],[]];                             _spwnsVehOPF  = [[],[]];                             _spwnsHeliOPF  = [[],[]];  _spwnsParaOPF = [[],[]];
+	_spwnsIND         = [[],[]];                             _spwnsVehIND  = [[],[]];                             _spwnsHeliIND  = [[],[]];  _spwnsParaIND = [[],[]];
+	_spwnsCIV         = [[],[]];                             _spwnsVehCIV  = [[],[]];                             _spwnsHeliCIV  = [[],[]];  _spwnsParaCIV = [[],[]];
+	_destMoveBLU      = [[],[]];                             _destWatchBLU = [[],[]];                             _destOccupyBLU = [[],[]]; _destHoldBLU   = [[],[]];  // destinations=[non-sectorized-dests, sectorized-dests]
+	_destMoveOPF      = [[],[]];                             _destWatchOPF = [[],[]];                             _destOccupyOPF = [[],[]]; _destHoldOPF   = [[],[]];
+	_destMoveIND      = [[],[]];                             _destWatchIND = [[],[]];                             _destOccupyIND = [[],[]]; _destHoldIND   = [[],[]];
+	_destMoveCIV      = [[/* not used */],[/* not used */]]; _destWatchCIV = [[/* not used */],[/* not used */]]; _destOccupyCIV = [[],[]]; _destHoldCIV   = [[],[]];
+	_destMovePUBLIC   = [[],[]];
 	_confirmedMarkers = [
 		[
 			[_spwnsBLU, _spwnsVehBLU, _spwnsHeliBLU, _spwnsParaBLU],
@@ -565,7 +565,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsVeh  = count ((((_confirmedMarkers # 0) # 0) # 1) # 0) + count ((((_confirmedMarkers # 0) # 0) # 1) # 1);
 		_spwnsHeli = count ((((_confirmedMarkers # 0) # 0) # 2) # 0) + count ((((_confirmedMarkers # 0) # 0) # 2) # 1);
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 0) # 3) # 0) + count ((((_confirmedMarkers # 0) # 0) # 3) # 1);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
+		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 SPAWN > NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
@@ -576,7 +576,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsVeh  = count ((((_confirmedMarkers # 0) # 1) # 1) # 0) + count ((((_confirmedMarkers # 0) # 1) # 1) # 1);
 		_spwnsHeli = count ((((_confirmedMarkers # 0) # 1) # 2) # 0) + count ((((_confirmedMarkers # 0) # 1) # 2) # 1);
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 1) # 3) # 0) + count ((((_confirmedMarkers # 0) # 1) # 3) # 1);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
+		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 SPAWN > NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
@@ -587,7 +587,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsVeh  = count ((((_confirmedMarkers # 0) # 2) # 1) # 0) + count ((((_confirmedMarkers # 0) # 2) # 1) # 1);
 		_spwnsHeli = count ((((_confirmedMarkers # 0) # 2) # 2) # 0) + count ((((_confirmedMarkers # 0) # 2) # 2) # 1);
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 2) # 3) # 0) + count ((((_confirmedMarkers # 0) # 2) # 3) # 1);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
+		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 SPAWN > NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
@@ -598,7 +598,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsVeh  = count ((((_confirmedMarkers # 0) # 3) # 1) # 0) + count ((((_confirmedMarkers # 0) # 3) # 1) # 1);
 		_spwnsHeli = count ((((_confirmedMarkers # 0) # 3) # 2) # 0) + count ((((_confirmedMarkers # 0) # 3) # 2) # 1);
 		_spwnsPara = count ((((_confirmedMarkers # 0) # 3) # 3) # 0) + count ((((_confirmedMarkers # 0) # 3) # 3) # 1);
-		if ( _spwns + _spwnsVeh + _spwnsHeli + _spwnsPara isEqualTo 0 ) then {
+		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning message:
 			systemChat format ["%1 SPAWN > NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
 		};
@@ -1027,7 +1027,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			// There's NO sector letter:
 			if ( _destSector isEqualTo "" ) then {
 				// if at least X destinations of this type:
-				if ( count (_dests # 0) >= _minAmount ) then {
+				if ( count _dests >= _minAmount ) then {
 					// Prepare to return:
 					_return = [[_destType, _destSector], true];
 				} else {
