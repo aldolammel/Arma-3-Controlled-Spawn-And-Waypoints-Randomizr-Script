@@ -9,7 +9,7 @@ if !isServer exitWith {};
 // Debug:
     CSWR_isOnDebugGlobal  = true;    // true = shows basic debug information for the Mission Editor / false = turn it off. Default: false.
     CSWR_isOnDebugOccupy  = false;   // true = shows deeper Occupy-markers debug info / false = turn it off. Default: false.
-    CSWR_isOnDebugWatch   = true;   // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
+    CSWR_isOnDebugWatch   = false;   // true = shows deeper Watch-markers debug info / false = turn it off. Default: false.
     CSWR_isOnDebugHold    = false;   // true = shows deeper Hold-markers debug info / false = turn it off. Default: false.
     CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off. Default: false.
     CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off. Default: false.
@@ -516,13 +516,6 @@ if !isServer exitWith {};
 	// Destroying useless things:
 	_spwnsAll     = nil;
 	_destsSpecial = nil;
-	// Minimal amount of each type of destination by side for a correctly script execution:
-	CSWR_minDestAny        = 2;
-	CSWR_minDestRestricted = 2; 
-	CSWR_minDestWatch      = 1; 
-	CSWR_minDestOccupy     = 1; 
-	CSWR_minDestHold       = 2; 
-	CSWR_minDestPublic     = 2;
 	// Global object declarations:
 	publicVariable "CSWR_isOnDebugGlobal";
 	publicVariable "CSWR_isOnDebugOccupy";
@@ -660,12 +653,6 @@ if !isServer exitWith {};
 	publicVariable "CSWR_destHoldCIV";
 	publicVariable "CSWR_destsPUBLIC";
 	publicVariable "CSWR_destsANYWHERE";
-	publicVariable "CSWR_minDestAny";
-	publicVariable "CSWR_minDestRestricted";
-	publicVariable "CSWR_minDestWatch";
-	publicVariable "CSWR_minDestOccupy";
-	publicVariable "CSWR_minDestHold";
-	publicVariable "CSWR_minDestPublic";
 	// Debug:
 	if CSWR_isOnDebugGlobal then {
 		// If the specific side is ON and has at least 1 spawnpoint:

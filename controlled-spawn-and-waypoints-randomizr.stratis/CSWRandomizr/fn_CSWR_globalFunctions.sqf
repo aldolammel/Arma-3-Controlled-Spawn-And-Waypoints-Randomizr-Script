@@ -1022,7 +1022,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			if ( _tag isEqualTo "CIV" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestAny;
+			_minAmount = 2;
 			_dests     = CSWR_destsANYWHERE;
 			// There's NO sector letter:
 			if ( _destSector isEqualTo "" ) then {
@@ -1045,7 +1045,7 @@ THY_fnc_CSWR_is_valid_destination = {
 				// Reserved space.
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestPublic;
+			_minAmount = 2;
 			_dests     = CSWR_destsPUBLIC;
 			// There's NO sector letter:
 			if ( _destSector isEqualTo "" ) then {
@@ -1076,7 +1076,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			if ( _tag isEqualTo "CIV" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt4] call BIS_fnc_error; sleep 5 };
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestRestricted;
+			_minAmount = 2;
 			switch _tag do {
 				case "BLU": { _dests = CSWR_destRestrictBLU };
 				case "OPF": { _dests = CSWR_destRestrictOPF };
@@ -1113,7 +1113,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			if ( _requester isEqualTo "vehicle" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5 };
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestWatch;
+			_minAmount = 1;
 			switch _tag do {
 				case "BLU": { _dests = CSWR_destWatchBLU };
 				case "OPF": { _dests = CSWR_destWatchOPF };
@@ -1149,7 +1149,7 @@ THY_fnc_CSWR_is_valid_destination = {
 			if ( _requester isEqualTo "vehicle" ) exitWith { ["%1 %2", CSWR_txtWarnHeader, _txt3] call BIS_fnc_error; sleep 5 };
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestOccupy;
+			_minAmount = 1;
 			switch _tag do {
 				case "BLU": { _dests = CSWR_destOccupyBLU };
 				case "OPF": { _dests = CSWR_destOccupyOPF };
@@ -1185,7 +1185,7 @@ THY_fnc_CSWR_is_valid_destination = {
 				// Reserved space.
 			// WIP - Function:
 			// Definitions:
-			_minAmount = CSWR_minDestHold;
+			_minAmount = 2;
 			switch _tag do {
 				case "BLU": { _dests = CSWR_destHoldBLU };
 				case "OPF": { _dests = CSWR_destHoldOPF };
