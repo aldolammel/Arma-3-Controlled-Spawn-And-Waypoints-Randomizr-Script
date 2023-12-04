@@ -1729,17 +1729,28 @@ THY_fnc_CSWR_unit_skills = {
 	// Info: 0.6
 	// Returns nothing.
 
-	params ["_grpType", "_grp", "_destType"];
-	//private [];
+	params ["_grpType", "_grp", "_destType", "_tag"];
+	private ["_exp", "_expValue"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Initial values:
-		// reserved space.
+	_exp      = "";
+	_expValue = nil;
 	// Errors handling:
 		// reserved space.
 	// Declarations:
-		// reserved space.
+	switch _tag do {
+		case "BLU": { _exp = toUpper CSWR_watcherAccuranceBLU };
+		case "OPF": { _exp = toUpper CSWR_watcherAccuranceOPF };
+		case "IND": { _exp = toUpper CSWR_watcherAccuranceIND };
+		//case "CIV": {};  // CIV doesn't use Watch-destinations.
+	};
+	switch _exp do {
+		case "R": { _expValue = 0.65 };
+		case "V": { _expValue = 0.80 };
+		case "E": { _expValue = 0.95 };
+	};
 	// Debug texts:
 		// reserved space.
 
@@ -1785,8 +1796,8 @@ THY_fnc_CSWR_unit_skills = {
 			_x setSkill ["courage", 0.75];
 			_x setSkill ["spotDistance", 0.80];
 			_x setSkill ["spotTime", 0.70];
-			_x setSkill ["aimingShake", 0.75];
-			_x setSkill ["aimingAccuracy", 0.75];
+			_x setSkill ["aimingShake", _expValue];
+			_x setSkill ["aimingAccuracy", _expValue];
 			_x setSkill ["reloadSpeed", 0.75];  // a bit faster than when watching.
 		};
 		// Updating the settings if Sniper group in watch strategy:
@@ -1805,8 +1816,8 @@ THY_fnc_CSWR_unit_skills = {
 			_x setSkill ["courage", 0.85];
 			_x setSkill ["spotDistance", 1];
 			_x setSkill ["spotTime", 1];
-			_x setSkill ["aimingShake", 0.85];
-			_x setSkill ["aimingAccuracy", 0.85];
+			_x setSkill ["aimingShake", _expValue];
+			_x setSkill ["aimingAccuracy", _expValue];
 			_x setSkill ["reloadSpeed", 0.85];
 		};
 		// If crewman of Vehicle Light:
@@ -2009,15 +2020,16 @@ THY_fnc_CSWR_gear_NVG = {
 	// Returns nothing.
 
 	params ["_unit", "_grpType", "_grpSpec", "_tag", "_isMandatory"];
-	private ["_canNvgInfantry", "_canNvgParatroops", "_canNvgSnipers", "_canFlashlight", "_newNvg", "_newFlashlight", "_oldNvg"];
+	private ["_canNvgInf", "_canNvgPara", "_canNvgSniper", "_canFl", "_newNvg", "_newFl", "_isForcedFl", "_oldNvg"];
 	
 	// Initial values:
-	_canNvgInfantry = false;
-	_canNvgParatroops = false;
-	_canNvgSnipers = false;
-	_canFlashlight = false;
-	_newNvg = "";
-	_newFlashlight = "";
+	_canNvgInf    = false;
+	_canNvgPara   = false;
+	_canNvgSniper = false;
+	_canFl        = false;
+	_newNvg       = "";
+	_newFl        = "";
+	_isForcedFl   = false;
 	// Errors handling:
 		// Reserved space.
 	// Declarations - part 1/2:
@@ -2030,10 +2042,37 @@ THY_fnc_CSWR_gear_NVG = {
 	// Declarations - part 2/2:
 	// Check all information about gear for the unit's side:
 	switch _tag do {
-		case "BLU": { _canNvgInfantry = CSWR_canNvgInfantryBLU; _canNvgParatroops = CSWR_canNvgParatroopsBLU; _canNvgSnipers = CSWR_canNvgSnipersBLU; _canFlashlight = CSWR_canFlashlightBLU; _newNvg = CSWR_nvgDeviceBLU; _newFlashlight = CSWR_flashlightDeviceBLU };
-		case "OPF": { _canNvgInfantry = CSWR_canNvgInfantryOPF; _canNvgParatroops = CSWR_canNvgParatroopsOPF; _canNvgSnipers = CSWR_canNvgSnipersOPF; _canFlashlight = CSWR_canFlashlightOPF; _newNvg = CSWR_nvgDeviceOPF; _newFlashlight = CSWR_flashlightDeviceOPF };
-		case "IND": { _canNvgInfantry = CSWR_canNvgInfantryIND; _canNvgParatroops = CSWR_canNvgParatroopsIND; _canNvgSnipers = CSWR_canNvgSnipersIND; _canFlashlight = CSWR_canFlashlightIND; _newNvg = CSWR_nvgDeviceIND; _newFlashlight = CSWR_flashlightDeviceIND };
-		case "CIV": { _canNvgInfantry = CSWR_canNvgCIV; _newNvg = CSWR_nvgDeviceCIV };
+		case "BLU": {
+			_canNvgInf    = CSWR_canNvgInfantryBLU;
+			_canNvgPara   = CSWR_canNvgParatroopsBLU;
+			_canNvgSniper = CSWR_canNvgSnipersBLU;
+			_canFl        = CSWR_canFlashlightBLU;
+			_newNvg       = CSWR_nvgDeviceBLU;
+			_newFl        = CSWR_flashlightDeviceBLU;
+			_isForcedFl   = CSWR_isForcedFlashlBLU;
+		};
+		case "OPF": {
+			_canNvgInf    = CSWR_canNvgInfantryOPF;
+			_canNvgPara   = CSWR_canNvgParatroopsOPF;
+			_canNvgSniper = CSWR_canNvgSnipersOPF;
+			_canFl        = CSWR_canFlashlightOPF;
+			_newNvg       = CSWR_nvgDeviceOPF;
+			_newFl        = CSWR_flashlightDeviceOPF;
+			_isForcedFl   = CSWR_isForcedFlashlOPF;
+		};
+		case "IND": {
+			_canNvgInf    = CSWR_canNvgInfantryIND;
+			_canNvgPara   = CSWR_canNvgParatroopsIND;
+			_canNvgSniper = CSWR_canNvgSnipersIND;
+			_canFl        = CSWR_canFlashlightIND;
+			_newNvg       = CSWR_nvgDeviceIND;
+			_newFl        = CSWR_flashlightDeviceIND;
+			_isForcedFl   = CSWR_isForcedFlashlIND;
+		};
+		case "CIV": {
+			_canNvgInf    = CSWR_canNvgCIV;
+			_newNvg       = CSWR_nvgDeviceCIV;
+		};
 	};
 	// Debug texts:
 		// reserved space.
@@ -2051,14 +2090,14 @@ THY_fnc_CSWR_gear_NVG = {
 		if ( _grpType isEqualTo "teamS" ) then {
 			// INFANTRY Sniper group:
 			// If infantry sniper group members are allowed to use the gear:
-			if _canNvgSnipers then {
+			if _canNvgSniper then {
 				// Add the new gear:
 				_unit linkItem _newNvg;
 			// Otherwise:
 			} else {
 				// PARATROOPER Sniper group:
 				// If paratrooper sniper group members are allowed to use the gear:
-				if ( _canNvgParatroops && _grpSpec isEqualTo "specPara" ) then {
+				if ( _canNvgPara && _grpSpec isEqualTo "specPara" ) then {
 					// Add the new gear:
 					_unit linkItem _newNvg;
 				};
@@ -2070,17 +2109,17 @@ THY_fnc_CSWR_gear_NVG = {
 			// If the unit is a paratrooper:
 			if ( _grpSpec isEqualTo "specPara" ) then {
 				// If PARATROOPER is allowed to use the gear:
-				if _canNvgParatroops then { 
+				if _canNvgPara then { 
 					_unit linkItem _newNvg;
 				} else {
 					// If the side can use flashlight, at least the unit will get one when no NVG:
-					if _canFlashlight then {
+					if _canFl then {
 						// Avoids a duplication at least if the gear is the same classname:
-						_unit removePrimaryWeaponItem _newFlashlight;
+						_unit removePrimaryWeaponItem _newFl;
 						// Add the gear:
-						_unit addPrimaryWeaponItem _newFlashlight;
+						_unit addPrimaryWeaponItem _newFl;
 						// Setting the flashlight:
-						_unit enableGunLights "Auto";
+						if !_isForcedFl then { _unit enableGunLights "Auto" } else { _unit enableGunLights "ForceOn" };
 					};
 				};
 			
@@ -2088,17 +2127,17 @@ THY_fnc_CSWR_gear_NVG = {
 
 				// INFANTRY:
 				// If INFANTRY is allowed to use the gear:
-				if _canNvgInfantry then {
+				if _canNvgInf then {
 					_unit linkItem _newNvg;
 				} else {
 					// If the side can use flashlight, at least the unit will get one when no NVG:
-					if _canFlashlight then {
+					if _canFl then {
 						// Avoids a duplication at least if the gear is the same classname:
-						_unit removePrimaryWeaponItem _newFlashlight;
+						_unit removePrimaryWeaponItem _newFl;
 						// Add the gear:
-						_unit addPrimaryWeaponItem _newFlashlight;
+						_unit addPrimaryWeaponItem _newFl;
 						// Setting the flashlight:
-						_unit enableGunLights "Auto";
+						if !_isForcedFl then { _unit enableGunLights "Auto" } else { _unit enableGunLights "ForceOn" };
 					};
 				};
 			};
@@ -3316,7 +3355,7 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Loadout selector:
 		[_tag, _grp, _grpType, _veh, _isVeh, _isAirCrew, _isPara] call THY_fnc_CSWR_loadout_selector;
 		// Group/Vehicle config > Units skills:
-		[_grpType, _grp, _destType] call THY_fnc_CSWR_unit_skills;
+		[_grpType, _grp, _destType, _tag] call THY_fnc_CSWR_unit_skills;
 		// Only group config > Formation:
 		if !_isVeh then { [_grpInfo] call THY_fnc_CSWR_group_formation };
 		// Group/Vehicle config > Adding to ZEUS:
@@ -4494,6 +4533,8 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	_wp setWaypointSpeed "FULL";  // Important: because sometimes members get stuck in the map and badly prevent the leader to reach the watch position.
 	_wp setWaypointCombatMode "GREEN";  // Important: forcing this for units when out of their watch location // hold fire, kill only if own position spotted.
 	_grp setCurrentWaypoint _wp;
+	// Dont speak anymore:
+	{ _x setSpeaker "NoVoice" } forEach units _grp;
 	// Wait the group gets closer, or doesn't exist anymore, or loses its waypoint:
 	waitUntil {sleep 5; isNull _grp || leader _grp distance _posWatcherATLAGL < 100 || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
 	// Escape > group doesn't exist anymore:
@@ -4518,8 +4559,6 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Return:
 		true;
 	};
-	// Dont speak anymore:
-	{ _x setSpeaker "NoVoice" } forEach units _grp;
 	// Straight on to the position:
 	_grp setSpeedMode "FULL";  // Important: because sometimes members get stuck in the map and badly prevent the leader to reach the watch position.
 	// From here, keep stealth to make sure the spot is clear:
@@ -4932,14 +4971,6 @@ THY_fnc_CSWR_WATCH_doWatching = {
 			};
 			// Remind all:
 			if _isWildPos then { _x setUnitPos "DOWN" };
-			// Debug:
-			if ( CSWR_isOnDebugGlobal && !isNull (getAttackTarget _x) ) then {
-				// Message:
-				systemChat format ["%1 WATCH > %2 '%3' unit has a target: '%4'.",
-				CSWR_txtDebugHeader, _tag, str _x, getAttackTarget _x];
-				// Reading breather:
-				sleep 1;
-			};
 			// CPU breather:
 			sleep 1;
 		} forEach units _grp;
