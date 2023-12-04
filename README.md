@@ -53,6 +53,8 @@ __
 **Dec, 1st 2023 | v6.5.1**
 - HOTFIX > A rare error: when the mission editor dropped common move markers to a side but they also chose to disable that side, the remaining groups from other sides using "_move_ANY" command could try to use those disabled markers, never finding those positions;
 - Fixed > Removed the Jets DLC dependency in the mission example;
+- Improved > Watch > You can choose 3 different levels of accurance for sniper groups using Watch destinations (Recruit, Veteran, Expert);
+- Improved > General > You can force the units by foot to use flashlights On all the time;
 - Documentation has been updated.
 
 **Nov, 27st 2023 | v6.5**
