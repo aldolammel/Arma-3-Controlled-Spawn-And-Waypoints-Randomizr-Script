@@ -22,26 +22,26 @@ __
 - Manually define which markers the faction can use as spawn-points;
 - Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
 - Create unlimited different types of spawn-points:
-- - - **Common spawn:** for units and ground vehicles; 
-- - - **Vehicle spawn:** exclusive for ground vehicles;
-- - - **Heli spawn:** exclusive for helicopters;
-- - - **Paradrop spawn:** for units and ground vehicles;
-- - - **Sectorized spawn:** all spawn types can be sectorized to be available only for specific groups/vehicles inside a faction; 
+- - **Common spawn:** for units and ground vehicles; 
+- - **Vehicle spawn:** exclusive for ground vehicles;
+- - **Heli spawn:** exclusive for helicopters;
+- - **Paradrop spawn:** for units and ground vehicles;
+- - **Sectorized spawn:** all spawn types can be sectorized to be available only for specific groups/vehicles inside a faction; 
 - Spawn-points can be triggered by:
-- - - **Mission starts:** right after the mission gets started;
-- - - **Timer delay:** a down count;
-- - - **Trigger delay:** when some editor's trigger is activated;
-- - - **Target delay:** when a specific unit or vehicle or building is killed/destroyed;
+- - **Mission starts:** right after the mission gets started;
+- - **Timer delay:** a down count;
+- - **Trigger delay:** when some editor's trigger is activated;
+- - **Target delay:** when a specific unit or vehicle or building is killed/destroyed;
 - Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
 - There's no re-spawn. Death is death for units and vehicles spawned by CSWR; 
 - Vehicles with turrets spawned by CSWR, when damaged, their gunners will try to never leave the vehicle, doing the last standing in combat;
 - Manually define which markers will be used as one type of destinations (waypoints) for AI units and vehicles;
 - Create unlimited different types of destination:
-- - - **Move:** groups will move randomly through your predefined move-markers;
-- - - **Watch:** sniper groups will search for the best high position to cover one of your predefined watch-markers;
-- - - **Hold:** soldiers, civilians, or ground vehicles (mainly tracked ones) will set position facing a specific direction predefined by you with hold-markers;
-- - - **Occupy:** soldiers or civilians will search for a building around a predefined occupy-marker, and will go there, get in and stay;
-- - - **Sectorized destination:** all destination types can be sectorized to be available only for specific groups/vehicles inside a faction;
+- - **Move:** groups will move randomly through your predefined move-markers;
+- - **Watch:** sniper groups will search for the best high position to cover one of your predefined watch-markers;
+- - **Hold:** soldiers, civilians, or ground vehicles (mainly tracked ones) will set position facing a specific direction predefined by you with hold-markers;
+- - **Occupy:** soldiers or civilians will search for a building around a predefined occupy-marker, and will go there, get in and stay;
+- - **Sectorized destination:** all destination types can be sectorized to be available only for specific groups/vehicles inside a faction;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
 - Sectorize which groups can move through many sectorized destination options of their faction;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
