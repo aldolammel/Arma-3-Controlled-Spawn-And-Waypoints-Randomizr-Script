@@ -20,7 +20,6 @@ __
 
 - No dependencies from other mods or scripts;
 - Manually define which markers the faction can use as spawn-points;
-- Sectorize which groups can spawn through many sectorized spawn-point options of their faction;
 - Create unlimited different types of spawn-points:
 - - **Common spawn:** for units and ground vehicles; 
 - - **Vehicle spawn:** exclusive for ground vehicles;
@@ -43,7 +42,6 @@ __
 - - **Occupy:** soldiers or civilians will search for a building around a predefined occupy-marker, and will go there, get in and stay;
 - - **Sectorized destination:** all destination types can be sectorized to be available only for specific groups/vehicles inside a faction;
 - Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
-- Sectorize which groups can move through many sectorized destination options of their faction;
 - Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
 - Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
 - There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
