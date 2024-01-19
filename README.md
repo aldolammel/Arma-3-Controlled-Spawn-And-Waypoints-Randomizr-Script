@@ -26,7 +26,7 @@ __
 - - - Vehicle spawn: exclusive for ground vehicles;
 - - - Heli spawn: exclusive for helicopters;
 - - - Paradrop spawn: for units and ground vehicles;
-- - - Setorized spawn: all spawn types can be setorized to be available only for specific groups/vehicles inside a faction; 
+- - - Sectorized spawn: all spawn types can be sectorized to be available only for specific groups/vehicles inside a faction; 
 - Spawn-points can be triggered by:
 - - - Mission starts: right after the mission gets started;
 - - - Timer delay: a down count;
