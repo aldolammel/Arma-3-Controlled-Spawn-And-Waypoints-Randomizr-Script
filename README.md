@@ -8,11 +8,11 @@ Special thanks: To the old (but gold) "T8 Units" script for the inspiration over
 
 ## HOW TO INSTALL / DOCUMENTATION
 
-video demo: https://www.youtube.com/watch?v=gcnvC2-qAFs
+Video demo: https://www.youtube.com/watch?v=gcnvC2-qAFs
 
 Video install: https://www.youtube.com/watch?v=vTz8v2cgrQQ
 
-Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/controlled-spawn-and-waypoints-randomizr.stratis/CSWRandomizr/_CSWR_Script_Documentation.pdf
+Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 
 __
 
@@ -34,8 +34,8 @@ __
 - Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
 - There's no re-spawn. Death is death for units and vehicles spawned by CSWR; 
 - Vehicles with turrets spawned by CSWR, when damaged, their gunners will try to never leave the vehicle, doing the last standing in combat;
-- Manually define which markers will be used as one type of destinations (waypoints) for AI units and vehicles;
-- Create unlimited different types of destination:
+- Manually define which markers will be used as one types of destinations (waypoints) for AI units and vehicles;
+- Create unlimited different types of destinations:
 - - **Move:** groups will move randomly through your predefined move-markers;
 - - **Watch:** sniper groups will search for the best high position to cover one of your predefined watch-markers;
 - - **Hold:** soldiers, civilians, or ground vehicles (mainly tracked ones) will set position facing a specific direction predefined by you with hold-markers;
@@ -62,6 +62,10 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Apr, 14th 2024 | v6.5.2**
+- Script folder structure modified to make the installation easier, including a clean configuration in loadout and population files.
+- Documentation has been updated.
 
 **Dec, 1st 2023 | v6.5.1**
 - HOTFIX > A rare error: when the mission editor dropped common move markers to a side but they also chose to disable that side, the remaining groups from other sides using "_move_ANY" command could try to use those disabled markers, never finding those positions;

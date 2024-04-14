@@ -38,15 +38,9 @@ class Header
 // CBA MOD
 cba_settings_hasSettingsFile = 0;
 
-
-
-// - - - - - - - - - EVERYTHING ABOVE IS NOT NEEDED FOR THIS SCRIPT WORKS - - - - - - - - -
-// - - - - - - - - - - - TAKE ONLY THESE LINES BELOW FOR YOUR MISSION - - - - - - - - - - -
-
-
 class cfgFunctions 
 {
 	// CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
-	// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
+	// Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 	#include "CSWRandomizr\THY_CSWR_functions.hpp"
 };
