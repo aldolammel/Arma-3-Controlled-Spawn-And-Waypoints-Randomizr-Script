@@ -1,6 +1,6 @@
-// CSWR v6.5.1
+// CSWR v6.5.2
 // File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
-// Documentation: your_mission\CSWRandomizr\_CSWR_Script_Documentation.pdf
+// Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 
