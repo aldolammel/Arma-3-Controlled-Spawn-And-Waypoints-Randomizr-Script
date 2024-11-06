@@ -97,7 +97,7 @@ THY_fnc_CSWR_is_marker_position_valid = {
 		// Otherwise, if not on map area:
 		} else {
 			// Warning message:
-			["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error; sleep 5;
+			["%1 %2", CSWR_txtWarnHeader, _txt1] call BIS_fnc_error;
 		};
 	};
 	// Return:
