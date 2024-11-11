@@ -29,6 +29,9 @@ switch _tag do {
             _unit removeItem "ItemGPS";
             _unit unlinkItem "ItemMap";
             _unit removeItem "ItemMap";
+            //_unit removePrimaryWeaponItem  "acc_pointer_IR";
+			//_unit removePrimaryWeaponItem  "optic_Arco_AK_lush_F";
+			//_unit removePrimaryWeaponItem  "optic_Holosight_lush_F";
             //_unit removeItem "16Rnd_9x21_Mag";
             //_unit removeItem "16Rnd_9x21_Mag";
             _unit removeWeapon "Binocular";
