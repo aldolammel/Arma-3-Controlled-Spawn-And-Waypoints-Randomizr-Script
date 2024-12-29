@@ -88,7 +88,7 @@ __
 
 ## CHANGELOG
 
-**Soon | v7.0**
+**Dec, 29th 2024 | v7.0**
 - IMPORTANT 1: from now and so on, the sector-letter is needed (not option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';
 - IMPORTANT 2: from now and so on, vehicles are not allowed to spawn through infantry spawn-points. Vehicles should use only 'spawnveh' or 'spawnheli' or 'spawnparadrop';
 - Added > Spawn type > Support to nautical spawns, allowing spawn boats and other nautical vehicles, including ground vehicles with amphibious hability;
