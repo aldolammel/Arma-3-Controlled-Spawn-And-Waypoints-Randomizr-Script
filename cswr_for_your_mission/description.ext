@@ -1,5 +1,7 @@
 // ATTENCION: if you already have a description.ext file in your mission, just include the lines below in that file.
 
+
+
 class cfgFunctions 
 {
 	// CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR

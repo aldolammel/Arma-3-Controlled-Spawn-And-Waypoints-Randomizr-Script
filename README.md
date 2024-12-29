@@ -1,7 +1,9 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v6.5.2
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.0
 >*Dependencies: none.*
 
-CSWR is an Arma 3 script that allows the Mission Editor to spawn AI units and vehicles (by ground or air paradrop) and makes those groups move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by Mission Editor through Eden marker's positions. CSWR accepts faction loadout customization, including additional customizations for sniper teams and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
+CSWR is an Arma 3 script that allows the Mission Editor (you) to spawn AI units and vehicles (ground, water, and air, including air paradrop for soldiers and vehicles) and makes those units move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by the Mission Editor through Eden marker's positions. CSWR accepts side loadout customization, including additional customizations for snipers and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
+
+<img src="cswr_mission_example.stratis/images/thumb.jpg" />
 
 Creation concept: bring life to the mission through non-stop units' movements with some level of unpredictability without losing control of server performance and what AI units can do.
 Special thanks: To the old (but gold) "T8 Units" script for the inspiration over the years.
@@ -10,7 +12,7 @@ Special thanks: To the old (but gold) "T8 Units" script for the inspiration over
 
 Video demo: https://www.youtube.com/watch?v=gcnvC2-qAFs
 
-Video install: https://www.youtube.com/watch?v=vTz8v2cgrQQ
+Video tutorials: https://www.youtube.com/playlist?list=PL9C3CUvV0NhM0HspcB9ajPNBj9lLy3ozN
 
 Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 
@@ -18,40 +20,63 @@ __
 
 ## SCRIPT DETAILS
 
+**What to expect:**
 - No dependencies from other mods or scripts;
-- Manually define which markers the faction can use as spawn-points;
-- Create unlimited different types of spawn-points:
-- - **Common spawn:** for units and ground vehicles; 
-- - **Vehicle spawn:** exclusive for ground vehicles;
-- - **Heli spawn:** exclusive for helicopters;
-- - **Paradrop spawn:** for units and ground vehicles;
-- - **Sectorized spawn:** all spawn types can be sectorized to be available only for specific groups/vehicles inside a faction; 
+- Run flawlessly for multiplayer and single-player missions;
+- Manually set which markers the side can use as spawn-points;
+- Create unlimited and different types of spawn-points:
+- Infantry Spawn-points;
+- - Marines Spawn-points; NEW
+- - Ground vehicle spawn-points;
+- - Nautical and amphibious spawn-points; NEW
+- - Helicopter spawn-points;
+- - Air Paradrop for vehicle spawn-points;
+- - Air Paradrop for people spawn-points;
 - Spawn-points can be triggered by:
-- - **Mission starts:** right after the mission gets started;
-- - **Timer delay:** a down count;
-- - **Trigger delay:** when some editor's trigger is activated;
-- - **Target delay:** when a specific unit or vehicle or building is killed/destroyed;
-- Once the spawn-points are created, the script will spawn the groups randomly through their faction spawns (sectorized or not);
-- There's no re-spawn. Death is death for units and vehicles spawned by CSWR; 
-- Vehicles with turrets spawned by CSWR, when damaged, their gunners will try to never leave the vehicle, doing the last standing in combat;
-- Manually define which markers will be used as one types of destinations (waypoints) for AI units and vehicles;
-- Create unlimited different types of destinations:
-- - **Move:** groups will move randomly through your predefined move-markers;
-- - **Watch:** sniper groups will search for the best high position to cover one of your predefined watch-markers;
-- - **Hold:** soldiers, civilians, or ground vehicles (mainly tracked ones) will set position facing a specific direction predefined by you with hold-markers;
-- - **Occupy:** soldiers or civilians will search for a building around a predefined occupy-marker, and will go there, get in and stay;
-- - **Sectorized destination:** all destination types can be sectorized to be available only for specific groups/vehicles inside a faction;
-- Once the destination markers are created, CSWR will take care of taking (or not) the groups there, randomly;
-- Manually set the number of soldiers, who they are, their loadouts, who belongs in each squad type, and even ground vehicles and helicopters;
-- Add or remove Night-Vision-Goggles and Flashlights for one or more factions, easily through "True" or "False" management;
-- There are 7 infantry templates and 8 vehicle templates to customize (with modded or original content) for each faction; 
-- Define easily how many AI groups are in-game, what squad types they belong, and their behavior: safe, aware, stealth, combat, chaos;
-- Available white and blacklist for buildings and ruins when groups are using Occupy movements;
-- All vehicles and units spawned by CSWR can be (ON/OFF) editable by Zeus;
+- - Mission starts;
+- - Trigger activation;
+- - Timer;
+- - Target status;
+- There is no re-spawn. Death is death for units and vehicles spawned by CSWR;
+- Create unlimited and different types of destinations:
+- - Move Restrict;
+- - Move Public;
+- - Move Any;
+- - Nautical Move Restrict; NEW
+- - Nautical Move Public; NEW
+- - Nautical Move Any; NEW
+- - Move Watch;
+- - Move Hold;
+- - Move Occupy;
+- Set which vehicles a side will use (including helicopters and boats);
+- Set which units (regardless of the faction or side) a side will use;
+- Set how large is each group-type of a side;
+- Customize the loadout of:
+- - Infantry;
+- - Snipers;
+- - Paratroopers;
+- - Crewmen;
+- - Marines; NEW
+- Set those segments of a side can use Night-vision-Goggles:
+- - Only Infantry;
+- - Only Snipers;
+- - Only Paratroopers;
+- - Only Marines; NEW
+- - All of them;
+- - No one;
+- - Set if a side has Flashlights as an alternative for Night-visions;
+- Set what behavior each group and vehicle start the game:
+- - Safe;
+- - Aware;
+- - Combat;
+- - Stealth;
+- - Chaos;
+- Set if all vehicles and units spawned by CSWR are editable by Zeus;
 - Set if the CSWR should wait for another script load first on the server;
-- **Debugging:** Mission Editor has a friendly error handling;
-- **Debugging:** Mission Editor has a hint monitor to control some AI numbers during the tests;
-- **Debugging:** full documentation available.
+- Debugging:
+- - Friendly error handling;
+- - Hint monitor to control some AI numbers;
+- - Full documentation is available.
 
 __
 
@@ -62,6 +87,42 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Soon | v7.0**
+- IMPORTANT 1: from now and so on, the sector-letter is needed (not option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';
+- IMPORTANT 2: from now and so on, vehicles are not allowed to spawn through infantry spawn-points. Vehicles should use only 'spawnveh' or 'spawnheli' or 'spawnparadrop';
+- Added > Spawn type > Support to nautical spawns, allowing spawn boats and other nautical vehicles, including ground vehicles with amphibious hability;
+- Added > Identity > Select the ethnicity each side represents, changing their faces and language automatically: Africa, Asia, Europe, Eastern Europe, Mid-East, North America, South America;
+- Added > Option to turn off the entire script through the management file, no need to touch the description.ext anymore;
+- Improved > Marines > Now, all infantry that spawn in water is converted automatically to a marine that has its own loadout if the editor customized that in 'fn_CSWR_loadout.sqf' file;
+- Improved > How each group/vehicle choose its 'time breaking' before each new waypoint;
+- Improved > The spawn-points feedbacks when dropped in inappropriated places (ground vehicle spawns too far away from the shore);
+- Improved > Paradrop > Now you can control the spreading (radius) of parashooters and vehicles falling from the sky where the minimal spreading's 200 meters and the default is 500;
+- Improved > Paradrop > Rock mountains > If a parashooter leader fell over a rock, CSWR manages to reposition them in a safe ground aside where they will wait the group members regroup;
+- Improved > Paradrop > Rock mountains > If a parashooter member gets stuck or too late to regroup their leader position, after a while (editable), CSWR teleport the unit to leader position;
+- Improved > Paradrop > Water/sea > If a parashooter leader fell into the water, CSWR manages to reposition them in near coast where they'll wait the group members regroup;
+- Improved > Paradrop > If a leader dies during the regroup waiting, CSWR transfer the waiting responsability to the new group leader if applyable;
+- Improved > Amphibious vehicles (e.g. APC) can only spawn in water and move to the land, but no longer to move in move-markers IN water, preventing accidental disengaging;
+- Improved > Helicopters > If it's spawned in water, helicopter automatically starts its mission hovering;
+- Improved > Helicopters > The crew now is using the custom infantry uniform too, but without change helmet and/or goggles;
+- Improved > Destinations > Now, each group/vehicle has its own waypointCompletionRadius each new destination, making units and vehicles more spread out when simultaneously on the same place;
+- Improved > init.sqf file updated;
+- Improved > A bunch of performance improvements;
+- Improved > fn_CSWR_population.sqf > Group variable names have been changed to be more readable/easy to understand;
+- Improved > Even more debug and warning feedbacks;
+- Fixed > Single player > Before, if you turned off the Debug mode and tried to run a single player game, an error about CSWR_prefix was printed out;
+- Fixed > Markers > If editor has a typo in some marker prefix ("cswr_") the script tells them correctly;
+- Fixed > Paradrop > An issue where paradropped vehicles would sometimes lose their balance and flip over in mid-air, causing the crew death or the vehicle crashes upon landing;
+- Fixed > Spawn delay > The bug that a group doesn't spawn if the editor sets the spawn-delay-timer to 0 (zero) minutes. Now zero and negative numbers are ignored;
+- Fixed > Destinations > If all hold-destinations are booked, tracked-vehicles were traveling through the map instead of to take a peripherical position onto booked hold-position;
+- Fixed > Group behavior > Some infantry groups (when their behavior were "SAFE") were not in diamond formation, what's mandatory for infantry executing hold-position;
+- Fixed > Helicopters > If a chopper needs repair/rearm/refuel/heal but no land-helicopter-spawn available, now the helicopter ignores the RTB necessity and fights 'til death;
+- Tweaked > Snipers > Now, if you turn (e.g.) CSWR_canNvgSnipersBLU to "false", no matter if the sniper group is part of paratroopers that NVG is allowed, the sniper group won't receive NVG anymore;
+- Tweaked > Helicopters > When the helicopter spawn landed, now it will turn the engine immediatelly but it still has a cooldown before take off;
+- Tweaked > Helicopters > Light class ones have a new default operational altitude (from 150 to 300 meters of altitude);
+- Tweaked > Helicopters > Heavy class ones have a new default operational altitude (from 300 to 600 meters of altitude);
+- Removed > Paratroops > Goggles are not a mandatory gear anymore;
+- Documentation has been updated.
 
 **Apr, 14th 2024 | v6.5.2**
 - Script folder structure modified to make the installation easier, including a clean configuration in loadout and population files.

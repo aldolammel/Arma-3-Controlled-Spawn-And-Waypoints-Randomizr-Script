@@ -1,8 +1,10 @@
-// CSWR v6.5.2
+// CSWR v7.0
 // File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
+
+if !CSWR_isOn exitWith {};
 
 // This function defines the side loadout details for each unit spawned by CSWR. 
 // Returns nothing.
@@ -23,62 +25,76 @@ switch _tag do {
             _unit removeItem "ItemWatch";
             _unit unlinkItem "ItemCompass";
             _unit removeItem "ItemCompass";
-            _unit unlinkItem "ItemRadio";
-            _unit removeItem "ItemRadio";
+            //_unit unlinkItem "ItemRadio";  // Carefull coz a unit without radio can't receive/give orders or share knowledge with other groups far away.
+            //_unit removeItem "ItemRadio";
             _unit unlinkItem "ItemGPS";
             _unit removeItem "ItemGPS";
             _unit unlinkItem "ItemMap";
             _unit removeItem "ItemMap";
-            _unit removeItem "16Rnd_9x21_Mag";
-            _unit removeItem "16Rnd_9x21_Mag";
+            //_unit removePrimaryWeaponItem "acc_pointer_IR";
+            //_unit removePrimaryWeaponItem "optic_Arco_AK_lush_F";
+            //_unit removePrimaryWeaponItem "optic_Holosight_lush_F";
+            //_unit removeItem "16Rnd_9x21_Mag";
+            //_unit removeItem "16Rnd_9x21_Mag";
             _unit removeWeapon "Binocular";
-            _unit removeWeapon "hgun_P07_F";
+            //_unit removeWeapon "hgun_P07_F";
 
-        // BLU INFANTRY UNITS:
+        // BLU ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "",                        // infantry uniform
-                "H_Booniehat_tan",         // infantry helmet
-                "",                        // infantry goggles
-                "V_Chestrig_khk",          // infantry vest (only units with vest will take the custom one)
-                "B_Carryall_cbr",          // infantry backpack (only units with backpack will take the custom one)
+                "U_BG_Guerrilla_6_1",                       // Infantry uniform
+                "H_HelmetSpecB_sand",                       // Infantry helmet
+                "",                       // Infantry goggles
+                "V_TacVest_oli",                       // Infantry vest (only units with vest will take the custom one)
+                "B_Kitbag_rgr",                       // Infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 
-        // BLU PARATROOP UNITS:
+        // BLU ROLE > MARINES:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_CombatUniform_mcam_tshirt",   // Paratrooper uniform
-                "H_HelmetB_light_desert",          // Paratrooper helmet
-                "G_Lowprofile",                    // Paratrooper goggles (cannot be "REMOVED")
-                "V_HarnessO_brn",                  // Paratrooper vest (cannot be "REMOVED")
+                "U_B_T_Soldier_AR_F",                      // Marine uniform
+                "H_Booniehat_khk_hs",               // Marine helmet
+                "G_B_Diving",            // Marine goggles
+                "",                      // Marine vest
+                "",                      // Marine backpack
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
 
-        // BLU INF. HEAVY CREW UNITS:
+        // BLU ROLE > PARATROOPS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "H_HelmetCrew_I",          // heavy crew helmet
-                "G_Balaclava_lowprofile",  // heavy crew goggles
-                "V_Chestrig_khk",          // heavy crew vest
+                "U_B_T_Soldier_F",                         // Paratroop uniform
+                "H_HelmetHBK_F",                         // Paratroop helmet
+                "G_Lowprofile",             // Paratroop goggles
+                "V_HarnessO_brn",                         // Paratroop vest (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_heavyCrewGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_paratroops;
 
-        // BLU INF. SNIPER GROUP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
+        // BLU ROLE > HEAVY CREW:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_FullGhillie_sard",  // sniper uniform
-                "",                      // sniper helmet
-                "",                      // sniper goggles
-                "",                      // sniper vest (cannot be "REMOVED")
-                "",                      // sniper backpack
-                "srifle_EBR_F",          // sniper rifle (cannot be "REMOVED")
-                "20Rnd_762x51_Mag",      // sniper rifle magazine (cannot be "REMOVED")
-                "optic_SOS",             // sniper rifle sight/optics
-                "",                      // sniper rifle rail
-                "muzzle_snds_B",         // sniper rifle muzzle/supressor
-                "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
+                "H_HelmetCrew_I",        // Heavy crew helmet
+                "",                      // Heavy crew goggles
+                "",                      // Heavy crew vest
+
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_heavyCrew;
+
+        // BLU ROLE > INF. SNIPER GROUP:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+            [
+                "U_B_T_FullGhillie_tna_F",                      // Sniper uniform
+                "",                      // Sniper helmet
+                "",                      // Sniper goggles
+                "",                      // Sniper vest (cannot be "REMOVED")
+                "",                      // Sniper backpack
+                "",                      // Sniper rifle (cannot be "REMOVED")
+                "",                      // Sniper rifle magazine (cannot be "REMOVED")
+                "",                      // Sniper rifle sight/optics
+                "",                      // Sniper rifle rail
+                "",                      // Sniper rifle muzzle/supressor
+                "",                      // Sniper rifle bipod
+                "Rangefinder",           // Sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -105,62 +121,76 @@ switch _tag do {
             _unit removeItem "ItemWatch";
             _unit unlinkItem "ItemCompass";
             _unit removeItem "ItemCompass";
-            _unit unlinkItem "ItemRadio";
-            _unit removeItem "ItemRadio";
+            //_unit unlinkItem "ItemRadio";  // Carefull coz a unit without radio can't receive/give orders or share knowledge with other groups far away.
+            //_unit removeItem "ItemRadio";
             _unit unlinkItem "ItemGPS";
             _unit removeItem "ItemGPS";
             _unit unlinkItem "ItemMap";
             _unit removeItem "ItemMap";
-            _unit removeItem "16Rnd_9x21_Mag";
-            _unit removeItem "16Rnd_9x21_Mag";
+            //_unit removePrimaryWeaponItem "acc_pointer_IR";
+            //_unit removePrimaryWeaponItem "optic_Arco_AK_lush_F";
+            //_unit removePrimaryWeaponItem "optic_Holosight_lush_F";
+            //_unit removeItem "16Rnd_9x21_Mag";
+            //_unit removeItem "16Rnd_9x21_Mag";
             _unit removeWeapon "Binocular";
-            _unit removeWeapon "hgun_Rook40_F";
+            //_unit removeWeapon "hgun_Rook40_F";
 
-        // OPF INFANTRY UNITS:
+        // OPF ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_O_CombatUniform_ocamo",  // infantry uniform
-                "H_HelmetB_camo",           // infantry helmet
-                "",                         // infantry goggles
-                "V_Chestrig_khk",           // infantry vest (only units with vest will take the custom one)
-                "B_Kitbag_cbr",             // infantry backpack (only units with backpack will take the custom one)
+                "U_O_R_Gorka_01_F",                       // Infantry uniform
+                "H_PASGT_basic_olive_F",                       // Infantry helmet
+                "G_Bandanna_khk",                       // Infantry goggles
+                "V_TacChestrig_oli_F",                       // Infantry vest (only units with vest will take the custom one)
+                "B_Carryall_green_F",                       // Infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+
+        // OPF ROLE > MARINES:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+            [
+                "U_O_R_Gorka_01_camo_F",                      // Marine uniform
+                "H_Watchcap_camo",               // Marine helmet
+                "G_O_Diving",            // Marine goggles
+                "V_CarrierRigKBT_01_light_Olive_F",                      // Marine vest
+                "",                      // Marine backpack
+
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
         
-        // OPF PARATROOP UNITS:
+        // OPF ROLE > PARATROOPS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "",                         // Paratrooper uniform
-                "H_HelmetB_light_desert",   // Paratrooper helmet
-                "G_Lowprofile",             // Paratrooper goggles (cannot be "REMOVED")
-                "V_HarnessO_brn",           // Paratrooper vest (cannot be "REMOVED")
+                "",                         // Paratroop uniform
+                "",                         // Paratroop helmet
+                "G_Lowprofile",             // Paratroop goggles
+                "",                         // Paratroop vest (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_paratroops;
 
-        // OPF INF. HEAVY CREW UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
-            [
-                "H_Tank_black_F",       // heavy crew helmet
-                "",                     // heavy crew goggles
-                "V_Chestrig_khk",       // heavy crew vest
-
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_heavyCrewGroup;
-
-        // OPF INF. SNIPER GROUP UNITS:
+        // OPF ROLE > HEAVY CREW:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_O_FullGhillie_ard",   // sniper uniform
-                "",                      // sniper helmet
-                "",                      // sniper goggles
-                "",                      // sniper vest (cannot be "REMOVED")
-                "",                      // sniper backpack
-                "srifle_DMR_01_F",       // sniper rifle (cannot be "REMOVED")
-                "10Rnd_762x54_Mag",      // sniper rifle magazine (cannot be "REMOVED")
-                "optic_LRPS",            // sniper rifle sight/optics
-                "",                      // sniper rifle rail
-                "muzzle_snds_B",         // sniper rifle muzzle/supressor
-                "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
+                "H_Tank_black_F",        // Heavy crew helmet
+                "",                      // Heavy crew goggles
+                "",                      // Heavy crew vest
+
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_heavyCrew;
+
+        // OPF ROLE > INF. SNIPER GROUP:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+            [
+                "U_O_FullGhillie_sard",                      // Sniper uniform
+                "",                      // Sniper helmet
+                "",                      // Sniper goggles
+                "",                      // Sniper vest (cannot be "REMOVED")
+                "",                      // Sniper backpack
+                "",                      // Sniper rifle (cannot be "REMOVED")
+                "",                      // Sniper rifle magazine (cannot be "REMOVED")
+                "",                      // Sniper rifle sight/optics
+                "",                      // Sniper rifle rail
+                "",                      // Sniper rifle muzzle/supressor
+                "",                      // Sniper rifle bipod
+                "Laserdesignator",           // Sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -182,62 +212,76 @@ switch _tag do {
             _unit removeItem "ItemWatch";
             _unit unlinkItem "ItemCompass";
             _unit removeItem "ItemCompass";
-            _unit unlinkItem "ItemRadio";
-            _unit removeItem "ItemRadio";
+            //_unit unlinkItem "ItemRadio";  // Carefull coz a unit without radio can't receive/give orders or share knowledge with other groups far away.
+            //_unit removeItem "ItemRadio";
             _unit unlinkItem "ItemGPS";
             _unit removeItem "ItemGPS";
             _unit unlinkItem "ItemMap";
             _unit removeItem "ItemMap";
-            _unit removeItem "9Rnd_45ACP_Mag";
-            _unit removeItem "9Rnd_45ACP_Mag";
+            //_unit removePrimaryWeaponItem "acc_pointer_IR";
+            //_unit removePrimaryWeaponItem "optic_Arco_AK_lush_F";
+            //_unit removePrimaryWeaponItem "optic_Holosight_lush_F";
+            //_unit removeItem "9Rnd_45ACP_Mag";
+            //_unit removeItem "9Rnd_45ACP_Mag";
             _unit removeWeapon "Binocular";
-            _unit removeWeapon "hgun_ACPC2_F";
+            //_unit removeWeapon "hgun_ACPC2_F";
 
-        // IND INFANTRY UNITS:
+        // IND ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_BG_Guerrilla_6_1",     // infantry uniform
-                "H_Watchcap_khk",         // infantry helmet
-                "",                       // infantry goggles
-                "V_BandollierB_rgr",      // infantry vest (only units with vest will take the custom one)
-                "B_AssaultPack_rgr",      // infantry backpack (only units with backpack will take the custom one)
+                "U_B_GEN_Commander_F",                       // Infantry uniform
+                "H_Beret_02",                       // Infantry helmet
+                "",                       // Infantry goggles
+                "V_TacChestrig_grn_F",                       // Infantry vest (only units with vest will take the custom one)
+                "B_ViperHarness_blk_F",                       // Infantry backpack (only units with backpack will take the custom one)
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+
+        // IND ROLE > MARINES:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+            [
+                "U_B_GEN_Soldier_F",                      // Marine uniform
+                "REMOVED",               // Marine helmet
+                "G_I_Diving",            // Marine goggles
+                "",                      // Marine vest
+                "B_ViperLightHarness_blk_F",                      // Marine backpack
+
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
         
-        // IND PARATROOP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
+        // IND ROLE > PARATROOPS:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "",                         // Paratrooper uniform
-                "REMOVED",                  // Paratrooper helmet
-                "G_Lowprofile",             // Paratrooper goggles (cannot be "REMOVED")
-                "V_HarnessO_brn",           // Paratrooper vest (cannot be "REMOVED")
+                "",                         // Paratroop uniform
+                "",                         // Paratroop helmet
+                "G_Lowprofile",             // Paratroop goggles
+                "",                         // Paratroop vest (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_paratroops;
 
-        // IND INF. HEAVY CREW UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
+        // IND ROLE > HEAVY CREW:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "H_Beret_Colonel",       // heavy crew helmet
-                "",                      // heavy crew goggles
-                "REMOVED",               // heavy crew vest
+                "H_Tank_eaf_F",          // Heavy crew helmet
+                "",                      // Heavy crew goggles
+                "",                      // Heavy crew vest
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_heavyCrewGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_heavyCrew;
 
-        // IND INF. SNIPER GROUP UNITS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
+        // IND ROLE > INF. SNIPER GROUP:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_I_GhillieSuit",       // sniper uniform
-                "",                      // sniper helmet
-                "",                      // sniper goggles
-                "",                      // sniper vest (cannot be "REMOVED")
-                "",                      // sniper backpack
-                "srifle_GM6_F",          // sniper rifle (cannot be "REMOVED")
-                "5Rnd_127x108_Mag",      // sniper rifle magazine (cannot be "REMOVED")
-                "optic_LRPS",            // sniper rifle sight/optics
-                "",                      // sniper rifle rail
-                "",                      // sniper rifle muzzle/supressor
-                "",                      // sniper rifle bipod
-                "Rangefinder",           // sniper binoculars (cannot be "REMOVED")
+                "U_I_GhillieSuit",                      // Sniper uniform
+                "",                      // Sniper helmet
+                "",                      // Sniper goggles
+                "",                      // Sniper vest (cannot be "REMOVED")
+                "",                      // Sniper backpack
+                "",                      // Sniper rifle (cannot be "REMOVED")
+                "",                      // Sniper rifle magazine (cannot be "REMOVED")
+                "",                      // Sniper rifle sight/optics
+                "",                      // Sniper rifle rail
+                "",                      // Sniper rifle muzzle/supressor
+                "",                      // Sniper rifle bipod
+                "Rangefinder",           // Sniper binoculars (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
 
@@ -255,17 +299,17 @@ switch _tag do {
         // To remove or unlink stuff:
             // Never remove NightVision from here. Use the fn_CSWR_management.sqf to set this.
             _unit removeItems "FirstAidKit";    // it removes all (removeItemS) firstAidKits in person inventory;
-            _unit unlinkItem "ItemWatch";
-            _unit removeItem "ItemWatch";
+            //_unit unlinkItem "ItemWatch";
+            //_unit removeItem "ItemWatch";
             _unit unlinkItem "ItemCompass";
             _unit removeItem "ItemCompass";
             _unit unlinkItem "ItemMap";
             _unit removeItem "ItemMap";
 
-        // CIV CITIZENS:
+        // CIV ROLE > CITIZENS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "RANDOM",                  // Citizen uniform (Only here, use "RANDOM" if you want)
+                "RANDOM",                  // Citizen uniform (Only for CIV, use "RANDOM" if you wanna use specific clothes listed in CSWR_civOutfits management)
                 "",                        // Citizen hat
                 "",                        // Citizen goggles
                 "",                        // Citizen vest (if used, it'll add to all CIV)
@@ -273,15 +317,26 @@ switch _tag do {
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
 
-        // CIV PARACHUTERS:
-        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
+        // CIV ROLE > SWIMMERS:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
+            [
+                "REMOVED",               // Swimmers uniform
+                "REMOVED",               // Swimmers helmet
+                "G_Diving",              // Swimmers goggles
+                "REMOVED",               // Swimmers vest
+                "REMOVED",               // Swimmers backpack
+
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
+        
+            // CIV ROLE > PARACHUTERS:
+        // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
                 "",                         // Parachuter uniform
                 "REMOVED",                  // Parachuter helmet
-                "G_Shades_Blue",            // Parachuter goggles (cannot be "REMOVED")
-                "V_Chestrig_blk",           // Parachuter vest (cannot be "REMOVED")
+                "G_Shades_Blue",            // Parachuter goggles
+                "V_RebreatherB",            // Parachuter vest (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_specialityParachuting;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_paratroops;
 
         // CIV ALL POEPLE:
         // To add or link stuff:

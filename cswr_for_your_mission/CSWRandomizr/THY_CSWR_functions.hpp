@@ -1,4 +1,4 @@
-// CSWR v6.5.2
+// CSWR v7.0
 // File: your_mission\CSWRandomizr\THY_CSWR_functions.hpp
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)

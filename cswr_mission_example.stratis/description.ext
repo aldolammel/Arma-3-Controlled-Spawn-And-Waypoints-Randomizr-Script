@@ -6,34 +6,34 @@ class Header
 	maxPlayers          = 1;
 };
 
-	// About
-	onLoadName          = "CSWR";
-	author              = "thy";
-	overviewPicture     = "images\thumb.jpg";
-	onLoadMission       = "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to create life and battles in a much faster and editable way."; 
+// About
+onLoadName          = "CSWR";
+author              = "thy";
+overviewPicture     = "images\thumb.jpg";
+onLoadMission       = "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to create life and battles in a much faster and editable way."; 
 
-	// Gameplay
-	joinUnassigned      = 0;
-	respawnButton       = 0;
-	respawnDialog       = 0;
-	debriefing          = 0;
-	saving              = 0;
-	
-	// Debug
-	enableDebugConsole  = 1;
-	allowFunctionsLog   = 1;
-	
-	// Performance
-	DisabledAI              = 1;
-	minPlayerDistance       = 1000;
-	corpseManagerMode       = 1;
-	corpseLimit             = 5;
-	corpseRemovalMinTime    = 300;
-	corpseRemovalMaxTime    = 600;
-	wreckManagerMode        = 1;
-	wreckLimit              = 5;
-	wreckRemovalMinTime     = 600;
-	wreckRemovalMaxTime     = 1200;
+// Gameplay
+joinUnassigned      = 0;
+respawnButton       = 0;
+respawnDialog       = 0;
+debriefing          = 0;
+saving              = 0;
+
+// Debug
+enableDebugConsole  = 1;
+allowFunctionsLog   = 1;
+
+// Performance
+DisabledAI              = 1;
+minPlayerDistance       = 1000;
+corpseManagerMode       = 1;
+corpseLimit             = 5;
+corpseRemovalMinTime    = 300;
+corpseRemovalMaxTime    = 600;
+wreckManagerMode        = 1;
+wreckLimit              = 5;
+wreckRemovalMinTime     = 600;
+wreckRemovalMaxTime     = 1200;
 
 // CBA MOD
 cba_settings_hasSettingsFile = 0;
