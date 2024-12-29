@@ -10,14 +10,14 @@ CSWR_isOn = true;                        // Turn on or off the entire script wit
 
 // Debug:
     CSWR_isOnDebug = true;               // true = shows basic debug information for the Mission Editor / false = turn it off / Default: false;
-        CSWR_isOnDebugOccupy  = false;   // true = shows deeper Occupy-markers debug info / false = turn it off / Default: false;
-        CSWR_isOnDebugWatch   = false;   // true = shows deeper Watch-markers debug info / false = turn it off / Default: false;
-        CSWR_isOnDebugHold    = false;   // true = shows deeper Hold-markers debug info / false = turn it off / Default: false;
+        CSWR_isOnDebugOccupy  = true;   // true = shows deeper Occupy-markers debug info / false = turn it off / Default: false;
+        CSWR_isOnDebugWatch   = true;   // true = shows deeper Watch-markers debug info / false = turn it off / Default: false;
+        CSWR_isOnDebugHold    = true;   // true = shows deeper Hold-markers debug info / false = turn it off / Default: false;
         CSWR_isOnDebugHeli    = false;   // true = shows deeper AI Helicopters piloting debug info / false = turn it off / Default: false;
-        CSWR_isOnDebugNautic  = false;   // true = shows deeper Nautical debug info / false = turn it off / Default: false;
+        CSWR_isOnDebugNautic  = true;   // true = shows deeper Nautical debug info / false = turn it off / Default: false;
         CSWR_isOnDebugPara    = false;   // true = shows deeper Paradrop debug info / false = turn it off / Default: false;
         CSWR_isOnDebugBooking = false;   // true = shows deeper markers booking debug info / false = turn it off / Default: false;
-        CSWR_isOnDebugSectors = false;   // true = shows deeper info about sectors when it's used / false = turn it off / Default: false;
+        CSWR_isOnDebugSectors = true;   // true = shows deeper info about sectors when it's used / false = turn it off / Default: false;
 
 // Sides:
     CSWR_isOnBLU = true;   // true = spawn BluFor/West through CSWR / false = don't spawn this side.

@@ -799,8 +799,8 @@ THY_fnc_VO_is_amphibious = {
 			CSWR_txtDebugHeader, _classname] call BIS_fnc_error;
 		} else {
 			// Warning:
-			systemChat format ["%1 SPAWN > NAUTICAL > The vehicle '%2' CANNOT FLOAT to be used in nautical spawn.",
-			CSWR_txtWarnHeader, _classname];
+			["%1 SPAWN > NAUTICAL > The vehicle '%2' CANNOT FLOAT to be used in nautical spawn.",
+			CSWR_txtDebugHeader, _classname] call BIS_fnc_error;
 		};
 		sleep 1;
 	};
