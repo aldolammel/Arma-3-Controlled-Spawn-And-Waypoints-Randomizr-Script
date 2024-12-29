@@ -26,62 +26,62 @@ __
 - Manually set which markers the side can use as spawn-points;
 - Create unlimited and different types of spawn-points:
 - Infantry Spawn-points;
--- Marines Spawn-points; **_NEW_**
--- Ground vehicle spawn-points;
--- Nautical and amphibious spawn-points; **_NEW_**
--- Helicopter spawn-points;
--- Air Paradrop for vehicle spawn-points;
--- Air Paradrop for people spawn-points;
+>> Marines Spawn-points; **_NEW_**
+>> Ground vehicle spawn-points;
+>> Nautical and amphibious spawn-points; **_NEW_**
+>> Helicopter spawn-points;
+>> Air Paradrop for vehicle spawn-points;
+>> Air Paradrop for people spawn-points;
 - Spawn-points can be triggered by:
--- Mission starts;
--- Trigger activation;
--- Timer;
--- Target status;
+>> Mission starts;
+>> Trigger activation;
+>> Timer;
+>> Target status;
 - There is no re-spawn. Death is death for units and vehicles spawned by CSWR;
 - Create unlimited and different types of destinations:
--- Move Restrict;
--- Move Public;
--- Move Any;
--- Nautical Move Restrict; **_NEW_**
--- Nautical Move Public; **_NEW_**
--- Nautical Move Any; **_NEW_**
--- Move Watch;
--- Move Hold;
--- Move Occupy;
+>> Move Restrict;
+>> Move Public;
+>> Move Any;
+>> Nautical Move Restrict; **_NEW_**
+>> Nautical Move Public; **_NEW_**
+>> Nautical Move Any; **_NEW_**
+>> Move Watch;
+>> Move Hold;
+>> Move Occupy;
 - Set which vehicles a side will use (including helicopters and boats);
 - Set which units (regardless of the faction or side) a side will use;
 - Set how large is each group-type of a side;
 - Customize the loadout of different roles of the same side:
--- Infantry;
--- Snipers;
--- Paratroopers;
--- Crewmen;
--- Marines; **_NEW_**
+>> Infantry;
+>> Snipers;
+>> Paratroopers;
+>> Crewmen;
+>> Marines; **_NEW_**
 - Set those segments of a side can use Night-vision-Goggles:
--- Only Infantry;
--- Only Snipers;
--- Only Paratroopers;
--- Only Marines; **_NEW_**
--- All of them;
--- No one;
--- Set if a side has Flashlights as an alternative for Night-visions;
+>> Only Infantry;
+>> Only Snipers;
+>> Only Paratroopers;
+>> Only Marines; **_NEW_**
+>> All of them;
+>> No one;
+>> Set if a side has Flashlights as an alternative for Night-visions;
 - Deeper customization:
--- Side ethnicity; **_NEW_**
---- Automatic faces selection;
---- Automatic language selection;
--- Language manual customization; **_NEW_**
+>> Side ethnicity; **_NEW_**
+>>> Automatic faces selection;
+>>> Automatic language selection;
+>> Language manual customization; **_NEW_**
 - Set what behavior each group and vehicle start the game:
--- Safe;
--- Aware;
--- Combat;
--- Stealth;
--- Chaos;
+>> Safe;
+>> Aware;
+>> Combat;
+>> Stealth;
+>> Chaos;
 - Set if all vehicles and units spawned by CSWR should be editable by Zeus;
 - Set if the CSWR should wait for another script load first on the server;
 - Debugging:
--- Friendly error handling;
--- Hint monitor to control some AI numbers;
--- Full documentation is available.
+>> Friendly error handling;
+>> Hint monitor to control some AI numbers;
+>> Full documentation is available.
 
 __
 
