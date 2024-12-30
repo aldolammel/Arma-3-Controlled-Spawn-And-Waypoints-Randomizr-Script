@@ -94,8 +94,8 @@ __
 ## CHANGELOG
 
 **Dec, 29th 2024 | v7.0**
-- **IMPORTANT 1:** from now and so on, the sector-letter is needed (not an option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';
-- **IMPORTANT 2:** from now and so on, vehicles are not allowed to spawn through infantry spawn-points. Vehicles should use only 'spawnveh' or 'spawnheli' or 'spawnparadrop';
+- **IMPORTANT 1:** from now and so on, the sector-letter is needed (not an option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';
+- **IMPORTANT 2:** from now and so on, vehicles are not allowed to spawn through infantry spawn-points. Vehicles should use only 'spawnveh' or 'spawnheli' or 'spawnparadrop';
 - Added > Spawn type > Support to nautical spawns, allowing spawn boats and other nautical vehicles, including ground vehicles with amphibious ability;
 - Added > Identity > Select the ethnicity each side represents, changing their faces and language automatically: Africa, Asia, Europe, Eastern Europe, Mid-East, North America, South America;
 - Added > Option to turn off the entire script through the management file, no need to touch the description.ext anymore;
@@ -117,7 +117,7 @@ __
 - Improved > Even more debug and warning feedback;
 - Fixed > Single player > Before, if you turned off the Debug mode and tried to run a single-player game, an error about CSWR_prefix was printed out;
 - Fixed > Markers > If editor has a typo in some marker prefix ("cswr_") the script tells them correctly;
-- Fixed > Paradrop > An issue where paradropped vehicles would sometimes lose their balance and flip over in mid-air, causing the crew's death or the vehicle to crash upon landing;
+- Fixed > Paradrop > An issue where paradropped vehicles would sometimes lose their balance and flip over in mid-air, causing the crew's death or the vehicle to crash upon landing;
 - Fixed > Spawn delay > The bug that a group doesn't spawn if the editor sets the spawn-delay-timer to 0 (zero) minutes. Now zero and negative numbers are ignored;
 - Fixed > Destinations > If all hold-destinations are booked, tracked-vehicles were traveling through the map instead of taking a peripherical position onto booked hold-position;
 - Fixed > Group behavior > Some infantry groups (when their behavior were "SAFE") were not in diamond formation, which is mandatory for infantry executing hold-position;

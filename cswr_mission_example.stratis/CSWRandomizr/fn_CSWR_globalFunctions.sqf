@@ -2588,7 +2588,7 @@ THY_fnc_CSWR_loadout_marines = {
 	// Escape > if it's a forbidden uniform for marines, abort:
 	if ( _newUniform in CSWR_forbiddenMarineUniforms ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > You're using a FORBIDDEN UNIFORM for %2 MARINES (those infantry spawning in water). The '%3' uniform forces the unit to be a diver, and CSWR doesn't know to manage divers yet. Change the %2 marines' uniform. This loadout customization was cancelled.",
+		systemChat format ["%1 LOADOUT > You're using a FORBIDDEN UNIFORM for %2 MARINES (those infantry spawning in water). The '%3' uniform bugs units that are NOT originally divers. Use the unit-divers classname in 'Population' file instead of to edit a non-diver unit through 'loadout' file.",
 		CSWR_txtWarnHeader, _tag, _newUniform]; sleep 10;
 	};
 	// Initial values:
