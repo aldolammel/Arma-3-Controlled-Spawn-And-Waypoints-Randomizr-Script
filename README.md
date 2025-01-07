@@ -1,11 +1,10 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.0
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.2
 >*Dependencies: none.*
 
-CSWR is an Arma 3 script that allows the Mission Editor (you) to spawn AI units and vehicles (ground, water, and air, including air paradrop for soldiers and vehicles) and makes those units move randomly to waypoints forever in life, where spawn-points and waypoints are easily pre-defined by the Mission Editor through Eden marker's positions. CSWR accepts side loadout customization, including additional customizations for snipers and paratroopers. CSWR almost doesn't change any original Arma AI behavior, saving server performance and Arma 3 integrity.
+CSWR is an Arma 3 script that allows you to spawn AI groups and vehicles how and wherever you want, making them automatically move through the easily defined map regions without the need for scripting knowledge. CSWR almost doesn't change original AI behaviors, saving server performance and Arma 3 integrity.
 
 <img src="cswr_mission_example.stratis/images/thumb.jpg" />
 
-Creation concept: bring life to the mission through non-stop units' movements with some level of unpredictability without losing control of server performance and what AI units can do.
 Special thanks: To the old (but gold) "T8 Units" script for the inspiration over the years.
 
 ## HOW TO INSTALL / DOCUMENTATION
@@ -17,6 +16,23 @@ Video tutorials: https://www.youtube.com/playlist?list=PL9C3CUvV0NhM0HspcB9ajPNB
 Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 
 __
+
+## QUICK START
+
+**Steps for Basic Editors:**
+1 - Download and open the documentation;
+2 - Install the script (10 seconds);
+3 - Turn "TRUE" which side(s) CSWR takes care;
+4 - Define how many groups and vehicles should be spawned;
+5 - On the map, drag and drop the markers for spawns and destinations;
+6 - Play.
+
+**Extra steps for Advanced Editors:**
+- Which language and ethnicity does the side belong to;
+- Define when each group/vehicle should spawn;
+- Customize the loadout of infantry, marines, snipers, and heavy crew;
+- Define the list of forbidden items that AI cannot have;
+- And more.
 
 ## SCRIPT DETAILS
 
@@ -92,6 +108,11 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
+
+**Jan, XXth 2025 | v7.2**
+- 
+- 
+- Documentation has been updated.
 
 **Dec, 29th 2024 | v7.0**
 - **IMPORTANT 1:** from now and so on, the sector-letter is needed (not an option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';

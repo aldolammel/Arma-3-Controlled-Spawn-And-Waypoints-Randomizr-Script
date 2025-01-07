@@ -17,7 +17,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
     // ..............................................................................................................................
 
 
-    if ( CSWR_isOnBLU && count CSWR_spwnsAllBLU > 0 ) then {
+    if ( CSWR_isOnBLU && CSWR_spwnsAllBLU isNotEqualTo [] ) then {
 		
         // DEFINING SIDE: BLUFOR
         // Define the number of soldiers (and their weapons) and vehicles of BluFor side.
@@ -115,7 +115,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
     // ..............................................................................................................................
 
 
-    if ( CSWR_isOnOPF && count CSWR_spwnsAllOPF > 0 ) then {
+    if ( CSWR_isOnOPF && CSWR_spwnsAllOPF isNotEqualTo [] ) then {
 
         // DEFINING SIDE: OPFOR
         // Define the number of soldiers (and their weapons) and vehicles of OpFor side.
@@ -213,7 +213,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
     // ..............................................................................................................................
 
 
-    if ( CSWR_isOnIND && count CSWR_spwnsAllIND > 0 ) then {
+    if ( CSWR_isOnIND && CSWR_spwnsAllIND isNotEqualTo [] ) then {
 
         // DEFINING SIDE: INDEPENDENT
         // Define the number of soldiers (and their weapons) and vehicles of Independent side.
@@ -305,7 +305,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
 	// ..............................................................................................................................
 
 
-    if ( CSWR_isOnCIV && count CSWR_spwnsAllCIV > 0 ) then {
+    if ( CSWR_isOnCIV && CSWR_spwnsAllCIV isNotEqualTo [] ) then {
 
         // DEFINING SIDE: CIVILIAN
         // Define the number of people and vehicles of Civilian side.
