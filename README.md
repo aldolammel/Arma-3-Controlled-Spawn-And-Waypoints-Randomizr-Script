@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.2
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.0
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows you to spawn AI groups and vehicles how and wherever you want, making them automatically move through the easily defined map regions without the need for scripting knowledge. CSWR almost doesn't change original AI behaviors, saving server performance and Arma 3 integrity.
@@ -108,11 +108,6 @@ Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-rele
 __
 
 ## CHANGELOG
-
-**Jan, XXth 2025 | v7.2**
-- 
-- 
-- Documentation has been updated.
 
 **Dec, 29th 2024 | v7.0**
 - **IMPORTANT 1:** from now and so on, the sector-letter is needed (not an option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';
