@@ -113,9 +113,9 @@ __
 ## CHANGELOG
 
 **Jan, 18th 2025 | v7.2**
-**IMPORTANT 1:** the script folder inside the mission as renamed from "CSWRandomizr" to "CSWR";
-**IMPORTANT 2:** the 1_Management, 2_Population and 3_Loadout files received a prefix number in their names to help editors to get the best sequence of file edition;
-**IMPORTANT 3:** the description.ext code was updated;
+- **IMPORTANT 1:** the script folder inside the mission as renamed from "CSWRandomizr" to "CSWR";
+- **IMPORTANT 2:** the 1_Management, 2_Population and 3_Loadout files received a prefix number in their names to help editors to get the best sequence of file edition;
+- **IMPORTANT 3:** the description.ext code was updated;
 - Added > Helicopters > Through Population file, with helicopters use destination-type "_move_EXTRACTION" to schedule a extration that always bring you to the base (helicopter spawn-point);
 - Added > Helicopters > Through Population file, with helicopters use destination-type "_move_TRANSPORT" to request an air transport to take your group to another area of your choice;
 - Added > Helicopters > New helicopter class supported: Medium class with their own altitude (medium altitude editable too, perfect for transport/extraction helicopters);
