@@ -5,7 +5,7 @@ CSWR is an Arma 3 script that allows you to spawn AI groups and vehicles how and
 
 <img src="cswr_mission_example.stratis/images/thumb.jpg" />
 
-Special thanks: To the old (but gold) "T8 Units" script for the inspiration over the years.
+Special thanks: To the old "T8 Units" script for the inspiration over the years.
 
 ## HOW TO INSTALL / DOCUMENTATION
 
@@ -42,9 +42,9 @@ __
 - Manually set which markers the side can use as spawn-points;
 - Create unlimited and different types of spawn-points:
 - Infantry Spawn-points;
-- - Marines Spawn-points; **_NEW_**
+- - Marines Spawn-points; **_NEW v7_**
 - - Ground vehicle spawn-points;
-- - Nautical and amphibious spawn-points; **_NEW_**
+- - Nautical and amphibious spawn-points; **_NEW v7_**
 - - Helicopter spawn-points;
 - - Air Paradrop for vehicle spawn-points;
 - - Air Paradrop for people spawn-points;
@@ -52,18 +52,21 @@ __
 - - Mission starts;
 - - Trigger activation;
 - - Timer;
-- - Target status;
+- - Object Target;
+- - Boolean flag; **_NEW v7.2_**
 - There is no re-spawn. Death is death for units and vehicles spawned by CSWR;
 - Create unlimited and different types of destinations:
 - - Move Restrict;
 - - Move Public;
 - - Move Any;
-- - Nautical Move Restrict; **_NEW_**
-- - Nautical Move Public; **_NEW_**
-- - Nautical Move Any; **_NEW_**
+- - Nautical Move Restrict; **_NEW v7_**
+- - Nautical Move Public; **_NEW v7_**
+- - Nautical Move Any; **_NEW v7_**
 - - Move Watch;
 - - Move Hold;
 - - Move Occupy;
+- - Move Extraction; **_NEW v7.2_**
+- - Move Transport; **_NEW v7.2_**
 - Set which vehicles a side will use (including helicopters and boats);
 - Set which units (regardless of the faction or side) a side will use;
 - Set how large is each group-type of a side;
@@ -72,20 +75,20 @@ __
 - - Snipers;
 - - Paratroopers;
 - - Crewmen;
-- - Marines; **_NEW_**
+- - Marines; **_NEW v7_**
 - Set those segments of a side can use Night-vision-Goggles:
 - - Only Infantry;
 - - Only Snipers;
 - - Only Paratroopers;
-- - Only Marines; **_NEW_**
+- - Only Marines; **_NEW v7_**
 - - All of them;
 - - No one;
 - - Set if a side has Flashlights as an alternative for Night-visions;
 - Deeper customization:
-- - Side ethnicity; **_NEW_**
+- - Side ethnicity; **_NEW v7_**
 - - - Automatic faces selection;
 - - - Automatic language selection;
-- - Language manual customization; **_NEW_**
+- - Language manual customization; **_NEW v7_**
 - Set what behavior each group and vehicle start the game:
 - - Safe;
 - - Aware;
@@ -112,7 +115,7 @@ __
 **Jan, 18th 2025 | v7.2**
 **IMPORTANT 1:** the script folder inside the mission as renamed from "CSWRandomizr" to "CSWR";
 **IMPORTANT 2:** the 1_Management, 2_Population and 3_Loadout files received a prefix number in their names to help editors to get the best sequence of file edition;
-**IMPORTANT 3:** the description.ext code was updated
+**IMPORTANT 3:** the description.ext code was updated;
 - Added > Helicopters > Through Population file, with helicopters use destination-type "_move_EXTRACTION" to schedule a extration that always bring you to the base (helicopter spawn-point);
 - Added > Helicopters > Through Population file, with helicopters use destination-type "_move_TRANSPORT" to request an air transport to take your group to another area of your choice;
 - Added > Helicopters > New helicopter class supported: Medium class with their own altitude (medium altitude editable too, perfect for transport/extraction helicopters);
