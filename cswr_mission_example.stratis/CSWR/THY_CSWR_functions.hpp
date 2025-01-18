@@ -1,24 +1,24 @@
-// CSWR v7.0
-// File: your_mission\CSWRandomizr\THY_CSWR_functions.hpp
+// CSWR: AUTOMATIZING THE WAR v7.2
+// File: your_mission\CSWR\THY_CSWR_functions.hpp
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 class THY_CSWR_functions {
 	tag = "THY"; 
 	
-	class CSWRandomizr {
-		file = "CSWRandomizr";
+	class CSWR {
+		file = "CSWR";
 		
-		class CSWR_management {
+		class CSWR_1_management {
 			preInit = 1;
 		};
 		class CSWR_globalFunctions {
 			preInit = 1;
 		};
-		class CSWR_loadout {
+		class CSWR_3_loadout {
 			preInit = 1;
 		};
-		class CSWR_population {
+		class CSWR_2_population {
 			preInit = 1;
 		};
 	};

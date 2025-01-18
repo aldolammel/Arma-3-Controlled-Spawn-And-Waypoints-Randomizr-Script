@@ -1,10 +1,11 @@
-// CSWR v7.0
-// File: your_mission\CSWRandomizr\fn_CSWR_globalFunctions.sqf
+// CSWR: AUTOMATIZING THE WAR v7.2
+// File: your_mission\CSWR\fn_CSWR_globalFunctions.sqf
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 
 // CSWR CORE / TRY TO CHANGE NOTHING BELOW!!! --------------------------------------------------------------------
+// It runs on server and client machines.
 if !CSWR_isOn exitWith {};
 
 // STRUCTURE OF A FUNCTION BY THY:
@@ -112,8 +113,13 @@ THY_fnc_CSWR_marker_name_section_type = {
 	// Not valid:
 	} else {
 		// Warning:
-		systemChat format ["%1 MARKER '%2' > The MARKER TYPE on the marker's name looks wrong. There's NO any '%3' type available for Spawn or Destination markers. The marker-types available are these ones for you fix it on Eden: %4.", 
-		CSWR_txtWarnHeader, _mkr, _mkrTypeToCheck, _allTypesAvailable];
+		if ( _mkrTypeToCheck isEqualTo "EXTRACTION" || _mkrTypeToCheck isEqualTo "TRANSPORT" ) then {
+			systemChat format ["%1 DESTINATION > %2 > EXTRACTION and TRANSPORT are DESTINATIONS that DON'T NEED markers on the map. Just use '_move_EXTRACTION' or '_move_TRANSPORT' in Population file assigned for Helicopters, and the CSWR knows what to do!",
+			CSWR_txtWarnHeader, _mkr];
+		} else {
+			systemChat format ["%1 MARKER '%2' > The MARKER TYPE on the marker's name looks wrong. There's NO any '%3' type available for Spawn or Destination markers. The marker-types available are these ones for you fix it on Eden: %4.", 
+			CSWR_txtWarnHeader, _mkr, _mkrTypeToCheck, _allTypesAvailable];
+		};
 	}; 
 	// Return:
 	_mkrType;
@@ -260,7 +266,7 @@ THY_fnc_CSWR_marker_name_section_number = {
 
 
 THY_fnc_CSWR_marker_scanner = {
-	// This function searches and appends in a list all markers confirmed as real. The searching take place once right at the mission begins through fn_CSWR_management.sqf file, and it classify the markers if they are spawns or destinations markers, just like if they are on land or in water.
+	// This function searches and appends in a list all markers confirmed as real. The searching take place once right at the mission begins through fn_CSWR_1_management.sqf file, and it classify the markers if they are spawns or destinations markers, just like if they are on land or in water.
 	// Return: _confirmedMkrs: array.
 
 	params ["_prefix", "_spacer"];
@@ -277,7 +283,7 @@ THY_fnc_CSWR_marker_scanner = {
 	_destMoveIND    = [[/*land*/],[/*water*/]]; _destWatchIND = [[],[]]; _destOccupyIND = [[],[]]; _destHoldIND = [[],[]];
 	_destMoveCIV    = [[/*land*/],[/*water*/]]; _destWatchCIV = [[],[]]; _destOccupyCIV = [[],[]]; _destHoldCIV = [[],[]];
 	_destMovePUBLIC = [[/*land*/],[/*water*/]];
-	// Preparing to return:
+	// Prepare to return:
 	_confirmedMkrs  = [
 		// Spawns:
 		[
@@ -352,6 +358,8 @@ THY_fnc_CSWR_marker_scanner = {
 			case "WATCH":         { _isValidShape = [2, _mkr] call THY_fnc_CSWR_marker_shape; _tag = [2, _mkrNameStructure, _mkr] call THY_fnc_CSWR_marker_name_section_owner };  // cswr_watch_blu_a_1
 			case "OCCUPY":        { _isValidShape = [2, _mkr] call THY_fnc_CSWR_marker_shape; _tag = [2, _mkrNameStructure, _mkr] call THY_fnc_CSWR_marker_name_section_owner };  // cswr_occupy_blu_a_1
 			case "HOLD":          { _isValidShape = [2, _mkr] call THY_fnc_CSWR_marker_shape; _tag = [2, _mkrNameStructure, _mkr] call THY_fnc_CSWR_marker_name_section_owner };  // cswr_hold_blu_a_1
+			//case "EXTRACTION":   {  };  // cswr_extraction_blu_a_1 (NOT USED!)
+			//case "TRANSPORT":   {  };  // cswr_transport_blu_a_1 (NOT USED!)
 			//default             { /* Not necessary because the errors handling are inside the previously functions inside this current function */ };
 		};
 		// Escape:
@@ -708,6 +716,8 @@ THY_fnc_CSWR_marker_scanner = {
 					};
 				};
 			};
+			//case "EXTRACTION": {};  // NOT USED!
+			//case "TRANSPORT": {};  // NOT USED!
 		};
 	} forEachReversed _possibleMkrs;
 	// Destroying unnecessary things:
@@ -741,7 +751,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMkrs # 0) # 0) # 3) # 0) + count ((((_confirmedMkrs # 0) # 0) # 3) # 1);
 		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning:
-			systemChat format ["%1 SPAWN > NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];  // dont use _tag here!
+			systemChat format ["%1 SPAWN > NO BLU SPAWN FOUND. Check the documentation or turn 'CSWR_isOnBLU' to 'false' in 'fn_CSWR_1_management.sqf' file!", CSWR_txtWarnHeader];  // dont use _tag here!
 		};
 	};
 	if CSWR_isOnOPF then {
@@ -752,7 +762,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMkrs # 0) # 1) # 3) # 0) + count ((((_confirmedMkrs # 0) # 1) # 3) # 1);
 		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning:
-			systemChat format ["%1 SPAWN > NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO OPF SPAWN FOUND. Check the documentation or turn 'CSWR_isOnOPF' to 'false' in 'fn_CSWR_1_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnIND then {
@@ -763,7 +773,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMkrs # 0) # 2) # 3) # 0) + count ((((_confirmedMkrs # 0) # 2) # 3) # 1);
 		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning:
-			systemChat format ["%1 SPAWN > NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO IND SPAWN FOUND. Check the documentation or turn 'CSWR_isOnIND' to 'false' in 'fn_CSWR_1_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	if CSWR_isOnCIV then {
@@ -774,7 +784,7 @@ THY_fnc_CSWR_marker_scanner = {
 		_spwnsPara = count ((((_confirmedMkrs # 0) # 3) # 3) # 0) + count ((((_confirmedMkrs # 0) # 3) # 3) # 1);
 		if ( (_spwns + _spwnsVeh + _spwnsHeli + _spwnsPara) isEqualTo 0 ) then {
 			// Warning:
-			systemChat format ["%1 SPAWN > NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_management.sqf' file!", CSWR_txtWarnHeader];
+			systemChat format ["%1 SPAWN > NO CIV SPAWN FOUND. Check the documentation or turn 'CSWR_isOnCIV' to 'false' in 'fn_CSWR_1_management.sqf' file!", CSWR_txtWarnHeader];
 		};
 	};
 	// Return:
@@ -814,10 +824,10 @@ THY_fnc_CSWR_marker_booking = {
 	// Param > _mkrType > string: which type of spawn-point (for infantry, for vehicle, for heli) or type of destination marker ( watch, hold, occupy, etc).
 	// Param > _markers > array: all markers must be checked.
 	// Param > _attemptLimit > number: limit of times the function will try to find a free marker.
-	// Returns _bookingInfo. Array [string, array, bool].
+	// Returns _bookingData. Array [string, array, bool].
 
 	params ["_mkrType", "_mkrPos", "_tag", "_markers", "_attemptLimit", "_cooldown"];
-	private ["_mkr", "_isBooked", "_bookingInfo", "_bookedLoc", "_isError", "_ctr"];
+	private ["_mkr", "_isBooked", "_bookingData", "_bookedLoc", "_isError", "_ctr"];
 
 	// Escape - part 1/2:
 		// reserved space.
@@ -825,7 +835,7 @@ THY_fnc_CSWR_marker_booking = {
 	_mkr         = "";
 	_mkrPos      = [];
 	_isBooked    = false;
-	_bookingInfo = [_mkr, _mkrPos, _isBooked];
+	_bookingData = [_mkr, _mkrPos, _isBooked];
 	_bookedLoc   = [];
 	_isError     = false;
 	// Declarations:
@@ -844,7 +854,7 @@ THY_fnc_CSWR_marker_booking = {
 		};
 	};
 	// Escape - part 2/2:
-	if _isError exitWith { _bookingInfo /* Returning */ };
+	if _isError exitWith { _bookingData /* Returning */ };
 	// Looping for select the marker:
 	while { _ctr <= _attemptLimit } do {
 		// Pick a marker (it looks not the best performance way to pick one but this way successfully will break the bias of the markers ordering in array):
@@ -889,14 +899,14 @@ THY_fnc_CSWR_marker_booking = {
 		// Important: if it's vehicles using the function right after spawn, be fast to avoid explosions:
 		sleep _cooldown;
 	};  // While-loop ends.
-	// Preparing to return:
-	_bookingInfo = [_mkr, _mkrPos, _isBooked];
+	// Prepare to return:
+	_bookingData = [_mkr, _mkrPos, _isBooked];
 	// Return:
-	_bookingInfo;
+	_bookingData;
 };
 
 
-THY_fnc_CSWR_marker_booking_undo = {
+THY_fnc_CSWR_marker_bookingUndo = {
 	// This function undo the booking of a marker (destination or spawn-point) when it becomes available.
 	// Returns nothing.
 
@@ -917,7 +927,7 @@ THY_fnc_CSWR_marker_booking_undo = {
 		case "BOOKING_SPAWNVEH":  { _bookedLoc = CSWR_bookedLocSpwnVeh };  // [[blu],[opf],[ind],[civ]]
 		case "BOOKING_SPAWNHELI": { _bookedLoc = CSWR_bookedLocSpwnHeli };
 		default {
-			systemChat format ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_booking_undo' function.",
+			systemChat format ["%1 There is no '%2' in 'THY_fnc_CSWR_marker_bookingUndo' function.",
 			CSWR_txtWarnHeader, _mkrType]; _isError = true;
 		};
 	};
@@ -1020,7 +1030,7 @@ THY_fnc_CSWR_is_valid_classname = {
 	_what = toUpper _what;
 	// Escape > If array empty:
 	if ( _classnames isEqualTo [] ) exitWith {
-		// Preparing to return:
+		// Prepare to return:
 		_isValid = false;
 		// Warning:
 		systemChat format ["%1 %2 > The variable '%3' looks EMPTY. Fix it to avoid errors.",
@@ -1103,7 +1113,7 @@ THY_fnc_CSWR_is_valid_classnames_type = {
 	// Escape:
 	if ( _classnames isEqualTo [] ) exitWith { _isValid = false; _isValid /* Returning... */ };
 	// Debut texts:
-	_txt1 = "Fix it in 'fn_CSWR_population.sqf' file";
+	_txt1 = "Fix it in 'fn_CSWR_2_population.sqf' file";
 	{  // forEach _allowedTypes:
 		_allowedType = _x;
 		{  // forEach _classnames:
@@ -1179,7 +1189,7 @@ THY_fnc_CSWR_is_valid_behavior = {
 	// Otherwise:
 	} else {
 		// Warning:
-		systemChat format ["%1 %2 > One or more %3s HAS NO BEHAVIOR properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the %3 WON'T BE CREATED.",
+		systemChat format ["%1 %2 > One or more %3s HAS NO BEHAVIOR properly configured in 'fn_CSWR_2_population.sqf' file. Check the documentation. For script integrity, the %3 WON'T BE CREATED.",
 		CSWR_txtWarnHeader, _tag, if _isVeh then {"vehicle"} else {"group"}]; sleep 5;
 	};
 	// Return:
@@ -1212,7 +1222,7 @@ THY_fnc_CSWR_is_valid_formation = {
 	// Otherwise:
 	} else {
 		// Warning:
-		systemChat format ["%1 GROUP > One or more %2 groups HAS NO FORMATION properly configured in 'fn_CSWR_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.",
+		systemChat format ["%1 GROUP > One or more %2 groups HAS NO FORMATION properly configured in 'fn_CSWR_2_population.sqf' file. Check the documentation. For script integrity, the group WON'T BE CREATED.",
 		CSWR_txtWarnHeader, _tag]; sleep 5;
 	};
 	// Return:
@@ -1252,7 +1262,7 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 	// This function checks if the spawn-points are paradrop type, and it updates the _spwnPos with the right drop altitude.
 	// Returns _return. Array: [bool, [y,x,z]].
 
-	params ["_spwns", "_spwnPos", "_isVeh", "_isAmphibious", "_forbidden"];
+	params ["_spwns", "_spwnPos", "_isVeh", "_isAmphib", "_forbidden"];
 	private ["_return", "_isPara"];
 
 	// Initial values:
@@ -1275,7 +1285,7 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 			_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropUnitAlt];
 		} else {
 			// For Regular Ground Vehicle:
-			if !_isAmphibious then {
+			if !_isAmphib then {
 				_spwnPos = [_spwnPos # 0, _spwnPos # 1, abs CSWR_spwnsParadropVehAlt];
 			// For Amphibious Vehicle:
 			} else {
@@ -1288,26 +1298,27 @@ THY_fnc_CSWR_is_spawn_paradrop = {
 			};
 		};
 	};
-	// Preparing to return:
+	// Prepare to return:
 	_return = [_isPara, _spwnPos];
 	// Return:
 	_return;
 };
 
 
-THY_fnc_CSWR_group_info = {
-	// This function returns a "dictionary" with group's features to be used for other functions later, and check basic rules about some group-types.
-	// Important: where each group-type can spawn is defined in fn_CSWR_management.sqf and its spawn rules are in THY_fnc_CSWR_spawn_type_checker just like the destination rules are in THY_fnc_CSWR_destination_type_checker.
-	// Returns _grpInfo array. If it returns empty, it's because the group is invalid and can't be spawned.
+THY_fnc_CSWR_grp_data = {
+	// This function returns a "dictionary" (manual 'hashMap') with group's features to be used for other functions later, and check basic rules about some group-types.
+	// Important 1: When this func runs, the group doesn't exist yet.
+	// Important 2: where each group-type can spawn is defined in fn_CSWR_1_management.sqf and its spawn rules are in THY_fnc_CSWR_spawn_type_checker just like the destination rules are in THY_fnc_CSWR_destination_type_checker.
+	// Returns _grpData array. If it returns empty, it's because the group is invalid and can't be spawned.
 
 	params["_side", "_tag", "_grpClassnames", "_destType", "_behavior", "_form"];
-	private["_teamLight", "_teamMedium", "_teamHeavy", "_teamCustom1", "_teamCustom2", "_teamCustom3", "_teamSniper", "_vehLight", "_vehMedium", "_vehHeavy", "_vehCustom1", "_vehCustom2", "_vehCustom3", "_nauLight", "_nauMedium", "_nauHeavy", "_heliLight", "_heliHeavy", "_isError", "_grpInfo", "_grpType"];
+	private["_teamLight", "_teamMedium", "_teamHeavy", "_teamCustom1", "_teamCustom2", "_teamCustom3", "_teamSniper", "_vehLight", "_vehMedium", "_vehHeavy", "_vehCustom1", "_vehCustom2", "_vehCustom3", "_nauLight", "_nauMedium", "_nauHeavy", "_heliLight", "_heliMedium", "_heliHeavy", "_isError", "_grpData", "_grpType"];
 
 	// Initial values:
 	_teamLight=[]; _teamMedium=[]; _teamHeavy=[]; _teamCustom1=[]; _teamCustom2=[]; _teamCustom3=[]; _teamSniper=[];  // people groups;
-	_vehLight=[]; _vehMedium=[]; _vehHeavy=[]; _vehCustom1=[]; _vehCustom2=[]; _vehCustom3=[]; _nauLight=[]; _nauMedium=[]; _nauHeavy=[]; _heliLight=[]; _heliHeavy=[];  // vehicle groups;
+	_vehLight=[]; _vehMedium=[]; _vehHeavy=[]; _vehCustom1=[]; _vehCustom2=[]; _vehCustom3=[]; _nauLight=[]; _nauMedium=[]; _nauHeavy=[]; _heliLight=[]; _heliMedium=[]; _heliHeavy=[];  // vehicle groups;
 	_isError = false;
-	_grpInfo = [];
+	_grpData = [];
 	
 	// STEP 1/3 > BUILDING THE GROUP DICTIONARY ----------------------------------------------------------------------
 	// It'll be used a lot for further validations.
@@ -1332,6 +1343,7 @@ THY_fnc_CSWR_group_info = {
 			_nauMedium  = [CSWR_vehicle_BLU_nautic_medium];
 			_nauHeavy   = [CSWR_vehicle_BLU_nautic_heavy];
 			_heliLight  = [CSWR_vehicle_BLU_heli_light];
+			_heliMedium = [CSWR_vehicle_BLU_heli_medium];
 			_heliHeavy  = [CSWR_vehicle_BLU_heli_heavy];
 		};
 		case OPFOR: {
@@ -1354,6 +1366,7 @@ THY_fnc_CSWR_group_info = {
 			_nauMedium  = [CSWR_vehicle_OPF_nautic_medium];
 			_nauHeavy   = [CSWR_vehicle_OPF_nautic_heavy];
 			_heliLight  = [CSWR_vehicle_OPF_heli_light];
+			_heliMedium = [CSWR_vehicle_OPF_heli_medium];
 			_heliHeavy  = [CSWR_vehicle_OPF_heli_heavy];
 		};
 		case INDEPENDENT: {
@@ -1376,6 +1389,7 @@ THY_fnc_CSWR_group_info = {
 			_nauMedium  = [CSWR_vehicle_IND_nautic_medium];
 			_nauHeavy   = [CSWR_vehicle_IND_nautic_heavy];
 			_heliLight  = [CSWR_vehicle_IND_heli_light];
+			_heliMedium = [CSWR_vehicle_IND_heli_medium];
 			_heliHeavy  = [CSWR_vehicle_IND_heli_heavy];
 		};
 		case CIVILIAN: {
@@ -1398,79 +1412,81 @@ THY_fnc_CSWR_group_info = {
 			_nauMedium  = [CSWR_vehicle_CIV_nautic_medium];
 			_nauHeavy   = [CSWR_vehicle_CIV_nautic_heavy];
 			_heliLight  = [CSWR_vehicle_CIV_heli_light];
+			_heliMedium = [CSWR_vehicle_CIV_heli_medium];
 			_heliHeavy  = [CSWR_vehicle_CIV_heli_heavy];
 		};
-		default { systemChat format ["%1 SIDE > There is no side called '%2'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_population.sqf' file.",
+		default { systemChat format ["%1 SIDE > There is no side called '%2'. There are only 'BLUFOR', 'OPFOR', 'INDEPENDENT' and 'CIVILIAN'. Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _side]; _isError = true };
 	};
 	// Escape:
-	if _isError exitWith { _grpInfo /* Returning */ };
+	if _isError exitWith { _grpData /* Returning */ };
 	// Group information > basic:
-	// _grpInfo is [ group side (side variable), group side tag (str), group id (obj), group type (str), group classnames ([strs]), group class (int), group behavior (str), group formation (str), destination type (str) ]
-	_grpInfo = [_side, _tag, grpNull, "", [], nil, _behavior, _form, _destType];
+	// _grpData is [ group side (side variable), group side tag (str), group id (obj), group type (str), group classnames ([strs]), group class (int), group behavior (str), group formation (str), destination type (str) ]
+	_grpData = [_side, _tag, grpNull, "", [], nil, _behavior, _form, _destType];
 	// Group information > specificity:
 	switch _grpClassnames do {
 		// People group:            (_grpType)                  (_grpClassnames)             (_grpClass)
-		case _teamLight:   { _grpInfo set [3, "teamL"];  _grpInfo set [4, _teamLight];   _grpInfo set [5, 0] };
-		case _teamMedium:  { _grpInfo set [3, "teamM"];  _grpInfo set [4, _teamMedium];  _grpInfo set [5, 0] };
-		case _teamHeavy:   { _grpInfo set [3, "teamH"];  _grpInfo set [4, _teamHeavy];   _grpInfo set [5, 0] };
-		case _teamCustom1: { _grpInfo set [3, "teamC1"]; _grpInfo set [4, _teamCustom1]; _grpInfo set [5, 0] };
-		case _teamCustom2: { _grpInfo set [3, "teamC2"]; _grpInfo set [4, _teamCustom2]; _grpInfo set [5, 0] };
-		case _teamCustom3: { _grpInfo set [3, "teamC3"]; _grpInfo set [4, _teamCustom3]; _grpInfo set [5, 0] };
-		case _teamSniper:  { _grpInfo set [3, "teamS"];  _grpInfo set [4, _teamSniper];  _grpInfo set [5, 0] };
+		case _teamLight:   { _grpData set [3, "teamL"];  _grpData set [4, _teamLight];   _grpData set [5, 0] };
+		case _teamMedium:  { _grpData set [3, "teamM"];  _grpData set [4, _teamMedium];  _grpData set [5, 0] };
+		case _teamHeavy:   { _grpData set [3, "teamH"];  _grpData set [4, _teamHeavy];   _grpData set [5, 0] };
+		case _teamCustom1: { _grpData set [3, "teamC1"]; _grpData set [4, _teamCustom1]; _grpData set [5, 0] };
+		case _teamCustom2: { _grpData set [3, "teamC2"]; _grpData set [4, _teamCustom2]; _grpData set [5, 0] };
+		case _teamCustom3: { _grpData set [3, "teamC3"]; _grpData set [4, _teamCustom3]; _grpData set [5, 0] };
+		case _teamSniper:  { _grpData set [3, "teamS"];  _grpData set [4, _teamSniper];  _grpData set [5, 0] };
 		// Vehicle > Ground:
-		case _vehLight:    { _grpInfo set [3, "vehL"];   _grpInfo set [4, _vehLight];    _grpInfo set [5, 1] };
-		case _vehMedium:   { _grpInfo set [3, "vehM"];   _grpInfo set [4, _vehMedium];   _grpInfo set [5, 1] };
-		case _vehHeavy:    { _grpInfo set [3, "vehH"];   _grpInfo set [4, _vehHeavy];    _grpInfo set [5, 1] };
-		case _vehCustom1:  { _grpInfo set [3, "vehC1"];  _grpInfo set [4, _vehCustom1];  _grpInfo set [5, 1] };
-		case _vehCustom2:  { _grpInfo set [3, "vehC2"];  _grpInfo set [4, _vehCustom2];  _grpInfo set [5, 1] };
-		case _vehCustom3:  { _grpInfo set [3, "vehC3"];  _grpInfo set [4, _vehCustom3];  _grpInfo set [5, 1] };
+		case _vehLight:    { _grpData set [3, "vehL"];   _grpData set [4, _vehLight];    _grpData set [5, 1] };
+		case _vehMedium:   { _grpData set [3, "vehM"];   _grpData set [4, _vehMedium];   _grpData set [5, 1] };
+		case _vehHeavy:    { _grpData set [3, "vehH"];   _grpData set [4, _vehHeavy];    _grpData set [5, 1] };
+		case _vehCustom1:  { _grpData set [3, "vehC1"];  _grpData set [4, _vehCustom1];  _grpData set [5, 1] };
+		case _vehCustom2:  { _grpData set [3, "vehC2"];  _grpData set [4, _vehCustom2];  _grpData set [5, 1] };
+		case _vehCustom3:  { _grpData set [3, "vehC3"];  _grpData set [4, _vehCustom3];  _grpData set [5, 1] };
 		// Vehicle > Nautical:
-		case _nauLight:    { _grpInfo set [3, "nauL"];   _grpInfo set [4, _nauLight];    _grpInfo set [5, 2] };
-		case _nauMedium:   { _grpInfo set [3, "nauM"];   _grpInfo set [4, _nauMedium];   _grpInfo set [5, 2] };
-		case _nauHeavy:    { _grpInfo set [3, "nauH"];   _grpInfo set [4, _nauHeavy];    _grpInfo set [5, 2] };
+		case _nauLight:    { _grpData set [3, "nauL"];   _grpData set [4, _nauLight];    _grpData set [5, 2] };
+		case _nauMedium:   { _grpData set [3, "nauM"];   _grpData set [4, _nauMedium];   _grpData set [5, 2] };
+		case _nauHeavy:    { _grpData set [3, "nauH"];   _grpData set [4, _nauHeavy];    _grpData set [5, 2] };
 		// Vehicle > Air:
-		case _heliLight:   { _grpInfo set [3, "heliL"];  _grpInfo set [4, _heliLight];   _grpInfo set [5, 3] };
-		case _heliHeavy:   { _grpInfo set [3, "heliH"];  _grpInfo set [4, _heliHeavy];   _grpInfo set [5, 3] };
+		case _heliLight:   { _grpData set [3, "heliL"];  _grpData set [4, _heliLight];   _grpData set [5, 3] };
+		case _heliMedium:  { _grpData set [3, "heliM"];  _grpData set [4, _heliMedium];  _grpData set [5, 3] };
+		case _heliHeavy:   { _grpData set [3, "heliH"];  _grpData set [4, _heliHeavy];   _grpData set [5, 3] };
 
 		// Important: Despite for vehicles is easy to know if they are part of marines ("nau..."), for people it's not coz what defines whether units are marines is their spawn-point
-		// and here CSWR still doesn't know where the group will spawn. The same occurs with paratroopers. That's why both features are not stored in _grpInfo.
+		// and here CSWR still doesn't know where the group will spawn. The same occurs with paratroopers. That's why both features are not stored in _grpData.
 	};
 	
 	// STEP 2/3 > CHECK GROUP-TYPE CLASSNAMES QUALITY ----------------------------------------------------------------
 	// Escape > It warning the editor if they register a helicopter classname in a group of soldier classnames, for example:
-	if !([_tag, _grpClassnames, _grpInfo # 5, (_grpInfo # 5) isNotEqualTo 0] call THY_fnc_CSWR_is_valid_classnames_type) exitWith {
+	if !([_tag, _grpClassnames, _grpData # 5, (_grpData # 5) isNotEqualTo 0] call THY_fnc_CSWR_is_valid_classnames_type) exitWith {
 		// Prepare to return:
-		_grpInfo = [];
+		_grpData = [];
 		// Return:
-		_grpInfo;
+		_grpData;
 	};
 	
 	// STEP 3/3 > GROUP-TYPE AND GROUP-CLASS RULES -------------------------------------------------------------------
 	// If a group-type (people and vehicle) needs to respect some rule about itself, put here down below!
 	// Escape > The sniper team has more units than the limit, abort:
-	if ( (_grpInfo # 3) isEqualTo "teamS" && (count _grpClassnames) > 2 ) then {
+	if ( (_grpData # 3) isEqualTo "teamS" && (count _grpClassnames) > 2 ) then {
 		// Warning:
-		systemChat format ["%1 DESTINATION > WATCH > %2 SNIPER group CANNOT have more than 2 units! The group WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 DESTINATION > WATCH > %2 SNIPER group CANNOT have more than 2 units! The group WON'T SPAWN! Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _tag]; sleep 5;
 		// Prepare to return:
-		_grpInfo = [];
+		_grpData = [];
 	};
 	// Return:
-	_grpInfo;
+	_grpData;
 };
 
 
-THY_fnc_CSWR_group_formation = {
+THY_fnc_CSWR_grp_form = {
 	// This function applies a formation to the group. Before, the formation has been validated through another function: THY_fnc_CSWR_is_valid_formation.
 	// Returns nothing.
 
-	params ["_grpInfo"];
+	params ["_grpData"];
 	private ["_grp", "_form"];
 
 	// Declarations:
-	_grp  = _grpInfo # 2;
-	_form = _grpInfo # 7;
+	_grp  = _grpData # 2;
+	_form = _grpData # 7;
 	// Escape:
 	if ( _form isEqualTo "" ) exitWith {};
 	// Custom formation:
@@ -1482,36 +1498,36 @@ THY_fnc_CSWR_group_formation = {
 };
 
 
-THY_fnc_CSWR_group_join_to_survive = {
-	// This function tries to find options and, if one is found, it drives the group to join in another one.
+THY_fnc_CSWR_grp_join_to_survive = {
+	// This function tries to find options for a crew with no vehicle and, if something is found, it drives the group to join in another group.
 	// Returns nothing.
-
-	params ["_tag", "_survivors", "_toJoin", "_dis", "_tryLimit", "_hasPunish", "_isNauSurvivors"];
-	private ["_grps", "_arrayOne", "_arrayTwo", "_freeSeats", "_rescuers", "_timeOut", "_veh", "_wait"];
+	
+	params ["_tag", "_grpSurvivors", "_toJoin", "_dis", "_tryLimit", "_hasPunish", "_isNauSurvivors", "_shouldIncludePlayers"];
+	private ["_grps", "_arrayOne", "_arrayTwo", "_freeSeats", "_grpRescuers", "_t", "_veh", "_unitsToCheck", "_wait"];
 
 	// Escape:
-	if ( isNull _survivors || !alive (leader _survivors) ) exitWith {};
+	if ( isNull _grpSurvivors || !alive (leader _grpSurvivors) ) exitWith {};
 	// Initial values:
-	_grps      = [];
-	_arrayOne  = [];
-	_arrayTwo  = [];
-	_freeSeats = 0;
-	_rescuers  = grpNull;
-	_timeOut   = nil;
-	_veh       = objNull;
+	_grps        = [];
+	_arrayOne    = [];
+	_arrayTwo    = [];
+	_freeSeats   = 0;
+	_grpRescuers = grpNull;
+	_t           = nil;
+	_veh         = objNull;
 	// Declarations:
-	_wait      = 10;
+	_unitsToCheck = if !_shouldIncludePlayers then { allUnits - allPlayers } else { allUnits };
+	_wait         = 10;
 	// Delete their waypoint(s):
-	for "_i" from ((count waypoints _survivors) - 1) to 1 step -1 do { deleteWaypoint [_survivors, _i]; sleep 0.2 };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).  // Nov/2024, forEachReversed fixes that too!
-
+	for "_i" from ((count waypoints _grpSurvivors) - 1) to 1 step -1 do { deleteWaypoint [_grpSurvivors, _i]; sleep 0.2 };  // waypoints get immediately re-indexed when one gets deleted, delete them from last to first. Never delete index 0. Deleting index 0 causes oddities in group movement during the game logic. Index 0 of a unit is its spawn point or current point, so delete it brings weird movements or waypoint loses (by Larrow).  // Nov/2024, forEachReversed fixes that too!
 	// Trying to find some help:
-	while { !isNull _survivors && _tryLimit > 0 } do {
+	while { !isNull _grpSurvivors && _tryLimit > 0 } do {
 		// Declarations:
-		_grps = (allUnits - allPlayers) select {
+		_grps = _unitsToCheck select {
 			// Any ally, except helicopters and units swimming:
-			side _x isEqualTo (side (leader _survivors)) &&
-			_x isNotEqualTo (leader _survivors) &&
-			_x distance (leader _survivors) <= _dis &&
+			side _x isEqualTo (side (leader _grpSurvivors)) &&
+			_x isNotEqualTo (leader _grpSurvivors) &&
+			_x distance (leader _grpSurvivors) <= _dis &&
 			_x isEqualTo (leader (group _x)) &&
 			alive _x &&
 			!(vehicle _x isKindOf "helicopter");
@@ -1537,7 +1553,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 			// If a rescuer vehicle is an option, and the closest one is exactly a vehile:
 			if ( _toJoin in [0, 2, 3] && !isNull objectParent (_grps # 0) ) then {
 				// Check available seats:
-				_freeSeats = vehicle leader (_grps # 0) emptyPositions "";  // returns a number.
+				_freeSeats = vehicle leader (_grps # 0) emptyPositions "";  // returns a number of all ("") positions free.
 				// If has NO the minimum seats available:
 				if ( _freeSeats < 2 ) then {
 					// If the second closest rescuer (if it exists) is by foot, so delete the index 0 (vehicle register) and keep going, otherwise finish the search:
@@ -1545,10 +1561,10 @@ THY_fnc_CSWR_group_join_to_survive = {
 				};
 			};
 			// Internal declarations:
-			_rescuers = group (_grps # 0);
-			_timeOut  = time + 300;  // 5min
+			_grpRescuers = group (_grps # 0);
+			_t  = time + 300;  // 5min
 			// Make the rescuers wait the survivors without loose their waypoint:
-			doStop units _rescuers;
+			doStop units _grpRescuers;
 			// Debug:
 			if CSWR_isOnDebug then {
 				["%1 SURVIVORS > %2 survivors crew found %3 rescuers: %4 %5",
@@ -1561,75 +1577,75 @@ THY_fnc_CSWR_group_join_to_survive = {
 			// Body pos:
 			if ( _tag isNotEqualTo "CIV" ) then {
 				// Rescuer leader body pos to wait survivors:
-				if ( isNull objectParent leader _rescuers) then { leader _rescuers setUnitPos "MIDDLE" };
+				if ( isNull objectParent leader _grpRescuers) then { leader _grpRescuers setUnitPos "MIDDLE" };
 			};
 			// For Non-Nautical survivors + Nautical survivors if rescuers by foot:
-			if ( !_isNauSurvivors || { _isNauSurvivors && isNull objectParent leader _rescuers } ) then {
+			if ( !_isNauSurvivors || { _isNauSurvivors && isNull objectParent leader _grpRescuers } ) then {
 				// Restore survivor leader body pos:
-				leader _survivors setUnitPos "UP";
+				leader _grpSurvivors setUnitPos "UP";
 				// Forcing the AI to go faster but still in combat if needed:
-				[_survivors, "BE_CHAOS", false, false] call THY_fnc_CSWR_group_behavior;
-				[_survivors, "BE_CHAOS", false, false] call THY_fnc_CSWR_unit_behavior;
+				[_grpSurvivors, "BE_CHAOS", false, false] call THY_fnc_CSWR_grp_behavior;
+				[_grpSurvivors, "BE_CHAOS", false, false] call THY_fnc_CSWR_unit_behavior;
 				// Go to the rescuer leader pos:
-				units _survivors doMove getPosATL (leader _rescuers);
+				units _grpSurvivors doMove getPosATL (leader _grpRescuers);
 			// For Nautical survivors for rescuers by boat:
 			} else {
-				[_survivors, "BE_COMBAT", false, false] call THY_fnc_CSWR_group_behavior;
-				[_survivors, "BE_COMBAT", false, false] call THY_fnc_CSWR_unit_behavior;
-				_survivors setFormation "VEE";  // Force all members of a huge group leave the water, but still leader almost in water to be pick up by vehicle if the case!
+				[_grpSurvivors, "BE_COMBAT", false, false] call THY_fnc_CSWR_grp_behavior;
+				[_grpSurvivors, "BE_COMBAT", false, false] call THY_fnc_CSWR_unit_behavior;
+				_grpSurvivors setFormation "VEE";  // Force all members of a huge group leave the water, but still leader almost in water to be pick up by vehicle if the case!
 				// Critical: it below doesn't work well enough. For nautical vehicles, it's better the survivors wait for than rescuers be super close:
-				//units _survivors doMove getPosASLW (leader _rescuers);
+				//units _grpSurvivors doMove getPosASLW (leader _grpRescuers);
 			};
 			// If rescuers by vehicle, make the their vehicle gets closer too:
 			// Critical: it's mandatory if you wanna make nautical rescue works!
-			if ( !isNull objectParent leader _rescuers ) then {
+			if ( !isNull objectParent leader _grpRescuers ) then {
 				if _isNauSurvivors then { _wait = 5 };  // Critical! Never bigger than 5! 
-				units _rescuers doMove (getPosATL (leader _survivors));  // WIP: if the rescuer vehicle is in HOLD destination???
+				units _grpRescuers doMove (getPosATL (leader _grpSurvivors));  // WIP: if the rescuer vehicle is in HOLD destination???
 			};
 			// Wait until the survivors get closer the rescuers:
 			waitUntil {
 				// Breather for the next loop check:
 				sleep _wait;
 				// Conditions to break the loop:
-				isNull _survivors || isNull _rescuers || leader _survivors distance leader _rescuers < 50 || time > _timeOut;
+				isNull _grpSurvivors || isNull _grpRescuers || leader _grpSurvivors distance leader _grpRescuers < 50 || time > _t;
 			};
 			// For Non-Nautical survivors + Nautical survivors if rescuers by foot:
 			// Updating the rescue leader pos in case the rescuer change too much their pos!
-			if ( !_isNauSurvivors || { _isNauSurvivors && isNull objectParent leader _rescuers } ) then {
-				units _survivors doMove getPosATL (leader _rescuers);
+			if ( !_isNauSurvivors || { _isNauSurvivors && isNull objectParent leader _grpRescuers } ) then {
+				units _grpSurvivors doMove getPosATL (leader _grpRescuers);
 			} else {
 				// Critical: it below doesn't work well enough. For nautical vehicles, it's better the survivors wait for than rescuers be super close:
-				//units _survivors doMove getPosASLW (leader _rescuers);
+				//units _grpSurvivors doMove getPosASLW (leader _grpRescuers);
 			};
 			// Wait until the survivors arrival:
 			waitUntil {
 				// Breather for the next loop check:
 				sleep _wait;
 				// Conditions to break the loop:
-				isNull _survivors || isNull _rescuers || leader _survivors distance leader _rescuers < 40;
+				isNull _grpSurvivors || isNull _grpRescuers || leader _grpSurvivors distance leader _grpRescuers < 40;
 			};
 			// Both leaders are alive:
-			if ( alive leader _survivors && alive leader _rescuers ) then {
+			if ( alive leader _grpSurvivors && alive leader _grpRescuers ) then {
 				// They are close enough:
-				if ( leader _survivors distance leader _rescuers <= 40 ) then {
+				if ( leader _grpSurvivors distance leader _grpRescuers <= 40 ) then {
 					// Rescuer leader has a vehicle:
-					if ( !isNull objectParent leader _rescuers ) then {
+					if ( !isNull objectParent leader _grpRescuers ) then {
 						// Move to the nautical/amphibious vehicle  pos:
 						if _isNauSurvivors then { 
-							leader _survivors setUnitPos "UP";
-							units _survivors doMove getPosASLW (leader _rescuers);
+							leader _grpSurvivors setUnitPos "UP";
+							units _grpSurvivors doMove getPosASLW (leader _grpRescuers);
 						};
 						// Teleport the survivors to the free vehicle seats:
-						_veh = vehicle leader _rescuers;
-						{ _x moveInAny _veh; sleep 1 } forEach units _survivors;
+						_veh = vehicle leader _grpRescuers;
+						{ _x moveInAny _veh; sleep 1 } forEach units _grpSurvivors;
 						// Survivors still out of vehicle must be deleted:
-						{ if ( isNull objectParent _x ) then { sleep 1; deleteVehicle _x } } forEach units _survivors;
+						{ if ( isNull objectParent _x ) then { sleep 1; deleteVehicle _x } } forEach units _grpSurvivors;
 						// Forcing the vehicle to go to its planned waypoint position:
 						// Critical: without this, amphibious vehicle doesn't leave the rescue position, staying stuck over there - WEIRD BEHAVIOR)!
-						if ( waypoints _rescuers isNotEqualTo [] ) then { driver (vehicle leader _rescuers) doMove (waypointPosition [_rescuers, 1]) };
+						if ( waypoints _grpRescuers isNotEqualTo [] ) then { driver (vehicle leader _grpRescuers) doMove (waypointPosition [_grpRescuers, 1]) };
 					};
 					// Make the crew join in the first found ally group:
-					(units _survivors) joinSilent _rescuers;
+					(units _grpSurvivors) joinSilent _grpRescuers;
 					// Debug:
 					if CSWR_isOnDebug then {
 						systemChat format ["%1 SURVIVORS > A %2 crew SURVIVED their vehicle lost and successfully JOINED in a rescuer group.",
@@ -1639,9 +1655,9 @@ THY_fnc_CSWR_group_join_to_survive = {
 				} else { _tryLimit = 0/*; break */ };
 			};
 			// Restore the rescuer leader body pos if they are not in a vehicle:
-			if ( isNull objectParent leader _rescuers ) then { leader _rescuers setUnitPos "UP" };
+			if ( isNull objectParent leader _grpRescuers ) then { leader _grpRescuers setUnitPos "UP" };
 			// Restore the rescuer group default behavior:
-			units _rescuers doFollow leader _rescuers;
+			units _grpRescuers doFollow leader _grpRescuers;
 		} else {
 			// Control:
 			_tryLimit = _tryLimit - 1;
@@ -1650,7 +1666,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 		};
 	};  // While-loop ends.
 	// Otherwise, if there's NO hope:
-	if ( !isNull _survivors ) then {
+	if ( !isNull _grpSurvivors ) then {
 		// Debug:
 		if CSWR_isOnDebug then {
 			["%1 SURVIVORS > A %2 has finished their search for rescuers and FAILED.",
@@ -1658,11 +1674,11 @@ THY_fnc_CSWR_group_join_to_survive = {
 		};
 		// Action:
 		if ( _tryLimit isEqualTo 0 && _hasPunish ) then {
-			{ _x setDamage 1 } forEach units _survivors;
+			{ _x setDamage 1 } forEach units _grpSurvivors;
 		} else {
 			// Tweak the behavior to last standing:
-			[_survivors, "BE_AWARE", false, false] call THY_fnc_CSWR_group_behavior;
-			[_survivors, "BE_AWARE", false, false] call THY_fnc_CSWR_unit_behavior;
+			[_grpSurvivors, "BE_AWARE", false, false] call THY_fnc_CSWR_grp_behavior;
+			[_grpSurvivors, "BE_AWARE", false, false] call THY_fnc_CSWR_unit_behavior;
 		};
 	};
 	// Return:
@@ -1670,7 +1686,7 @@ THY_fnc_CSWR_group_join_to_survive = {
 };
 
 
-THY_fnc_CSWR_group_behavior = {
+THY_fnc_CSWR_grp_behavior = {
 	// This function defines the group behavior only. This always will run first than THY_fnc_CSWR_unit_behavior.
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
@@ -1685,7 +1701,7 @@ THY_fnc_CSWR_group_behavior = {
 	// Errors handling:
 	if ( side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) then {
 		// warning message:
-		systemChat format ["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 > A CIV group/vehicle tries to set its behavior as '%2', and civilians can behave only as '_be_SAFE', '_be_AWARE', and '_be_CHAOS'. Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _behavior]; sleep 3;
 		// Fixing:
 		_behavior = "BE_AWARE";
@@ -1727,7 +1743,7 @@ THY_fnc_CSWR_group_behavior = {
 			_grp setCombatMode "RED";  // Mandatory if the waypoint is "SAD" type (for helicopters/air crew). Never remove it!
 			_grp setSpeedMode "FULL";  // do not wait for any other units in formation.
 		};
-		default { systemChat format ["%1 %2 > THERE IS NO behavior called '%3'. Check the documentation and fix it in 'fn_CSWR_population.sqf' file.",
+		default { systemChat format ["%1 %2 > THERE IS NO behavior called '%3'. Check the documentation and fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, side (leader _grp), _behavior] };
 	};
 	// CPU breather
@@ -1738,7 +1754,7 @@ THY_fnc_CSWR_group_behavior = {
 
 
 THY_fnc_CSWR_unit_behavior = {
-	// This function defines the unit behavior inside their group. This always will run right after the THY_fnc_CSWR_group_behavior.
+	// This function defines the unit behavior inside their group. This always will run right after the THY_fnc_CSWR_grp_behavior.
 	// Native A3 AI behaviours: https://community.bistudio.com/wiki/AI_Behaviour / https://community.bistudio.com/wiki/Combat_Modes / https://community.bistudio.com/wiki/setSpeedMode
 	// Returns nothing.
 
@@ -1747,7 +1763,7 @@ THY_fnc_CSWR_unit_behavior = {
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
-	if (side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) exitWith {};  // the warning message is in THY_fnc_CSWR_group_behavior already ;)
+	if (side _grp isEqualTo CIVILIAN && _behavior in ["BE_COMBAT", "BE_STEALTH"] ) exitWith {};  // the warning message is in THY_fnc_CSWR_grp_behavior already ;)
 	// Declarations:
 	if _isHunting then { _behavior = "BE_CHAOS" };
 	{  // forEach units _grp;:
@@ -1896,6 +1912,20 @@ THY_fnc_CSWR_unit_skills = {
 			_x setSkill ["spotDistance", 1];  // as Heli Light is closer from the ground (flyInHeight), it's easier to spot the enemy than Heli Heavy.
 			_x setSkill ["courage", 0.9];
 		};
+		// If crewman of Heli Medium:
+		if ( _grpType isEqualTo "heliM" ) then {
+			// skills:
+			if ( _x isEqualTo leader _grp ) then {
+				_x setSkill ["commanding", 0.95];
+			};
+			/* if ( _x isEqualTo gunner (vehicle _x) ) then {
+				// reserved space.
+			} else {
+				// reserved space.
+			}; */
+			_x setSkill ["spotDistance", 0.95];  // as Heli Medium is further from the ground (flyInHeight), it's harder to spot the enemy than Heli Light
+			_x setSkill ["courage", 0.9];
+		};
 		// If crewman of Heli Heavy:
 		if ( _grpType isEqualTo "heliH" ) then {
 			// skills:
@@ -1907,7 +1937,7 @@ THY_fnc_CSWR_unit_skills = {
 			} else {
 				// reserved space.
 			}; */
-			_x setSkill ["spotDistance", 0.85];  // as Heli Heavy is further from the ground (flyInHeight), it's harder to spot the enemy than Heli Light
+			_x setSkill ["spotDistance", 0.90];  // as Heli Heavy is further from the ground (flyInHeight), it's harder to spot the enemy than Heli Light
 			_x setSkill ["courage", 0.9];
 		};
 		// CPU breather
@@ -2041,7 +2071,7 @@ THY_fnc_CSWR_gear_container_transfer = {
 			// Replace for the new uniform:
 			_unit forceAddUniform _newContainer;
 			// if there is one or more items from old uniform, repack them to the new one:
-			if ( count _content > 0 ) then { { _unit addItemToUniform _x } forEach _content };
+			if ( _content isNotEqualTo [] ) then { { _unit addItemToUniform _x } forEach _content };
 		};
 		case "backpack": {
 			// Old backpack content:
@@ -2051,7 +2081,7 @@ THY_fnc_CSWR_gear_container_transfer = {
 			// Replace for the new backpack:
 			_unit addBackpack _newContainer;
 			// if there is one or more items from old backpack, repack them to the new one:
-			if ( count _content > 0 ) then { { _unit addItemToBackpack _x } forEach _content };
+			if ( _content isNotEqualTo [] ) then { { _unit addItemToBackpack _x } forEach _content };
 		};
 		case "vest": {
 			// Old vest content:
@@ -2061,7 +2091,7 @@ THY_fnc_CSWR_gear_container_transfer = {
 			// Replace for the new vest:
 			_unit addVest _newContainer;
 			// if there is one or more items from old vest, repack them to the new one:
-			if ( count _content > 0 ) then { { _unit addItemToVest _x } forEach _content };
+			if ( _content isNotEqualTo [] ) then { { _unit addItemToVest _x } forEach _content };
 		};
 	};
 	// CPU breather:
@@ -2126,7 +2156,7 @@ THY_fnc_CSWR_gear_facewear = {
 	private ["_oldGear"];
 
 	// Escape > Air Crew never has its goggles customized:
-	if (_grpType in ["heliL", "heliH"]) exitWith {};
+	if (_grpType in ["heliL", "heliM", "heliH"]) exitWith {};
 	// Declarations:
 	_oldGear = goggles _unit;  // if empty, returns "".
 	// If editor is NOT trying to remove the gear by force:
@@ -2169,7 +2199,7 @@ THY_fnc_CSWR_gear_helmet = {
 	private ["_oldGear"];
 
 	// Escape > Air Crew never has its helmet customized:
-	if (_grpType in ["heliL", "heliH"]) exitWith {};
+	if (_grpType in ["heliL", "heliM", "heliH"]) exitWith {};
 	// Declarations:
 	_oldGear = headgear _unit;  // if empty, returns "".
 	// If editor is NOT trying to remove the gear by force:
@@ -2215,18 +2245,44 @@ THY_fnc_CSWR_gear_uniform = {
 	_oldGear = uniform _unit;  // if empty, returns "".
 	// Editor wants to randomize the uniforms:
 	if ( _newGear isEqualTo "RANDOM" ) then {
-		// For Civilian:
-		if ( _tag isEqualTo "CIV" ) then {
+		switch _tag do {
 			// Transfer the old gear content to the new one:
-			["uniform", _unit, selectRandom CSWR_civOutfits] call THY_fnc_CSWR_gear_container_transfer;
-		} else {
-			// Warning:
-			if ( _unit isEqualTo (leader (group _unit))) then {
-				systemChat format ["%1 LOADOUT > You're trying to RANDOMIZE the UNIFORM for %2 units, but ONLY CIV side can use 'RANDOM' command in its loadout. A %2 group has been deleted. Fix this in 'fn_CSWR_loadout.sqf' file.",
-				CSWR_txtWarnHeader, _tag]; sleep 5;
+			case "BLU": {
+				if ( CSWR_bluUniformsToRandom isNotEqualTo [] ) then {
+					["uniform", _unit, selectRandom CSWR_bluUniformsToRandom] call THY_fnc_CSWR_gear_container_transfer;
+				} else {
+					// Warning:
+					systemChat format ["%1 LOADOUT > You're trying to randomize the %2 UNIFORMS but 'CSWR_bluUniformsToRandom' in Management file is empty. Fix it!",
+					CSWR_txtWarnHeader, _tag]; sleep 5;
+				};
 			};
-			// Delete the unit:
-			deleteVehicle _unit;
+			case "OPF": {
+				if ( CSWR_opfUniformsToRandom isNotEqualTo [] ) then {
+					["uniform", _unit, selectRandom CSWR_opfUniformsToRandom] call THY_fnc_CSWR_gear_container_transfer;
+				} else {
+					// Warning:
+					systemChat format ["%1 LOADOUT > You're trying to randomize the %2 UNIFORMS but 'CSWR_opfUniformsToRandom' in Management file is empty. Fix it!",
+					CSWR_txtWarnHeader, _tag]; sleep 5;
+				};
+			};
+			case "IND": {
+				if ( CSWR_indUniformsToRandom isNotEqualTo [] ) then {
+					["uniform", _unit, selectRandom CSWR_indUniformsToRandom] call THY_fnc_CSWR_gear_container_transfer;
+				} else {
+					// Warning:
+					systemChat format ["%1 LOADOUT > You're trying to randomize the %2 UNIFORMS but 'CSWR_indUniformsToRandom' in Management file is empty. Fix it!",
+					CSWR_txtWarnHeader, _tag]; sleep 5;
+				};
+			};
+			case "CIV": {
+				if ( CSWR_civUniformsToRandom isNotEqualTo [] ) then {
+					["uniform", _unit, selectRandom CSWR_civUniformsToRandom] call THY_fnc_CSWR_gear_container_transfer;
+				} else {
+					// Warning:
+					systemChat format ["%1 LOADOUT > You're trying to randomize the %2 UNIFORMS but 'CSWR_civUniformsToRandom' in Management file is empty. Fix it!",
+					CSWR_txtWarnHeader, _tag]; sleep 5;
+				};
+			};
 		};
 	} else {
 		// If editor is NOT trying to remove the gear by force:
@@ -2245,9 +2301,9 @@ THY_fnc_CSWR_gear_uniform = {
 					// Check if the unit has no gear yet (inherited a possible editor's choice from other lower group class):
 					if ( _oldGear isEqualTo "" ) then {
 						// Add the generic gear:
-						_unit forceAddUniform (selectRandom CSWR_civOutfits);
+						_unit forceAddUniform (selectRandom CSWR_civUniformsToRandom);
 						// Warning:
-						systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.",
+						systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using UNIFORM but in 'fn_CSWR_3_loadout.sqf' you didn't set a UNIFORM for them or, at least, for the group class they inherit the UNIFORM. For script integrity, CSWR sets a generic one.",
 						CSWR_txtWarnHeader, _tag, group _unit, _grpType]; sleep 5;
 					};
 				};
@@ -2300,7 +2356,7 @@ THY_fnc_CSWR_gear_vest = {
 					// Add the generic gear:
 					_unit addVest _genericGear;
 					// Warning:
-					systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.",
+					systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using VEST but in 'fn_CSWR_3_loadout.sqf' you didn't set a VEST for them or, at least, for the group class they inherit the VEST. For script integrity, CSWR sets a generic one.",
 					CSWR_txtWarnHeader, _tag, group _unit, _grpType]; sleep 5;
 				};
 			};
@@ -2349,7 +2405,7 @@ THY_fnc_CSWR_gear_backpack = {
 	_oldGear = backpack _unit;  // if empty, returns "".
 	_genericGear = "B_Carryall_blk";
 	// If editor is NOT trying to remove the gear by force:
-	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroopers".
+	if ( _newGear isNotEqualTo "REMOVED" ) then {  // IMPORTANT: if you need to stop the editor to force removal, create rules in loadout functions, as e.g. "Infantry basic", or "Paratroops".
 		// If the usage is mandatory:
 		if _isMandatory then {
 			// Any crew unit never take a backpack:
@@ -2368,7 +2424,7 @@ THY_fnc_CSWR_gear_backpack = {
 					// Add the generic gear:
 					_unit addBackpack _genericGear;
 					// Warning:
-					systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.",
+					systemChat format ["%1 LOADOUT > %2 '%3' members ('%4' group type) should be using BACKPACK but in 'fn_CSWR_3_loadout.sqf' you didn't set a BACKPACK for them or, at least, for the group class they inherit the BACKPACK. For script integrity, CSWR sets a generic one.",
 					CSWR_txtWarnHeader, _tag, group _unit, _grpType]; sleep 5;
 				};
 			};
@@ -2449,7 +2505,7 @@ THY_fnc_CSWR_weaponry_sniper = {
 	};
 	// WIP - Check the mag compability with rifle:
 		// If not compatibl  warning message:
-		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_loadout.sqf' file.",
+		// ["%1 LOADOUT > %2 Sniper groups got rifle and its ammo compability issues. Check it out in 'fn_CSWR_3_loadout.sqf' file.",
 		// CSWR_txtWarnHeader, _tag] call BIS_fnc_error; sleep 5;
 	// Muzzle:
 	if ( _newMuzzle isNotEqualTo "REMOVED" ) then {
@@ -2508,7 +2564,7 @@ THY_fnc_CSWR_weaponry_sniper = {
 };
 
 
-THY_fnc_CSWR_loadout_infantry_basicGroup = {
+THY_fnc_CSWR_loadout_infantry_basicGrp = {
 	// This function organizes the basic of all infantry classes unit loadout, including: heavy crew, sniper groups, and paratroopers. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
 
@@ -2656,7 +2712,7 @@ THY_fnc_CSWR_loadout_paratroops = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > A %2 PARATROOP group member was deleted coz a mandatory gear (VEST): 1) vest was REMOVED; or 2) vest WASN'T DECLARED in their loadout, nor in Infantry loadout; or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		systemChat format ["%1 LOADOUT > A %2 PARATROOP group member was deleted coz a mandatory gear (VEST): 1) vest was REMOVED; or 2) vest WASN'T DECLARED in their loadout, nor in Infantry loadout; or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_3_loadout.sqf' file.",
 		CSWR_txtWarnHeader, _tag];
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
@@ -2752,7 +2808,7 @@ THY_fnc_CSWR_loadout_heavyCrew = {
 };
 
 
-THY_fnc_CSWR_loadout_infantry_sniperGroup = {
+THY_fnc_CSWR_loadout_infantry_sniperGrp = {
 	// This function organizes exclusively the infantry sniper group unit loadout. The rules exceptions must be applied in this function, and not in the gear functions.
 	// Returns nothing.
 
@@ -2764,28 +2820,28 @@ THY_fnc_CSWR_loadout_infantry_sniperGroup = {
 	// Escape > If editor's trying to remove a mandatory gear, or no new gear was declared and the unit has NO an old gear to inherit:
 	if ( _newMag isEqualTo "REMOVED" || {_newMag isEqualTo "" && primaryWeaponMagazine _unit isEqualTo ""} ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY AMMO) WAS REMOVED or it WASN'T DECLARED in its loadout or in its inherited loadout. Check the %2 section in 'fn_CSWR_3_loadout.sqf' file.",
 		CSWR_txtWarnHeader, _tag];
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newRifle isEqualTo "REMOVED" || {_newRifle isEqualTo "" && primaryWeapon _unit isEqualTo ""} ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (PRIMARY WEAPON) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no primary weapon. Check the %2 section in 'fn_CSWR_3_loadout.sqf' file.",
 		CSWR_txtWarnHeader, _tag];
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newVest isEqualTo "REMOVED" || {_newVest isEqualTo "" && vest _unit isEqualTo ""} ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (VEST) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no vest. Check the %2 section in 'fn_CSWR_3_loadout.sqf' file.",
 		CSWR_txtWarnHeader, _tag];
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
 	};
 	if ( _newBinoc isEqualTo "REMOVED" || {_newBinoc isEqualTo "" && binocular _unit isEqualTo ""} ) exitWith {
 		// Warning:
-		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_loadout.sqf' file.",
+		systemChat format ["%1 LOADOUT > A %2 SNIPER GROUP was deleted coz a mandatory gear (BINOCULARS) 1) WAS REMOVED or 2) it WASN'T DECLARED in its loadout or in its inherited loadout, or even 3) the original unit has no binoculars. Check the %2 section in 'fn_CSWR_3_loadout.sqf' file.",
 		CSWR_txtWarnHeader, _tag];
 		// Remove the unit as pushiment:
 		deleteVehicle _unit;
@@ -2888,7 +2944,7 @@ THY_fnc_CSWR_language_default = {
 	if ( _lang isNotEqualTo "" ) exitWith {
 		// Warning:
 		if CSWR_isOnDebug then {
-			systemChat format ["%1 LANGUAGE > For %2, you're using a unknown language ('%3'). Fix it, using one of those listed as options in 'fn_CSWR_management.sqf' file.",
+			systemChat format ["%1 LANGUAGE > For %2, you're using a unknown language ('%3'). Fix it, using one of those listed as options in 'fn_CSWR_1_management.sqf' file.",
 			CSWR_txtWarnHeader, _tag, _lang];
 		};
 		// Prepare to return:
@@ -2922,12 +2978,14 @@ THY_fnc_CSWR_identity_selector = {
 	// Initial values:
 	_faces = "";
 	_lang  = "";
+	_array = [];
 	// Declarations:
 	switch _tag do {
 		case "BLU": { _faces = CSWR_facesFromRegionBLU; _lang = CSWR_languageBLU };
 		case "OPF": { _faces = CSWR_facesFromRegionOPF; _lang = CSWR_languageOPF };
 		case "IND": { _faces = CSWR_facesFromRegionIND; _lang = CSWR_languageIND };
-		case "CIV": { _faces = CSWR_facesFromRegionCIV; _lang = CSWR_languageCIV };
+		// For Civilian, it's removing all camo face paint automatically:
+		case "CIV": { _faces = CSWR_facesFromRegionCIV select { _array = _x splitString "_"; (_array # 0) isNotEqualTo "CamoHead" }; _lang = CSWR_languageCIV };
 	};
 	// Applying custom faces and language:
 	if ( _faces isNotEqualTo [] ) then { { _x setFace (selectRandom _faces) } forEach units _grp };
@@ -2937,8 +2995,26 @@ THY_fnc_CSWR_identity_selector = {
 };
 
 
+THY_fnc_CSWR_grp_callSign_selector = {
+	// This function gives a CallSign for specific teams that need to, for example, use CommandChats or radio.
+	// Returns nothing.
+
+	params ["_grp", "_destType", "_isAirCrew", "_isTransp"];
+	private ["_n"];
+
+	// Escape:
+	if !_isTransp exitWith { true };
+	// Declarations:
+	_n = round random 99;
+	if ( _isAirCrew && _destType isEqualTo "MOVE_TRANSPORT" ) then { _grp setGroupId [format ["Air Transport Team %1", _n]] };
+	if ( _isAirCrew && _destType isEqualTo "MOVE_EXTRACTION" ) then { _grp setGroupId [ format ["Air Extraction Team %1", _n]] };
+	// Return:
+	true;
+};
+
+
 THY_fnc_CSWR_loadout_selector = {
-	// This function understands who is the group, their context, and what the main ROLE the group will perform in order to select the right loadout must be applied for each group member. Once the function calls the THY_fnc_CSWR_loadout.sqf, that file first will apply for everyone the infantry loadout, and then the others loadouts declared over it if the group features demand. In this way, CSWR can guarantee the mechanics of equipment inheritance for different types and specializations of groups.
+	// This function understands who is the group, their context, and what the main ROLE the group will perform in order to select the right loadout must be applied for each group member. Once the function calls the THY_fnc_CSWR_3_loadout.sqf, that file first will apply for everyone the infantry loadout, and then the others loadouts declared over it if the group features demand. In this way, CSWR can guarantee the mechanics of equipment inheritance for different types and specializations of groups.
 	// Returns nothing.
 
 	params ["_tag", "_grp", "_grpType", "_veh", "_isVeh", "_isAirCrew", "_isNauCrew", "_isMarine", "_isPara"];
@@ -2954,29 +3030,29 @@ THY_fnc_CSWR_loadout_selector = {
 	if ( !_isAirCrew && !_isNauCrew && !_isMarine && !_isPara ) then {
 		// By foot and not-heavy-ground-vehicle:
 		if !(_vehType in CSWR_vehGroundHeavy) then {
-			{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+			{ [_tag, _x, _grpType, ""] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;
 		} else {
 			// heavy Ground vehicle:
-			{ [_tag, _x, _grpType, "specHeavyCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+			{ [_tag, _x, _grpType, "specHeavyCrew"] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;
 		};
 	} else {
 		// ROLE > MARINE -----------------------------------------------------------------------------------
 		if ( !_isPara && _isMarine ) then {
 			// By foot and nautical and not-heavy-ground-vehicle with amphibious ability:
 			if !(_vehType in CSWR_vehGroundHeavy) then {
-				{ [_tag, _x, _grpType, "specMarine"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				{ [_tag, _x, _grpType, "specMarine"] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;
 			// Marines with heavy ground vehicle with amphibious ability:
 			} else {
-				{ [_tag, _x, _grpType, "specMarineHeavyCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				{ [_tag, _x, _grpType, "specMarineHeavyCrew"] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;
 			};
 		} else {
 			// ROLE > PARATROOP --------------------------------------------------------------------------
 			// By foot and by not-ground-heavy-vehicle in paradrop:
 			if !(_vehType in CSWR_vehGroundHeavy) then {
-				{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;
+				{ [_tag, _x, _grpType, "specPara"] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;
 			// Heavy Ground Vehicle in paradrop:
 			} else {
-				{ [_tag, _x, _grpType, "specParaHeavyCrew"] call THY_fnc_CSWR_loadout; sleep _wait } forEach units _grp;	
+				{ [_tag, _x, _grpType, "specParaHeavyCrew"] call THY_fnc_CSWR_3_loadout; sleep _wait } forEach units _grp;	
 			};
 		};
 	};
@@ -2986,16 +3062,17 @@ THY_fnc_CSWR_loadout_selector = {
 
 
 THY_fnc_CSWR_base_service_station = {
+	// It's a new thread!
 	// This function provides rearming, refueling and repairing for AI vehicles, and health for crewmen.
 	// Returns nothing, but open a new thread.
 
-	params ["_hasServiceRTB", "_spwns", "_tag", "_grpType", "_grp", "_veh", "_isAmphibious", "_isAirCrew", "_isNauCrew", "_destType", "_destSector", "_behavior"];
-	private ["_time", "_wait"];
+	params ["_hasServiceRTB", "_spwns", "_tag", "_grpType", "_grp", "_veh", "_isAmphib", "_isAirCrew", "_isNauCrew", "_destType", "_destSector", "_behavior"];
+	private ["_t", "_wait"];
 
 	// Escape:
 	if ( isNull _grp || !alive _veh ) exitWith {};
 	// Initial values:
-	_time = 0;
+	_t = 0;
 	// Declarations:
 	_wait = 30;
 	// Main functionality:
@@ -3026,7 +3103,7 @@ THY_fnc_CSWR_base_service_station = {
 	// If helicopter:
 	if _isAirCrew then {
 		// Dramatization breather:
-		_time = time + (selectRandom CSWR_heliTakeOffDelay); waitUntil { sleep 10; time > _time };
+		_t = time + (selectRandom CSWR_heliTakeOffDelay); waitUntil { sleep 10; time > _t };
 		// Debug:
 		if CSWR_isOnDebug then { systemChat format ["%1 HELICOPTER > After maintenance services, %2 '%3' helicopter's BACK TO DUTY!",
 		CSWR_txtDebugHeader, _tag, _grp] };
@@ -3035,7 +3112,7 @@ THY_fnc_CSWR_base_service_station = {
 		// Reserved space.
 	};
 	// Return to duty (open a new thread):
-	[_spwns, _destType, _destSector, _tag, _grpType, _grp, _behavior, true, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB] spawn THY_fnc_CSWR_go;
+	["", _spwns, _destType, _destSector, _tag, _grpType, _grp, _behavior, true, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, grpNull] spawn THY_fnc_CSWR_go;
 	// Return:
 	true;
 };
@@ -3043,10 +3120,10 @@ THY_fnc_CSWR_base_service_station = {
 
 THY_fnc_CSWR_spawn_type_checker = {
 	// This function checks deeper each spawn-points that couldn't be checked by THY_fnc_CSWR_add_validation function. This function here flags the group-type is allowed to spawn through a specific spawn-point-type.
-	// Important: where each group-type can spawn is defined in fn_CSWR_management.sqf and which classname represents which group-type is in THY_fnc_CSWR_group_info.
+	// Important: where each group-type can spawn is defined in fn_CSWR_1_management.sqf and which classname represents which group-type is in THY_fnc_CSWR_grp_data.
 	// Returns _isValid. Bool.
 
-	params ["_tag", "_spwns", "_grpType", "_isPeople", "_isVeh", "_isAmphibious", "_isNauCrew", "_isAirCrew"];
+	params ["_tag", "_spwns", "_grpType", "_isPeople", "_isVeh", "_isAmphib", "_isNauCrew", "_isAirCrew"];
 	private ["_isValid", "_allowed"];
 
 	// Initial values:
@@ -3061,40 +3138,40 @@ THY_fnc_CSWR_spawn_type_checker = {
 			// Escape > if non-people-group, abort:
 			if !_isPeople exitWith {
 				if ( !_isNauCrew && !_isAirCrew ) then {
-					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
 					if _isAirCrew then {
-						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 						CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				};
 			};
 			// For People:
-			_allowed = CSWR_groupTypesForSpwns;
+			_allowed = CSWR_grpTypesForSpwns;
 		};
 		// Blu > Spawn for vehicle
 		case CSWR_spawnsForVehicleBLU: {
 			// Escape > if not-ground-or-nautical-vehicle, abort:
 			if ( _isPeople || _isAirCrew ) exitWith {
 				if _isPeople then {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag];
 				} else {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag];
 				};
 				sleep 5;
 			};
 			// For Regular ground vehicle:
-			if ( !_isAmphibious && !_isNauCrew ) then { _allowed = CSWR_groupTypesForSpwnsVehGround;
+			if ( !_isAmphib && !_isNauCrew ) then { _allowed = CSWR_grpTypesForSpwnsVehGround;
 			// For Amphibious vehicle:
-			} else { if _isAmphibious then { _allowed = CSWR_groupTypesForSpwnsVehGround + CSWR_groupTypesForSpwnsVehNautical;
+			} else { if _isAmphib then { _allowed = CSWR_grpTypesForSpwnsVehGround + CSWR_grpTypesForSpwnsVehNautical;
 			// For Nautical vehicle:
-			} else { _allowed = CSWR_groupTypesForSpwnsVehNautical }};
+			} else { _allowed = CSWR_grpTypesForSpwnsVehNautical }};
 		};
 		// Blu > Spawn for helicopter
 		case CSWR_spawnsForHelicopterBLU: {
@@ -3102,34 +3179,34 @@ THY_fnc_CSWR_spawn_type_checker = {
 			if !_isAirCrew exitWith {
 				if !_isPeople then {
 					if !_isNauCrew then {
-						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				} else {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				};
 			};
 			// For Helicopter:
-			_allowed = CSWR_groupTypesForSpwnsVehAirHeli;
+			_allowed = CSWR_grpTypesForSpwnsVehAirHeli;
 		};
 		// Blu > Spawn paradrop
 		case CSWR_spawnsParadropBLU: {
 			// Escape > if air vehicle or nautical one, abort:
 			if ( _isAirCrew || _isNauCrew ) exitWith {
 				if _isAirCrew then {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
-					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 				};
 			};
 			// For people and ground vehicle:
-			_allowed = CSWR_groupTypesForSpwnsPara;
+			_allowed = CSWR_grpTypesForSpwnsPara;
 		};
 		// ---------------------------------------------------------------------------------------------------------------
 		// Opf > Spawn for people
@@ -3137,40 +3214,40 @@ THY_fnc_CSWR_spawn_type_checker = {
 			// Escape > if non-people-group, abort:
 			if !_isPeople exitWith {
 				if ( !_isNauCrew && !_isAirCrew ) then {
-					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
 					if _isAirCrew then {
-						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 						CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				};
 			};
 			// For People:
-			_allowed = CSWR_groupTypesForSpwns;
+			_allowed = CSWR_grpTypesForSpwns;
 		};
 		// Opf > Spawn for vehicle
 		case CSWR_spawnsForVehicleOPF: {
 			// Escape > if not-ground-or-nautical-vehicle, abort:
 			if ( _isPeople || _isAirCrew ) exitWith {
 				if _isPeople then {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag];
 				} else {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag];
 				};
 				sleep 5;
 			};
 			// For Regular ground vehicle:
-			if ( !_isAmphibious && !_isNauCrew ) then { _allowed = CSWR_groupTypesForSpwnsVehGround;
+			if ( !_isAmphib && !_isNauCrew ) then { _allowed = CSWR_grpTypesForSpwnsVehGround;
 			// For Amphibious vehicle:
-			} else { if _isAmphibious then { _allowed = CSWR_groupTypesForSpwnsVehGround + CSWR_groupTypesForSpwnsVehNautical;
+			} else { if _isAmphib then { _allowed = CSWR_grpTypesForSpwnsVehGround + CSWR_grpTypesForSpwnsVehNautical;
 			// For Nautical vehicle:
-			} else { _allowed = CSWR_groupTypesForSpwnsVehNautical }};
+			} else { _allowed = CSWR_grpTypesForSpwnsVehNautical }};
 		};
 		// Opf > Spawn for helicopter
 		case CSWR_spawnsForHelicopterOPF: {
@@ -3178,34 +3255,34 @@ THY_fnc_CSWR_spawn_type_checker = {
 			if !_isAirCrew exitWith {
 				if !_isPeople then {
 					if !_isNauCrew then {
-						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				} else {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				};
 			};
 			// For Helicopter:
-			_allowed = CSWR_groupTypesForSpwnsVehAirHeli;
+			_allowed = CSWR_grpTypesForSpwnsVehAirHeli;
 		};
 		// Opf > Spawn paradrop
 		case CSWR_spawnsParadropOPF: {
 			// Escape > if air vehicle or nautical one, abort:
 			if ( _isAirCrew || _isNauCrew ) exitWith {
 				if _isAirCrew then {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
-					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 				};
 			};
 			// For people and ground vehicle:
-			_allowed = CSWR_groupTypesForSpwnsPara;
+			_allowed = CSWR_grpTypesForSpwnsPara;
 		};
 		// ---------------------------------------------------------------------------------------------------------------
 		// Ind > Spawn for people
@@ -3213,40 +3290,40 @@ THY_fnc_CSWR_spawn_type_checker = {
 			// Escape > if non-people-group, abort:
 			if !_isPeople exitWith {
 				if ( !_isNauCrew && !_isAirCrew ) then {
-					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
 					if _isAirCrew then {
-						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 						CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				};
 			};
 			// For People:
-			_allowed = CSWR_groupTypesForSpwns;
+			_allowed = CSWR_grpTypesForSpwns;
 		};
 		// Ind > Spawn for vehicle
 		case CSWR_spawnsForVehicleIND: {
 			// Escape > if not-ground-or-nautical-vehicle, abort:
 			if ( _isPeople || _isAirCrew ) exitWith {
 				if _isPeople then {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag];
 				} else {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag];
 				};
 				sleep 5;
 			};
 			// For Regular ground vehicle:
-			if ( !_isAmphibious && !_isNauCrew ) then { _allowed = CSWR_groupTypesForSpwnsVehGround;
+			if ( !_isAmphib && !_isNauCrew ) then { _allowed = CSWR_grpTypesForSpwnsVehGround;
 			// For Amphibious vehicle:
-			} else { if _isAmphibious then { _allowed = CSWR_groupTypesForSpwnsVehGround + CSWR_groupTypesForSpwnsVehNautical;
+			} else { if _isAmphib then { _allowed = CSWR_grpTypesForSpwnsVehGround + CSWR_grpTypesForSpwnsVehNautical;
 			// For Nautical vehicle:
-			} else { _allowed = CSWR_groupTypesForSpwnsVehNautical }};
+			} else { _allowed = CSWR_grpTypesForSpwnsVehNautical }};
 		};
 		// Ind > Spawn for helicopter
 		case CSWR_spawnsForHelicopterIND: {
@@ -3254,34 +3331,34 @@ THY_fnc_CSWR_spawn_type_checker = {
 			if !_isAirCrew exitWith {
 				if !_isPeople then {
 					if !_isNauCrew then {
-						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				} else {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				};
 			};
 			// For Helicopter:
-			_allowed = CSWR_groupTypesForSpwnsVehAirHeli;
+			_allowed = CSWR_grpTypesForSpwnsVehAirHeli;
 		};
 		// Ind > Spawn paradrop
 		case CSWR_spawnsParadropIND: {
 			// Escape > if air vehicle or nautical one, abort:
 			if ( _isAirCrew || _isNauCrew ) exitWith {
 				if _isAirCrew then {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
-					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+					systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 				};
 			};
 			// For people and ground vehicle:
-			_allowed = CSWR_groupTypesForSpwnsPara;
+			_allowed = CSWR_grpTypesForSpwnsPara;
 		};
 		// ---------------------------------------------------------------------------------------------------------------
 		// Civ > Spawn for people
@@ -3289,40 +3366,40 @@ THY_fnc_CSWR_spawn_type_checker = {
 			// Escape > if non-people-group, abort:
 			if !_isPeople exitWith {
 				if ( !_isNauCrew && !_isAirCrew ) then {
-					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+					systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				} else {
 					if _isAirCrew then {
-						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+						systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 						CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				};
 			};
 			// For People:
-			_allowed = CSWR_groupTypesForSpwns;
+			_allowed = CSWR_grpTypesForSpwns;
 		};
 		// Civ > Spawn for vehicle
 		case CSWR_spawnsForVehicleCIV: {
 			// Escape > if not-ground-or-nautical-vehicle, abort:
 			if ( _isPeople || _isAirCrew ) exitWith {
 				if _isPeople then {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag];
 				} else {
-					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
+					systemChat format ["%1 %2 SPAWN > HELICOPTERS need a specific spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForHelicopter%2' in spawn column of those %2 helicopter rows.",
 					CSWR_txtWarnHeader, _tag];
 				};
 				sleep 5;
 			};
 			// For Regular ground vehicle:
-			if ( !_isAmphibious && !_isNauCrew ) then { _allowed = CSWR_groupTypesForSpwnsVehGround;
+			if ( !_isAmphib && !_isNauCrew ) then { _allowed = CSWR_grpTypesForSpwnsVehGround;
 			// For Amphibious vehicle:
-			} else { if _isAmphibious then { _allowed = CSWR_groupTypesForSpwnsVehGround + CSWR_groupTypesForSpwnsVehNautical;
+			} else { if _isAmphib then { _allowed = CSWR_grpTypesForSpwnsVehGround + CSWR_grpTypesForSpwnsVehNautical;
 			// For Nautical vehicle:
-			} else { _allowed = CSWR_groupTypesForSpwnsVehNautical }};
+			} else { _allowed = CSWR_grpTypesForSpwnsVehNautical }};
 		};
 		// Civ > Spawn for helicopter
 		case CSWR_spawnsForHelicopterCIV: {
@@ -3330,30 +3407,30 @@ THY_fnc_CSWR_spawn_type_checker = {
 			if !_isAirCrew exitWith {
 				if !_isPeople then {
 					if !_isNauCrew then {
-						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
+						systemChat format ["%1 %2 SPAWN > GROUND VEHICLES need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForVehicle%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 vehicle rows.",
 						CSWR_txtWarnHeader, _tag]; sleep 5;
 					} else {
-						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
+						systemChat format ["%1 %2 SPAWN > NAUTICAL VEHICLES need a specific spawn-type. In fn_CSWR_2_population.sqf, use only 'CSWR_spawnsForVehicle%2' in spawn column of those %2 nautical vehicle rows. Make sure some '%3%4SPAWNVEH%4%2%4sectorletter%4anynumber' are in water.",
 					CSWR_txtWarnHeader, _tag, CSWR_prefix, CSWR_spacer]; sleep 10;
 					};
 				} else {
-					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
+					systemChat format ["%1 %2 SPAWN > Groups of PEOPLE ON FOOT need a different spawn-type. In fn_CSWR_2_population.sqf, use 'CSWR_spawnsForPeople%2' or 'CSWR_spawnsParadrop%2' in spawn column of those %2 people rows.",
 					CSWR_txtWarnHeader, _tag]; sleep 5;
 				};
 			};
 			// For Helicopter:
-			_allowed = CSWR_groupTypesForSpwnsVehAirHeli;
+			_allowed = CSWR_grpTypesForSpwnsVehAirHeli;
 		};
 		// Civ > Spawn paradrop
 		case CSWR_spawnsParadropCIV: {
 			// Important: CIV vehicles are forbidden to execute paradrop:
 			// Escape > if vehicle, abort:
 			if _isVeh exitWith {
-				systemChat format ["%1 %2 SPAWN > CIVILIAN VEHICLES are FORBIDDEN to use 'CSWR_spawnsParadrop%2'. Civilian people can, but vehicles. Fix it in 'fn_CSWR_population.sqf' file.",
+				systemChat format ["%1 %2 SPAWN > CIVILIAN VEHICLES are FORBIDDEN to use 'CSWR_spawnsParadrop%2'. Civilian people can, but vehicles. Fix it in 'fn_CSWR_2_population.sqf' file.",
 				CSWR_txtWarnHeader, _tag]; sleep 5;
 			};
 			// For people and ground vehicle:
-			_allowed = CSWR_groupTypesForSpwnsPara;
+			_allowed = CSWR_grpTypesForSpwnsPara;
 		};
 	};
 	
@@ -3370,8 +3447,8 @@ THY_fnc_CSWR_destination_type_checker = {
 	// This function checks deeper each destination that couldn't be checked by THY_fnc_CSWR_add_validation function. This function here compares which group-type and group-class is trying to execute each destination-type and, of course, if these destinations are respecting the minimum amount to be used.
 	// Returns _isValid: bool.
 
-	params ["_tag", "_destType", "_destSector", "_grpType", "_isPeople", "_isVeh", "_isAmphibious", "_isNauCrew", "_isAirCrew"];
-	private ["_isValid", "_destsLand", "_destsWater", "_minAmount", "_requester", "_txt1", "_txt2"];
+	params ["_tag", "_destType", "_destSector", "_grpType", "_isPeople", "_isVeh", "_isAmphib", "_isNauCrew", "_isAirCrew"];
+	private ["_isValid", "_destsLand", "_destsWater", "_minAmount", "_caller", "_txt1", "_txt2"];
 
 	// Initial values:
 	_isValid    = true;
@@ -3379,9 +3456,9 @@ THY_fnc_CSWR_destination_type_checker = {
 	_destsWater = [];
 	_minAmount  = nil;
 	// Declarations:
-	_requester = if _isPeople then {"group"} else {"vehicle"};
+	_caller = if _isPeople then {"group"} else {"vehicle"};
 	// Debug texts:
-	_txt1 = format ["A %1 %2 won't be created coz the DESTINATION TYPE '%3' HAS NO", _tag, _requester, _destType];
+	_txt1 = format ["A %1 %2 won't be created coz the DESTINATION TYPE '%3' HAS NO", _tag, _caller, _destType];
 	_txt2 = "or more destination markers dropped on the map. Be aware: destination markers on land and in water need its the minimum amount separately with you are using both";
 	
 	// STEP 1/2 > WHAT IS FORBIDDEN FOR EACH GROUP-TYPE AND GROUP-CLASS ----------------------------------------------
@@ -3391,7 +3468,7 @@ THY_fnc_CSWR_destination_type_checker = {
 		// Prepare to return:
 		_isValid = false;
 		// Warning:
-		systemChat format ["%1 DESTINATION > Only SNIPER GROUPS can use '_move_WATCH' in 'fn_CSWR_population.sqf' file. In the problematic %2 row in there, find the group-type column, and replace that you got for 'CSWR_people_%2_sniper' if you really wanna use watch-destinations.",
+		systemChat format ["%1 DESTINATION > Only SNIPER GROUPS can use '_move_WATCH' in 'fn_CSWR_2_population.sqf' file. In the problematic %2 row in there, find the group-type column, and replace that you got for 'CSWR_people_%2_sniper' if you really wanna use watch-destinations.",
 		CSWR_txtWarnHeader, _tag]; sleep 10;
 		// Return:
 		_isValid
@@ -3401,7 +3478,7 @@ THY_fnc_CSWR_destination_type_checker = {
 		// Prepare to return:
 		_isValid = false;
 		// Warning:
-		systemChat format ["%1 DESTINATION > %2 HELICOPTER CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 DESTINATION > %2 HELICOPTER CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _tag, _destType];
 		sleep 5;
 		// Return:
@@ -3412,7 +3489,7 @@ THY_fnc_CSWR_destination_type_checker = {
 		// Prepare to return:
 		_isValid = false;
 		// Warning:
-		systemChat format ["%1 DESTINATION > %2 NAUTICAL vehicles CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 DESTINATION > %2 NAUTICAL vehicles CANNOT execute '%3'! The vehicle WON'T SPAWN! Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _tag, _destType];
 		sleep 5;
 		// Return:
@@ -3450,11 +3527,11 @@ THY_fnc_CSWR_destination_type_checker = {
 			// Escape message:
 			if !_isValid exitWith {
 				// Warning:
-				if ( !_isNauCrew && !_isAmphibious ) then {
+				if ( !_isNauCrew && !_isAmphib ) then {
 					systemChat format ["%1 DESTINATION > %2 %3 %4.",
 					CSWR_txtWarnHeader, _txt1, _minAmount, _txt2];
 				} else {
-					if _isAmphibious then {
+					if _isAmphib then {
 						systemChat format ["%1 DESTINATION > %2 %3 or more destination markers (ON LAND) dropped on the map. Despite AMPHIBIOUS vehicles can spawn in water, their destinations need to be ON LAND.",
 						CSWR_txtWarnHeader, _txt1, _minAmount];
 					} else {
@@ -3494,11 +3571,11 @@ THY_fnc_CSWR_destination_type_checker = {
 			// Escape message:
 			if !_isValid exitWith {
 				// Warning:
-				if ( !_isNauCrew && !_isAmphibious ) then {
+				if ( !_isNauCrew && !_isAmphib ) then {
 					systemChat format ["%1 DESTINATION > %2 %3 %4.",
 					CSWR_txtWarnHeader, _txt1, _minAmount, _txt2];
 				} else {
-					if _isAmphibious then {
+					if _isAmphib then {
 						systemChat format ["%1 DESTINATION > %2 %3 or more destination markers (ON LAND) dropped on the map. Despite AMPHIBIOUS vehicles can spawn in water, their destinations need to be ON LAND.",
 						CSWR_txtWarnHeader, _txt1, _minAmount];
 					} else {
@@ -3548,11 +3625,11 @@ THY_fnc_CSWR_destination_type_checker = {
 			// Escape message:
 			if !_isValid exitWith {
 				// Warning:
-				if ( !_isNauCrew && !_isAmphibious ) then {
+				if ( !_isNauCrew && !_isAmphib ) then {
 					systemChat format ["%1 DESTINATION > %2 %3 %4.",
 					CSWR_txtWarnHeader, _txt1, _minAmount, _txt2];
 				} else {
-					if _isAmphibious then {
+					if _isAmphib then {
 						systemChat format ["%1 DESTINATION > %2 %3 or more destination markers (ON LAND) dropped on the map. Despite AMPHIBIOUS vehicles can spawn in water, their destinations need to be ON LAND.",
 						CSWR_txtWarnHeader, _txt1, _minAmount];
 					} else {
@@ -3623,13 +3700,15 @@ THY_fnc_CSWR_destination_type_checker = {
 				sleep 10;
 			};
 		};
+		case "MOVE_EXTRACTION": {};  // NOT USED WITH MARKERS! DON'T remove this to avoid the message below be shown.
+		case "MOVE_TRANSPORT": {};  // NOT USED WITH MARKERS! DON'T remove this to avoid the message below be shown.
 		default {
 			// If the declarated destination type in fn_CSWR_population file IS NOT recognized:
 			// Prepare to return:
 			_isValid = false;
 			// Warning:
-			systemChat format ["%1 DESTINATION > One or more %2 %3s HAS NO DESTINATION properly configured in 'fn_CSWR_population.sqf' file. For script integrity, the %3 won't be created.",
-			CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+			systemChat format ["%1 DESTINATION > One or more %2 %3s HAS NO DESTINATION properly configured in 'fn_CSWR_2_population.sqf' file. For script integrity, the %3 won't be created.",
+			CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		};
 	};  // switch ends.
 	// Return:
@@ -3637,18 +3716,59 @@ THY_fnc_CSWR_destination_type_checker = {
 };
 
 
+THY_fnc_CSWR_spawn_antiBlocker = {
+	// This function detects what is over each vehicle spawn-point that increase the risk of unwanted explosions, and then delete the blocker object, considering an object list of exceptions.
+	// Returns nothing.
+
+	params ["_tag", "_spwn", "_grp", "_veh", "_spwnPos", "_safeDis"];
+	private ["_plrsAndHeadless", "_player", "_units"];
+
+	// Initial values:
+	_plrsAndHeadless = [];
+	_player          = objNull;
+	_units           = [];
+	_playerGrpUnits  = [];
+	_unitsVehs       = [];
+	_objsNeverDel    = [];
+	// When the vehicle get distance from spawn or be destroyed (or for some reason the group leaves the vehicle and get distance by foot), stop the looping:
+	waitUntil { sleep 5; isNull _grp || !alive _veh || (_veh distance _spwnPos) > _safeDis || (leader _grp distance _spwnPos) > _safeDis };
+	// over the spawn-point, if the vehicle has been destroyed, or the crew has been killed, or the crew rampout leaving the vehicle, it deletes the wreck/vehicle and everything around it to avoid explosions:
+	if ( !alive _veh || !alive leader _grp || isNull objectParent (leader _grp) ) then {
+		// Checking if there's player AI units/vehicles around and ignore them:
+		// Important: dont check for units side. Some mission have impredictable stories/lores/scenarios like civilian spawning along independent!
+		_plrsAndHeadless = allPlayers select { _x isEqualTo leader (group _x) };
+		{ _player = _x; _units = allUnits select { _x in (units (group _player)) }; _playerGrpUnits append _units } forEach _plrsAndHeadless;
+		// Checking if player group units are in vehicles:
+		{ if ( !isNull objectParent _x ) then { _unitsVehs pushBackUnique (vehicle _x) } } forEach _playerGrpUnits;
+		// Check if there's a custom helipad:
+		_objsNeverDel = _spwnPos nearObjects ["Helipad_Base_F", _safeDis];  // For more types but slower: nearestObjects [_spwnPos, ["Helipad_Base_F", "..."], _safeDis];
+		// Delete everything in spawn position, except players, AI from player groups, and vehicles with AI or players from player groups:
+		{ deleteVehicleCrew _x; deleteVehicle _x; sleep 0.25 } forEach (((_spwnPos nearObjects _safeDis) + (units _grp)) - (_playerGrpUnits + _unitsVehs + _objsNeverDel));
+		// Debug:
+		if CSWR_isOnDebug then {
+			systemChat format ["%1 BOOKING > A %2 vehicle (or its wreck) HAS BEEN DELETED over a spawn-point to preserve the spawn integrity.",
+			CSWR_txtDebugHeader, _tag, _spwn];
+		};
+	};
+	// Return:
+	true;
+};
+
+
 THY_fnc_CSWR_spawn_and_go = {
+	// It's a new thread!
 	// This function has 2 main features: 1) it schedules the group/vehicle spawn (now or later), and 2) send the group/vehicle to execute its first move.
 	// Returns nothing, but open a new thread.
 
-	params ["_spwnsInfo", "_spwnDelayMethods", "_grpInfo", "_isVeh", "_behavior", "_destsInfo"];
-	private ["_isAmphibious", "_isNauCrew", "_isAirCrew", "_hasServiceRTB", "_canSpwn", "_serverBreath", "_spwn", "_spwnPosChecker", "_isPara", "_spwnPos", "_isMarine", "_unit", "_bookingInfo", "_isBooked", "_tryLimit", "_veh", "_isEmergencyHover", "_blockers", "_time", "_emergencyPos", "_isPeople", "_spwns", "_spwnsSector", "_destType", "_destSector", "_side", "_tag", "_grp", "_grpType", "_grpClassnames", "_grpClass", "_grpSize", "_safeDis", "_requester", "_txt1", "_txt2", "_txt3", "_isValidToSpwnHere", "_isValidDest"];
+	params ["_spwnsData", "_spwnDelayMethods", "_grpData", "_isVeh", "_behavior", "_destsData"];
+	private ["_isAmphib", "_isNauCrew", "_isAirCrew", "_hasServiceRTB", "_isTransp", "_canSpwn", "_serverBreath", "_spwn", "_spwnPosChecker", "_isPara", "_spwnPos", "_isMarine", "_unit", "_bookingData", "_isBooked", "_tryLimit", "_veh", "_isEmergencyHover", "_blockers", "_t", "_emergencyPos", "_grpCaller", "_isPeople", "_spwns", "_spwnsSector", "_destType", "_destSector", "_side", "_tag", "_grp", "_grpType", "_grpClassnames", "_grpClass", "_grpSize", "_safeDis", "_caller", "_txt1", "_txt2", "_txt3", "_isValidSpwnHere", "_isValidDest"];
 
 	// Initial values:
-	_isAmphibious     = false;
+	_isAmphib         = false;
 	_isNauCrew        = false;
 	_isAirCrew        = false;
 	_hasServiceRTB    = false;
+	_isTransp         = false;
 	_canSpwn          = true;
 	_serverBreath     = 0;
 	_spwn             = "";
@@ -3657,66 +3777,71 @@ THY_fnc_CSWR_spawn_and_go = {
 	_spwnPos          = [];
 	_isMarine         = false;
 	_unit             = objNull;
-	_bookingInfo      = [];
+	_bookingData      = [];
 	_isBooked         = false;
-	_tryLimit       = 5;
+	_tryLimit         = 5;
 	_veh              = objNull;
 	_isEmergencyHover = false;
 	_blockers         = [];
-	_time             = 0;
+	_t                = 0;
 	_emergencyPos     = [];
+	_grpCaller        = grpNull;
 	// Declarations:
 	_isPeople      = !_isVeh;
-	_spwns         = _spwnsInfo # 0;
-	_spwnsSector   = _spwnsInfo # 1;
-	_destType      = _destsInfo # 0;
-	_destSector    = _destsInfo # 1;
-	_side          = _grpInfo # 0;
-	_tag           = _grpInfo # 1;
-	_grp           = _grpInfo # 2;
-	_grpType       = _grpInfo # 3;
-	_grpClassnames = _grpInfo # 4;
-	_grpClass      = _grpInfo # 5;
+	_spwns         = _spwnsData # 0;
+	_spwnsSector   = _spwnsData # 1;
+	_destType      = _destsData # 0;
+	_destSector    = _destsData # 1;
+	_side          = _grpData # 0;
+	_tag           = _grpData # 1;
+	_grp           = _grpData # 2;
+	_grpType       = _grpData # 3;
+	_grpClassnames = _grpData # 4;
+	_grpClass      = _grpData # 5;
 	_grpSize       = count _grpClassnames;  // debug proposes.
 	_safeDis       = 20;
-	_requester     = if _isPeople then {"group"} else {"vehicle"};
+	_caller        = if _isPeople then {"group"} else {"vehicle"};
 	switch _grpClass do {
 		// People group-types:
 		case 0: { /* Reminder: _isPeople exists and already defined */ };
 		// Vehicle group-types:
-		case 1: { if ( [_grpClassnames # 0] call THY_fnc_VO_is_amphibious ) then { _isAmphibious = true } };  // Amphibious
+		case 1: { if ( [_grpClassnames # 0] call THY_fnc_VO_is_amphibious ) then { _isAmphib = true } };  // Amphibious
 		case 2: { _isNauCrew = true };  // Nautical
 		case 3: {  // Helicopter
 			_isAirCrew = true;
-			switch _tag do {
-				case "BLU": { _hasServiceRTB = CSWR_hasRtbHeli # 0 };
-				case "OPF": { _hasServiceRTB = CSWR_hasRtbHeli # 1 };
-				case "IND": { _hasServiceRTB = CSWR_hasRtbHeli # 2 };
-				case "CIV": { _hasServiceRTB = CSWR_hasRtbHeli # 3 };
+			if ( !(_destType in ["MOVE_EXTRACTION", "MOVE_TRANSPORT"]) ) then {
+				switch _tag do {
+					case "BLU": { _hasServiceRTB = CSWR_hasRtbHeli # 0 };
+					case "OPF": { _hasServiceRTB = CSWR_hasRtbHeli # 1 };
+					case "IND": { _hasServiceRTB = CSWR_hasRtbHeli # 2 };
+					case "CIV": { _hasServiceRTB = CSWR_hasRtbHeli # 3 };
+				};
+			} else {
+				_isTransp = true;
 			};
 		};
 	};
 	// Debug texts:
-	_txt1 = format ["A %1 %2 has an error in 'fn_CSWR_population.sqf' file.", _tag, _requester];
-	_txt2 = format ["For script integrity, the %1 WON'T SPAWN!", _requester];
+	_txt1 = format ["A %1 %2 has an error in 'fn_CSWR_2_population.sqf' file.", _tag, _caller];
+	_txt2 = format ["For script integrity, the %1 WON'T SPAWN!", _caller];
 	_txt3 = format ["%1 %2 %3 will spawn LATER.", _grpSize, _tag, if _isVeh then {"vehicle"} else {"group units"}];
 
-	// STEP 1/4 > SPAWN VALIDATIONS ----------------------------------------------------------------------------------
+	// STEP 1/5 > SPAWN VALIDATIONS ----------------------------------------------------------------------------------
 	// It checks whether the group is technically allowed to spawn what the editor wants they spawn!
-	_isValidToSpwnHere = [_tag, _spwns, _grpType, _isPeople, _isVeh, _isAmphibious, _isNauCrew, _isAirCrew] call THY_fnc_CSWR_spawn_type_checker;
+	_isValidSpwnHere = [_tag, _spwns, _grpType, _isPeople, _isVeh, _isAmphib, _isNauCrew, _isAirCrew] call THY_fnc_CSWR_spawn_type_checker;
 	// Escape > Spawn-type invalid for this group/vehicle:
-	if !_isValidToSpwnHere exitWith { true };
+	if !_isValidSpwnHere exitWith { true };
 
-	// STEP 2/4 > DESTINATION VALIDATIONS ----------------------------------------------------------------------------
-	_isValidDest = [_tag, _destType, _destSector, _grpType, _isPeople, _isVeh, _isAmphibious, _isNauCrew, _isAirCrew] call THY_fnc_CSWR_destination_type_checker;
+	// STEP 2/5 > DESTINATION VALIDATIONS ----------------------------------------------------------------------------
+	_isValidDest = [_tag, _destType, _destSector, _grpType, _isPeople, _isVeh, _isAmphib, _isNauCrew, _isAirCrew] call THY_fnc_CSWR_destination_type_checker;
 	// Escape > Destinations invalid for this group/vehicle:
 	if !_isValidDest exitWith { true };
 
-	// STEP 3/4 > SPAWN-DELAY ----------------------------------------------------------------------------------------
+	// STEP 3/5 > SPAWN-DELAY ----------------------------------------------------------------------------------------
 	// It checks if the _spwnDelayMethods content is correctly filled and which delay method is to be used for group/vehicle:
 	if ( typeName _spwnDelayMethods isEqualTo "ARRAY" ) then {
 		// If _spwnDelayMethods is not empty, it's coz the group needs Spawn Delay:
-		if ( count _spwnDelayMethods > 0 ) then {
+		if ( _spwnDelayMethods isNotEqualTo [] ) then {
 			// Escape > If the object doesn't exist:
 			// IMPORTANT: this (isNil "_x") doesn't work properly coz if trigger_name doesn't exist in editor map, still the name will be in memory and there A3 won't recognized its existence, printing out "Undentified variable error". Also the systemChat will be shown to the editor (good). The solution would be change the variable method in Population.sqf to string but str is not a good choice for editors (causing much more typos). So keep like this (with error on screen if it happens) but here's the fix: https://forums.bohemia.net/forums/topic/203108-isnil-foreach/?tab=comments#comment-3536853
 			{
@@ -3755,12 +3880,12 @@ THY_fnc_CSWR_spawn_and_go = {
 			if ( _spwnDelayMethods isEqualTo [] ) exitWith {};
 			// Escape > If some spawn delay method is in a wrong format, abort the spawn:
 			{  // forEach _spwnDelayMethods:
-				if ( !(typeName _x in ["OBJECT", "SCALAR"]) ) exitWith { 
+				if ( !(typeName _x in ["OBJECT", "SCALAR", "STRING"]) ) exitWith {
 					// Flag to abort the group/vehicle spawn:
 					_canSpwn = false;
 					// Warning:
-					systemChat format ["%1 SPAWN DELAY > %2 Make sure you're using a timer, triggers, and targets without quotes, e.g: [5] or [trigger_1] or [trigger_1, trigger_2] or [5, trigger_1, target_1]. %3",
-					CSWR_txtWarnHeader, _txt1, _txt2]; sleep 5;
+					systemChat format ["%1 SPAWN DELAY > %2 Make sure you're using a timer (number representing minutes), or triggers (without quotes), or object targets (without quotes), or boolean flags (WITH quotes). E.g: [5] or [trigger_1] or [target_1] or [''my_bool_1''] or a mixed like [5, trigger_1, ''bool_1''].",
+					CSWR_txtWarnHeader, _txt1]; sleep 10;
 				};
 			} forEach _spwnDelayMethods;
 			// If everything is fine, Spawn Delay:
@@ -3768,8 +3893,8 @@ THY_fnc_CSWR_spawn_and_go = {
 				// Debug:
 				if CSWR_isOnDebug then {
 					// Debug monitor > How many units will spawn soon:
-					CSWR_spwnDelayQueueAmount = CSWR_spwnDelayQueueAmount + _grpSize;
-					publicVariable "CSWR_spwnDelayQueueAmount";
+					CSWR_spwnDelayQueue = CSWR_spwnDelayQueue + _grpSize;
+					publicVariable "CSWR_spwnDelayQueue";
 					// Debug:
 					systemChat format ["%1 SPAWN DELAY > %2%3",
 					CSWR_txtDebugHeader, _txt3, selectRandom ["", ".."]]; sleep 0.25;
@@ -3786,8 +3911,27 @@ THY_fnc_CSWR_spawn_and_go = {
 		systemChat format ["%1 SPAWN DELAY > %2 %3",
 		CSWR_txtWarnHeader, _txt1, _txt2]; sleep 5;
 	};
+	
+	// STEP 4/5 > TRANSPORT SUPPORT ----------------------------------------------------------------------------------
+	// If so, it means the side has a new support resource available for side's players:
+	if _isTransp then {
+		// For Transport:
+		if ( _destType isEqualTo "MOVE_TRANSPORT") then {
+			_grpCaller = [_side, _tag, "AIR TRANSPORT", "CSWR_suprtTranspAirData", "suprtTranspAir"] call THY_fnc_CSWR_TRANSPORT_booking_and_wait;
+		// For Transport Extraction:
+		} else {
+			_grpCaller = [_side, _tag, "AIR EXTRACTION", "CSWR_suprtExtractAirData", "suprtExtractAir"] call THY_fnc_CSWR_TRANSPORT_booking_and_wait;;
+		};
+		// If caller group doesn't exist anymore:
+		if ( !alive leader _grpCaller ) exitWith {
+			if CSWR_isOnDebug then {
+				systemChat format ["%1 SUPPORT RESOURCE > Unexpected error with the var '_grpCaller'. The vehicle WON'T spawn!",
+				CSWR_txtWarnHeader];
+			};
+		};
+	};
 
-	// STEP 4/4 > SPAWNING -------------------------------------------------------------------------------------------
+	// STEP 5/5 > SPAWNING -------------------------------------------------------------------------------------------
 	// If the group/vehicle reaches this, pretty sure it will be spawned, unless the spawn is blocked too long.
 	if _canSpwn then {
 		// For people:
@@ -3796,7 +3940,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			_spwns = (_spwns # 0) + (_spwns # 1);
 		} else {
 			// For regular ground vehicles:
-			if ( !_isAirCrew && !_isNauCrew && !_isAmphibious ) then {
+			if ( !_isAirCrew && !_isNauCrew && !_isAmphib ) then {
 				// Only spawns on land and air (paradrop):
 				_spwns = (_spwns # 0);
 			} else {
@@ -3807,8 +3951,15 @@ THY_fnc_CSWR_spawn_and_go = {
 				} else {
 					// For helicopter:
 					if _isAirCrew then {
-						// Spawns on land and in water (flying):
-						_spwns = (_spwns # 0) + (_spwns # 1);
+						// For Helicopters NOT executing extraction:
+						if ( _destType isNotEqualTo "MOVE_EXTRACTION" ) then {
+							// Spawns on land and in water (flying):
+							_spwns = (_spwns # 0) + (_spwns # 1);
+						// For Helicopters executing Extraction:
+						} else {
+							// Spawns on land only:
+							_spwns = _spwns # 0;
+						};
 					// For nautical vehicle:
 					} else {
 						// Only spawns in water:
@@ -3823,15 +3974,15 @@ THY_fnc_CSWR_spawn_and_go = {
 		// Escape:
 		if ( _spwns isEqualTo [] ) exitWith {
 			// Warning:
-			systemChat format ["%1 SPAWN > In 'fn_CSWR_population.sqf' file, at least one %2 %3 row is using a SECTOR (%4) that WASN'T FOUND any spawn-marker using it on Eden. This %3 WON'T be created!",
-			CSWR_txtWarnHeader, _tag, _requester, _spwnsSector]; sleep 5;
+			systemChat format ["%1 SPAWN > In 'fn_CSWR_2_population.sqf' file, at least one %2 %3 row is using a SECTOR (%4) that WASN'T FOUND any spawn-marker using it on Eden. This %3 WON'T be created!",
+			CSWR_txtWarnHeader, _tag, _caller, _spwnsSector]; sleep 5;
 		};
 		// Checks current server performance:
 		_serverBreath = ((abs(CSWR_serverMaxFPS-diag_fps) / (CSWR_serverMaxFPS-CSWR_serverMinFPS)) ^ 2) * 2;  // ((abs(FPSMAX-diag_fps)/(FPSMAX-FPSLIMIT))^2)*MAXDELAY;
 		// Select a spawn:
 		_spwn = selectRandom _spwns;
 		// Check if they will be paradrop (group and vehicle), regarding the answer, it returns the spawn position (_spwnPos):
-		_spwnPosChecker = [_spwns, markerPos _spwn, _isVeh, _isAmphibious, [_isAirCrew, _isNauCrew]] call THY_fnc_CSWR_is_spawn_paradrop;
+		_spwnPosChecker = [_spwns, markerPos _spwn, _isVeh, _isAmphib, [_isAirCrew, _isNauCrew]] call THY_fnc_CSWR_is_spawn_paradrop;
 		_isPara         = _spwnPosChecker # 0;
 		_spwnPos        = _spwnPosChecker # 1;
 		// Check if the group (except helicopter crew) should receive marine loadout:
@@ -3859,17 +4010,17 @@ THY_fnc_CSWR_spawn_and_go = {
 			while { !_isPara } do {
 				// For Ground or Nautical Vehicle:
 				if !_isAirCrew then {
-					_bookingInfo = ["BOOKING_SPAWNVEH", _spwnPos, _tag, _spwns, 10, 5] call THY_fnc_CSWR_marker_booking;
+					_bookingData = ["BOOKING_SPAWNVEH", _spwnPos, _tag, _spwns, 10, 5] call THY_fnc_CSWR_marker_booking;
 				} else {
 					// For Air Vehicle:
-					_bookingInfo = ["BOOKING_SPAWNHELI", _spwnPos, _tag, _spwns, 10, 20] call THY_fnc_CSWR_marker_booking;
+					_bookingData = ["BOOKING_SPAWNHELI", _spwnPos, _tag, _spwns, 10, 20] call THY_fnc_CSWR_marker_booking;
 				};
 				// Marker to spawn:
-				_spwn     = _bookingInfo # 0;
+				_spwn     = _bookingData # 0;
 				// Spawn position:
-				_spwnPos  = _bookingInfo # 1;  // [x,y,z]
+				_spwnPos  = _bookingData # 1;  // [x,y,z]
 				// Booked status:
-				_isBooked = _bookingInfo # 2;
+				_isBooked = _bookingData # 2;
 				// For booked vehicles:
 				if _isBooked then {
 					// Stop the loop:
@@ -3912,7 +4063,7 @@ THY_fnc_CSWR_spawn_and_go = {
 
 			// NO SPAWN BOOKING NEEDED:
 			// SPAWNING REGULAR GROUND VEHICLE AND ITS CREW:
-			if ( !_isAirCrew && !_isNauCrew && !_isAmphibious ) then {
+			if ( !_isAirCrew && !_isNauCrew && !_isAmphib ) then {
 				// Regular ground vehicle spawns on the ground:
 				if !_isPara then {
 					// Find an empty place near to the ground spawn-point:
@@ -3964,7 +4115,7 @@ THY_fnc_CSWR_spawn_and_go = {
 							if CSWR_isOnDebug then {
 								systemChat format ["%1 HELICOPTER > A %2 helicopter's waiting its HELIPAD (%3) to be clear. Next try soon...",
 								CSWR_txtDebugHeader, _tag, _spwn];
-								if CSWR_isOnDebugHeli then { { systemChat format ["HELIPAD BLOCKER:   %1", typeOf _x] } forEach _blockers };
+								if ( CSWR_isOnDebugHeli || CSWR_isOnDebugSupport ) then { { systemChat format ["HELIPAD BLOCKER:   %1", typeOf _x] } forEach _blockers };
 							};
 							// Breather for the next loop check:
 							sleep 20;  // IMPORTANT: leave this command in the final of this scope/loop, never in the beginning.
@@ -3980,8 +4131,9 @@ THY_fnc_CSWR_spawn_and_go = {
 							_veh engineOn true;
 						};
 						// Only helicopter config > Features:
-						if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight abs CSWR_heliLightAlt };
-						if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight abs CSWR_heliHeavyAlt };
+						if ( _grpType isEqualTo "heliL" ) then { _veh flyInHeight CSWR_heliLightAlt };
+						if ( _grpType isEqualTo "heliM" ) then { _veh flyInHeight CSWR_heliMediumAlt };
+						if ( _grpType isEqualTo "heliH" ) then { _veh flyInHeight CSWR_heliHeavyAlt };
 					// Otherwise:
 					} else {
 						// SPAWNING THE NAUTICAL VEHICLE AND ITS CREW:
@@ -3994,6 +4146,10 @@ THY_fnc_CSWR_spawn_and_go = {
 			};
 			// Only vehicle config > Setting the vehicle direction:
 			_veh setDir (markerDir _spwn);
+			if (CSWR_removeItemsCargo # 0) then { clearWeaponCargo _veh };
+			if (CSWR_removeItemsCargo # 1) then { clearMagazineCargo _veh };
+			if (CSWR_removeItemsCargo # 2) then { clearItemCargo _veh };
+			if (CSWR_removeItemsCargo # 3) then { clearBackpackCargo _veh };
 			// Creating the group and its ground vehicle crew:
 			_grp = _side createVehicleCrew _veh;  // CRITICAL: never remove _side to avoid inconscistences when mission editor to use vehicles from another side.
 			// Only vehicle config:
@@ -4004,18 +4160,20 @@ THY_fnc_CSWR_spawn_and_go = {
 		};
 
 		// RIGHT AFTER THE SPAWN:
-		// Update the _grpInfo:
-		_grpInfo set [2, _grp];
+		// Update the _grpData:
+		_grpData set [2, _grp];
 		// Group/Vehicle config > Server performance:
 		_grp deleteGroupWhenEmpty true;
 		// Identity selector:
 		[_tag, _grp] call THY_fnc_CSWR_identity_selector;
+		// Group name selector:
+		[_grp, _destType, _isAirCrew, _isTransp] call THY_fnc_CSWR_grp_callSign_selector;
 		// Loadout selector:
 		[_tag, _grp, _grpType, _veh, _isVeh, _isAirCrew, _isNauCrew, _isMarine, _isPara] call THY_fnc_CSWR_loadout_selector;
 		// Group/Vehicle config > Units skills:
 		[_grpType, _grp, _destType, _tag] call THY_fnc_CSWR_unit_skills;
 		// Only group config > Formation:
-		if !_isVeh then { [_grpInfo] call THY_fnc_CSWR_group_formation };
+		if !_isVeh then { [_grpData] call THY_fnc_CSWR_grp_form };
 		// Group/Vehicle config > Adding to ZEUS:
 		if ( CSWR_isEditableByZeus || CSWR_isOnDebug ) then {
 			{  // forEach allCurators:
@@ -4029,25 +4187,39 @@ THY_fnc_CSWR_spawn_and_go = {
 		};
 		// Only helicopter config > Takeoff delay:
 		if ( _isAirCrew && !CSWR_isHeliSpwningInAir && !_isEmergencyHover ) then {
-			// Defining the preparing time:
-			_time = time + (selectRandom CSWR_heliTakeOffDelay);
-			if ( CSWR_isOnDebug && CSWR_isOnDebugHeli ) then {
-				["%1 HELICOPTER > A %2 helicopter PREPARING to take off soon...",
-				CSWR_txtDebugHeader, _tag] call BIS_fnc_error };
-			// Preparing time to take off:
-			waitUntil { sleep 5; time > _time };
+			// If combat one:
+			if !_isTransp then {
+				// Defining the preparing time:
+				_t = time + (selectRandom CSWR_heliTakeOffDelay);
+				if ( CSWR_isOnDebug && CSWR_isOnDebugHeli ) then {
+					["%1 HELICOPTER > A %2 helicopter PREPARING to take off soon...",
+					CSWR_txtDebugHeader, _tag] call BIS_fnc_error };
+				// Preparing time to take off:
+				waitUntil { sleep 5; !alive _veh || time > _t };
+			// Transport support:
+			// Important: for a best gameplay experience, better do not include cooldown for transport support take off.
+			} else {
+				// Escape > If air support vehicle explodes, remove player group from those using this support resource, and abort:
+				if ( !alive _veh || !alive driver _veh ) exitWith {
+					// Remove the player's group from the support list:
+					if ( _destType isEqualTo "MOVE_EXTRACTION" ) then { [_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo };
+					if ( _destType isEqualTo "MOVE_TRANSPORT" ) then { [_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo };
+					// Return:
+					true;
+				};
+			};
 			// Debug:
-			if ( CSWR_isOnDebug && alive (vehicle (leader _grp)) ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, _grp] };
+			if ( CSWR_isOnDebug && alive _veh ) then { systemChat format ["%1 %2 '%3' helicopter is TAKING OFF!", CSWR_txtDebugHeader, _tag, _grp] };
 		};
 		// If Spawn was a Paradrop:
 		if _isPara then {
 			// For People:
 			if !_isVeh then {
 				// Timeout:
-				_time = time + 180;  // 3 minutes. If leader fell over a rock or building higher than 10m so timeout is needed to avoid infinite loop.
+				_t = time + 180;  // 3 minutes. If leader fell over a rock or building higher than 10m so timeout is needed to avoid infinite loop.
 				// Wait the leader touch the ground or water:
 				// CRITICAL: about terrain, don't set less than 10m coz if leader fell over a rock, they are NOT touching the ground for Arma!
-				waitUntil { sleep 10; (getPosATL (leader _grp)) # 2 < 10 || (getPosASLW (leader _grp)) # 2 < 1 || !alive leader _grp || time > _time };
+				waitUntil { sleep 10; (getPosATL (leader _grp)) # 2 < 10 || (getPosASLW (leader _grp)) # 2 < 1 || !alive leader _grp || time > _t };
 				// Time for the leader arrive on the ground (coz the '10'm gap):
 				sleep 8;
 				[_tag, leader _grp, 100, 1] call THY_fnc_CSWR_makes_unit_touch_the_ground;
@@ -4074,10 +4246,10 @@ THY_fnc_CSWR_spawn_and_go = {
 						// Otherwise, if another group member:
 						} else {
 							// Timeout:
-							_time = time + 180;  // 3 minutes. If unit fell over a rock or building higher than 10m so timeout is needed to avoid infinite loop.
+							_t = time + 180;  // 3 minutes. If unit fell over a rock or building higher than 10m so timeout is needed to avoid infinite loop.
 							// Wait the member touch the ground or water:
 							// CRITICAL: about terrain, don't set less than 10m coz if member fell over a rock, they are NOT touching the ground for Arma!
-							waitUntil { sleep 3;  (getPosATL _x) # 2 < 10 || (getPosASLW _x) # 2 < 1 || !alive _x || time > _time };
+							waitUntil { sleep 3;  (getPosATL _x) # 2 < 10 || (getPosASLW _x) # 2 < 1 || !alive _x || time > _t };
 							// Time for the leader arrive on the ground (coz the '10'm gap):
 							sleep 5;
 							[_tag, leader _grp, 50, 1] call THY_fnc_CSWR_makes_unit_touch_the_ground;
@@ -4093,7 +4265,7 @@ THY_fnc_CSWR_spawn_and_go = {
 					// If leader on land:
 					if !(surfaceIsWater (getPos (leader _grp))) then {
 						// Wait the group members regroup for the first mission move after paradrop landing:
-						[_tag, _grp, 30, getPos (leader _grp)] call THY_fnc_CSWR_leader_waiting_group_mates;
+						[_tag, _grp, 30, getPos (leader _grp)] call THY_fnc_CSWR_leader_waiting_grp_mates;
 					// If leader in water:
 					} else {
 						// Find a dry land near:
@@ -4105,7 +4277,7 @@ THY_fnc_CSWR_spawn_and_go = {
 							sleep 1;
 							leader _grp doMove (getPosATL leader _grp);
 							// Wait the group members regroup for the first mission move after paradrop landing:
-							[_tag, _grp, 30, _emergencyPos] call THY_fnc_CSWR_leader_waiting_group_mates;
+							[_tag, _grp, 30, _emergencyPos] call THY_fnc_CSWR_leader_waiting_grp_mates;
 						// No dry land found:
 						} else {
 							// To avoid problematic behavior with new leader if also in water, selecting all units in water or dead yet (any reason) to delete them:
@@ -4116,7 +4288,7 @@ THY_fnc_CSWR_spawn_and_go = {
 								CSWR_txtDebugHeader, _tag, _grp]; sleep 1;
 							};
 							// Wait the group members regroup for the first mission move after paradrop landing:
-							[_tag, _grp, 30, getPos (leader _grp)] call THY_fnc_CSWR_leader_waiting_group_mates;
+							[_tag, _grp, 30, getPos (leader _grp)] call THY_fnc_CSWR_leader_waiting_grp_mates;
 						};
 					};
 				};
@@ -4131,27 +4303,17 @@ THY_fnc_CSWR_spawn_and_go = {
 
 		// WAYPOINTS SECTION:
 		// Group/Vehicle config > Destination (open a new thread):
-		[_spwns, _destType, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB] spawn THY_fnc_CSWR_go;
+		[_spwn, _spwns, _destType, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, _grpCaller] spawn THY_fnc_CSWR_go;
 
 		// UNDO THE BOOKING:
 		// For vehicle:
 		if _isVeh then {
-			// When the vehicle get distance from spawn or be destroyed (or for some reason the group leaves the vehicle and get distance by foot), stop the looping:
-			waitUntil { sleep 5; isNull _grp || !alive _veh || _veh distance _spwnPos > _safeDis || (leader _grp) distance _spwnPos > _safeDis };
-			// over the spawn-point, if the vehicle has been destroyed, or the crew has been killed, or the crew rampout leaving the vehicle, it deletes the wreck/vehicle and everything around it to avoid explosions:
-			if ( !alive _veh || !alive (leader _grp) || isNull (objectParent (leader _grp)) ) then {
-				// Delete everything in spawn position:
-				{ deleteVehicle _x; sleep 0.1 } forEach (_spwnPos nearObjects _safeDis) + units _grp;
-				// Debug:
-				if CSWR_isOnDebug then {
-					systemChat format ["%1 BOOKING > A %2 vehicle (or its wreck) HAS BEEN DELETED over a spawn-point to preserve the spawn integrity.",
-					CSWR_txtDebugHeader, _tag, _spwn];
-				};
-			};
+			// Anti-spawn-blocker for vehicles:
+			[_tag, _spwn, _grp, _veh, _spwnPos, _safeDis] call THY_fnc_CSWR_spawn_antiBlocker;
 			// If ground or nautical vehicle:
 			if !_isAirCrew then {
 				// Undo the booking:
-				["BOOKING_SPAWNVEH", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+				["BOOKING_SPAWNVEH", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 				// Debug:
 				if ( CSWR_isOnDebug && CSWR_isOnDebugBooking ) then {
 					systemChat format ["%1 BOOKING_SPAWNVEH > %2 '%3' marker is free.",
@@ -4160,7 +4322,7 @@ THY_fnc_CSWR_spawn_and_go = {
 			// Otherwise:
 			} else {
 				// If helicopter:
-				["BOOKING_SPAWNHELI", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+				["BOOKING_SPAWNHELI", _tag, _spwn, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 				if ( CSWR_isOnDebug && CSWR_isOnDebugBooking ) then {
 					systemChat format ["%1 BOOKING_SPAWNHELI > %2 '%3' marker is free.",
 					CSWR_txtDebugHeader, _tag, _spwn]; sleep 1;
@@ -4179,32 +4341,21 @@ THY_fnc_CSWR_spawn_delay = {
 	// Returns nothing.
 
 	params ["_tag", "_spwnDelayMethods", "_isVeh", "_grpSize"];
-	private ["_isReadyToSpwn", "_timeLoop", "_time", "_ctr", "_wait", "_requester", "_txt1"];
+	private ["_isReadyToSpwn", "_t", "_ctr", "_wait", "_caller", "_txt1"];
 
-	// Escape:
-		// reserved space.
-	// Errors handling:
-		// reserved space.
 	// Initial values:
 	_isReadyToSpwn = false;
-	_timeLoop      = 0;
 	// Declarations:
-	_time      = time;
-	_ctr       = _time;
-	_wait      = 10;  // CAUTION: this number is used to calcs the TIMER too.
-	_requester = if _isVeh then {"vehicle"} else {"group"};
-	
+	_t          = time;
+	_ctr        = _t;
+	_wait       = 10;  // CAUTION: this number is used to calcs the TIMER too.
+	_caller     = if _isVeh then {"vehicle"} else {"group"};
 	// Debug texts:
-	_txt1 = format ["A %1 %2 was granted TO SPAWN", _tag, _requester];
-
+	_txt1 = format ["A %1 %2 was granted TO SPAWN", _tag, _caller];
 	// Spawn Delay conditions > Stay checking if the group ISN'T ready to spawn:
 	while { !_isReadyToSpwn } do {
-		_timeLoop = time;
-		// Delay for each loop check:
-		waitUntil { sleep _wait; time >= _timeLoop + _wait };
-		// Escape:
-			// reserved space.
-
+		// Breather:
+		uiSleep _wait;
 		{  // forEach _spwnDelayMethods:
 			// TIMER DELAY:
 			// If Spawn Delay has a timer, check if it's a number:
@@ -4212,7 +4363,7 @@ THY_fnc_CSWR_spawn_delay = {
 				// Counter increase:
 				_ctr = _ctr + _wait;
 				// Timer checker:
-				if ( _ctr >= _time + ((abs _x) * 60) ) exitWith {
+				if ( _ctr >= _t + ((abs _x) * 60) ) exitWith {
 					// Function completed:
 					_isReadyToSpwn = true;
 					// Debug:
@@ -4223,30 +4374,45 @@ THY_fnc_CSWR_spawn_delay = {
 				};
 			// otherwise:
 			} else {
-				// TRIGGER DELAY:
-				// If Spawn Delay has a trigger, check if it's a trigger object:
-				if ( _x isKindOf "EmptyDetector" ) then { 
-					// If the trigger has been activated:
-					if ( triggerActivated _x ) exitWith { 
+				// BOOLEAN FLAG DELAY:
+				if ( typeName _x isEqualTo "STRING" ) then {
+					// If true, break the looping and spawn:
+					if (missionNamespace getVariable [_x, false]) exitWith {  // if nothing declared, default value is false!
 						// Function completed:
-						_isReadyToSpwn = true; 
+						_isReadyToSpwn = true;
 						// Debug:
 						if CSWR_isOnDebug then {
-							systemChat format ["%1 SPAWN DELAY > %2 by TRIGGER activation (%3).",
+							systemChat format ["%1 SPAWN DELAY > %2 by BOOLEAN FLAG (''%3'' turned TRUE).",
 							CSWR_txtDebugHeader, _txt1, _x]; sleep 1;
 						};
 					};
 				// Otherwise:
 				} else {
-					// TARGET DELAY:
-					// If the target has been killed/destroyed:
-					if ( !alive _x ) exitWith {
-						// Function completed:
-						_isReadyToSpwn = true;
-						// Debug:
-						if CSWR_isOnDebug then {
-							systemChat format ["%1 SPAWN DELAY > %2 by TARGET elimination/destruction (%3).",
-							CSWR_txtDebugHeader, _txt1, _x]; sleep 1;
+					// TRIGGER DELAY:
+					// If Spawn Delay has a trigger, check if it's a trigger object:
+					if ( _x isKindOf "EmptyDetector" ) then { 
+						// If the trigger has been activated:
+						if ( triggerActivated _x ) exitWith {
+							// Function completed:
+							_isReadyToSpwn = true; 
+							// Debug:
+							if CSWR_isOnDebug then {
+								systemChat format ["%1 SPAWN DELAY > %2 by TRIGGER activation (%3).",
+								CSWR_txtDebugHeader, _txt1, _x]; sleep 1;
+							};
+						};
+					// Otherwise:
+					} else {
+						// TARGET DELAY:
+						// If the target has been killed/destroyed:
+						if ( !alive _x ) exitWith {
+							// Function completed:
+							_isReadyToSpwn = true;
+							// Debug:
+							if CSWR_isOnDebug then {
+								systemChat format ["%1 SPAWN DELAY > %2 by TARGET elimination/destruction (%3).",
+								CSWR_txtDebugHeader, _txt1, _x]; sleep 1;
+							};
 						};
 					};
 				};
@@ -4256,8 +4422,8 @@ THY_fnc_CSWR_spawn_delay = {
 	// Debug:
 	if CSWR_isOnDebug then {
 		// Debug monitor > How many units will spawn soon:
-		CSWR_spwnDelayQueueAmount = CSWR_spwnDelayQueueAmount - _grpSize;
-		publicVariable "CSWR_spwnDelayQueueAmount";
+		CSWR_spwnDelayQueue = CSWR_spwnDelayQueue - _grpSize;
+		publicVariable "CSWR_spwnDelayQueue";
 	};
 	// Return:
 	true;
@@ -4265,11 +4431,11 @@ THY_fnc_CSWR_spawn_delay = {
 
 
 THY_fnc_CSWR_add_validation = {
-	// This function validate most part of the parameters of THY_fnc_CSWR_add_people and THY_fnc_CSWR_add_vehicle. Deeper validations for spawns (THY_fnc_CSWR_spawn_type_checker) and destinations (THY_fnc_CSWR_destination_type_checker) happen later when CSWR would have more information.
+	// This function validate most of the parameters in THY_fnc_CSWR_add_people and THY_fnc_CSWR_add_vehicle. Deeper validations for spawns (THY_fnc_CSWR_spawn_type_checker) and destinations (THY_fnc_CSWR_destination_type_checker) happen later when CSWR would have more information.
 	// Returns _isInvalid: bool.
 
-	params ["_isVeh", "_tag", "_spwnsInfo", "_requesterClass", "_destsInfo"];
-	private ["_isInvalid", "_mkrOwner", "_spwns", "_spwnsSector", "_destType", "_destSector", "_requester"];
+	params ["_isVeh", "_tag", "_spwnsData", "_callerClass", "_destsData"];
+	private ["_isInvalid", "_mkrOwner", "_spwns", "_spwnsSector", "_destType", "_destSector", "_caller"];
 
 	// Escape:
 		// reserved space.
@@ -4277,50 +4443,50 @@ THY_fnc_CSWR_add_validation = {
 	_isInvalid = false;
 	_mkrOwner  = "";
 	// Declarations:
-	_spwns       = _spwnsInfo # 0;
-	_spwnsSector = _spwnsInfo # 1;
-	_destType    = _destsInfo # 0;
-	_destSector  = _destsInfo # 1;
-	_requester   = if !_isVeh then { "group" } else { "vehicle" };
+	_spwns       = _spwnsData # 0;
+	_spwnsSector = _spwnsData # 1;
+	_destType    = _destsData # 0;
+	_destSector  = _destsData # 1;
+	_caller   = if !_isVeh then { "group" } else { "vehicle" };
 	// Debug texts:
 		// reserved space.
 	// Main functionality:
 	// Escape > If some issue with the side declaration, abort:
 	if ( _tag isEqualTo "" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > One or more %2s have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_population.sqf' file and fix it. The %2 WON'T be created.",
-		CSWR_txtWarnHeader, _requester]; sleep 10;
+		systemChat format ["%1 SPAWN > One or more %2s have a typo/mispelling in the name of the side they belong to. Check the 'fn_CSWR_2_population.sqf' file and fix it. The %2 WON'T be created.",
+		CSWR_txtWarnHeader, _caller]; sleep 10;
 		// Return:
 		true;
 	};
 	/*
 	SPAWN STRUCTURE --------------------------------------------------------------------------------------------------
-	_spwnsInfo = [CSWR_spawnsForPeopleBLU, "A"]
+	_spwnsData = [CSWR_spawnsForPeopleBLU, "A"]
 		[0 CSWR_spawnsForPeopleBLU
 			[0 Land markers],
 			[1 Water markers]
 		]
 	*/
-	// Escape > If _spwnsInfo is not array, abort:
-	if ( typeName _spwnsInfo isNotEqualTo "ARRAY" ) exitWith {
+	// Escape > If _spwnsData is not array, abort:
+	if ( typeName _spwnsData isNotEqualTo "ARRAY" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > One or more %2 %3 rows have no '[ ]' in spawn-points-type column. Fix it in 'fn_CSWR_population.sqf' file, e.g: [CSWR_spawnsForPeople%2, ''A'']. The %2 %3 won't be created.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+		systemChat format ["%1 SPAWN > One or more %2 %3 rows have no '[ ]' in spawn-points-type column. Fix it in 'fn_CSWR_2_population.sqf' file, e.g: [CSWR_spawnsForPeople%2, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		// Return:
 		true;
 	};
 	// Escape > If there's NO spawn-points-type, abort:
-	if ( isNil { typeName _spwns isEqualTo "ARRAY" } || _spwnsInfo isEqualTo [] ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+	if ( isNil { typeName _spwns isEqualTo "ARRAY" } || _spwnsData isEqualTo [] ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
 		// Warning:
-		systemChat format ["%1 SPAWN > One or more %2 %3 rows got an invalid type of spawn-points or the spawn-points-type column has its '[ ]' empty. Fix it in fn_CSWR_population.sqf file, e.g: [CSWR_spawnsForPeople%2, ''A'']. The %2 %3 won't be created.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 10;
+		systemChat format ["%1 SPAWN > One or more %2 %3 rows got an invalid type of spawn-points or the spawn-points-type column has its '[ ]' empty. Fix it in fn_CSWR_2_population.sqf file, e.g: [CSWR_spawnsForPeople%2, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 10;
 		// Return:
 		true;
 	};
 	// Escape > if first element is a string, abort:
 	if ( typeName _spwns isEqualTo "STRING" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > Looks you didn't type the %2 spawn-point-type in its column, only the sector. Use that inside the '[ ]' like this for example: [CSWR_spawnsForPeople%2, ''A''] in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 SPAWN > Looks you didn't type the %2 spawn-point-type in its column, only the sector. Use that inside the '[ ]' like this for example: [CSWR_spawnsForPeople%2, ''A''] in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _tag]; sleep 5;
 		// Return:
 		true;
@@ -4328,8 +4494,8 @@ THY_fnc_CSWR_add_validation = {
 	// Escape > first element is not array, abort:
 	if ( typeName (_spwns # 0) isNotEqualTo "ARRAY" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > Looks you declared the %2 spawn-points without '[ ]' in spawn-points-type column in 'fn_CSWR_population.sqf' file at least in one of the %2 %3 rows creation.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+		systemChat format ["%1 SPAWN > Looks you declared the %2 spawn-points without '[ ]' in spawn-points-type column in 'fn_CSWR_2_population.sqf' file at least in one of the %2 %3 rows creation.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		// Return:
 		true;
 	};
@@ -4337,14 +4503,14 @@ THY_fnc_CSWR_add_validation = {
 	if ( ((_spwns # 0)+(_spwns # 1)) isEqualTo [] ) exitWith {
 		// Warning:
 		systemChat format ["%1 SPAWN > There IS NO %2 SPAWNPOINT to create a %2 %3. On EDEN markers, if you're trying to spawn a group, use marker's variable-name like '%4%5SPAWN%5%2%5sectorletter%5anynumber'. If you wanna spawn a ground or nautical vehicle, use '%4%5SPAWNVEH%5%2%5sectorletter%5anynumber'. Or, a HELICOPTER, '%4%5SPAWNHELI%5%2%5sectorletter%5anynumber'.",
-		CSWR_txtWarnHeader, _tag, _requester, CSWR_prefix, CSWR_spacer]; sleep 10;
+		CSWR_txtWarnHeader, _tag, _caller, CSWR_prefix, CSWR_spacer]; sleep 10;
 		// Return:
 		true;
 	};
 	// Escape > test if there is at least one marker string-name in land-markers array OR in water-markers array. If not, abort:
 	if ( typeName ((_spwns # 0) # 0) isNotEqualTo "STRING" || typeName ((_spwns # 1) # 0) isNotEqualTo "STRING" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > Somehow, %2 there's NO VALID spawn-point on land, nor spawn-point in water. Check the 'fn_CSWR_population.sqf' file and make sure you're using the structure like this: [CSWR_spawnsForPeople%2, ''A''] for example.",
+		systemChat format ["%1 SPAWN > Somehow, %2 there's NO VALID spawn-point on land, nor spawn-point in water. Check the 'fn_CSWR_2_population.sqf' file and make sure you're using the structure like this: [CSWR_spawnsForPeople%2, ''A''] for example.",
 		CSWR_txtWarnHeader, _tag]; sleep 10;
 		// Return:
 		true;
@@ -4353,18 +4519,18 @@ THY_fnc_CSWR_add_validation = {
 	_mkrOwner = (((((_spwns # 0)+(_spwns # 1)) # 0) splitString CSWR_spacer) # 2);  // splitString results e.g: ["CSWR","SPAWN","BLU","1"]
 	if ( _mkrOwner isNotEqualTo _tag ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > NOT ALLOWED to spawn a %2 %3 in %4 spawn-points. Check your 'fn_CSWR_population.sqf' file and make sure all %2 and %4 %3 rows have their spawn-points correctly assigned for their sides.", 
-		CSWR_txtWarnHeader, _tag, _requester, _mkrOwner]; sleep 5;
+		systemChat format ["%1 SPAWN > NOT ALLOWED to spawn a %2 %3 in %4 spawn-points. Check your 'fn_CSWR_2_population.sqf' file and make sure all %2 and %4 %3 rows have their spawn-points correctly assigned for their sides.", 
+		CSWR_txtWarnHeader, _tag, _caller, _mkrOwner]; sleep 5;
 		// Return:
 		true;
 	};
 	// Escape > If spawn sector is not a string, abort:
-	if ( isNil { typeName _spwnsSector isEqualTo "STRING" } ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
+	if ( isNil { typeName _spwnsSector isEqualTo "STRING" } ) exitWith {
 		// Warning:
 		systemChat format ["%1 SPAWN > Spawn-sector's missing in some %2 %3 row in 'fn_CSWR_population' file! Sector in Population file must be a letter between QUOTES, e.g: [%4%2, ''A'']. The %2 %3 won't be created.",
 		CSWR_txtWarnHeader,
 		_tag,
-		_requester,
+		_caller,
 		if !_isVeh then {"CSWR_spawnsForPeople"} else {"CSWR_spawnsForVehicle"}]; sleep 5;
 		// Return:
 		true;
@@ -4372,157 +4538,184 @@ THY_fnc_CSWR_add_validation = {
 	// Escape > If the spawn sector letter has more than one character, abort:
 	if ( _spwnsSector isNotEqualTo "" && count _spwnsSector isNotEqualTo 1 ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > At least one %2 %3 has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spawnsForPeople%2, ''A'']. Fix it in 'fn_CSWR_population.sqf' file.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+		systemChat format ["%1 SPAWN > At least one %2 %3 has an invalid spawn-SECTOR. Sectorization accepts only ONE LETTER, like this: [CSWR_spawnsForPeople%2, ''A'']. Fix it in 'fn_CSWR_2_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		// Return:
 		true;
 	};
-	// Escape > If there's NO spawn-point sectorized on Eden but there's a sector letter declared in fn_CSWR_population.sqf file:
-	// (NOT NEEDED SINCE SECTORIZATION IS MANDATORY IN v7!)
-	// Escape > If exist spawn-points on Eden, but no declared sector in fn_CSWR_population.sqf file:
-	if ( count ((_spwns # 0) + (_spwns # 1)) > 0 && _spwnsSector isEqualTo "" ) exitWith {
+	// Escape > If exist spawn-points on Eden, but no declared sector in fn_CSWR_2_population.sqf file:
+	if ( (((_spwns # 0) # 0) + ((_spwns # 1) # 0)) isNotEqualTo [] && _spwnsSector isEqualTo "" ) exitWith {
 		// Warning:
-		systemChat format ["%1 SPAWN > Looks you have correctly spawn-points on Eden but forgot to declarate their sector letter in 'fn_CSWR_population.sqf'. To fix, add the sector letter in each row that is missing.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+		systemChat format ["%1 SPAWN > Looks you have correctly spawn-points on Eden but forgot to declarate their sector letter in 'fn_CSWR_2_population.sqf'. To fix, add the sector letter in each row that is missing.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		// Return:
 		true;
 	};
 	// If group:
 	if !_isVeh then {
-		// If editor is using a vehicle requester and not a group instead:
-		if ( typeName _requesterClass isEqualTo "STRING" ) exitWith {
+		// If editor is using a vehicle caller and not a group instead:
+		if ( typeName _callerClass isEqualTo "STRING" ) exitWith {
 			// Warning:
 			if ( _tag isNotEqualTo "CIV" ) then {
-				systemChat format ["%1 GROUP > At least one of %2 group rows in 'fn_CSWR_population.sqf' file you're requesting a VEHICLE and NOT a group of soldiers as expected. Remember to use for each %2 group row ONLY 'CSWR_group_%2_light', 'CSWR_group_%2_medium', 'CSWR_group_%2_heavy', 'CSWR_group_%2_custom_1', or 'CSWR_group_%2_sniper'.",
+				systemChat format ["%1 GROUP > At least one of %2 group rows in 'fn_CSWR_2_population.sqf' file you're requesting a VEHICLE and NOT a group of soldiers as expected. Remember to use for each %2 group row ONLY 'CSWR_group_%2_light', 'CSWR_group_%2_medium', 'CSWR_group_%2_heavy', 'CSWR_group_%2_custom_1', or 'CSWR_group_%2_sniper'.",
 				CSWR_txtWarnHeader, _tag];
 			} else {
-				systemChat format ["%1 GROUP > At least one of %2 group rows in 'fn_CSWR_population.sqf' file you're requesting a VEHICLE and NOT a group of people as expected. Remember to use for each %2 group row ONLY 'CSWR_group_%2_light', 'CSWR_group_%2_medium', 'CSWR_group_%2_heavy', or 'CSWR_group_%2_custom_1'.",
+				systemChat format ["%1 GROUP > At least one of %2 group rows in 'fn_CSWR_2_population.sqf' file you're requesting a VEHICLE and NOT a group of people as expected. Remember to use for each %2 group row ONLY 'CSWR_group_%2_light', 'CSWR_group_%2_medium', 'CSWR_group_%2_heavy', or 'CSWR_group_%2_custom_1'.",
 				CSWR_txtWarnHeader, _tag];
 			};
 			 sleep 10;
-			// Preparing to return:
+			// Prepare to return:
 			_isInvalid = true;
 		};
 		// If has something declared as unit classname, but the first element is not string, abort:
-		if ( count _requesterClass > 0 && typeName (_requesterClass # 0) isNotEqualTo "STRING" ) exitWith {
+		if ( _callerClass isNotEqualTo [] && typeName (_callerClass # 0) isNotEqualTo "STRING" ) exitWith {
 			// Warning:
-			systemChat format ["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
+			systemChat format ["%1 GROUP > At least one of the %2 groups looks the classname(s) is/are NOT declared between quotes in 'fn_CSWR_2_population.sqf' file. Right way e.g: ['X_classname_one', 'X_classname_two'].",
 			CSWR_txtWarnHeader, _tag]; sleep 10;
-			// Preparing to return:
+			// Prepare to return:
 			_isInvalid = true;
 		};
 		// If the group is empty, abort:
-		if ( _requesterClass isEqualTo [] ) exitWith {
+		if ( _callerClass isEqualTo [] ) exitWith {
 			// Warning:
-			systemChat format ["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
+			systemChat format ["%1 GROUP > At least one %2 group type configured in 'fn_CSWR_2_population.sqf' file HAS NO classname(s) declared for CSWR script gets to know which unit(s) should be created. Fix it!", 
 			CSWR_txtWarnHeader, _tag]; sleep 10;
-			// Preparing to return:
+			// Prepare to return:
 			_isInvalid = true;
 		};
 	// If vehicle:
 	} else {
-		// If editor is using a group requester and not a vehicle instead:
-		if ( typeName _requesterClass isEqualTo "ARRAY" ) exitWith {
+		// If editor is using a group caller and not a vehicle instead:
+		if ( typeName _callerClass isEqualTo "ARRAY" ) exitWith {
 			// Warning:
-			systemChat format ["%1 VEHICLE > At least one of %2 vehicle rows in 'fn_CSWR_population.sqf' file you're requesting a GROUP and NOT a vehicle as expected. Remember to use for each %2 vehicle row ONLY 'CSWR_vehicle_%2_light', 'CSWR_vehicle_%2_medium', 'CSWR_vehicle_%2_heavy', or 'CSWR_vehicle_%2_custom_1', for example.",
+			systemChat format ["%1 VEHICLE > At least one of %2 vehicle rows in 'fn_CSWR_2_population.sqf' file you're requesting a GROUP and NOT a vehicle as expected. Remember to use for each %2 vehicle row ONLY 'CSWR_vehicle_%2_light', 'CSWR_vehicle_%2_medium', 'CSWR_vehicle_%2_heavy', or 'CSWR_vehicle_%2_custom_1', for example.",
 			CSWR_txtWarnHeader, _tag];
 			 sleep 10;
-			// Preparing to return:
+			// Prepare to return:
 			_isInvalid = true;
 		};
 		// If has something declared as vehicle classname, but is not string, abort:
-		if ( _requesterClass isNotEqualTo "" && typeName _requesterClass isNotEqualTo "STRING" ) exitWith {
+		if ( _callerClass isNotEqualTo "" && typeName _callerClass isNotEqualTo "STRING" ) exitWith {
 			// Warning:
-			systemChat format ["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_population.sqf' file. Right way e.g: 'X_classname_one'.",
+			systemChat format ["%1 VEHICLE > At least one of the %2 vehicles looks the classname is NOT declared between quotes in 'fn_CSWR_2_population.sqf' file. Right way is using QUOTES, e.g: ''X_classname_one''.",
 			CSWR_txtWarnHeader, _tag]; sleep 10;
+			// Prepare to return:
+			_isInvalid = true;
 		};
 		// If the vehicle variable is empty, abort:
-		if ( _requesterClass isEqualTo "" ) exitWith {
+		if ( _callerClass isEqualTo "" ) exitWith {
 			// Warning:
-			systemChat format ["%1 VEHICLE > At least one %2 vehicle-type configured in 'fn_CSWR_population.sqf' file HAS NO classname declared for CSWR gets to know which vehicle should be created. Fix it, adding a vehicle classname between double-quotes!",
+			systemChat format ["%1 VEHICLE > At least one %2 vehicle-type configured in 'fn_CSWR_2_population.sqf' file HAS NO classname declared for CSWR gets to know which vehicle should be created. Fix it, adding a vehicle classname between double-quotes!",
 			CSWR_txtWarnHeader, _tag]; sleep 10;
+			// Prepare to return:
+			_isInvalid = true;
+		};
+		// Checking the spawn over the Extraction destination influencies:
+		if ( _destType isEqualTo "MOVE_EXTRACTION" ) then {
+			// If there's NO at least one Spawn for helicopter on land, and the destination type is Extraction move, abort:
+			// Important: it doesn't prevent the helicopter to spawn in water if the editor sets on the land and water. So this "water" checks need to happen furthur during the spawn process!
+			if ( isNil { !((_spwns # 0) # 0 in (CSWR_spwnsHeliLandBLU + CSWR_spwnsHeliLandOPF + CSWR_spwnsHeliLandIND + CSWR_spwnsHeliLandCIV)) } ) exitWith {  // isNill coz maybe the array is empty and would bring an error.
+				// Warning:
+				systemChat format ["%1 SPAWN > At least one %2 vehicle is trying to use %3, but the spawn-point type used is NOT for helicopter OR there's NO spawn markers on dry land. When the destination is EXTRACTION, the helicopter SPAWN need to be ON DRY LAND. Check your 'fn_CSWR_2_population.sqf' file and EDEN spawn-markers.",
+				CSWR_txtWarnHeader, _tag, _destType]; sleep 10;
+				// Prepare to return:
+				_isInvalid = true;
+			};
 		};
 	};
-	 // Escape > Returning if one conditional right above flags _isInvalid as true:
+	// Escape > Returning if one conditional right above flags _isInvalid as true:
 	if _isInvalid exitWith { _isInvalid };
 	/*
 	DESTINATION STRUCTURE --------------------------------------------------------------------------------------------
-	_destsInfo = [string, "A"]
+	_destsData = [string, "A"]
 	*/
-	// Escape > If _destsInfo is not array, abort:
-	if ( typeName _destsInfo isNotEqualTo "ARRAY" ) exitWith {
+	// Escape > If _destsData is not array, abort:
+	if ( typeName _destsData isNotEqualTo "ARRAY" ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > One or more %2 %3 rows have no '[ ]' in destination-type column. Fix it in 'fn_CSWR_population.sqf' file directly in the destination column of each issued row, e.g: [_move_ANY] or [_move_RESTRICT, ''A'']. The %2 %3 won't be created.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 10;
+		systemChat format ["%1 DESTINATION > One or more %2 %3 rows have no '[ ]' in destination-type column. Fix it in 'fn_CSWR_2_population.sqf' file directly in the destination column of each issued row, e.g: [_move_ANY] or [_move_RESTRICT, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 10;
 		// Return:
 		true;
 	};
 	// Escape > If there is NO destination, abort:
-	if ( count _destsInfo < 2 ) exitWith {
+	if ( count _destsData < 2 ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > One or more %2 %3 rows got an invalid type of destination or the destination-type column has its '[ ]' empty. Fix it in fn_CSWR_population.sqf file, e.g: [_move_ANY] or [_move_RESTRICT, ''A'']. The %2 %3 won't be created.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 10;
+		systemChat format ["%1 DESTINATION > One or more %2 %3 rows got an invalid type of destination or the destination-type column has its '[ ]' empty. Fix it in fn_CSWR_2_population.sqf file, e.g: [_move_ANY] or [_move_RESTRICT, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 10;
 		// Return:
 		true;
 	};
-	// Escape > If _destsInfo first element is not a string, abort:
+	// Escape > If _destsData first element is not a string, abort:
 	if ( typeName _destType isNotEqualTo "STRING" ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > There IS NO DESTINATION to send a %2 %3. In 'fn_CSWR_population.sqf' check if (e.g.) [_move_ANY] or [_move_PUBLIC, ''A''] or [_move_RESTRICTED, ''A''] is configured.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 5;
+		systemChat format ["%1 DESTINATION > There IS NO DESTINATION to send a %2 %3. In 'fn_CSWR_2_population.sqf' check if (e.g.) [_move_ANY] or [_move_PUBLIC, ''A''] or [_move_RESTRICTED, ''A''] is configured.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 5;
 		// Return:
 		true;
 	};
 	// Escape > If destination sector is not a string, abort:
 	if ( isNil { typeName _destSector isEqualTo "STRING" } ) exitWith {  // WIP not sure if the logic is right, but somehow it works.
 		// Warning:
-		systemChat format ["%1 DESTINATION > Destination SECTOR must be a letter between QUOTES. Fix it in fn_CSWR_population.sqf file, e.g: [_move_ANY, ''A'']. The %2 %3 won't be created.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 10;
+		systemChat format ["%1 DESTINATION > Destination SECTOR must be a letter between QUOTES. Fix it in fn_CSWR_2_population.sqf file, e.g: [_move_ANY, ''A'']. The %2 %3 won't be created.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 10;
 		// Return:
 		true;
 	};
 	// Escape > If the destination-sector letter has more than one character, abort:
 	if ( _destSector isNotEqualTo "" && count _destSector > 1 ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > At least one %2 %3 has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_RESTRICT, ''A'']. Remember: [_move_ANY] doesn't accept sector-letters. Fix it in 'fn_CSWR_population.sqf' file.",
-		CSWR_txtWarnHeader, _tag, _requester]; sleep 10;
+		systemChat format ["%1 DESTINATION > At least one %2 %3 has an invalid destination-SECTOR. Sectorization accepts only ONE LETTER, like this: [_move_RESTRICT, ''A'']. Remember: [_move_ANY] doesn't accept sector-letters. Fix it in 'fn_CSWR_2_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, _caller]; sleep 10;
 		// Return:
 		true;
 	};
-	// Escape > If it's NOT a '_move_ANY' destination and has NO destination-sector declared, abort:
-	if ( _destType isNotEqualTo "MOVE_ANY" && _destSector isEqualTo "" ) exitWith {
+	// Escape > If it's NOT one of the exceptions, and has NO destination-sector declared, abort:
+	if ( !(_destType in ["MOVE_ANY", "MOVE_EXTRACTION", "MOVE_TRANSPORT"]) && _destSector isEqualTo "" ) exitWith {
 		// Warning:
-		if ( _tag isNotEqualTo "CIV") then {
-			systemChat format ["%1 DESTINATION > At least one %2 %3 row is trying to use a destionation WITHOUT a SECTOR. Only '_move_ANY' doesn't required sectorization. Fix it in 'fn_CSWR_population.sqf' file using, for example, [_move_RESTRICT, ''A''] or [_move_PUBLIC, ''A''] or [_move_ANY].",
-			CSWR_txtWarnHeader, _tag, _requester];
+		if (_tag isNotEqualTo "CIV") then {
+			systemChat format ["%1 DESTINATION > At least one %2 %3 row is trying to use a destionation WITHOUT a SECTOR. Only '_move_ANY' and '_move_EXTRACTION' don't required sectors. Fix it in 'fn_CSWR_2_population.sqf' file using, for example, [_move_RESTRICT, ''A''] or [_move_PUBLIC, ''A''] or [_move_ANY].",
+			CSWR_txtWarnHeader, _tag, _caller];
 		} else {
-			systemChat format ["%1 DESTINATION > At least one %2 %3 row is trying to use a destionation WITHOUT a SECTOR. Only '_move_ANY' doesn't required sectorization. Fix it in 'fn_CSWR_population.sqf' file using, for example, [_move_PUBLIC, ''A''] or [_move_ANY].",
-			CSWR_txtWarnHeader, _tag, _requester];
+			systemChat format ["%1 DESTINATION > At least one %2 %3 row is trying to use a destionation WITHOUT a SECTOR. Only '_move_ANY' and '_move_EXTRACTION' don't required sectors. Fix it in 'fn_CSWR_2_population.sqf' file using, for example, [_move_PUBLIC, ''A''] or [_move_ANY].",
+			CSWR_txtWarnHeader, _tag, _caller];
 		};
 		sleep 10;
 		// Return:
 		true;
 	};
-	// Escape > If it's a '_move_ANY' destination and has destination-sector declared, abort:
-	if ( _destType isEqualTo "MOVE_ANY" && _destSector isNotEqualTo "" ) exitWith {
+	// Escape > If it's one of those destinations that don't require sector but has sector declared, abort:
+	if ( _destType in ["MOVE_ANY", "MOVE_EXTRACTION", "MOVE_TRANSPORT"] && _destSector isNotEqualTo "" ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > A %2 %3 is trying to sectorize (%4) a '_move_ANY' in 'fn_CSWR_population.sqf' file, and it's forbidden coz '_move_ANY' can send assigned groups and vehicles to any COMMON destinations as PUBLIC and RESTRICTED ones dropped on the map, no matter what sector they are. Remember: '_move_ANY' doesn't include specialized destination as WATCH, HOLD and OCCUPY.",
-		CSWR_txtWarnHeader, _tag, _requester, _destSector]; sleep 10;
+		if ( _destType isEqualTo "MOVE_ANY" ) then {
+			systemChat format ["%1 DESTINATION > A %2 %3 is trying to sectorize (%4) a '_move_ANY' in 'fn_CSWR_2_population.sqf' file, and it's forbidden coz '_move_ANY' can send assigned groups and vehicles to any COMMON destinations as PUBLIC and RESTRICTED ones dropped on the map, no matter what sector they are. Remember: '_move_ANY' doesn't include specialized destination as WATCH, HOLD and OCCUPY.",
+			CSWR_txtWarnHeader, _tag, _caller, _destSector]; sleep 10;
+		} else {
+			systemChat format ["%1 DESTINATION > A %2 %3 is trying to sectorize (%4) a '_move_EXTRACTION' in 'fn_CSWR_2_population.sqf' file, and it's forbidden coz EXTRACTION destination goes anywhere the player is, and return to the base automatically, making it doesn't need any marker on Eden or sector in Population file.",
+			CSWR_txtWarnHeader, _tag, _caller, _destSector]; sleep 10;
+		};
 		// Return:
 		true;
 	};
 	// Escape > If civilian side is trying to use one or more forbidden moves for civilian side, abort:
 	if ( _tag isEqualTo "CIV" && _destType in ["MOVE_ANY", "MOVE_RESTRICTED", "MOVE_WATCH"] ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > In 'fn_CSWR_population.sqf' file, you're trying to use '%3' with a %2 %4. Civilians CAN use '_move_PUBLIC' (people and vehicles), and '_move_OCCUPY' (only people), and '_move_HOLD' (people and vehicles) for example. Fix it.",
-		CSWR_txtWarnHeader, _tag, _destType, _requester]; sleep 10;
+		systemChat format ["%1 DESTINATION > In 'fn_CSWR_2_population.sqf' file, you're trying to use '%3' with a %2 %4. Civilians CAN use '_move_PUBLIC' (people and vehicles), and '_move_OCCUPY' (only people), and '_move_HOLD' (people and vehicles) for example. Fix it.",
+		CSWR_txtWarnHeader, _tag, _destType, _caller]; sleep 10;
 		// Return:
 		true;
 	};
 	// Escape > If any vehicle is trying to execute the specialized destination OCCUPY, abort:
 	if ( _isVeh && _destType isEqualTo "MOVE_OCCUPY" ) exitWith {
 		// Warning:
-		systemChat format ["%1 DESTINATION > At least one %2 vehicle is trying to use %3. Only people can execute a '_move_OCCUPY'. Fix it in 'fn_CSWR_population.sqf' file.",
+		systemChat format ["%1 DESTINATION > At least one %2 vehicle is trying to use %3. Only people can execute a '_move_OCCUPY'. Fix it in 'fn_CSWR_2_population.sqf' file.",
+		CSWR_txtWarnHeader, _tag, _destType]; sleep 5;
+		// Return:
+		true;
+	};
+	// Escape > If Extraction and Transport moves are not used by helicopter, abort:
+	if ( _destType in ["MOVE_EXTRACTION", "MOVE_TRANSPORT"] && !_isVeh ) exitWith {
+		// Warning:
+		systemChat format ["%1 DESTINATION > At least one %2 group is trying to use %3. Only HELICOPTERS can execute a '_move_TRANSPORT' and '_move_EXTRACTION'. Fix it in 'fn_CSWR_2_population.sqf' file.",
 		CSWR_txtWarnHeader, _tag, _destType]; sleep 5;
 		// Return:
 		true;
@@ -4536,36 +4729,36 @@ THY_fnc_CSWR_add_people = {
 	// This function checks if it really is a group-type (on foot) for Arma 3, and does a quick detail validations before next steps with much deeper validations.
 	// Returns nothing, but open a new thread.
 	
-	params ["_side", ["_spwnsInfo", [[], ""]], ["_grpClassnames", []], ["_form", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", []]];
-	private ["_tag", "_isValidClasses", "_validBehavior", "_validForm", "_grpInfo"];
+	params ["_side", ["_spwnsData", [[], ""]], ["_grpClassnames", []], ["_form", ""], ["_behavior", ""], ["_destsData", ["", ""]], ["_spwnDelayMethods", []]];
+	private ["_tag", "_isValidClasses", "_validBehavior", "_validForm", "_grpData"];
 	
 	// Error handling:
-	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""]};
+	if ( count _destsData < 2 ) then { _destsData set [1, ""]};
 	// Declarations:
-	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other vehicles.
+	// Important: dont declare _spwnsData or _destsData selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other vehicles.
 	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	// Validations:
-	if ( [false, _tag, _spwnsInfo, _grpClassnames, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
-	_spwnsInfo         = [_spwnsInfo # 0, toUpper (_spwnsInfo # 1)];  // sector-letter tweaked.
-	_destsInfo         = [toUpper (_destsInfo # 0), toUpper (_destsInfo # 1)];  // destination-type and sector-letter both case-sensitive tweaked.
+	if ( [false, _tag, _spwnsData, _grpClassnames, _destsData] call THY_fnc_CSWR_add_validation ) exitWith {};
+	_spwnsData         = [_spwnsData # 0, toUpper (_spwnsData # 1)];  // sector-letter tweaked.
+	_destsData         = [toUpper (_destsData # 0), toUpper (_destsData # 1)];  // destination-type and sector-letter both case-sensitive tweaked.
 	_isValidClasses    = [_tag, "CfgVehicles", "UNIT", "_grpClassnames", _grpClassnames] call THY_fnc_CSWR_is_valid_classname;
 	_validBehavior     = [_tag, false, _behavior] call THY_fnc_CSWR_is_valid_behavior;      // [behavior name fixed, isValid]
 	_validForm         = [_tag, false, _form] call THY_fnc_CSWR_is_valid_formation;         // [formation name fixed, isValid]
 	// Escape:
 	if ( !_isValidClasses || !(_validBehavior # 1) || !(_validForm # 1) ) exitWith {};
 	// Built the group information for further validations:
-	_grpInfo = [_side, _tag, _grpClassnames, _destsInfo # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_group_info;
+	_grpData = [_side, _tag, _grpClassnames, _destsData # 0, _validBehavior # 0, _validForm # 0] call THY_fnc_CSWR_grp_data;
 	// Escape:
-	if ( _grpInfo isEqualTo [] ) exitWith {};
+	if ( _grpData isEqualTo [] ) exitWith {};
 	/*
-	Structure of _spwnsInfo = e.g. [CSWR_spawnsForPeopleBLU, "A"]
+	Structure of _spwnsData = e.g. [CSWR_spawnsForPeopleBLU, "A"]
 	[0 CSWR_spawnsForPeopleBLU
 		[0 land],
 		[1 water]
 	]
 	*/
 	// Spawn Schedule (open a new thread):
-	[_spwnsInfo, _spwnDelayMethods, _grpInfo, false, _validBehavior # 0, _destsInfo] spawn THY_fnc_CSWR_spawn_and_go;
+	[_spwnsData, _spwnDelayMethods, _grpData, false, _validBehavior # 0, _destsData] spawn THY_fnc_CSWR_spawn_and_go;
 	// CPU breather:
 	sleep 1;
 	// Return:
@@ -4577,35 +4770,35 @@ THY_fnc_CSWR_add_vehicle = {
 	// This function checks what vehicle type this is for Arma 3, and does a quick detail validations before next steps with much deeper validations.
 	// Returns nothing, but open a new thread.
 	
-	params ["_side", ["_spwnsInfo", [[], ""]], ["_vehClass", ""], ["_behavior", ""], ["_destsInfo", ["", ""]], ["_spwnDelayMethods", []]];
-	private ["_tag", "_isValidClasses", "_validBehavior", "_grpInfo"];
+	params ["_side", ["_spwnsData", [[], ""]], ["_vehClass", ""], ["_behavior", ""], ["_destsData", ["", ""]], ["_spwnDelayMethods", []]];
+	private ["_tag", "_isValidClasses", "_validBehavior", "_grpData"];
 	
 	// Error handling:
-	if ( count _destsInfo < 2 ) then { _destsInfo set [1, ""]};
+	if ( count _destsData < 2 ) then { _destsData set [1, ""]};
 	// Declarations:
-	// Important: dont declare _spwnsInfo or _destsInfo selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other vehicles.
+	// Important: dont declare _spwnsData or _destsData selections before the Escapes coz during Escape tests easily the declarations will print out errors that will stop the creation of other vehicles.
 	_tag = [_side] call THY_fnc_CSWR_convertion_side_to_tag;
 	// Validations:
-	if ( [true, _tag, _spwnsInfo, _vehClass, _destsInfo] call THY_fnc_CSWR_add_validation ) exitWith {};
-	_spwnsInfo         = [_spwnsInfo # 0, toUpper (_spwnsInfo # 1)];  // sector-letter tweaked.
-	_destsInfo         = [toUpper (_destsInfo # 0), toUpper (_destsInfo # 1)];  // destination-type and sector-letter both case-sensitive tweaked.
+	if ( [true, _tag, _spwnsData, _vehClass, _destsData] call THY_fnc_CSWR_add_validation ) exitWith {};
+	_spwnsData         = [_spwnsData # 0, toUpper (_spwnsData # 1)];  // sector-letter tweaked.
+	_destsData         = [toUpper (_destsData # 0), toUpper (_destsData # 1)];  // destination-type and sector-letter both case-sensitive tweaked.
 	_isValidClasses    = [_tag, "CfgVehicles", "VEHICLE", "_vehClass", [_vehClass]] call THY_fnc_CSWR_is_valid_classname;
 	_validBehavior     = [_tag, true, _behavior] call THY_fnc_CSWR_is_valid_behavior;      // [behavior name fixed, isValid]
 	// Escape:
 	if ( !_isValidClasses || !(_validBehavior # 1) ) exitWith {};
 	// Built the vehicle information for further validations:
-	_grpInfo = [_side, _tag, [_vehClass], _destsInfo # 0, _validBehavior # 0, ""] call THY_fnc_CSWR_group_info;
+	_grpData = [_side, _tag, [_vehClass], _destsData # 0, _validBehavior # 0, ""] call THY_fnc_CSWR_grp_data;
 	// Escape:
-	if ( _grpInfo isEqualTo [] ) exitWith {};
+	if ( _grpData isEqualTo [] ) exitWith {};
 	/* 
-	Structure of _spwnsInfo = e.g. [CSWR_spawnsForVehicleOPF, "B"]
+	Structure of _spwnsData = e.g. [CSWR_spawnsForVehicleOPF, "B"]
 	[0 CSWR_spawnsForVehicleOPF
 		[0 land],
 		[1 water]
 	]
 	*/
 	// Spawn Schedule (open a new thread):
-	[_spwnsInfo, _spwnDelayMethods, _grpInfo, true, _validBehavior # 0, _destsInfo] spawn THY_fnc_CSWR_spawn_and_go;
+	[_spwnsData, _spwnDelayMethods, _grpData, true, _validBehavior # 0, _destsData] spawn THY_fnc_CSWR_spawn_and_go;
 	// CPU breather:
 	sleep 5;  // Critical for paradrop of amphibious vehicles!
 	// Return:
@@ -4613,7 +4806,7 @@ THY_fnc_CSWR_add_vehicle = {
 };
 
 
-THY_fnc_CSWR_leader_waiting_group_mates = {
+THY_fnc_CSWR_leader_waiting_grp_mates = {
 	// This function only makes the current group leader waits for the rest of the group to be ready to move.
 	// Returns true if ready to go.
 
@@ -4723,16 +4916,24 @@ THY_fnc_CSWR_makes_unit_touch_the_ground = {
 
 
 THY_fnc_CSWR_go = {
-	// This function selects the destination-type (and its markers on map) that group/vehicle will execute in a row and forever. This function runs only once by group/vehicle, except when a vehicle requests a RTB function.
+	// It's a new thread!
+	// After the group/vehicle spawn, this function selects the destination-type (and its markers on map) that group/vehicle will execute in a row and forever.
+	// This function runs only once by group/vehicle, except when a vehicle requests a RTB function.
 	// Returns nothing, but open a new thread.
 
-	params["_spwns", "_destType", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphibious", "_isAirCrew", "_isNauCrew", "_hasServiceRTB"];
+	params["_spwn", "_spwns", "_destType", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphib", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_grpCaller"];
 	private["_dests"];
 
-	// Escape > if the group doesn't exist anymore, or its leader is dead, abort:
-	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
-	// Escape > if it's vehicle and the vehicle is destroyed, abort:
-	if ( _isVeh && !alive (vehicle leader _grp) ) exitWith {};
+	// Escape > if the people group doesn't exist anymore, abort:
+	if ( !_isVeh && !alive (leader _grp) ) exitWith { true };
+	// Escape > if the vehicle doesn't exist anymore, abort:
+	if ( _isVeh && !alive (vehicle leader _grp) ) exitWith {
+		// If the vehicle is destroyed as soon it spawns, it make sure the player's group will receive a new support if available:
+		if ( _destType isEqualTo "MOVE_EXTRACTION" ) then { [_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo };
+		if ( _destType isEqualTo "MOVE_TRANSPORT" ) then { [_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo };
+		// Return:
+		true;
+	};
 	// Initial values:
 	_dests = [];
 	// Main functionality:
@@ -4750,8 +4951,8 @@ THY_fnc_CSWR_go = {
 					_dests = (CSWR_destsANYWHERE # 1);  // Only water
 				};
 			};
-			// Start the move looping:
-			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_ANYWHERE;
+			// Start the move looping (new thread):
+			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_ANYWHERE;
 		};
 		case "MOVE_PUBLIC": {
 			// For People, Amphibious vehicle, and Regular Ground Vehicle:
@@ -4768,8 +4969,8 @@ THY_fnc_CSWR_go = {
 			};
 			// Looks for only for right letter in sectorized ones:
 			_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-			// Start the move looping:
-			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_dest_PUBLIC;
+			// Start the move looping (new thread):
+			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_dest_PUBLIC;
 		};
 		case "MOVE_RESTRICTED": {
 			// For People, Amphibious vehicle, and Regular Ground Vehicle:
@@ -4801,8 +5002,8 @@ THY_fnc_CSWR_go = {
 			};
 			// Looks for only for right letter in sectorized ones:
 			_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-			// Start the move looping:
-			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
+			// Start the move looping (new thread):
+			[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, false] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
 		};
 		case "MOVE_WATCH": {
 			// Which side is consulting:
@@ -4814,7 +5015,7 @@ THY_fnc_CSWR_go = {
 			};
 			// Looks for only for right letter in sectorized ones:
 			_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-			// Start the move (this is not a looping):
+			// Start the move (this is not a looping) (new thread):
 			[_dests, _tag, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_WATCH;
 		};
 		case "MOVE_OCCUPY": {
@@ -4827,7 +5028,7 @@ THY_fnc_CSWR_go = {
 			};
 			// Looks for only for right letter in sectorized ones:
 			_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-			// Start the move looping:
+			// Start the move looping (new thread):
 			[_dests, _tag, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_OCCUPY;
 		};
 		case "MOVE_HOLD": {
@@ -4840,19 +5041,27 @@ THY_fnc_CSWR_go = {
 			};
 			// Looks for only for right letter in sectorized ones:
 			_dests = _dests select { _x find (CSWR_spacer + _destSector + CSWR_spacer) isNotEqualTo -1 };
-			// Start the move looping:
+			// Start the move looping (new thread):
 			[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
 		};
+		case "MOVE_EXTRACTION": {
+			// Start the move (new thread):
+			[_tag, _spwn, _grpCaller, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_EXTRACTION;
+		};
+		case "MOVE_TRANSPORT": {
+			// Start the move (new thread):
+			[_tag, _spwn, _grpCaller, _grpType, _grp, _behavior] spawn THY_fnc_CSWR_go_dest_TRANSPORT;
+		};
 		// And if something wrong:
-		default { systemChat format ["%1 %2 '%3' group has an UNKNOWN DESTINATION. Check the 'fn_CSWR_population.sqf' file.", CSWR_txtWarnHeader, _tag, _grp]; sleep 5 };
+		default { systemChat format ["%1 %2 '%3' group has an UNKNOWN DESTINATION. Check the 'fn_CSWR_2_population.sqf' file.", CSWR_txtWarnHeader, _tag, _grp]; sleep 5 };
 	};
 	// Debug:
-	if ( CSWR_isOnDebug && CSWR_isOnDebugSectors ) then {
+	if ( CSWR_isOnDebug && CSWR_isOnDebugSectors && !(_destType in ["MOVE_EXTRACTION", "MOVE_TRANSPORT"]) ) then {
 		// Message:
 		["%1 DESTINATION > %2 %3 %4 | %5 = %6.",
 		CSWR_txtDebugHeader,
 		_tag,
-		if !_isVeh then {"group"} else {if (!_isAmphibious && !_isAirCrew && !_isNauCrew) then {"Ground vehicle"} else {if _isAmphibious then {"Amphibious vehicle"} else {if _isAirCrew then {"Helicopter"} else {"Nautical vehicle"}}}},
+		if !_isVeh then {"group"} else {if (!_isAmphib && !_isAirCrew && !_isNauCrew) then {"Ground vehicle"} else {if _isAmphib then {"Amphibious vehicle"} else {if _isAirCrew then {"Helicopter"} else {"Nautical vehicle"}}}},
 		_grp,
 		if (_destSector isNotEqualTo "") then {format ["Sector-%1", _destSector]} else {"'_move_ANY' applied"},
 		str _dests] call BIS_fnc_error;
@@ -4876,6 +5085,7 @@ THY_fnc_CSWR_go_altitude = {
 	if !_isHunting then {
 		// If helicopter, set the new waypoint altitude (z axis):
 		if ( _grpType isEqualTo "heliL" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliLightAlt] };
+		if ( _grpType isEqualTo "heliM" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliMediumAlt] };
 		if ( _grpType isEqualTo "heliH" ) then { _areaToPass = [_areaToPass # 0, _areaToPass # 1, abs CSWR_heliHeavyAlt] };
 	};
 	// Return:
@@ -4887,12 +5097,12 @@ THY_fnc_CSWR_go_next_condition = {
 	// This function checks if the group or vehicle have been reached the condition for the next waypoint.
 	// Returns _isRTB. Bool.
 
-	params ["_tag", "_grp", "_isVeh", /* "_isAmphibious", */ "_isAirCrew", "_isNauCrew", "_isHunting", "_hasServiceRTB"];
-	private ["_isRTB", "_time", "_veh", "_driver", "_gunner"];
+	params ["_tag", "_grp", "_isVeh", /* "_isAmphib", */ "_isAirCrew", "_isNauCrew", "_isHunting", "_hasServiceRTB"];
+	private ["_isRTB", "_t", "_veh", "_driver", "_gunner"];
 
 	// Initial values:
 	_isRTB    = false;
-	_time     = 0;
+	_t     = 0;
 	_veh      = objNull;
 	_driver   = objNull;
 	_gunner   = objNull;
@@ -4908,12 +5118,12 @@ THY_fnc_CSWR_go_next_condition = {
 			(waypointType [_grp, currentWaypoint _grp]) isEqualTo "";
 		};
 		// After the arrival, cooldown:
-		_time = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
+		_t = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
 		waitUntil {
 			// Breather for the next loop check:
 			sleep 10;
 			// Conditions to break the loop:
-			isNull _grp || !alive (leader _grp) || time > _time;
+			isNull _grp || !alive (leader _grp) || time > _t;
 		};
 	// For Vehicle:
 	} else {
@@ -4929,12 +5139,12 @@ THY_fnc_CSWR_go_next_condition = {
 				isNull _grp || !alive (leader _grp) || !alive _veh || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "";
 			};
 			// After the arrival, cooldown:
-			_time = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
+			_t = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
 			waitUntil {
 				// Breather for the next loop check:
 				sleep 10;
 				// Conditions to break the loop:
-				isNull _grp || !alive (leader _grp) || !alive _veh || time > _time;
+				isNull _grp || !alive (leader _grp) || !alive _veh || time > _t;
 			};
 		} else {
 			// For Helicopter:
@@ -4970,12 +5180,12 @@ THY_fnc_CSWR_go_next_condition = {
 				// Check if nautical crew in water:
 				[_tag, _grp] call THY_fnc_CSWR_is_nauticalCrew_in_water;
 				// After the arrival, cooldown:
-				_time = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
+				_t = if ( (waypointType [_grp, currentWaypoint _grp]) isNotEqualTo "" ) then { time + (selectRandom CSWR_destCommonTakeabreak) } else { 0 };
 				waitUntil {
 					// Breather for the next loop check:
 					sleep 10; 
 					// Conditions to break the loop:
-					isNull _grp || isNull objectParent leader _grp || !alive (leader _grp) || !alive _veh || time > _time;
+					isNull _grp || isNull objectParent leader _grp || !alive (leader _grp) || !alive _veh || time > _t;
 				};
 				// Check if nautical crew in water:
 				[_tag, _grp] call THY_fnc_CSWR_is_nauticalCrew_in_water;
@@ -4988,7 +5198,7 @@ THY_fnc_CSWR_go_next_condition = {
 
 
 THY_fnc_CSWR_is_nauticalCrew_in_water = {
-	// This function makes the nautical crew first leave the water to, next, try the function THY_fnc_CSWR_group_join_to_survive.
+	// This function makes the nautical crew first leave the water to, next, try the function THY_fnc_CSWR_grp_join_to_survive.
 	// Returns bool: true if group leader in water.
 
 	params ["_tag", "_grp"];
@@ -5020,7 +5230,7 @@ THY_fnc_CSWR_is_nauticalCrew_in_water = {
 		// Military body pos:
 		if ( _tag isNotEqualTo "CIV" ) then { leader _grp setUnitPos "MIDDLE" };
 		// Crew with no vehicle should join in a infantry group:
-		[_tag, _grp, 3, 600, 10, true, true] call THY_fnc_CSWR_group_join_to_survive;
+		[_tag, _grp, 3, 600, 10, true, true, false] call THY_fnc_CSWR_grp_join_to_survive;
 	// There is no hope:
 	} else {
 		// Kill marines:
@@ -5040,17 +5250,22 @@ THY_fnc_CSWR_go_RTB = {
 	// This function checks where are the side service stations for vehicles.
 	// Returns nothing, but open a new thread.
 
-	params ["_hasServiceRTB", "_spwns", "_tag", "_grpType", "_grp", /* "_isAmphibious", */ "_isAirCrew", /* "_isNauCrew", */ "_destType", "_destSector", "_behavior"];
+	params ["_hasServiceRTB", "_spwns", "_tag", "_grpType", "_grp", /* "_isAmphib", */ "_isAirCrew", /* "_isNauCrew", */ "_destType", "_destSector", "_behavior"];
 	private ["_wp", "_side", "_veh", "_distToLanding", "_closestStnPos"];
 
 	// Escape:
 	if ( isNull _grp ) exitWith {};
 	// Initial values:
 	_wp = [];
+	_distToLanding = 300;  // critical!
 	// Declarations:
 	_side          = side (leader _grp);
 	_veh           = vehicle (leader _grp);
-	_distToLanding = if ( _grpType isEqualTo "heliL" ) then { abs CSWR_heliLightAlt + 50 } else { if ( _grpType isEqualTo "heliH" ) then { abs CSWR_heliHeavyAlt + 50 } else { 300 }  }; // critical!
+	switch _grpType do {
+		case "heliL": { _distToLanding = CSWR_heliLightAlt + 50 };
+		case "heliM": { _distToLanding = CSWR_heliMediumAlt + 50 };
+		case "heliH": { _distToLanding = CSWR_heliHeavyAlt + 50 };
+	};
 	_closestStnPos = [_side, /* _spwns, _grpType, */ _veh] call THY_fnc_CSWR_go_RTB_closest_station;
 	// Escape:
 	if ( isNull _grp || !alive _veh || !alive leader _grp || _closestStnPos isEqualTo [] ) exitWith {
@@ -5060,8 +5275,8 @@ THY_fnc_CSWR_go_RTB = {
 			CSWR_txtWarnHeader, _tag];
 		};
 	};
-	// Forcing to return and not re-engage:
-	_grp setBehaviourStrong "CARELESS";
+	// Forcing to return and not re-engage (only gunners if available):
+	driver _veh setCombatBehaviour "CARELESS";
 	// Creating the waypoint to the _closestStnPos:
 	_wp = _grp addWaypoint [_closestStnPos, 0];
 	_wp setWaypointCombatMode "GREEN";  // Hold fire, disengage, don't fire unless fired upon. Keep in formation.
@@ -5137,6 +5352,7 @@ THY_fnc_CSWR_go_RTB_closest_station = {
 
 
 THY_fnc_CSWR_go_RTB_heli_landing = {
+	// It's a new thread!
 	// This function makes the helicopter to land in a safe place.
 	// Returns nothing, but open a new thread.
 
@@ -5169,11 +5385,13 @@ THY_fnc_CSWR_go_RTB_heli_landing = {
 
 
 THY_fnc_CSWR_go_ANYWHERE = {
-	// This function sets the group/vehicle to move to any destination (sum of almost all other preset destinations), including exclusive enemy side destinations but excluding the specialized (watch, hold, occupy) ones. It's a recursive loop.
+	// It's a new thread!
+	// This function sets the group/vehicle to move to any destination (sum of almost all other preset destinations), including exclusive enemy side destinations but excluding the
+	// specialized (watch, hold, occupy) ones. It's a recursive loop.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing, but open a new thread.
 
-	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphibious", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
+	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphib", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
 	private ["_isHunting", "_areaToPass", "_wp"];
 
 	// Escape:
@@ -5182,7 +5400,7 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	if ( _tag isEqualTo "CIV" ) exitWith {
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning:
-		systemChat format ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.",
+		systemChat format ["%1 MOVE ANYWHERE > Civilians CANNOT use '_move_ANY'. Please, fix it in 'fn_CSWR_2_population.sqf' file. For script integrity, the civilian group was deleted.",
 		CSWR_txtWarnHeader]; sleep 5;
 	};
 	// Initial values:
@@ -5197,7 +5415,7 @@ THY_fnc_CSWR_go_ANYWHERE = {
 		_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _isRTB] call THY_fnc_CSWR_go_altitude;
 	};
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
@@ -5229,22 +5447,24 @@ THY_fnc_CSWR_go_ANYWHERE = {
 	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_isRTB = [_tag, _grp, _isVeh, /* _isAmphibious, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
+	_isRTB = [_tag, _grp, _isVeh, /* _isAmphib, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
 	// Escape > Return to base (open a new thread):
-	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphibious, */ _isAirCrew, /* _isNauCrew, */ "MOVE_ANY", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
+	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphib, */ _isAirCrew, /* _isNauCrew, */ "MOVE_ANY", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
 	// Restart the movement:
-	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_ANYWHERE;
+	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_ANYWHERE;
 	// Return:
 	true;
 };
 
 
-THY_fnc_CSWR_go_dest_PUBLIC = { 
-	// This function sets the group/vehicle to move through PUBLIC destinations where civilians and soldiers can go, excluding the specialized (watch, hold, occupy) ones and the waypoints restricted by other sides. It's a recursive loop.
+THY_fnc_CSWR_go_dest_PUBLIC = {
+	// It's a new thread!
+	// This function sets the group/vehicle to move through PUBLIC destinations where civilians and soldiers can go, excluding the specialized (watch, hold, occupy) ones and
+	// the waypoints restricted by other sides. It's a recursive loop.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing, but open a new thread.
 	
-	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphibious", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
+	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphib", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
 	private ["_isHunting", "_areaToPass", "_wp"];
 
 	// Escape:
@@ -5261,7 +5481,7 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 		_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _isRTB] call THY_fnc_CSWR_go_altitude;
 	};
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
@@ -5293,22 +5513,23 @@ THY_fnc_CSWR_go_dest_PUBLIC = {
 	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_isRTB = [_tag, _grp, _isVeh, /* _isAmphibious, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
+	_isRTB = [_tag, _grp, _isVeh, /* _isAmphib, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
 	// Escape > Return to base (open a new thread):
-	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphibious, */ _isAirCrew, /* _isNauCrew, */ "MOVE_PUBLIC", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
+	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphib, */ _isAirCrew, /* _isNauCrew, */ "MOVE_PUBLIC", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
 	// Restart the movement:
-	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_dest_PUBLIC;
+	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_dest_PUBLIC;
 	// Return:
 	true;
 };
 
 
-THY_fnc_CSWR_go_dest_RESTRICTED = { 
+THY_fnc_CSWR_go_dest_RESTRICTED = {
+	// It's a new thread!
 	// This function sets the group/vehicle to move only through the exclusive side destinations, excluding public and specialized ones (watch, hold, occupy). It's a recursive loop.
 	// Everything about setWaypointType: https://community.bistudio.com/wiki/Waypoints
 	// Returns nothing, but open a new thread.
 	
-	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphibious", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
+	params ["_spwns", "_dests", "_destSector", "_tag", "_grpType", "_grp", "_behavior", "_isVeh", "_isAmphib", "_isAirCrew", "_isNauCrew", "_hasServiceRTB", "_isRTB"];
 	private ["_isHunting", "_areaToPass", "_wp"];
 
 	// Escape:
@@ -5316,7 +5537,7 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Error handling:
 	if ( _tag isEqualTo "CIV" ) exitWith {
 		// Warning:
-		systemChat format ["%1 MOVE RESTRICTED > Civilians CANNOT use '_move_RESTRICTED'. A perfect choice for Civilians is '_move_PUBLIC', so fix it in 'fn_CSWR_population.sqf' file. And on Eden, make sure you have some '%2%3move%3public%3sectorletter%3anyNumber' markers available too. For now, this group was deleted.",
+		systemChat format ["%1 MOVE RESTRICTED > Civilians CANNOT use '_move_RESTRICTED'. A perfect choice for Civilians is '_move_PUBLIC', so fix it in 'fn_CSWR_2_population.sqf' file. And on Eden, make sure you have some '%2%3move%3public%3sectorletter%3anyNumber' markers available too. For now, this group was deleted.",
 		CSWR_txtWarnHeader, CSWR_prefix, CSWR_spacer];
 		// Delete:
 		{ deleteVehicle _x } forEach units _grp; sleep 10;
@@ -5333,7 +5554,7 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 		_areaToPass = [_tag, _grp, _grpType, _areaToPass, _isAirCrew, _isHunting, _isRTB] call THY_fnc_CSWR_go_altitude;
 	};
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh, _isHunting] call THY_fnc_CSWR_unit_behavior;
 	// Creating the waypoint:
@@ -5365,17 +5586,18 @@ THY_fnc_CSWR_go_dest_RESTRICTED = {
 	// Making the waypoint guide the group/vehicle right now:
 	_grp setCurrentWaypoint _wp;
 	// Check if the group is already on their destination:
-	_isRTB = [_tag, _grp, _isVeh, /* _isAmphibious, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
+	_isRTB = [_tag, _grp, _isVeh, /* _isAmphib, */ _isAirCrew, _isNauCrew, _isHunting, _hasServiceRTB] call THY_fnc_CSWR_go_next_condition;
 	// Escape > Return to base (open a new thread):
-	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphibious, */ _isAirCrew, /* _isNauCrew, */ "MOVE_RESTRICTED", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
+	if _isRTB exitWith { [_hasServiceRTB, _spwns, _tag, _grpType, _grp, /* _isAmphib, */ _isAirCrew, /* _isNauCrew, */ "MOVE_RESTRICTED", _destSector, _behavior] spawn THY_fnc_CSWR_go_RTB; true /* Returning, ending this current thread */ };
 	// Restart the movement:
-	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphibious, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
+	[_spwns, _dests, _destSector, _tag, _grpType, _grp, _behavior, _isVeh, _isAmphib, _isAirCrew, _isNauCrew, _hasServiceRTB, _isRTB] spawn THY_fnc_CSWR_go_dest_RESTRICTED;
 	// Return:
 	true;
 };
 
 
-THY_fnc_CSWR_go_dest_WATCH = { 
+THY_fnc_CSWR_go_dest_WATCH = {
+	// It's a new thread!
 	// This function sets the group to move only through the high natural spots destinations and stay there for as long the mission runs, watching around quiet, perfect for snipers and marksmen groups. It's NOT a looping.
 	// Returns nothing, but open a new thread.
 	
@@ -5389,7 +5611,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Deleting the units:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning:
-		systemChat format ["%1 WATCH > A non-sniper-group tried to use the '_move_WATCH'. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the group was deleted.",
+		systemChat format ["%1 WATCH > A non-sniper-group tried to use the '_move_WATCH'. Please, fix it in 'fn_CSWR_2_population.sqf' file. For script integrity, the group was deleted.",
 		CSWR_txtWarnHeader]; sleep 5;
 		// Return:
 		true;
@@ -5399,7 +5621,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Deleting the units:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning:
-		systemChat format ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_population.sqf' file. For script integrity, the civilian group was deleted.",
+		systemChat format ["%1 WATCH > Civilians CANNOT use Watch-Destinations. Please, fix it in 'fn_CSWR_2_population.sqf' file. For script integrity, the civilian group was deleted.",
 		CSWR_txtWarnHeader]; sleep 5;
 		// Return:
 		true;
@@ -5433,7 +5655,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 	_timeout       = 0;
 	_isCanceled    = false;
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, false] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Declarations:
@@ -5537,7 +5759,7 @@ THY_fnc_CSWR_go_dest_WATCH = {
 		// Delete the watcher group:
 		{ deleteVehicle _x } forEach units _grp;
 		// Warning:
-		systemChat format ["%1 WATCH > The '%2' marker looks bad positioned for this kind of terrain. CONSIDER repositioning '%2' marker, or increase a bit 'CSWR_watchMkrRange' in 'fn_CSWR_management.sqf' file, or include one or more of those 'CSWR_acceptableTowersForWatch' assets around the watch-marker on Eden, respecting the range between %4m (min) and %5m (max). The group has been deleted.",
+		systemChat format ["%1 WATCH > The '%2' marker looks bad positioned for this kind of terrain. CONSIDER repositioning '%2' marker, or increase a bit 'CSWR_watchMkrRange' in 'fn_CSWR_1_management.sqf' file, or include one or more of those 'CSWR_acceptableTowersForWatch' assets around the watch-marker on Eden, respecting the range between %4m (min) and %5m (max). The group has been deleted.",
 		CSWR_txtWarnHeader, _mkr, _tag, CSWR_watchMkrRangeStart, CSWR_watchMkrRange]; sleep 5;
 		// Return:
 		true;
@@ -5764,7 +5986,7 @@ THY_fnc_CSWR_WATCH_check_building_before_to_go = {
 
 
 THY_fnc_CSWR_WATCH_find_towers = {
-	// This function checks what buildings are available around a specific watch-marker range and selects one of them to be used for the watcher-group. Similar function: THY_fnc_CSWR_OCCUPY_find_buildings_by_group.
+	// This function checks what buildings are available around a specific watch-marker range and selects one of them to be used for the watcher-group. Similar function: THY_fnc_CSWR_OCCUPY_find_buildings_by_grp.
 	// Return _bldg: object.
 
 	params ["_mkr", "_grp", "_tag", "_posTargetASL"];
@@ -5826,6 +6048,7 @@ THY_fnc_CSWR_WATCH_find_towers = {
 
 
 THY_fnc_CSWR_WATCH_doWatching = {
+	// It's a new thread!
 	// This function organizes the sniper/marksman group during the overwatching. It's a recursive loop.
 	// Returns nothing, but open a new thread.
 
@@ -5963,7 +6186,7 @@ THY_fnc_CSWR_WATCH_doWatching = {
 					side _x isNotEqualTo CIVILIAN;
 				};
 				// If there's target in target zone, and (watch group has a second operative member, or the watch-gunner has no a current target):
-				if ( count _targets > 0 && { count ((units _grp) select { alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" }) > 1 || isNull (getAttackTarget (leader _grp)) } ) then {
+				if ( _targets isNotEqualTo [] && { count ((units _grp) select { alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" }) > 1 || isNull (getAttackTarget (leader _grp)) } ) then {
 					// Watch-gunner will see a target:
 					(leader _grp) lookAt (selectRandom _targets);
 				};
@@ -6106,7 +6329,8 @@ THY_fnc_CSWR_WATCH_spotter_fire_support = {
 };
 
 
-THY_fnc_CSWR_go_dest_OCCUPY = { 
+THY_fnc_CSWR_go_dest_OCCUPY = {
+	// It's a new thread!
 	// This function sets the group to move and occupy buildings in a certain marker range. It's a recursive loop.
 	// Returns nothing, but open a new thread.
 	
@@ -6118,7 +6342,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 	// Error handling > Vehicle cannot provide occupy:
 	if ( !isNull (objectParent (leader _grp)) ) exitWith {
 		// Warning:
-		systemChat format ["%1 OCCUPY > A %2 vehicle was trying to OCCUPY a building, and vehicles cannot do this. Fix it in 'fn_CSWR_population.sqf' file. For script integrity, The vehicle and its crew were deleted!",
+		systemChat format ["%1 OCCUPY > A %2 vehicle was trying to OCCUPY a building, and vehicles cannot do this. Fix it in 'fn_CSWR_2_population.sqf' file. For script integrity, The vehicle and its crew were deleted!",
 		CSWR_txtWarnHeader, _tag];
 		// Deleting the vehicle:
 		deleteVehicle vehicle (leader _grp);
@@ -6152,11 +6376,11 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		sleep 0.25;
 	} forEach units _grp;
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, false] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, false] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, false] call THY_fnc_CSWR_unit_behavior;
 	// Selecting one building from probably many others found in that range:
-	_bldg = [_dests, _grp, {alive _x} count (units _grp), _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_group;  // return object.
+	_bldg = [_dests, _grp, {alive _x} count (units _grp), _tag] call THY_fnc_CSWR_OCCUPY_find_buildings_by_grp;  // return object.
 
 	// If there's a building:
 	if ( !isNull _bldg ) then {
@@ -6251,7 +6475,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 		// Delete the group:
 		//{ deleteVehicle _x } forEach units _grp;  // Dont delete the group coz maybe all buildings are destroyed during the game.
 		// Warning:
-		systemChat format ["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or the group size doesn't fit in the buildings, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_management.sqf ('CSWR_occupyMkrRange'). A %2 group will stand still in its current position.",
+		systemChat format ["%1 OCCUPY > A %2 OCCUPY marker looks not close enough to buildins, or the group size doesn't fit in the buildings, or all buildings around are destroyed, or the marker has no a good range configured in fn_CSWR_1_management.sqf ('CSWR_occupyMkrRange'). A %2 group will stand still in its current position.",
 		CSWR_txtWarnHeader, _tag];
 		// Breather:
 		sleep _wait;
@@ -6261,7 +6485,7 @@ THY_fnc_CSWR_go_dest_OCCUPY = {
 };
 
 
-THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
+THY_fnc_CSWR_OCCUPY_find_buildings_by_grp = {
 	// This function checks what buildings are available around a specific occupy-marker range and selects one of them to be used for the occupier-group. Similar function: THY_fnc_CSWR_WATCH_find_towers.
 	// Return _bldg: object.
 
@@ -6331,6 +6555,7 @@ THY_fnc_CSWR_OCCUPY_find_buildings_by_group = {
 
 
 THY_fnc_CSWR_OCCUPY_remove_unit_from_group = {
+	// It's a new thread!
 	// This function removes a specific unit left behind, and set them to a new group that's abled to execute also the occupy-movement by itself.
 	// Returns nothing, but open a new thread.
 
@@ -6367,7 +6592,7 @@ THY_fnc_CSWR_OCCUPY_nearEnemies = {
 	_isEnemyNear = false;
 	// Searching:
 	_nearEnemies = (_unit nearEntities ["Man", _disLimiterEnemy]) select { _x isKindOf "CAManBase" && side _unit isNotEqualTo (side _x) && side _unit isNotEqualTo CIVILIAN && alive _x && incapacitatedState _x isNotEqualTo "UNCONSCIOUS" };
-	if ( count _nearEnemies > 0 ) then { _isEnemyNear = true };
+	if ( _nearEnemies isNotEqualTo [] ) then { _isEnemyNear = true };
 	// Return:
 	_isEnemyNear;
 };
@@ -6404,11 +6629,12 @@ THY_fnc_CSWR_OCCUPY_unitBodyPosition_getOut = {
 
 
 THY_fnc_CSWR_OCCUPY_doGetIn = {
+	// It's a new thread!
 	// This function will try to make the group get inside the chosen building to occupy it.
 	// Returns nothing, but open a new thread.
 
 	params ["_bldg", "_bldgPos", "_dests", "_grp", "_tag", "_behavior", "_disLimiterFromBldg", "_disLimiterEnemy", "_disLimiterFrndPlayer", "_wait"];
-	private ["_spots", "_spot", /* "_isFrndPlayerNear", */ "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCtr", "_time", "_grpSize", "_compass", "_isRuin"];
+	private ["_spots", "_spot", /* "_isFrndPlayerNear", */ "_isEnemyNear", "_timeOutToUnit", "_canTeleport", "_alreadySheltered", "_orderCtr", "_t", "_grpSize", "_compass", "_isRuin"];
 
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
@@ -6421,7 +6647,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 	_canTeleport      = true;
 	_alreadySheltered = [];
 	_orderCtr     = nil;
-	_time             = 0;
+	_t             = 0;
 	// Declarations:
 	_grpSize = {alive _x} count (units _grp);
 	_compass = [0, 45, 90, 135, 180, 225, 270, 315];  // Better final-result than 'random 360'.
@@ -6661,7 +6887,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 				sleep 1;
 			};
 			// Next planned move cooldown:
-			_time = time + (selectRandom CSWR_destOccupyTakeabreak); waitUntil { if (!CSWR_isOnDebug && !CSWR_isOnDebugHold) then { sleep 60 } else { sleep 3 }; time > _time };
+			_t = time + (selectRandom CSWR_destOccupyTakeabreak); waitUntil { if (!CSWR_isOnDebug && !CSWR_isOnDebugHold) then { sleep 60 } else { sleep 3 }; time > _t };
 		// Otherwise:
 		} else {
 			// Debug:
@@ -6686,6 +6912,7 @@ THY_fnc_CSWR_OCCUPY_doGetIn = {
 
 
 THY_fnc_CSWR_OCCUPY_doGetOut = {
+	// It's a new thread!
 	// This function is the last stage of Occupy function where it removes the group from inside the occupied building.
 	// Returns nothing, but open a new thread.
 
@@ -6802,28 +7029,29 @@ THY_fnc_CSWR_OCCUPY_doGetOut = {
 };
 
 
-THY_fnc_CSWR_go_dest_HOLD = { 
+THY_fnc_CSWR_go_dest_HOLD = {
+	// It's a new thread!
 	// This function sets the group to arrive in a place and make it doesn't move to another place for a long time. It's a recursive loop.
 	// Returns nothing, but open a new thread.
 	
 	params ["_dests", "_tag", "_grp", "_behavior", "_isVeh"];
-	private ["_isVehTracked", "_bookingInfo", "_mkrToHold", "_isBooked", "_posHolder", "_wp", "_time", "_ctr", "_tryLimit", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
+	private ["_isVehTracked", "_bookingData", "_mkrToHold", "_isBooked", "_posHolder", "_wp", "_t", "_ctr", "_tryLimit", "_trackedVehTypes", "_vehType", "_veh", "_wpDisLimit", "_wait", "_waitForVeh"];
 	
 	// Escape:
 	if ( isNull _grp || !alive (leader _grp) ) exitWith {};
 	// Error handling > if it's a vehicle but for some reason the crew is out of the vehicle, abort:
 	if ( _isVeh && isNull (objectParent (leader _grp)) ) exitWith {
 		// Crew with no vehicle should join in a infantry group:
-		[_tag, _grp, 1, 300, 3, true, false] call THY_fnc_CSWR_group_join_to_survive;
+		[_tag, _grp, 1, 300, 3, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
 	};
 	// Initial values:
 	_isVehTracked    = false;
-	_bookingInfo     = [];
+	_bookingData     = [];
 	_mkrToHold       = "";
 	_isBooked        = false;
 	_posHolder       = [];
 	_wp              = [];
-	_time            = 0;
+	_t            = 0;
 	_ctr             = 0;
 	_tryLimit      = 10;
 	_trackedVehTypes = [];
@@ -6842,7 +7070,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		if ( _vehType in _trackedVehTypes && _tag isNotEqualTo "CIV" ) then { _isVehTracked = true };
 	};
 	// Load the original group behavior (Editor's choice):
-	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
+	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_grp_behavior;
 	// Load again the unit individual and original behavior:
 	[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	// Debug:
@@ -6858,13 +7086,13 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// if tracked vehicle:
 	if _isVehTracked then { 
 		// Try to booking a marker:
-		_bookingInfo = ["BOOKING_HOLD", getPosATL (leader _grp), _tag, _dests, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
+		_bookingData = ["BOOKING_HOLD", getPosATL (leader _grp), _tag, _dests, 5, _waitForVeh] call THY_fnc_CSWR_marker_booking;
 		// Which marker to go:
-		_mkrToHold   = _bookingInfo # 0;
+		_mkrToHold   = _bookingData # 0;
 		// Marker position:
-		_posHolder   = _bookingInfo # 1;  // [x,y,z]
+		_posHolder   = _bookingData # 1;  // [x,y,z]
 		// Is booked?
-		_isBooked    = _bookingInfo # 2;
+		_isBooked    = _bookingData # 2;
 		// Debug:
 		if ( CSWR_isOnDebug && !_isBooked ) then {
 			systemChat format ["%1 HOLD > %2 '%3' tracked-vehicle tried but failed to booking a HOLD-MARKER center. Moving to a secondary position.",
@@ -6945,11 +7173,11 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// crew by foot:
 		} else {
 			// Undo the booking:
-			["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+			["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 			// Update to avoid further checking:
 			_isBooked = false;
 			// Crew with no vehicle should join in a infantry group:
-			[_tag, _grp, 1, 300, 3, true, false] call THY_fnc_CSWR_group_join_to_survive;
+			[_tag, _grp, 1, 300, 3, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
 		};
 		// Wait 'til the vehicle is over the waypoint:
 		waitUntil { sleep _wait; isNull _grp || !alive _veh || (leader _grp) distance _posHolder < _wpDisLimit || isNull (objectParent (leader _grp)) || (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" };
@@ -6959,12 +7187,12 @@ THY_fnc_CSWR_go_dest_HOLD = {
 	// Escape > Booked or not, it's a vehicle, and if the ground doesn't exist or the leader was killed, or the vehicle has been destroyed, or even the group is out of the vehicle, abort:
 	if ( _isVeh && { isNull _grp || !alive (leader _grp) || !alive _veh || isNull (objectParent (leader _grp)) } ) exitWith {
 		// Undo the booking if booked:
-		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 	};
 	// Escape > if the group/vehicle lost its hold-waypoint:
 	if ( (waypointType [_grp, currentWaypoint _grp]) isEqualTo "" ) exitWith { 
 		// Undo the booking:
-		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+		["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 		// Restart:
 		[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
 	};
@@ -6981,7 +7209,7 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		// Otherwise, if the crew is by foot:
 		} else {
 			// Crew with no vehicle should join in a infantry group:
-			[_tag, _grp, 1, 300, 3, true, false] call THY_fnc_CSWR_group_join_to_survive;
+			[_tag, _grp, 1, 300, 3, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
 		};
 	// infantry:
 	} else {
@@ -6990,16 +7218,16 @@ THY_fnc_CSWR_go_dest_HOLD = {
 		_grp setFormation "DIAMOND";
 		sleep 45;
 		// Load the original group behavior (Editor's choice):
-		[_grp, _behavior, _isVeh] call THY_fnc_CSWR_group_behavior;
+		[_grp, _behavior, _isVeh] call THY_fnc_CSWR_grp_behavior;
 		// Load again the unit individual and original behavior:
 		[_grp, _behavior, _isVeh] call THY_fnc_CSWR_unit_behavior;
 	};
 	// Next planned move cooldown:
-	_time = time + (selectRandom CSWR_destHoldTakeabreak); 
-	waitUntil { sleep _wait; isNull _grp || !alive (leader _grp) || time > _time || { if _isVeh then { !alive _veh } else { false } } };  // Important: dont check the currentWaypoints coz infantry will delete it in their arrival.
+	_t = time + (selectRandom CSWR_destHoldTakeabreak); 
+	waitUntil { sleep _wait; isNull _grp || !alive (leader _grp) || time > _t || { if _isVeh then { !alive _veh } else { false } } };  // Important: dont check the currentWaypoints coz infantry will delete it in their arrival.
 	
 	// UNDO IF BOOKED:
-	["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_booking_undo;
+	["BOOKING_HOLD", _tag, _mkrToHold, _isBooked] call THY_fnc_CSWR_marker_bookingUndo;
 	
 	// RESTART THE MOVEMENT:
 	[_dests, _tag, _grp, _behavior, _isVeh] spawn THY_fnc_CSWR_go_dest_HOLD;
@@ -7076,7 +7304,7 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 		sleep 20;
 	};  // while loop ends.
 	// Escape > if there are some blockers, abort:
-	if ( count _blockers > 0 ) exitWith {};
+	if ( _blockers isNotEqualTo [] ) exitWith {};
 	// Set the direction:
 	_vehPos = getPosATL _veh;
 	_veh setDir _directionToHold;  // best practices is make it before to use the setPos because odd things can happen about object collision position.
@@ -7095,6 +7323,1682 @@ THY_fnc_CSWR_HOLD_tracked_vehicle_direction = {
 };
 
 
+THY_fnc_CSWR_go_dest_EXTRACTION = {
+	// It's a new thread!
+	// After the THY_fnc_CSWR_TRANSPORT_booking_and_wait, this function sets the vehicle to move to the group's leader position (caller) and bring them back to the base. It's NOT a recursive loop.
+	// Returns nothing.
+
+	params ["_tag", "_spwn", "_grpCaller", "_grpType", "_grpVeh", "_behavior", ["_searchRange", 80]];
+	private ["_isToTryAgain", "_spaceToLand", "_t", "_wasDebugHeliOn", "_basePos", "_minDisCall", "_searchRngLimit", "_disReadyLand", "_veh", "_pickupPos", "_txt1", "_txt2", "_txt3", "_txt4", "_helipad", "_wp"];
+
+	// Escape > If vehicle explode for any reason, abort:
+	if ( !alive vehicle (leader _grpVeh) ) exitWith {
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Return:
+		true;
+	};
+	// Initial values:
+	_isToTryAgain   = false;
+	_spaceToLand    = nil;
+	_t              = 0;  // Dont set nil!
+	_wasDebugHeliOn = if CSWR_isOnDebugHeli then { true } else { false };  // Debug purposes.
+	// Declarations:
+	_basePos        = markerPos _spwn;
+	_minDisCall     = 500;
+	_searchRngLimit = 400;
+	_disReadyLand   = 300; if (_minDisCall < _disReadyLand) then { _minDisCall = _disReadyLand + 10 }; // Caution: lower than 300 can cause explosion during the take off!
+	_veh            = vehicle leader _grpVeh;
+	_pickupPos      = getPosATL leader _grpCaller;  // caller position.
+	switch _grpType do {
+		case "heliL": { _spaceToLand = 10 };
+		case "heliM": { _spaceToLand = 15 };
+		case "heliH": { _spaceToLand = 20 };
+	};
+	_txt1 = "The pickup position CANNOT be used! It appears that the surrounding terrain is unsuitable.";
+	_txt2 = "The pickup position requested is TOO CLOSE to the base.";
+	_txt3 = "You're in an area that's impossible for the Support Transport team to reach you. You lost the request.";
+	_txt4 = "The extraction team was neutralized!";
+	
+	// STAGE 1/6 > PLAYER REQUEST A POSITION TO PICKUP --------------------------------------------------
+	// Finding the landing spot:
+	_pickupPos = [
+		_pickupPos,  // center
+		0,  // minDist
+		_searchRange,  // maxDist
+		_spaceToLand,  // objDist
+		0,  // waterMode (0=land / 1=land+water / 2=water)
+		0.25,  // maxGrad (0=absolutely flat, the checking is ignored / 1=absolutely steep, a person would use hands to walking up)
+		0,  // shoreMode (0=does not have to be at a shore / 1=must be at a shore)
+		[],  // blacklistPos
+		[]  // defaultPos (when no position is found)
+	] call BIS_fnc_findSafePos; // Returns only [x,y] when something is found!
+	// If BIS_fnc_findSafePos appends a Z pos in the _pickupPos array when nothing was found:
+	if ( count _pickupPos isEqualTo 3 || _basePos distance2d _pickupPos < _minDisCall ) then {
+		if ( count _pickupPos isEqualTo 3 ) then {
+			// For single-player:
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt1];
+			// For Multiplayer:
+			} else {
+				[format ["%1", _txt1]] remoteExec ["systemChat", leader _grpCaller];
+			};
+		} else {
+			// For single-player:
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt2];
+			// For Multiplayer:
+			} else {
+				[format ["%1", _txt2]] remoteExec ["systemChat", leader _grpCaller];
+			};
+		};
+		// Expand the search area until a certain range limit:
+		if (_searchRange <= _searchRngLimit ) then {
+			// Cooldown next try:
+			sleep 5;  // Important: big number will make the vehicle, already in-game, stand still over the spawn-point!
+			// Flag:
+			_isToTryAgain = true;
+			// Restart the function with twice bigger search range (new thread):
+			[_tag, _spwn, _grpCaller, _grpType, _grpVeh, _behavior, (_searchRange * 2)] spawn THY_fnc_CSWR_go_dest_EXTRACTION;
+		} else {
+			// Failed message:
+			// For single-player
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt3];
+			// For multiplayer
+			} else {
+				[format ["%1", _txt3]] remoteExec ["systemChat", leader _grpCaller];
+			};
+			// Remove the player's group from the support list:
+			[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+			// Delete Transport Team:
+			deleteVehicleCrew _veh;
+			deleteVehicle _veh;
+		};
+	};
+	// Escape > Leave before of discounting the attempt from the support amount:
+	if _isToTryAgain exitWith { true };
+	// Escape > If search range is too big, just abort:
+	if ( _searchRange > _searchRngLimit ) exitWith { true };
+	
+	// STAGE 2/6 > EXTRACTION TEAM ON BASE, PREPARING TO GO ---------------------------------------------
+	// vehicle config:
+	_veh lockDriver true;
+	// Load the original group behavior (Editor's choice):
+	[_grpVeh, _behavior, true, false] call THY_fnc_CSWR_grp_behavior;
+	// Load again the unit individual and original behavior:
+	[_grpVeh, _behavior, true, false] call THY_fnc_CSWR_unit_behavior;
+	// Forcing driver only:
+	driver _veh setCombatBehaviour "CARELESS";  // Gunner(s) still open fire.
+	// Creating the virtual helipad and the waypoint for there:
+	_helipad = "Land_HelipadEmpty_F"; if CSWR_isOnDebug then { _helipad = "Land_HelipadSquare_F"};
+	_helipad = _helipad createVehicle _pickupPos;
+	_wp = _grpVeh addWaypoint [_pickupPos, 0];
+	//_wp setWaypointCombatMode "YELLOW";
+	_wp setWaypointType "MOVE";
+	_grpVeh setCurrentWaypoint _wp;
+	// Message:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		// For military context:
+		if ( _tag isNotEqualTo "CIV" ) then {
+			leader _grpVeh commandChat format ["Heading to the %1 position!",
+			_grpCaller];
+		// For cibilian context:
+		} else {
+			leader _grpVeh commandChat format ["Here is the helicopter's pilot, we are going to Mr. %1 position, okay?!",
+			leader _grpCaller];
+		};
+	};
+	
+	// STAGE 3/6 > EXTRACTION TEAM ON THE WAY, HEADING TO PLAYERS POSITION ------------------------------
+	// Waiting the extraction team to be on the requested position:
+	waitUntil {
+		// Breather:
+		sleep 10;
+		// Condition to break the loop:
+		// If engine stopped (blades broken or veh destroyed):
+		!isEngineOn _veh ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or caller group has no leader anymore:
+		!alive leader _grpCaller ||
+		// Or the veh is already on the way to the pickup point AND it's touching the ground:
+		{ _veh distance2d _basePos > _disReadyLand && ((getPosATL _veh) # 2) <= 0.3 } ||
+		// Or the veh is close enough the pickup point:
+		_veh distance2d _pickupPos < _disReadyLand;
+	};
+	// Escape > If some accident, breaking the helicopter blades or an important actor is dead, abort:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || ((getPosATL _veh) # 2) <= 0.3 ) exitWith {
+		// Force the destruction:
+		{ deleteVehicle _x } forEach units _grpVeh;
+		_veh setDamage 1;
+		// For single-player:
+		if !isMultiplayer then {
+			systemChat format ["%1", _txt4];
+		// For Multiplayer:
+		} else {
+			[format ["%1", _txt4]] remoteExec ["systemChat", leader _grpCaller];
+		};
+		// Remove the dynamic helipad:
+		deleteVehicle _helipad;
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Return:
+		true;
+	};
+	// Landing:
+	_veh land "GET IN";
+	// Debug > Turning off the Debug Heli temporarily:
+	[_tag, _grpVeh, _veh, _grpCaller, _t, 1] call THY_fnc_CSWR_debug_supportTransp;
+	// Wait until vehicle touches the ground:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// Debug > Showing caller group info:
+		[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+		// Conditions:
+		((getPosATL _veh) # 2) <= 0.3;
+	};
+	// Debug > Showing caller group info (last info from this stage):
+	[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+	
+	// STAGE 4/6 > EXTRACTION TEAM ON THE PICKUP POINT --------------------------------------------------
+	// Message > extraction team waiting the leader _grpCaller:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		leader _grpVeh commandChat format ["%1",
+		selectRandom ["We are at the requested point. Get in!", "At the requested point. Hurry up!"]];
+	};
+	// Waiting all _grpCaller members get in:
+	_t = time + CSWR_airTransportWaitTime;
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// In case of one or more crew members jump out the veh while landed, no matter the reason:
+		if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+			// Make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+			// If veh still in-game:
+			if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+				_veh lockDriver false;
+				_veh setFuel 0;
+			};
+		};
+		// Debug > Showing caller group info:
+		[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+		// Condition to break the loop:
+		// If engine stopped (blades broken or veh destroyed):
+		!isEngineOn _veh ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or caller group has no leader anymore:
+		!alive leader _grpCaller ||
+		// Or all alive caller group units are in veh:
+		({ alive _x } count (units _grpCaller)) isEqualTo ({ _x in _veh } count (units _grpCaller)) ||
+		// Or the time ran out:
+		time > _t;
+	};
+	// Debug > Showing caller group info (last info from this stage):
+	[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+	// Remove the dynamic helipad:
+	deleteVehicle _helipad;
+	// Escape > if veh is alive but it's broken, abort:
+	if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Debug > Turning On if Debug Heli was On before:
+		[_tag, _grpVeh, _veh, _grpCaller, _t, 2, _wasDebugHeliOn] call THY_fnc_CSWR_debug_supportTransp;
+		// Return:
+		true;
+	};
+	// Escape > if veh lost its engine or is destroyed, OR crew driver is dead/objNull, OR there's no more leader on caller group, abort:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+		// For single-player:
+		if !isMultiplayer then {
+			systemChat format ["%1", _txt4];
+		// For Multiplayer:
+		} else {
+			[format ["%1", _txt4]] remoteExec ["systemChat", leader _grpCaller];
+		};
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Debug > Turning On if Debug Heli was On before:
+		[_tag, _grpVeh, _veh, _grpCaller, _t, 2, _wasDebugHeliOn] call THY_fnc_CSWR_debug_supportTransp;
+		// Return:
+		true;
+	};
+	// Message:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		if ( time <= _t ) then {
+			_veh vehicleChat "Let's get out of here!";
+		} else {
+			leader _grpVeh commandChat "Sorry, but we CANNOT stay longer! We are leaving!";
+		};
+	};
+	// Debug > Turning On if Debug Heli was On before:
+	[_tag, _grpVeh, _veh, _grpCaller, _t, 2, _wasDebugHeliOn] call THY_fnc_CSWR_debug_supportTransp;
+	
+	// STAGE 5/6 > EXTRACTION TEAM RETURNING TO BASE  ---------------------------------------------------
+	// Returning the origin position:
+	_wp = _grpVeh addWaypoint [_basePos, 0];
+	_wp setWaypointCombatMode "YELLOW";
+	_wp setWaypointType "MOVE";
+	_grpVeh setCurrentWaypoint _wp;
+	// Waiting the extraction team to be back to the base:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// In case of one or more crew members jump out the veh while landed, no matter the reason:
+		if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+			// Make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+			// If veh still in-game:
+			if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+				_veh lockDriver false;
+				_veh setFuel 0;
+			};
+		};
+		// Condition to break the loop:
+		// If engine stopped (blades broken or veh destroyed):
+		!isEngineOn _veh ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or caller group has no leader anymore:
+		!alive leader _grpCaller ||
+		// 
+		_veh distance2d _basePos < _disReadyLand;
+	};
+	// Escape > If some accident at base, breaking the helicopter blades or an important actor is dead, abort:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+		// Canceling landing:
+		if ( alive _veh && isEngineOn _veh ) then { _veh land "NONE" };
+		// For single-player:
+		if !isMultiplayer then {
+			systemChat format ["%1", _txt4];
+		// For Multiplayer:
+		} else {
+			[format ["%1", _txt4]] remoteExec ["systemChat", leader _grpCaller];
+		};
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Return:
+		true;
+	};
+	// Landing:
+	_veh land "LAND";  // Caution: 'LAND" forces the engine off!
+	
+	// STAGE 6/6 > EXTRACTION TEAM AT BASE  -------------------------------------------------------------
+	// Waiting until touch the ground:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// Conditions:
+		((getPosATL _veh) # 2) <= 0.3;
+	};
+	_veh engineOn false;
+	// Message of mission completed:
+	if ( alive driver _veh && leader _grpVeh distance2d _basePos < _disReadyLand ) then {
+		leader _grpVeh commandChat "We are back to the base! Our mission's complete, over!";
+	};
+	// Finishing some details:
+	{ deleteVehicle _x } forEach units _grpVeh;  // deleteVehicleCrew _veh; -- it would delete your AI group members too.
+	{ moveOut (_x # 0) } forEach (fullCrew _veh);  // moveOut is faster, no animation, works with players, AI and dead bodies.
+	_veh setVehicleLock "LOCKED";
+	// A short time to players take back something added in vehicle cargo:
+	sleep 30;
+	deleteVehicle _veh;
+	// Remove the player's group from the support list:
+	[_grpCaller, "CSWR_suprtExtractAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_go_dest_TRANSPORT = {
+	// It's a new thread!
+	// After the THY_fnc_CSWR_TRANSPORT_booking_and_wait, this function sets the vehicle to move to the caller group (always a player) pickup-point and bring them for a custom position called delivery-point.
+	// There the caller leader once into the vehicle, they provide the delivery-point with their map by clicking. Once the transport support is done, the vehicle returns to base and it's deleted. 
+	// It's NOT a recursive loop.
+	// Returns nothing.
+
+	params ["_tag", "_spwn", "_grpCaller", "_grpType", "_grpVeh", "_behavior", ["_searchRange", 80]];
+	private ["_basePos", "_minDisCall", "_callerPos", "_isToTryAgain", "_spaceToLand", "_isToShowMsg", "_data", "_searchRngLimit", "_disReadyLand", "_veh", "_txt1", "_txt2", "_txt3"];
+
+	// Escape > If the veh explodes for any reason, abort:
+	if ( !alive vehicle (leader _grpVeh) ) exitWith {
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+		// Return:
+		true;
+	};
+	// Declarations - part 1/2:
+	_basePos    = markerPos _spwn;
+	_minDisCall = 500;
+	_callerPos  = getPosATL leader _grpCaller;  // caller position.
+	// Initial values:
+	_isToTryAgain = false;
+	_spaceToLand  = nil;
+	_isToShowMsg  = true;
+	_data         = createHashMap;  // Important: storing things that can change and it's more dynamic to store!
+	_data set ["isCallerOnBase", _basePos distance2d _callerPos < _minDisCall];  // if true, the veh doesn't need to execute the entire Pickup function, just the last moment where the player get in the veh.
+	_data set ["isCanceled", false];  // most important info where, if true, the entire support service should be finished as soon as possible, depends if the veh and its driver are alive or not.
+	_data set ["isDeliveryBase", false];  // if true, the veh doesn't need to execute the RTB stage coz the veh will be at base already, just short cooldown to be deleted once it arrives at delivery-point (base).
+	_data set ["wasCanceledEarlierAtBase", false];  // if true, it means the veh not even more, so the function can just jump all sub-functions straight to the deletion veh and its crew stage.
+	_data set ["whereToGoPos", []];  // the coordenates defined by caller for the delivery-point.
+	_data set ["helipadType", if !CSWR_isOnDebug then { "Land_HelipadEmpty_F" } else { "Land_HelipadSquare_F" }];
+	_data set ["helipad", objNull];  // Coz sometimes one sub-function of air transport creates the helipad, and just another later is responsable to delete it.
+	_data set ["wasDebugHeliOn", if CSWR_isOnDebugHeli then { true } else { false }];  // Crucial to know if debug transp should turn off debug heli just once and then restore it if needed later.
+	// Declarations - part 2/2:
+	_searchRngLimit = 400;
+	_disReadyLand   = 300; if (_minDisCall < _disReadyLand) then { _minDisCall = _disReadyLand + 10 }; // Caution: lower than 300 can cause explosion during the take off!
+	_veh            = vehicle leader _grpVeh;
+	switch _grpType do {
+		case "heliL": { _spaceToLand = 10 };
+		case "heliM": { _spaceToLand = 15 };
+		case "heliH": { _spaceToLand = 20 };
+	};
+	_txt1 = "For some reason, the Air Transport was canceled.";
+	_txt2 = format ["The pickup point CANNOT be used! It appears that %1m of terrain is unsuitable. Checking...", _searchRange];
+	_txt3 = format ["After to check %1m around, you're in a TOO RISKY terrain for this class (%2) of Air Transport to reach you. You LOST THIS REQUEST.", _searchRange, _grpType];
+
+	// STAGE 1/5 > CALLER REQUESTS TRANSPORT SUPPORT |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	// Player group is NOT AT BASE:
+	if !(_data get "isCallerOnBase") then {
+		// Finding the landing spot:
+		_callerPos = [
+			_callerPos,  // center
+			0,  // minDist
+			_searchRange,  // maxDist
+			_spaceToLand,  // objDist
+			0,  // waterMode (0=land / 1=land+water / 2=water)
+			0.25,  // maxGrad (0=absolutely flat, the checking is ignored / 1=absolutely steep, a person would use hands to walking up)
+			0,  // shoreMode (0=does not have to be at a shore / 1=must be at a shore)
+			[],  // blacklistPos
+			[]  // defaultPos (when no position is found)
+		] call BIS_fnc_findSafePos; // Returns only [x,y] when something is found!
+		// If BIS_fnc_findSafePos appends a Z pos in the _callerPos array when nothing was found:
+		if ( count _callerPos isEqualTo 3 ) then {
+			// Expand the search area until a certain range limit:
+			if ( _searchRange <= _searchRngLimit ) then {
+				// Message:
+				// For Single-player:
+				if !isMultiplayer then {
+					systemChat format ["%1", _txt2];
+				// For Multiplayer:
+				} else {
+					[format ["%1", _txt2]] remoteExec ["systemChat", leader _grpCaller];
+				};
+				// Cooldown next try:
+				sleep 5;  // Important: big number will make the vehicle, already in-game, stand still over the spawn-point!
+				// Flag:
+				_isToTryAgain = true;
+				// Restart the function with twice bigger search range (new thread):
+				[_tag, _spwn, _grpCaller, _grpType, _grpVeh, _behavior, (_searchRange * 2)] spawn THY_fnc_CSWR_go_dest_TRANSPORT;
+			} else {
+				// Failed message:
+				// For Single-player:
+				if !isMultiplayer then {
+					systemChat format ["%1", _txt3];
+				// For Multiplayer:
+				} else {
+					[format ["%1", _txt3]] remoteExec ["systemChat", leader _grpCaller];
+				};
+				// Remove the player's group from the support list:
+				[_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+				// Delete Transport Team:
+				deleteVehicleCrew _veh;
+				deleteVehicle _veh;
+			};
+		};
+	};
+	// Escape > Leave this thread for a new try, OR if search range is too big, just abort:
+	if ( _isToTryAgain || _searchRange > _searchRngLimit ) exitWith { true };
+	
+	// STAGE 2/5 > TRANSPORT TEAM WAITS CALLER GROUP TO GET IN - OR - GOES TO THE PICKUP POINT |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	_data = [_data, _grpCaller, _callerPos, _tag, _grpVeh, _veh, _behavior, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_pickup;
+	// Remove the dynamic helipad, no matter if canceled or going to the next stage:
+	deleteVehicle (_data get "helipad");
+	// Action if support canceled:
+	if ( _data get "isCanceled" ) then {
+		// Debug > Turning On if Debug Heli was On before:
+		[_tag, _grpVeh, _veh, _grpCaller, nil, 2, _data get "wasDebugHeliOn"] call THY_fnc_CSWR_debug_supportTransp;
+		// Message only to caller:
+		if _isToShowMsg then {
+			// For single-player:
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt1];
+			// For multiplayer:
+			} else {
+				[format ["%1", _txt1]] remoteExec ["systemChat", leader _grpCaller];
+			};
+			_isToShowMsg = false;
+		};
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+	};
+	// Escape > If the veh was destroyed OR the pilot is dead, abort:
+	if ( !isEngineOn _veh || !alive driver _veh ) exitWith { true };
+
+	// STEP 3/5> TRANSPORT TEAM WITH CALLER, ASKING WHERE TO GO |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	_data = [_data, _grpCaller, _tag, _grpVeh, _veh, _basePos, _spaceToLand, _minDisCall] call THY_fnc_CSWR_TRANSPORT_where_to_go;
+	// Important: don't remove the helipad by code here as the previously stages! This function above is different than others.
+	// Debug > Turning On if Debug Heli was On before:
+	// Important: no matter what, this debug support won't be used in the next stage!
+	[_tag, _grpVeh, _veh, _grpCaller, nil, 2, _data get "wasDebugHeliOn"] call THY_fnc_CSWR_debug_supportTransp;  // Next stages this debug is not needed!
+	// Action if support canceled:
+	if ( _data get "isCanceled" ) then {
+		// Message only to caller:
+		if _isToShowMsg then {
+			// For single-player:
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt1];
+			// For multiplayer:
+			} else {
+				[format ["%1", _txt1]] remoteExec ["systemChat", leader _grpCaller];
+			};
+			_isToShowMsg = false;
+		};
+		// Remove the player's group from the support list:
+		[_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+	};
+	// Escape > If the veh was destroyed OR the pilot is dead, abort:
+	if ( !isEngineOn _veh || !alive driver _veh ) exitWith { true };
+
+	// STAGE 4/5 > TRANSPORT TEAM WITH CALLER, GOES TO DELIVERY POINT ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	_data = [_data, _grpCaller, _tag, _grpVeh, _veh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_delivery;
+	// Remove the dynamic helipad, no matter if canceled or going to the next stage:
+	deleteVehicle (_data get "helipad");
+	// Remove the player's group from the support list:
+	// Important: at this point caller is at delivery point, so it removes the caller group from the booking list no matter what:
+	[_grpCaller, "CSWR_suprtTranspAirData"] call THY_fnc_CSWR_TRANSPORT_grp_bookingUndo;
+	// Action if support canceled:
+	if ( _data get "isCanceled" ) then {  // It's NOT "Escape"!
+		// Message only to caller:
+		if _isToShowMsg then {
+			// For single-player:
+			if !isMultiplayer then {
+				systemChat format ["%1", _txt1];
+			// For multiplayer:
+			} else {
+				[format ["%1", _txt1]] remoteExec ["systemChat", leader _grpCaller];
+			};
+		};
+	};
+	// Escape > If the veh was destroyed OR the pilot is dead, abort:
+	//if ( !alive _veh || !alive driver _veh ) exitWith { true };  // Not needed!
+
+	// STAGE 5/5> TRANSPORT TEAM RETURNING TO BASE |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	[_data, _grpCaller, _tag, _grpVeh, _veh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_RTB;
+	// Important: no reason to have the THY_fnc_CSWR_TRANSPORT_grp_bookingUndo here because caller doesn't reach this step with the transport team!
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_pickup = {
+	// This function takes the first stage of the transport support resource, finding the caller (player) position and, if not at base side by side the vehicle spawn-point,
+	// the vehicle spawns and goes to the caller position to pickup them.
+	// Returns _data: hashMap/array.
+
+	params ["_data", "_grpCaller", "_callerPos", "_tag", "_grpVeh", "_veh", "_behavior", "_basePos", "_disReadyLand"];
+	private ["_helipad", "_wp", "_t"];
+
+	// Initial values:
+	_helipad = "";
+	_wp      = [];
+	_t       = 0;  // Dont set nil!
+	// Escape > Veh is destroyed, OR veh driver is dead/objNull, abort:
+	if ( !isEngineOn _veh || _veh getHitPointDamage "HitVRotor" > 0.6 || !alive driver _veh ) exitWith { _data set ["isCanceled", true]; _data set ["wasCanceledEarlierAtBase", true]; _data };
+	// Declarations:
+		// Reserved space.
+	// Load the original group behavior (Editor's choice):
+	[_grpVeh, _behavior, true, false] call THY_fnc_CSWR_grp_behavior;
+	// Load again the unit individual and original behavior:
+	[_grpVeh, _behavior, true, false] call THY_fnc_CSWR_unit_behavior;
+	// Forcing the pilot only:
+	driver _veh setCombatBehaviour "CARELESS";  // Gunner still open fire.
+	// vehicle config:
+	_veh lockDriver true;
+	// Debug > Turning off the Debug Heli temporarily:
+	[_tag, _grpVeh, _veh, _grpCaller, _t, 1] call THY_fnc_CSWR_debug_supportTransp;
+
+	// STEP 1/2 > TRANSPORT TEAM ON BASE, PREPARING TO GO |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	// Caller already IS AT BASE:
+	if (_data get "isCallerOnBase") then {
+		// Messages:
+		if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+			if ( _tag isNotEqualTo "CIV" ) then {
+				leader _grpVeh commandChat format ["We are READY and less than %2 meters from the %1 position. We gonna waiting for them!",
+				_grpCaller, _minDisCall];
+			} else {
+				leader _grpVeh commandChat format ["We are READY and close enough to the Mr. %1. We gonna waiting for them!",
+				leader _grpCaller];
+			};
+		};
+
+		// STEP 1.1/2 > TRANSPORT TEAM ON LANDED ON PICKUP POINT (BASE) --------------------------------------------------
+		// Waiting all _grpCaller members get in:
+		_t = time + CSWR_airTransportWaitTime;
+		waitUntil {
+			// Breather:
+			sleep 5;
+			// Debug > Showing caller group info:
+			[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+			// Condition to break the loop:
+			// If engine stopped (blades broken or veh destroyed):
+			!isEngineOn _veh ||
+			// Or veh driver is dead/objnull:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or caller group has no leader anymore:
+			!alive leader _grpCaller ||
+			// Or if the entire caller group (alive members) is in veh:
+			({ alive _x } count (units _grpCaller)) isEqualTo ({ _x in _veh } count (units _grpCaller)) ||
+			// Or if nobody from caller group is in veh and the time ran out:
+			// Important: dont set validations abourt 'leader distance releated to veh' coz the leader called to transport from the base and that's it!
+			{ { alive _x && _x in _veh } count (units _grpCaller) isEqualTo 0 && time > _t };
+		};
+		// Debug > Showing caller group info (last info from this stage):
+		[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+		// Escape > If some accident at base, breaking the helicopter blades or an important actor is dead, abort:
+		if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+			_data set ["wasCanceledEarlierAtBase", true];
+		};
+		// Escape > if pickup failed coz NO one from caller group was in veh when the time ran out:
+		if ( { alive _x && _x in _veh } count (units _grpCaller) isEqualTo 0 && time > _t ) exitWith {
+			// Message:
+			if ( alive _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+				// For military context:
+				if ( _tag isNotEqualTo "CIV" ) then {
+					leader _grpVeh commandChat format ["Base, looks %1 couldn't reach the pickup point. We are abording the mission. Engine off, over!",
+					_grpCaller];
+				// For civilian context:
+				} else {
+					leader _grpVeh commandChat format ["For some reason, Mr. %1 wasn't at pickup point. Taxiing canceled...",
+					leader _grpCaller];
+				};
+			};
+			// Prepare to return:
+			_data set ["isCanceled", true];
+			_data set ["wasCanceledEarlierAtBase", true];
+		};
+
+	// STEP 2/2 > TRANSPORT TEAM GOING TO PICKUP POINT ---------------------------------------------------------------
+	// Caller is NOT at base:
+	} else {
+		_helipad = (_data get "helipadType") createVehicle _callerPos;
+		// Storing the obj to be accessable later through another function:
+		_data set ["helipad", _helipad];
+		_wp = _grpVeh addWaypoint [_callerPos, 0];
+		//_wp setWaypointCombatMode "YELLOW";
+		_wp setWaypointType "MOVE";
+		_grpVeh setCurrentWaypoint _wp;
+		// Message:
+		if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+			// For military context:
+			if ( _tag isNotEqualTo "CIV" ) then {
+				leader _grpVeh commandChat format ["Heading to the %1 position!",
+				_grpCaller];
+			// For civilian context:
+			} else {
+				leader _grpVeh commandChat format ["Here is the helicopter pilot, we are heading to Mr. %1 position...",
+				leader _grpCaller];
+			};
+		};
+		// Waiting the Transport team to be on the pickup point:
+		waitUntil {
+			// Breather:
+			sleep 10;
+			// Condition to break the loop:
+			// If engine stopped (blades broken or veh destroyed):
+			!isEngineOn _veh ||
+			// Or veh has no driver:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or veh is far from the base (but before the pickup point) and is touching the ground:
+			{ _veh distance2d _basePos > _disReadyLand && ((getPosATL _veh) # 2) <= 0.3 } ||
+			// Or veh is already landing to pickup the caller:
+			_veh distance2d _callerPos < _disReadyLand;
+		};
+		// Escape > if veh lost its blades or is destroyed, OR crew driver is dead/objNull, Or veh is far from the base, far from the pickup point, but it's touching the ground, abort:
+		if (!isEngineOn _veh ||
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			{ _veh distance2d _basePos > _disReadyLand && _veh distance2d _callerPos > _disReadyLand && ((getPosATL _veh) # 2) <= 0.3 } ) exitWith {
+			// Force the destruction:
+			{ deleteVehicle _x } forEach units _grpVeh;
+			_veh setDamage 1;
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > if the caller group is dead (inside the veh), abort:
+		if ( !alive leader _grpCaller ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Landing:
+		_veh land "GET IN";
+		// Wait until vehicle touches the ground:
+		waitUntil {
+			// Breather:
+			sleep 5;
+			// Conditions:
+			// If engine stopped (blades broken or veh destroyed):
+			!isEngineOn _veh ||
+			// Or veh driver is dead/objnull:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or caller group has no leader anymore:
+			!alive leader _grpCaller ||
+			// Or veh is touching the ground:
+			((getPosATL _veh) # 2) <= 0.3;
+		};
+		// Escape > if veh is alive but it's broken, abort:
+		if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > if veh lost its engine or is destroyed, OR crew driver is dead/objNull, OR there's no more leader on caller group, abort:
+		if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+			// Abort the landing if crew and veh alive:
+			_veh land "NONE";
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		
+		// STEP 2.1/2 > TRANSPORT TEAM ON LANDED ON PICKUP POINT ---------------------------------------------------------
+		// Message > Transport team waiting the leader _grpCaller:
+		if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+			leader _grpVeh commandChat format ["%1",
+			selectRandom ["We are at the requested point. Get in!", "At the requested point. Hurry up!"]];
+		};
+		// Waiting all _grpCaller members get in:
+		_t = time + CSWR_airTransportWaitTime;
+		waitUntil {
+			// Breather:
+			sleep 5;
+			// In case of one or more crew members jump out the veh while landed, no matter the reason:
+			if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+				// Make them join to an ally group if in the range, including caller group and vehicles:
+				[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+				// If veh still in-game:
+				if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+					_veh lockDriver false;
+					_veh setFuel 0;
+				};
+			};
+			// Debug > Showing caller group info:
+			[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+			// Condition to break the loop:
+			// If engine stopped (blades broken or veh destroyed):
+			!isEngineOn _veh ||
+			// Or veh driver is dead/objnull:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or caller group has no leader anymore:
+			!alive leader _grpCaller ||
+			// Or if the entire caller group (alive members) is in veh:
+			({ alive _x } count (units _grpCaller)) isEqualTo ({ _x in _veh } count (units _grpCaller)) ||
+			// Or if caller leader is not close, AND nobody from their group is in veh AND the time ran out:
+			{ leader _grpCaller distance2d _veh > 80 && { alive _x && _x in _veh } count (units _grpCaller) isEqualTo 0 && time > _t };
+		};
+		// Debug > Showing caller group info (last info from this stage):
+		[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+		// Escape > if pickup failed coz caller leader wasn't close, AND veh has engine On, AND no one from their group was in veh, AND the time ran out:
+		if ( leader _grpCaller distance2d _veh > 80 && isEngineOn _veh && { alive _x && _x in _veh } count (units _grpCaller) isEqualTo 0 && time > _t ) exitWith {
+			// In order to make sure (CPU lag?) no one from caller group is in veh in this case:
+			{ moveOut _x } forEach (units _grpCaller) select { alive _x && _x in _veh };
+			// Message:
+			if ( alive _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+				// For military context:
+				if ( _tag isNotEqualTo "CIV" ) then {
+					leader _grpVeh commandChat format ["Base, looks %1 couldn't reach the pickup point. We are returning to base, over!",
+					_grpCaller];
+				// For civilian context:
+				} else {
+					leader _grpVeh commandChat format ["For some reason, Mr. %1 wasn't at pickup point. Returning to heliport...",
+					leader _grpCaller];
+				};
+			};
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > if veh is alive but it's broken, abort:
+		if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > if veh lost its engine or is destroyed, OR crew driver is dead/objNull, OR there's no more leader on caller group, abort:
+		if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+			// Another crew member tries to take the vehicle control:
+			[_tag, _grpVeh, _veh] call THY_fnc_CSWR_TRANSPORT_copilot_takes_control;
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+	};
+	// Return:
+	_data;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_where_to_go = {
+	// This function manage the stage that the transport team asks the caller leader (player) where to go next.
+	// This will call the function THY_fnc_CSWR_TRANSPORT_provide_pos_using_map that will call another one on client-side.
+	// Returns _data: hashMap/array.
+	
+	params ["_data", "_grpCaller", "_tag", "_grpVeh", "_veh", "_basePos", "_spaceToLand", "_minDisCall"];
+	private ["_t"];
+
+	// Escape > If support service failed, abort this function, even if the veh still running:
+	if ( _data get "isCanceled" ) exitWith { _data };
+	// Initial values:
+	_t = 0;
+	
+	// Asking to the player where to go:
+	// CRITICAL STAGE (CAN TAKE A WHILE, DEPENDS THE PLAYER):
+	_data = [_data, _tag, _grpCaller, _grpVeh, _veh, _basePos, _spaceToLand, _minDisCall] call THY_fnc_CSWR_TRANSPORT_provide_pos_using_map;
+	// IMPORTANT TO KNOW: if everything fine, now the transport has its waypoint to delivery-point!
+
+	// Escape > Something went wrong with the original player group's leader:
+	if ( !isEngineOn _veh || _data isEqualTo [] ) exitWith {
+		// Remove the dynamic helipad:
+		deleteVehicle (_data get "helipad");
+		// Force the caller group members already in veh to get out:
+		{ moveOut _x } forEach (units _grpCaller) select { alive _x && _x in _veh };
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Escape > if veh is broken, OR driver is dead/objNull, OR the caller group leader is dead, abort:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+		// Remove the dynamic helipad:
+		deleteVehicle (_data get "helipad");
+		// Another crew member tries to take the vehicle control:
+		[_tag, _grpVeh, _veh] call THY_fnc_CSWR_TRANSPORT_copilot_takes_control;
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Message:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		// Checking if the delivery point is NOT on the base:
+		if ( (_data get "whereToGoPos") distance2d _basePos > _minDisCall ) then {
+			_veh vehicleChat format ["%1",
+			selectRandom ["Right! Let's do it!", "Okay, that will be fun!", "Solid copy, sir!", "Already! We know this area...", "Alright, here we go!", "Copy! Let's go!"]];
+		} else {
+			// Message for military context
+			if ( _tag isNotEqualTo "CIV" ) then {
+				_veh vehicleChat "Wow, it's the base position! Sir, you should call to Extraction team on the next time... Returning to base!";
+			// Message for cibilian context
+			} else {
+				_veh vehicleChat "Let's go back to home...";
+			};
+			// Flag it:
+			_data set ["isDeliveryBase", true];
+		};
+	};
+	// Return:
+	_data;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_delivery = {
+	// This function takes care of the transport support stage where the caller (player) is already in vehicle, riding the caller group until the requested position.
+	// Returns _data: hashMap/array.
+
+	params ["_data", "_grpCaller", "_tag", "_grpVeh", "_veh", "_basePos", "_disReadyLand"];
+	private ["_t"];
+
+	// Escape > If support service failed, abort this function, even if the veh still running:
+	if ( _data get "isCanceled" ) exitWith { _data };
+	// Initial values:
+	_t = 0;  // Dont set nil!
+	// Waiting the helicopter get some high and distance:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// In case of one or more crew members jump out the veh while landed, no matter the reason:
+		if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+			// Make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+			// If veh still in-game:
+			if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+				_veh lockDriver false;
+				_veh setFuel 0;
+			};
+		};
+		// Condition to break the loop:
+		// If engine stopped (blades broken or veh destroyed):
+		!isEngineOn _veh ||
+		// Caller group is dead:
+		!alive leader _grpCaller ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or veh is higher than 10 meters:
+		((getPosATL _veh) # 2) > 10;
+	};
+	// Escape > if veh is alive but it's broken, abort:
+	if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+		// Prepare to return:
+		_data set ["isCanceled", true];
+	};
+	// Escape > if veh lost its engine or is destroyed, OR crew driver is dead/objNull, OR there's no more leader on caller group, abort:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+		// Prepare to return:
+		_data set ["isCanceled", true];
+	};
+	// Messages:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		// For military context:
+		if ( _tag isNotEqualTo "CIV" ) then {
+			// If caller wants to move out there:
+			if !(_data get "isDeliveryBase") then {
+				leader _grpVeh commandChat format ["Moving %1 at the delivery-point, over!",
+				_grpCaller];
+			// If caller wants to return to base:
+			} else {
+				leader _grpVeh commandChat format ["%1The %2 team's with me and we are straight on to the base, over!",
+				selectRandom ["", "This is Bird. ", "This is God. ", "This is Eagle. ", "This is Soprano. ", "This is Lammel. "],
+				_grpCaller];
+			};
+		// For civilian context:
+		} else {
+			leader _grpVeh commandChat format ["Going to take Mr. %1 to the requested location.",
+			leader _grpCaller];
+		};
+	};
+	// Waiting the helicopter reaches the delivery position:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// In case of one or more crew members jump out the veh while landed, no matter the reason:
+		if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+			// Make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+			// If veh still in-game:
+			if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+				_veh lockDriver false;
+				_veh setFuel 0;
+			};
+		};
+		// Condition to break the loop:
+		// If engine stopped (blades broken):
+		!isEngineOn _veh ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or caller group has no leader anymore:
+		!alive leader _grpCaller ||
+		// Or veh is touching the ground:
+		((getPosATL _veh) # 2) <= 0.3 ||
+		// Or veh is close enough to the delivery point:
+		_veh distance2d (_data get "whereToGoPos") <= _disReadyLand;
+	};
+	// Escape > if veh is alive but it's broken, abort:
+	if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+		// Remove the dynamic helipad:
+		deleteVehicle (_data get "helipad");
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Escape > if veh is destroyed, OR its crew is dead, OR veh is touching the ground before to get close from final destination, abort:
+	if ( 
+		!isEngineOn _veh ||
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || 
+		{ ((getPosATL _veh) # 2) <= 0.3 && _veh distance2d (_data get "whereToGoPos") > _disReadyLand } ) exitWith {
+		// Force the destruction:
+		{ deleteVehicle _x } forEach units _grpVeh;
+		_veh setDamage 1;
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Escape > if the caller group is dead (inside the veh), abort:
+	if ( !alive leader _grpCaller ) exitWith {
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Land type depends if out there or base:
+	driver _veh setCombatBehaviour "CARELESS";
+	if !(_data get "isDeliveryBase") then { _veh land "GET OUT" } else { _veh land "LAND" };  // Caution: 'LAND" forces the engine off!
+	// Waiting touch the ground on delivery point:
+	waitUntil {
+		// Breather:
+		sleep 5;
+		// In case of one or more crew members jump out the veh while landed, no matter the reason:
+		if !(_data get "isDeliveryBase") then {
+			if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+				// Make them join to an ally group if in the range, including caller group and vehicles:
+				[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+				// If veh still in-game:
+				if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+					_veh lockDriver false;
+					_veh setFuel 0;
+				};
+			};
+		};
+		// Conditions:
+		// If engine stopped (blades broken):
+		!isEngineOn _veh ||
+		// Or veh driver is dead/objnull:
+		!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+		// Or veh is touching the ground:
+		((getPosATL _veh) # 2) <= 0.3;
+	};
+	// Escape > if veh is alive but it's broken, abort:
+	if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Escape > if veh is destroyed, OR its crew is dead, abort:
+	if (!alive _veh ||  // CAUTION: don't use engine check here coz, if delivery is at base, the helicopter turns its engine off and would cause an explosion!
+		!alive driver _veh ||
+		incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS") exitWith {
+		// Force the destruction:
+		{ deleteVehicle _x } forEach units _grpVeh;
+		_veh setDamage 1;
+		// Prepare to return:
+		_data set ["isCanceled", true];
+		// Return:
+		_data;
+	};
+	// Message:
+	if ( isEngineOn _veh && alive driver _veh && incapacitatedState (driver _veh) isNotEqualTo "UNCONSCIOUS" ) then {
+		if !(_data get "isDeliveryBase") then {
+			leader _grpVeh commandChat format ["%1... %2",
+			selectRandom ["On ground", "The bird touchesdown", "Here we are"],
+			selectRandom ["Up to you, sir!", "Go, go, go!", "Good luck!"]];
+		} else {
+			_veh vehicleChat format ["%1",
+			selectRandom ["Home, sweet home...", "At home, sir!", "That's it! At home, boys..."]];
+		};
+	};
+	// The delivery is finished here if it was at base!
+	// Otherwise, for delivery out there, prepare to RTB:
+	if !(_data get "isDeliveryBase") then {
+		// Waiting the caller group gets out of veh:
+		_t = time + CSWR_airTransportWaitTime;
+		waitUntil {
+			// Breather:
+			sleep 5;
+			// In case of one or more crew members jump out the veh while landed, no matter the reason:
+			if ( (units _grpVeh) findIf { alive _x && isNull objectParent _x } isNotEqualTo -1 ) then {
+				// Make them join to an ally group if in the range, including caller group and vehicles:
+				[_tag, _grpVeh, 0, 300, 5, false, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+				// If veh still in-game:
+				if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+					_veh lockDriver false;
+					_veh setFuel 0;
+				};
+			};
+			// Condition to break the loop:
+			// If engine stopped (blades broken):
+			!isEngineOn _veh ||
+			// Or veh driver is dead/objnull:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or nobody from caller group is in veh:
+			{ alive _x && _x in _veh } count (units _grpCaller) isEqualTo 0 ||
+			// Or the time ran out:
+			time > _t;
+		};
+		// Escape > if veh is alive but it's broken, abort:
+		if ( [_tag, _veh, _grpVeh, _basePos, _disReadyLand] call THY_fnc_CSWR_TRANSPORT_message_mayday ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > Veh is destroyed, OR veh driver is dead/objNull, abort:
+		if ( !isEngineOn _veh || !alive _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ) exitWith {
+			// Another crew member tries to take the vehicle control:
+			[_tag, _grpVeh, _veh] call THY_fnc_CSWR_TRANSPORT_copilot_takes_control;
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// If the time ran out, it forces the remainder of the caller group to get out:
+		if ( time > _t ) then {
+			// Forcing the caller group to get out of veh:
+			{ moveOut _x } forEach (units _grpCaller) select { alive _x && _x in _veh };
+		};
+	};
+	// Return:
+	_data;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_RTB = {
+	// This function takes care about the last stage of the transport support service. Once the caller group (player) is dropped on the delivery point or the transport support is canceled,
+	// if the veh wasn't at base, the veh starts the way back to its spawn-point position that here is called "base". After its arrival, the veh and its crew is deleted successfully.
+	// CRITICAL: if the veh and its crew are alive, this stage MUST be executed, no matter is mission is on-going or canceled!
+	// Returns nothing.
+
+	params ["_data", "_grpCaller", "_tag", "_grpVeh", "_veh", "_basePos", "_disReadyLand"];
+	private ["_t", "_wp"];
+
+	// Escape > If not at base yet, AND (veh is destroyed OR driver's dead), abort:
+	if ( !(_data get "isDeliveryBase") && { !isEngineOn _veh || !alive driver _veh } ) exitWith {
+		// If veh still alive:
+		if ( alive _veh ) then {
+			// Veh config pos-accident:
+			_veh lockDriver false;
+			_veh setFuel 0;
+			// If crew leader is okay and the veh is not in the air:
+			if ( alive leader _grpVeh && ((getPosATL _veh) # 2) <= 1 ) then {
+				// For them to get out:
+				{ moveOut _x } forEach units _grpVeh;
+			};
+		};
+		if ( alive leader _grpVeh ) then {
+			// If alive crew, make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+		};
+		// Return:
+		true;
+	};
+	// Initial values:
+	_t  = 0;  // Dont set nil!
+	_wp = [];
+
+	// STEP 1/3 > TRANSPORT TEAM AND CALLER GROUP ON DELIVERY POINT (AND SOON THE TRANSPORT TEAM WILL DO RTB) --------
+	// If support was NOT canceled in the first step (Pickup) of the service:
+	if !(_data get "wasCanceledEarlierAtBase") then {
+		// Delivery point is NOT at base:
+		if !(_data get "isDeliveryBase") then {
+			// If support is NOT canceled:
+			if !(_data get "isCanceled") then {
+				// To avoid players get in again:
+				_veh setVehicleLock "LOCKEDPLAYER";
+				// Message:
+				if ( alive _veh && alive driver _veh ) then {
+					// For military context:
+					if ( _tag isNotEqualTo "CIV" ) then {
+						leader _grpVeh commandChat format ["%1! %2!",
+						selectRandom ["The package has been delivered", "The ground team has been placed"],
+						selectRandom ["Returning to base", "Bird's returning to nest"]];
+					// For civilian context:
+					} else {
+						leader _grpVeh commandChat format ["Mr. %1 on the ground. Helicopter returning to the heliport!", leader _grpCaller];
+					};
+				};
+			// If support WAS CANCELED:
+			} else {
+				// Message:
+				if ( isEngineOn _veh && alive driver _veh ) then {
+					// For military context:
+					if ( _tag isNotEqualTo "CIV" ) then {
+						leader _grpVeh commandChat "Our mission was aborted. Returning to base, over!";
+					// For civilian context:
+					} else {
+						leader _grpVeh commandChat "Apparently, the plan has been changed. Returning to heliport...";
+					};
+				};
+			};
+
+			// STEP 2/3 > TRANSPORT TEAM RETURNING TO BASE  ------------------------------------------------------------------
+			// Vehicle config:
+			driver _veh setCombatBehaviour "CARELESS";  // Gunner still open fire.
+			// Creating the waypoint to the base's helipad position:
+			_wp = _grpVeh addWaypoint [_basePos, 0];
+			_wp setWaypointCombatMode "YELLOW";
+			_wp setWaypointType "MOVE";
+			_grpVeh setCurrentWaypoint _wp;
+			// Waiting the Transport team to be back at base:
+			waitUntil {
+				// Breather:
+				sleep 10;
+				// Condition to break the loop:
+				// If engine stopped (blades broken):
+				!isEngineOn _veh ||
+				// Or veh driver is dead/objnull:
+				!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+				// Or veh is close enough from the base:
+				_veh distance2d _basePos < _disReadyLand;
+			};
+			// Landing:
+			_veh land "LAND";  // Caution: 'LAND" forces the engine off!
+
+			// STEP 3/3 > TRANSPORT TEAM AT BASE  ----------------------------------------------------------------------------
+			// Waiting until touch the ground:
+			waitUntil {
+				// Breather:
+				sleep 10;
+				// Condition to break the loop:
+				// If engine stopped (blades broken):
+				!isEngineOn _veh ||
+				// Or veh driver is dead/objnull:
+				!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+				// Or veh is touching the ground:
+				((getPosATL _veh) # 2) <= 0.3;
+			};
+			// Escape > Veh is destroyed, OR veh driver is dead/objNull, abort:
+			if ( !alive _veh || !alive driver _veh ) exitWith { true };  // CAUTION: don't check the engine here coz it's expected to be turned it off.
+			// Message of mission completed:
+			if !(_data get "isCanceled") then {
+				// For military context:
+				if ( _tag isNotEqualTo "CIV" ) then {
+					if ( alive driver _veh && leader _grpVeh distance2d _basePos < _disReadyLand ) then {
+						leader _grpVeh commandChat "We are back to base! Our mission's complete, over!";
+					};
+				};
+				// For civilian context:
+				// The pilot doesn't care if civilian knows what's going on!
+			};
+		};  // ends of NOT "isDeliveryBase".
+		// Deleting the dynamic helipad:
+		//deleteVehicle (_data get "helipad");  // Not needed!
+	};  // ends of NOT "wasCanceledEarlierAtBase".
+	// Turn off engine:
+	_veh engineOn false;
+	// Finishing some details:
+	{ deleteVehicle _x } forEach units _grpVeh;  // deleteVehicleCrew _veh; -- it would delete your AI group members too.
+	// Just for make sure, get out for everyone accidentally still in veh:
+	{ moveOut (_x # 0) } forEach (fullCrew _veh);
+	_veh setVehicleLock "LOCKED";
+	// A short time to players take back something added in vehicle cargo:
+	sleep 30;
+	deleteVehicle _veh;
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_booking_and_wait = {
+	// This function has 2 actions:
+	// 1) it adds the caller group (a player group) to the _globalData (CSWR_suprtTranspAirData or CSWR_suprtExtractAirData) if that player group didn't receive it before. In other words, a group can take just one call at a time;
+	// 2) once a caller has the support assigned, it waits the caller to call for it;
+	// Only after that, the support resource is spawned to execute the destination: THY_fnc_CSWR_go_dest_TRANSPORT or THY_fnc_CSWR_go_dest_EXTRACTION.
+	// Returns _grpCaller: group.
+
+	params ["_side", "_tag", "_feedbackName", "_globalData", "_class"];
+	private ["_grpCaller", "_playersLeaders", "_player", "_localData", "_grpsWithSuprt", "_isToUseSuprt", "_idx", "_hasSuprtOwner", "_cooldown"];
+
+	// Case need to restart the owner check:
+	scopeName "restartownercheck";
+	// Initial values:
+	_grpCaller      = grpNull;
+	_playersLeaders = [];
+	_player         = objNull;
+	_localData      = [];
+	_grpsWithSuprt  = [];  // Groups with THIS support TYPE!
+	_isToUseSuprt   = false;
+	_idx            = -1;
+	// Declarations:
+	_hasSuprtOwner = false;  // It means if this resource already has a player as owner for this resource be aware, waiting to be called.
+	_cooldown      = 45;  // Lower values is bad to the performance.
+
+	// STEP 1/2 > FIND A GROUP TO GIVE THIS RESOURCE ------------------------------------------------------------------
+	// This support resource searches for a group without this resource type:
+	while { !_hasSuprtOwner } do {
+		// For Multiplayer:
+		if isMultiplayer then {
+			// Select only player leader of the same side:
+			_playersLeaders = (allPlayers - entities "HeadlessClient_F") select { side _x isEqualTo _side && _x isEqualTo leader (group _x) };
+		// For Single-player:
+		} else {
+			_playersLeaders = [player];
+		};
+		// By the side, check those groups that a player is the leader and don't have the support resource yet:
+		{  // forEach _playersLeaders:
+			// Breather:
+			sleep 0.25;
+			// Internal declarations:
+			_player        = _x;
+			_localData     = missionNamespace getVariable _globalData;  // Returns [ [side, [grpArray1, grpArray3, ...]], ..., ..., ... ];  // grpArray1 = [_isToUseSuprt, grp1];
+			_grpsWithSuprt = _localData get _side;  // returns [grpArray1, grpArray3, ...] or array empty;
+			// If there's something to check:
+			if ( _grpsWithSuprt isNotEqualTo [] ) then {
+				// If the group has the same support resource type, skip to the next one:
+				if ( _grpsWithSuprt findIf { group _player isEqualTo (_x # 1) } isNotEqualTo -1 ) then { continue };
+			};
+			// Add the support request option for the group's leader:
+			// calling a custom subclass (requestTranspHeli) of built-in class (CfgCommunicationMenu) declared in description.ext.
+			[_player, _class] call BIS_fnc_addCommMenuItem;
+			// Defining the support owner's group:
+			_grpCaller = group _player;
+			// Add the group to the list:
+			_grpsWithSuprt pushBack [_isToUseSuprt, _grpCaller];  // _isToUseSuprt must be 'false' here!
+			// In _localData, search for the index/key SIDENAME and, then, replace the value for _grpsWithSuprt content:
+			_localData set [_side, _grpsWithSuprt];
+			// Broadcasting the update:
+			missionNamespace setVariable [_globalData, _localData, true];
+			// Flag it to break the while-loop:
+			_hasSuprtOwner = true;
+			// Debug:
+			if CSWR_isOnDebug then {
+				["%1 SUPPORT RESOURCE > %2 player leader from '%3' received a %4 resource.",
+				CSWR_txtDebugHeader, _tag, _grpCaller, _feedbackName] call BIS_fnc_error; sleep 2;
+				// More debug:
+				if CSWR_isOnDebugSupport then {
+					["%1 SUPPORT RESOURCE > Groups with %2 available = %3",
+					CSWR_txtDebugHeader, _globalData, missionNamespace getVariable _globalData] call BIS_fnc_error; sleep 2;
+				};
+			};
+		} forEach _playersLeaders;
+		// Breather if new looping is needed:
+		if !_hasSuprtOwner then {
+			// Debug:
+			if ( CSWR_isOnDebug && CSWR_isOnDebugSupport ) then {
+				["%1 SUPPORT RESOURCE > A %2 %3 has NO group owner yet (it's okay). Next try in %4s...",
+				CSWR_txtDebugHeader, _tag, _feedbackName, _cooldown] call BIS_fnc_error;
+			};
+			// Breather:
+			sleep _cooldown;
+		};
+	};  // While loop ends.
+
+	// STEP 2/2 > WAITING THE CALLER GROUP TO REQUEST SUPPORT --------------------------------------------------------
+	// Waiting the player's leader request support via description.ext (THY_fnc_CSWR_support_transp_by_air or THY_fnc_CSWR_support_extract_by_air):
+	waitUntil {
+		// Breather for next loop check:
+		sleep 15;
+		// Check if the description.ext updated the boolean value in grpArray:
+		_localData = missionNamespace getVariable _globalData;
+		_grpsWithSuprt = _localData get _side;  // returns [grpArray1, grpArray3, ...]
+		_idx = _grpsWithSuprt findIf { _grpCaller isEqualTo (_x # 1) };
+		// Case something goes wrong the _i
+		if ( _idx isEqualTo -1 ) exitWith {
+			if CSWR_isOnDebug then {
+				systemChat format ["%1 SUPPORT RESOURCE > A non-used %2 %3 resource returned to be available!",
+				CSWR_txtDebugHeader, _tag, _feedbackName];
+				sleep 2;
+			};
+			breakTo "restartownercheck";
+		};
+		_isToUseSuprt = (_grpsWithSuprt # _idx) # 0;  // Returns only the boolean value: [_isToUseSuprt, grp1];
+		// Condition to break the loop:
+		_isToUseSuprt;
+	};
+	// Return:
+	_grpCaller;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_grp_bookingUndo = {
+	// This function removes the player's group from the _globalData (CSWR_suprtTranspAirData or CSWR_suprtExtractAirData), making the group able to receive the resource again if it's still available.
+	// Returns nothing.
+
+	params ["_grp", "_globalData"];
+	private ["_localData", "_grpsWithSuprt", "_idx"];
+
+	// Escape:
+	if ( isNull _grp ) exitWith { true };
+	// Take the current version of the  the player's group from the support list:
+	_localData = missionNamespace getVariable _globalData;
+	// Take only those side groups that have this resource:
+	_grpsWithSuprt = _localData get (side _grp);  // returns [grpArray1, grpArray3, ...]
+	// Figure out the index of the player's group in _grpsWithSuprt list:
+	_idx = _grpsWithSuprt findIf { _grp isEqualTo (_x # 1) };  // [_isToUseSuprt, grp1];
+	// Remove the grpArray from the list of those groups with support resource:
+	_grpsWithSuprt deleteAt _idx;
+	// Update the entire side with the _grpsWithSuprt update:
+	_localData set [side _grp, _grpsWithSuprt];
+	// Broading the update:
+	missionNamespace setVariable [_globalData, _localData, true];
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_caller_pos = {
+	// CLIENT-SIDE function, and it's called by server-side: THY_fnc_CSWR_TRANSPORT_provide_pos_using_map.
+	// This function asks for the leader of caller group its cursor position over the map by click.
+	// Returns _pos: array. Positon where the caller group leader wants to go.
+
+	params ["_grpCaller"];
+	private ["_pos"];
+
+	// Making sure player exist in multiplayer:
+	waitUntil { sleep 0.1; !isNull player };
+    // Initial values:
+    _pos = [];
+	// Escape > If the machine has no interface, or the player is dead, or the player is not the caller group leader, abort:
+	if ( !hasInterface || !alive player || player isNotEqualTo leader _grpCaller ) exitWith { _pos };
+	// Forcing player to open map:
+	openMap [true, true];
+	// Check the click pos on map:
+	addMissionEventHandler [
+        "MapSingleClick", {
+			params ["_units", "_pos", "_alt", "_shift"];
+			// Defining:
+			player setVariable ["whereToGoPos", _pos, true];
+			// Closes the player map normally:
+			openMap [false, false];
+			// Ends the event handler:
+			removeMissionEventHandler ["MapSingleClick", _thisEventHandler];
+		}
+	];
+	// Waiting for caller to provide position:
+	waitUntil { sleep 1; !alive player || (leader _grpCaller getVariable "whereToGoPos") isNotEqualTo [] };
+	// prepare to return:
+	_pos = leader _grpCaller getVariable "whereToGoPos";	
+	// Return:
+	_pos;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_provide_pos_using_map = {
+	// This function requests for the player where they want to go, and creates the helicopter waypoint over that position.
+	// Returns _data: hashMap/array. If returns an empty array, it's coz something went wrong.
+
+	params ["_data", "_tag", "_grpCaller", "_grpVeh", "_veh", "_basePos", "_spaceToLand", "_minDisCall"];
+	private ["_isTryAgain", "_t", "_requestedPos", "_helipad", "_wp", "_searchRange", "_txt1"];
+
+	// Initial values:
+	_isTryAgain   = nil;
+	_t            = 0;  // Dont set nil!
+	_requestedPos = [];
+	_helipad      = "";
+	_wp           = [];
+	// Declarations:
+	_searchRange = 80;
+	_txt1 = "Please, provide another position";
+	// If _veh still working, the current driver still alive, and the player is in the vehicle, keep looping:
+	// Critical: don't check whether leader is in veh coz if leader dies in veh and the current leader is out, it would break the following logic of leadership transfering to another caller group unit!
+	while { isEngineOn _veh && alive driver _veh && alive leader _grpCaller} do {
+		// Internal initial values:
+		leader _grpCaller setVariable ["whereToGoPos", [], true];
+		_isTryAgain = false;
+		// Intruction message:
+		_veh vehicleChat format ["%1",
+		selectRandom ["Where do we go, sir?", "Where should we go, sir?", "What's the next point, sir?", "Sir, we need the delivery-point coordenates!", "Sir, what's the coords?"]];
+		["CLICK OVER THE AREA YOU WANT TO GO!"] remoteExec ["systemChat", leader _grpCaller];
+		// To run only in caller group leader's machine:
+		_requestedPos = [_grpCaller] call THY_fnc_CSWR_TRANSPORT_caller_pos;
+		// Waiting for caller to provide position:
+		waitUntil { sleep 1; !alive leader _grpCaller || _requestedPos isNotEqualTo [] };
+		// Timeout:
+		_t = time + CSWR_airTransportWaitTime;
+		// Confirming caller group leader is in veh:
+		waitUntil {
+			// Breather:
+			sleep 2;
+			// Debug > Showing caller group info:
+			[_tag, _grpVeh, _veh, _grpCaller, _t] call THY_fnc_CSWR_debug_supportTransp;
+			// Condition to break the loop:
+			// If engine stopped (blades broken):
+			!isEngineOn _veh ||
+			// Or veh driver is dead/objnull:
+			!alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ||
+			// Or if the original caller group leader dies, it makes the veh waits a possible new leader that still coming to the veh position:
+			leader _grpCaller in _veh ||
+			// Or if the time ran out:
+			time > _t;
+		};
+		// Escape > if veh is destroyed, OR crew driver is dead/objNull, OR caller leader, abort:
+		if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Escape > If helicopter still landed, and the time ran out:
+		if ( ((getPosATL _veh) # 2) < 1 && time > _t ) exitWith {
+			// Force the caller group members already in veh to get out:
+			{ moveOut _x } forEach (units _grpCaller) select { alive _x && _x in _veh };
+			// Message:
+			if ( alive _veh && alive driver _veh ) then {
+				// Message for military context
+				if ( _tag isNotEqualTo "CIV" ) then {
+					leader _grpVeh commandChat "Sorry boys, we CAN'T wait you all forever. Returning to base!";
+				// Message for civilian context
+				} else {
+					leader _grpVeh commandChat "Sorry, sir. I CAN'T wait you all day long. Returning to heliport!";
+				};
+			};
+			// Prepare to return:
+			_data set ["isCanceled", true];
+		};
+		// Validation > Check if caller requested pos is okay to land:
+		 _requestedPos = [
+			_requestedPos,  // center
+			0,  // minDist
+			_searchRange,  // maxDist
+			_spaceToLand,  // objDist
+			0,  // waterMode (0=land / 1=land+water / 2=water)
+			0.25,  // maxGrad (0=absolutely flat, the checking is ignored / 1=absolutely steep, a person would use hands to walking up)
+			0,  // shoreMode (0=does not have to be at a shore / 1=must be at a shore)
+			[],  // blacklistPos
+			[]  // defaultPos (when no position is found)
+		] call BIS_fnc_findSafePos; // Returns only [x,y] when something is found!
+		// If BIS_fnc_findSafePos appends a Z pos in the _requestedPos array when nothing was found:
+		if ( count _requestedPos isEqualTo 3 ) then {
+			// Flag it to try again:
+			_isTryAgain = true;
+			// Message:
+			_veh vehicleChat format ["Sir, even checking %1m around, that COORDS is NO GOOD ENOUGH to drop you out. %2...",
+			_searchRange, _txt1];
+		};
+		// Validation > Forbidden position > too close:
+		if ( _requestedPos distance2d (getPosATL _veh) < _minDisCall ) then {
+			// Flag it to try again:
+			_isTryAgain = true;
+			// Message:
+			_veh vehicleChat format ["Sir, this coordenates are TOO CLOSE. %1...",
+			_txt1];
+		} else {
+			// Validation > Forbidden position > on water:
+			if ( surfaceIsWater _requestedPos ) then {
+				// Flag it to try again:
+				_isTryAgain = true;
+				// Message:
+				_veh vehicleChat format ["Sir, I CAN'T leave you ON WATER. %1...",
+				_txt1];
+			};
+		};
+		// Approved to leave the loop:
+		if !_isTryAgain then { break };
+		// In case a new looping, breather:
+		sleep 3;  // It avoids "map blinking" on player screen!
+	};  // while-loop ends.
+	// Escape > something bad happened, it's already canceled so just abort to return now:
+	if ( !isEngineOn _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller ) exitWith {
+		// Debug > Turning On if Debug Heli was On before:
+		[_tag, _grpVeh, _veh, _grpCaller, _t, 2, _wasDebugHeliOn] call THY_fnc_CSWR_debug_supportTransp;
+		// Return:
+		_data;
+	};
+	// If everything is fine:
+	// Creating the waypoint to the Delivery point:
+	_helipad = (_data get "helipadType") createVehicle _requestedPos;
+	_wp = _grpVeh addWaypoint [_requestedPos, 0];
+	_wp setWaypointType "MOVE";
+	_grpVeh setCurrentWaypoint _wp;
+	// Prepare to return:
+	_data set ["whereToGoPos", _requestedPos];
+	_data set ["helipad", _helipad];
+	// Check if the delivery point is at base:
+	if ( _requestedPos distance2d _basePos < _minDisCall ) then { _data set ["isDeliveryBase", true] };
+	// Return:
+	_data;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_copilot_takes_control = {
+	// This function prepares another crewman to take driver seat if the original driver is lost and the vehicle is not broken or destroyed.
+	// Returns nothing.
+
+	params ["_tag", "_grpVeh", "_veh"];
+	private ["_copilot"];
+
+	// Escape:
+	if ( isNull _grpVeh ) exitWith { true };
+	// Initial values:
+	_copilot = objNull;
+	// If there's another crew alive:
+	if ( (units _grpVeh) select { alive _x } isNotEqualTo [] ) then {
+		// If veh not broken:
+		if ( isEngineOn _veh ) then {
+			// Unlock the seat:
+			_veh lockDriver false;
+			(driver _veh) moveOut _veh;
+			_veh engineOn true;
+			// Copilot takes control:
+			_copilot = (((units _grpVeh) select { alive _x && lifeState _x isNotEqualTo "UNCONSCIOUS" }) # 0);
+			_copilot setCombatBehaviour "CARELESS";
+			_copilot assignAsDriver _veh;
+			_copilot moveInDriver _veh;
+			waitUntil { sleep 1; !alive _veh || !alive _copilot || !isNull driver _veh };
+			// Lock the seat again:
+			_veh lockDriver true;
+		// Veh is broken:
+		} else {
+			// Make them join to an ally group if in the range, including caller group and vehicles:
+			[_tag, _grpVeh, 0, 300, 5, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+			// If veh still in-game:
+			if ( alive _veh ) then {  // The idea is don't provide a not planned veh for players, but without lock seats in case the player fells that into it is a safer place for any reason!
+				_veh lockDriver false;
+				_veh setFuel 0;
+			};
+		};
+	} else {
+		// If vehicle still in-game and landed:
+		if ( alive _veh && ((getPosATL _veh) # 2) <= 0.3 ) then {
+			_veh engineOn false;
+			_veh lockDriver false;
+			_veh setFuel 0;
+		};
+	};
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_TRANSPORT_message_mayday = {
+	// This function just sends a mayday message on command chat.
+	// Returns _isMayday: bool.
+
+	params ["_tag", "_veh", "_grpVeh", "_basePos", "_disReadyLand"];
+	private ["_isMayday"];
+
+	// Initial values:
+	_isMayday = false;
+	// Escape:
+	if ( !alive _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" ) exitWith { _isMayday };
+	// If veh is not in RTB (where it need to turn off engine), AND (veh lost power or lost rotor tail):
+	if ( _basePos distance2d _veh > _disReadyLand && { !isEngineOn _veh || _veh getHitPointDamage "HitVRotor" > 0.8 } ) then {
+		// Flag it:
+		_isMayday = true;
+		// For military context:
+		if ( _tag isNotEqualTo "CIV" ) then {
+			leader _grpVeh commandChat format ["Mayday, Mayday, Mayday! %1",
+			selectRandom ["", "Bird's down! Bird's down!", "Come on, baby, hang on, hang on!", "... No good, no good...!", "... NO, NO, NO, COME ON! ..."]];
+		// For civilian context:
+		} else {
+			leader _grpVeh commandChat format ["%1",
+			selectRandom ["Mayday, Mayday, Mayday!", "Oh my God!"]];
+		};
+		// Waiting the veh be on the ground:
+		waitUntil { sleep 5; !isEngineOn _veh || !alive driver _veh || ((getPosATL _veh) # 2) <= 0.3 };
+		// If veh still in-game:
+		if ( alive _veh ) then {
+			_veh lockDriver false;
+			_veh setFuel 0;
+			// For them to get out:
+			{ moveOut _x } forEach units _grpVeh;
+		};
+		// Make them join to an ally group if in the range, including caller group and vehicles:
+		[_tag, _grpVeh, 0, 300, 2, true, false, true] call THY_fnc_CSWR_grp_join_to_survive;
+	};
+	// Return:
+	_isMayday;
+};
+
+
+THY_fnc_CSWR_support_extract_by_air = {
+	// This function is called if a player request a Extraction Support by Communication Menu (defined in description.ext file).
+	// parameters = _this = ["caller", "pos", "target", "is3D", "id"] e.g [bis_01, [1234,5678], objNull, true, 1]
+	// Important: this function cannot be suspended (sleep, waitUntil, ...) once it's using 'call' and not 'spawn' method in description.ext.
+	// Returns nothing.
+
+	if !isServer exitWith {};  // Just in case once this function is called through description.ext and I'm not sure if client machine could read it.
+
+	//params ["_unit"];
+	private ["_player", "_globalData", "_grpsWithSuprt", "_idx"];
+
+	// Declarations:
+	_player     = _this # 0;  // caller.
+	_globalData = missionNamespace getVariable "CSWR_suprtExtractAirData";
+	// Take only those side groups that have this resource:
+	_grpsWithSuprt = _globalData get (side _player);  // returns [grpArray1, grpArray3, ...]
+	// Figure out the index of the player's group in _grpsWithSuprt list:
+	_idx = _grpsWithSuprt findIf { group _player isEqualTo (_x # 1) };  // [_isToUseSuprt, grp1];
+	// Update the grpArray, authorizing them to use the support, changing the _isToUseSuprt value to 'true':
+	_grpsWithSuprt set [_idx, [true, group _player]];
+	// Update the entire side with the _grpsWithSuprt update:
+	_globalData set [side _player, _grpsWithSuprt];
+	// Broading the update:
+	missionNamespace setVariable ["CSWR_suprtExtractAirData", _globalData, true];
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_support_transp_by_air = {
+	// This function is called if a player request a Transport Support by Communication Menu (defined in description.ext file).
+	// parameters = _this = ["caller", "pos", "target", "is3D", "id"] e.g [bis_01, [1234,5678], objNull, true, 1]
+	// Important: this function cannot be suspended (sleep, waitUntil, ...) once it's using 'call' and not 'spawn' method in description.ext.
+	// Returns nothing.
+
+	if !isServer exitWith {};  // Just in case once this function is called through description.ext and I'm not sure if client machine could read it.
+
+	//params ["_unit"];
+	private ["_player", "_globalData", "_grpsWithSuprt", "_idx"];
+
+	// Declarations:
+	_player     = _this # 0;  // caller.
+	_globalData = missionNamespace getVariable "CSWR_suprtTranspAirData";
+	// Take only those side groups that have this resource:
+	_grpsWithSuprt = _globalData get (side _player);  // returns [grpArray1, grpArray3, ...]
+	// Figure out the index of the player's group in _grpsWithSuprt list:
+	_idx = _grpsWithSuprt findIf { group _player isEqualTo (_x # 1) };  // [_isToUseSuprt, grp1];
+	// Update the grpArray, authorizing them to use the support, changing the _isToUseSuprt value to 'true':
+	_grpsWithSuprt set [_idx, [true, group _player]];
+	// Update the entire side with the _grpsWithSuprt update:
+	_globalData set [side _player, _grpsWithSuprt];
+	// Broading the update:
+	missionNamespace setVariable ["CSWR_suprtTranspAirData", _globalData, true];
+	// Return:
+	true;
+};
+
+
+THY_fnc_CSWR_debug_supportTransp = {
+	// This function just check the caller group (player) situation after they request a transport support.
+	// Returns nothing.
+
+	params ["_tag", "_grpVeh", "_veh", "_grpCaller", "_t", ["_whatToDo", 0], ["_wasDebugHeliOn", false]];
+	//private [""];
+
+	// Escape > If one of these debugs are off, abort:
+	if ( !CSWR_isOnDebug || !CSWR_isOnDebugSupport ) exitWith { true };
+	// Escape > If is not trying to turn off this debug, AND (veh is destroy, or driver is dead, or caller is dead), abort:
+	if ( _whatToDo isNotEqualTo 2 && { !alive _veh || !alive driver _veh || incapacitatedState (driver _veh) isEqualTo "UNCONSCIOUS" || !alive leader _grpCaller } ) exitWith { true };
+	// Check case:
+	switch _whatToDo do {
+		// Do nothing, just read debug message:
+		case 0: {};
+		// Just turn On this debug, turning Off the Debug Helicopter in case it's On:
+		case 1: { if CSWR_isOnDebugHeli then { missionNamespace setVariable ["CSWR_isOnDebugHeli", false, true] } };
+		// Just turn Off this debug, turning On the Debug Helicopter if On before:
+		case 2: { if _wasDebugHeliOn then { missionNamespace setVariable ["CSWR_isOnDebugHeli", true, true] } };
+	};
+	// Escape > after case selected:
+	if ( _whatToDo in [1, 2] ) exitWith { true };
+	// Debug message:
+	["%1 SUPPORT RESOURCE > %2 %3 %4 > Members of %5 in vehicle: %6 | Entire group? = %7 | Timeout? = %8",
+	CSWR_txtDebugHeader,
+	_tag,
+	_grpVeh,
+	(_veh call BIS_fnc_objectType) # 1,
+	_grpCaller,
+	{ alive _x && _x in _veh } count (units _grpCaller),
+	({ alive _x } count (units _grpCaller)) isEqualTo ({ _x in _veh } count (units _grpCaller)),
+	if (_t isNotEqualTo 0) then {time > _t} else {"Doesn't exist now!"}] call BIS_fnc_error;
+	// Return:
+	true;
+};
+
+
 THY_fnc_CSWR_debug = {
 	// This function shows some numbers to the mission editor when debugging.
 	// Returns nothing.
@@ -7102,10 +9006,6 @@ THY_fnc_CSWR_debug = {
 	//params [];
 	private ["_playableBLU", "_playableOPF", "_playableIND", "_playableCIV", "_aliveAll", "_aliveBLU", "_aliveOPF", "_aliveIND", "_aliveCIV"];
 
-	// Initial values:
-		// reserved space.
-	// Errors handling:
-		// reserved space.
 	// Declarations:
 	_playableBLU = { alive _x && side _x isEqualTo BLUFOR } count playableUnits;
 	_playableOPF = { alive _x && side _x isEqualTo OPFOR } count playableUnits;
@@ -7129,7 +9029,7 @@ THY_fnc_CSWR_debug = {
 		"\nIND AI units in-game: %5" +
 		"\nCIV AI units in-game: %6" +
 		"\n\n",
-		CSWR_spwnDelayQueueAmount,
+		CSWR_spwnDelayQueue,
 		_aliveAll,
 		_aliveBLU,
 		_aliveOPF,

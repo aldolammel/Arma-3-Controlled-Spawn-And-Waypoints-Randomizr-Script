@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.0
+# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.2
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows you to spawn AI groups and vehicles how and wherever you want, making them automatically move through the easily defined map regions without the need for scripting knowledge. CSWR almost doesn't change original AI behaviors, saving server performance and Arma 3 integrity.
@@ -103,11 +103,29 @@ __
 
 ## IDEA AND FIX?
 
-Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-release-controlled-spawn-and-waypoints-randomizr/
+Discussion and known issues: https://forums.bohemia.net/forums/topic/237504-release-cswr-automatizing-the-war/
 
 __
 
 ## CHANGELOG
+
+**Jan, 18th 2025 | v7.2**
+**IMPORTANT 1:** the script folder inside the mission as renamed from "CSWRandomizr" to "CSWR";
+**IMPORTANT 2:** the 1_Management, 2_Population and 3_Loadout files received a prefix number in their names to help editors to get the best sequence of file edition;
+**IMPORTANT 3:** the description.ext code was updated
+- Added > Helicopters > Through Population file, with helicopters use destination-type "_move_EXTRACTION" to schedule a extration that always bring you to the base (helicopter spawn-point);
+- Added > Helicopters > Through Population file, with helicopters use destination-type "_move_TRANSPORT" to request an air transport to take your group to another area of your choice;
+- Added > Helicopters > New helicopter class supported: Medium class with their own altitude (medium altitude editable too, perfect for transport/extraction helicopters);
+- Added > Spawn delay > Just like 'by Trigger', 'by Object Target' and 'by Timer', now you can spawn something using 'Boolean flag', perfect for external scripts or codes with triggers;
+- Added > Groups > One more formation options (three in total) for BluFor, OpFor, and Independent. Civilian still with two options;
+- Added > Loadout customization > Now you can select two or more uniforms, for example, for infantry and randomize them automatically, perfect to create militia and PMC factions;
+- Added > Vehicle cargo items > In Management file, the option 'CSWR_removeItemsCargo', if true, removes all cargo items from vehicles spawned by CSWR;
+- Fixed > Coding > Two global variables weren't declared correctly, causing log error messages for servers;
+- Fixed > Spawns > CSWR anti-spawn-blockers was deleting even the Player's AI members if they were over a vehicle spawn-point position. For those objects, only a warning message;
+- Fixed > Spawns > CSWR anti-spawn-blockers was deleting custom helipads (those placed by you);
+- Tweaked > Ethnicity > People from Civilian doesn't use camo face paint anymore, no matter what ethnicity is chosen;
+- Improved > A few performance improvements;
+- Documentation has been updated.
 
 **Dec, 29th 2024 | v7.0**
 - **IMPORTANT 1:** from now and so on, the sector-letter is needed (not an option anymore) in spawns and destinations. Example of spawn, from 'cswr_spawn_blu_1' to 'cswr_spawn_blu_A_1';

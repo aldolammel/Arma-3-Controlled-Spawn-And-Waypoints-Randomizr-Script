@@ -1,5 +1,5 @@
-// CSWR v7.0
-// File: your_mission\CSWRandomizr\fn_CSWR_loadout.sqf
+// CSWR: AUTOMATIZING THE WAR v7.2
+// File: your_mission\CSWR\fn_CSWR_3_loadout.sqf
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
@@ -42,19 +42,19 @@ switch _tag do {
         // BLU ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_BG_Guerrilla_6_1",                       // Infantry uniform
-                "H_HelmetSpecB_sand",                       // Infantry helmet
+                "",                       // Infantry uniform (use "RANDOM" for each unit to use one option from the list CSWR_bluUniformsToRandom)
+                "",                       // Infantry helmet
                 "",                       // Infantry goggles
-                "V_TacVest_oli",                       // Infantry vest (only units with vest will take the custom one)
-                "B_Kitbag_rgr",                       // Infantry backpack (only units with backpack will take the custom one)
+                "",                       // Infantry vest (only units with vest will take the custom one)
+                "",                       // Infantry backpack (only units with backpack will take the custom one)
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGrp;
 
         // BLU ROLE > MARINES:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_T_Soldier_AR_F",                      // Marine uniform
-                "H_Booniehat_khk_hs",               // Marine helmet
+                "",                      // Marine uniform (use "RANDOM" for each unit to use one option from the list CSWR_bluUniformsToRandom)
+                "REMOVED",               // Marine helmet
                 "G_B_Diving",            // Marine goggles
                 "",                      // Marine vest
                 "",                      // Marine backpack
@@ -64,10 +64,10 @@ switch _tag do {
         // BLU ROLE > PARATROOPS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_T_Soldier_F",                         // Paratroop uniform
-                "H_HelmetHBK_F",                         // Paratroop helmet
+                "",                         // Paratroop uniform (use "RANDOM" for each unit to use one option from the list CSWR_bluUniformsToRandom)
+                "",                         // Paratroop helmet
                 "G_Lowprofile",             // Paratroop goggles
-                "V_HarnessO_brn",                         // Paratroop vest (cannot be "REMOVED")
+                "",                         // Paratroop vest (cannot be "REMOVED")
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_paratroops;
 
@@ -83,7 +83,7 @@ switch _tag do {
         // BLU ROLE > INF. SNIPER GROUP:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_T_FullGhillie_tna_F",                      // Sniper uniform
+                "",                      // Sniper uniform (use "RANDOM" for each unit to use one option from the list CSWR_bluUniformsToRandom)
                 "",                      // Sniper helmet
                 "",                      // Sniper goggles
                 "",                      // Sniper vest (cannot be "REMOVED")
@@ -96,7 +96,7 @@ switch _tag do {
                 "",                      // Sniper rifle bipod
                 "Rangefinder",           // Sniper binoculars (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGrp;
 
         // BLU ALL UNITS:
         // To add or link stuff:
@@ -138,21 +138,21 @@ switch _tag do {
         // OPF ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_O_R_Gorka_01_F",                       // Infantry uniform
-                "H_PASGT_basic_olive_F",                       // Infantry helmet
-                "G_Bandanna_khk",                       // Infantry goggles
-                "V_TacChestrig_oli_F",                       // Infantry vest (only units with vest will take the custom one)
-                "B_Carryall_green_F",                       // Infantry backpack (only units with backpack will take the custom one)
+                "",                       // Infantry uniform (use "RANDOM" for each unit to use one option from the list CSWR_opfUniformsToRandom)
+                "",                       // Infantry helmet
+                "",                       // Infantry goggles
+                "",                       // Infantry vest (only units with vest will take the custom one)
+                "",                       // Infantry backpack (only units with backpack will take the custom one)
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGrp;
 
         // OPF ROLE > MARINES:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_O_R_Gorka_01_camo_F",                      // Marine uniform
-                "H_Watchcap_camo",               // Marine helmet
+                "",                      // Marine uniform (use "RANDOM" for each unit to use one option from the list CSWR_opfUniformsToRandom)
+                "REMOVED",               // Marine helmet
                 "G_O_Diving",            // Marine goggles
-                "V_CarrierRigKBT_01_light_Olive_F",                      // Marine vest
+                "",                      // Marine vest
                 "",                      // Marine backpack
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
@@ -160,7 +160,7 @@ switch _tag do {
         // OPF ROLE > PARATROOPS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "",                         // Paratroop uniform
+                "",                         // Paratroop uniform (use "RANDOM" for each unit to use one option from the list CSWR_opfUniformsToRandom)
                 "",                         // Paratroop helmet
                 "G_Lowprofile",             // Paratroop goggles
                 "",                         // Paratroop vest (cannot be "REMOVED")
@@ -179,7 +179,7 @@ switch _tag do {
         // OPF ROLE > INF. SNIPER GROUP:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_O_FullGhillie_sard",                      // Sniper uniform
+                "",                      // Sniper uniform (use "RANDOM" for each unit to use one option from the list CSWR_opfUniformsToRandom)
                 "",                      // Sniper helmet
                 "",                      // Sniper goggles
                 "",                      // Sniper vest (cannot be "REMOVED")
@@ -192,7 +192,7 @@ switch _tag do {
                 "",                      // Sniper rifle bipod
                 "Laserdesignator",           // Sniper binoculars (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGrp;
 
         // OPF ALL UNITS:
         // To add or link stuff:
@@ -229,29 +229,29 @@ switch _tag do {
         // IND ROLE > INFANTRY:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "U_B_GEN_Commander_F",                       // Infantry uniform
-                "H_Beret_02",                       // Infantry helmet
+                "",                       // Infantry uniform (use "RANDOM" for each unit to use one option from the list CSWR_indUniformsToRandom)
+                "",                       // Infantry helmet
                 "",                       // Infantry goggles
-                "V_TacChestrig_grn_F",                       // Infantry vest (only units with vest will take the custom one)
-                "B_ViperHarness_blk_F",                       // Infantry backpack (only units with backpack will take the custom one)
+                "",                       // Infantry vest (only units with vest will take the custom one)
+                "",                       // Infantry backpack (only units with backpack will take the custom one)
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGrp;
 
         // IND ROLE > MARINES:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_B_GEN_Soldier_F",                      // Marine uniform
+                "",                      // Marine uniform (use "RANDOM" for each unit to use one option from the list CSWR_indUniformsToRandom)
                 "REMOVED",               // Marine helmet
                 "G_I_Diving",            // Marine goggles
                 "",                      // Marine vest
-                "B_ViperLightHarness_blk_F",                      // Marine backpack
+                "",                      // Marine backpack
 
             _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_marines;
         
         // IND ROLE > PARATROOPS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "",                         // Paratroop uniform
+                "",                         // Paratroop uniform (use "RANDOM" for each unit to use one option from the list CSWR_indUniformsToRandom)
                 "",                         // Paratroop helmet
                 "G_Lowprofile",             // Paratroop goggles
                 "",                         // Paratroop vest (cannot be "REMOVED")
@@ -270,7 +270,7 @@ switch _tag do {
         // IND ROLE > INF. SNIPER GROUP:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "U_I_GhillieSuit",                      // Sniper uniform
+                "",                      // Sniper uniform (use "RANDOM" for each unit to use one option from the list CSWR_indUniformsToRandom)
                 "",                      // Sniper helmet
                 "",                      // Sniper goggles
                 "",                      // Sniper vest (cannot be "REMOVED")
@@ -283,7 +283,7 @@ switch _tag do {
                 "",                      // Sniper rifle bipod
                 "Rangefinder",           // Sniper binoculars (cannot be "REMOVED")
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_sniperGrp;
 
         // IND ALL UNITS:
         // To add or link stuff:
@@ -309,18 +309,18 @@ switch _tag do {
         // CIV ROLE > CITIZENS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED" in uppercase:
             [
-                "RANDOM",                  // Citizen uniform (Only for CIV, use "RANDOM" if you wanna use specific clothes listed in CSWR_civOutfits management)
+                "RANDOM",                  // Citizen uniform (use "RANDOM" for each unit to use one option from the list CSWR_civUniformsToRandom)
                 "",                        // Citizen hat
                 "",                        // Citizen goggles
                 "",                        // Citizen vest (if used, it'll add to all CIV)
                 "",                        // Citizen backpack (if used, it'll add to all CIV)
 
-            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGroup;
+            _unit, _grpType, _grpSpec, _tag] call THY_fnc_CSWR_loadout_infantry_basicGrp;
 
         // CIV ROLE > SWIMMERS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "REMOVED",               // Swimmers uniform
+                "REMOVED",               // Swimmers uniform (use "RANDOM" for each unit to use one option from the list CSWR_civUniformsToRandom)
                 "REMOVED",               // Swimmers helmet
                 "G_Diving",              // Swimmers goggles
                 "REMOVED",               // Swimmers vest
@@ -331,7 +331,7 @@ switch _tag do {
             // CIV ROLE > PARACHUTERS:
         // Loadout replacement / empty ("") results no change. To force removal, type "REMOVED":
             [
-                "",                         // Parachuter uniform
+                "",                         // Parachuter uniform (use "RANDOM" for each unit to use one option from the list CSWR_civUniformsToRandom)
                 "REMOVED",                  // Parachuter helmet
                 "G_Shades_Blue",            // Parachuter goggles
                 "V_RebreatherB",            // Parachuter vest (cannot be "REMOVED")

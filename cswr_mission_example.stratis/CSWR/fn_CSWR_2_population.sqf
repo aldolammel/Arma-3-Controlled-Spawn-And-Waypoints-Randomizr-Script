@@ -1,24 +1,23 @@
-// CSWR v7.0
-// File: your_mission\CSWRandomizr\fn_CSWR_population.sqf
+// CSWR: AUTOMATIZING THE WAR v7.2
+// File: your_mission\CSWR\fn_CSWR_2_population.sqf
 // Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
 // by thy (@aldolammel)
 
 if ( !isServer || !CSWR_isOn ) exitWith {};
 
 [] spawn {
-	
     // CSWR CORE > DONT TOUCH > Wait if needed:
-    private _time = time + CSWR_wait;
-    waitUntil { sleep 0.2; time > _time };
+    private _t = time + CSWR_wait;
+    waitUntil { sleep 0.2; time > _t };
     // CSWR CORE > DONT TOUCH > Object declarations:
-    private ["_form_BLU_1", "_form_OPF_1", "_form_IND_1", "_form_CIV_1", "_form_BLU_2", "_form_OPF_2", "_form_IND_2", "_form_CIV_2", "_be_SAFE", "_be_AWARE", "_be_COMBAT", "_be_STEALTH", "_be_CHAOS", "_move_ANY", "_move_PUBLIC", "_move_RESTRICTED", "_move_WATCH", "_move_OCCUPY", "_move_HOLD"]; _form_BLU_1=""; _form_OPF_1=""; _form_IND_1=""; _form_CIV_1=""; _form_BLU_2=""; _form_OPF_2=""; _form_IND_2=""; _form_CIV_2=""; _be_SAFE="BE_SAFE"; _be_AWARE="BE_AWARE"; _be_COMBAT="BE_COMBAT"; _be_STEALTH="BE_STEALTH"; _be_CHAOS="BE_CHAOS"; _move_ANY="MOVE_ANY"; _move_PUBLIC="MOVE_PUBLIC"; _move_RESTRICTED="MOVE_RESTRICTED"; _move_WATCH="MOVE_WATCH"; _move_OCCUPY="MOVE_OCCUPY"; _move_HOLD="MOVE_HOLD";
-	
+    private _form_BLU_1=""; private _form_OPF_1=""; private _form_IND_1=""; private _form_CIV_1=""; private _form_BLU_2=""; private _form_OPF_2=""; private _form_IND_2=""; private _form_CIV_2=""; private _form_BLU_3=""; private _form_OPF_3=""; private _form_IND_3=""; private _be_SAFE="BE_SAFE"; private _be_AWARE="BE_AWARE"; private _be_COMBAT="BE_COMBAT"; private _be_STEALTH="BE_STEALTH"; private _be_CHAOS="BE_CHAOS"; private _move_ANY="MOVE_ANY"; private _move_PUBLIC="MOVE_PUBLIC"; private _move_RESTRICTED="MOVE_RESTRICTED"; private _move_WATCH="MOVE_WATCH"; private _move_OCCUPY="MOVE_OCCUPY"; private _move_HOLD="MOVE_HOLD"; private _move_EXTRACTION="MOVE_EXTRACTION"; private _move_TRANSPORT="MOVE_TRANSPORT";
+
 
     // ..............................................................................................................................
 
 
     if ( CSWR_isOnBLU && CSWR_spwnsAllBLU isNotEqualTo [] ) then {
-		
+
         // DEFINING SIDE: BLUFOR
         // Define the number of soldiers (and their weapons) and vehicles of BluFor side.
 
@@ -33,6 +32,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             CSWR_vehicle_BLU_nautic_medium   = "B_Boat_Armed_01_minigun_F";
             CSWR_vehicle_BLU_nautic_heavy    = "";
             CSWR_vehicle_BLU_heli_light      = "B_Heli_Light_01_dynamicLoadout_F";  // low altitudes.
+            CSWR_vehicle_BLU_heli_medium     = "B_Heli_Transport_01_F";  // medium altitudes.
             CSWR_vehicle_BLU_heli_heavy      = "B_Heli_Attack_01_dynamicLoadout_F";  // high altitudes.
 
             // People groups
@@ -48,15 +48,16 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             // Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND".
             _form_BLU_1 = "COLUMN";
             _form_BLU_2 = "FILE";
+            _form_BLU_3 = "DIAMOND";
 
             // CSWR CORE > DONT TOUCH > Public variables:
-            publicVariable "CSWR_vehicle_BLU_ground_light"; publicVariable "CSWR_vehicle_BLU_ground_medium"; publicVariable "CSWR_vehicle_BLU_ground_heavy"; publicVariable "CSWR_vehicle_BLU_ground_custom_1"; publicVariable "CSWR_vehicle_BLU_ground_custom_2"; publicVariable "CSWR_vehicle_BLU_ground_custom_3"; publicVariable "CSWR_vehicle_BLU_nautic_light"; publicVariable "CSWR_vehicle_BLU_nautic_medium"; publicVariable "CSWR_vehicle_BLU_nautic_heavy"; publicVariable "CSWR_vehicle_BLU_heli_light"; publicVariable "CSWR_vehicle_BLU_heli_heavy"; publicVariable "CSWR_people_BLU_light"; publicVariable "CSWR_people_BLU_medium"; publicVariable "CSWR_people_BLU_heavy"; publicVariable "CSWR_people_BLU_custom_1"; publicVariable "CSWR_people_BLU_custom_2"; publicVariable "CSWR_people_BLU_custom_3"; publicVariable "CSWR_people_BLU_sniper";
+            publicVariable "CSWR_vehicle_BLU_ground_light"; publicVariable "CSWR_vehicle_BLU_ground_medium"; publicVariable "CSWR_vehicle_BLU_ground_heavy"; publicVariable "CSWR_vehicle_BLU_ground_custom_1"; publicVariable "CSWR_vehicle_BLU_ground_custom_2"; publicVariable "CSWR_vehicle_BLU_ground_custom_3"; publicVariable "CSWR_vehicle_BLU_nautic_light"; publicVariable "CSWR_vehicle_BLU_nautic_medium"; publicVariable "CSWR_vehicle_BLU_nautic_heavy"; publicVariable "CSWR_vehicle_BLU_heli_light"; publicVariable "CSWR_vehicle_BLU_heli_medium"; publicVariable "CSWR_vehicle_BLU_heli_heavy"; publicVariable "CSWR_people_BLU_light"; publicVariable "CSWR_people_BLU_medium"; publicVariable "CSWR_people_BLU_heavy"; publicVariable "CSWR_people_BLU_custom_1"; publicVariable "CSWR_people_BLU_custom_2"; publicVariable "CSWR_people_BLU_custom_3"; publicVariable "CSWR_people_BLU_sniper";
 			
         // SPAWNING: BLUFOR
         // Define each group and their features and destination.
 		
             // Vehicles
-            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleBLU, CSWR_spawnsForHelicopterBLU, CSWR_spawnsParadropBLU]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD]; [Spawn delay: timer, trigger activation, target status] ];
+            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleBLU, CSWR_spawnsForHelicopterBLU, CSWR_spawnsParadropBLU]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD, _move_EXTRACTION, _move_TRANSPORT]; [Spawn delay: timer, trigger activation, target status] ];
 
             // nautical vehicles
             [BLUFOR, [CSWR_spawnsForVehicleBLU, "N"], CSWR_vehicle_BLU_nautic_medium, _be_SAFE, [_move_ANY, ""], []] call THY_fnc_CSWR_add_vehicle;
@@ -131,6 +132,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             CSWR_vehicle_OPF_nautic_medium   = "O_Boat_Armed_01_hmg_F";
             CSWR_vehicle_OPF_nautic_heavy    = "";
             CSWR_vehicle_OPF_heli_light      = "O_Heli_Light_02_dynamicLoadout_F";  // low altitudes.
+            CSWR_vehicle_OPF_heli_medium     = "O_Heli_Transport_04_covered_F";  // medium altitudes.
             CSWR_vehicle_OPF_heli_heavy      = "O_Heli_Attack_02_dynamicLoadout_F";  // high altitudes.
 			
             // People groups
@@ -146,15 +148,16 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             // Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND".
             _form_OPF_1 = "WEDGE";
             _form_OPF_2 = "FILE";
+            _form_OPF_3 = "DIAMOND";
 
             // CSWR CORE > DONT TOUCH > Public variables:
-            publicVariable "CSWR_vehicle_OPF_ground_light"; publicVariable "CSWR_vehicle_OPF_ground_medium"; publicVariable "CSWR_vehicle_OPF_ground_heavy"; publicVariable "CSWR_vehicle_OPF_ground_custom_1"; publicVariable "CSWR_vehicle_OPF_ground_custom_2"; publicVariable "CSWR_vehicle_OPF_ground_custom_3"; publicVariable "CSWR_vehicle_OPF_nautic_light"; publicVariable "CSWR_vehicle_OPF_nautic_medium"; publicVariable "CSWR_vehicle_OPF_nautic_heavy"; publicVariable "CSWR_vehicle_OPF_heli_light"; publicVariable "CSWR_vehicle_OPF_heli_heavy"; publicVariable "CSWR_people_OPF_light"; publicVariable "CSWR_people_OPF_medium"; publicVariable "CSWR_people_OPF_heavy"; publicVariable "CSWR_people_OPF_custom_1"; publicVariable "CSWR_people_OPF_custom_2"; publicVariable "CSWR_people_OPF_custom_3"; publicVariable "CSWR_people_OPF_sniper";
+            publicVariable "CSWR_vehicle_OPF_ground_light"; publicVariable "CSWR_vehicle_OPF_ground_medium"; publicVariable "CSWR_vehicle_OPF_ground_heavy"; publicVariable "CSWR_vehicle_OPF_ground_custom_1"; publicVariable "CSWR_vehicle_OPF_ground_custom_2"; publicVariable "CSWR_vehicle_OPF_ground_custom_3"; publicVariable "CSWR_vehicle_OPF_nautic_light"; publicVariable "CSWR_vehicle_OPF_nautic_medium"; publicVariable "CSWR_vehicle_OPF_nautic_heavy"; publicVariable "CSWR_vehicle_OPF_heli_light"; publicVariable "CSWR_vehicle_OPF_heli_medium"; publicVariable "CSWR_vehicle_OPF_heli_heavy"; publicVariable "CSWR_people_OPF_light"; publicVariable "CSWR_people_OPF_medium"; publicVariable "CSWR_people_OPF_heavy"; publicVariable "CSWR_people_OPF_custom_1"; publicVariable "CSWR_people_OPF_custom_2"; publicVariable "CSWR_people_OPF_custom_3"; publicVariable "CSWR_people_OPF_sniper";
 
         // SPAWNING: OPFOR
         // Define each group and their features and destination.
 
             // Vehicles
-            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleOPF, CSWR_spawnsForHelicopterOPF, CSWR_spawnsParadropOPF]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD]; [Spawn delay: timer, trigger activation, target status] ];
+            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleOPF, CSWR_spawnsForHelicopterOPF, CSWR_spawnsParadropOPF]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD, _move_EXTRACTION, _move_TRANSPORT]; [Spawn delay: timer, trigger activation, target status] ];
 
             // Light ground vehicles
             [OPFOR, [CSWR_spawnsForVehicleOPF, "C"], CSWR_vehicle_OPF_ground_light, _be_AWARE, [_move_ANY], []] call THY_fnc_CSWR_add_vehicle;
@@ -229,6 +232,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             CSWR_vehicle_IND_nautic_medium   = "I_Boat_Armed_01_minigun_F";
             CSWR_vehicle_IND_nautic_heavy    = "";
             CSWR_vehicle_IND_heli_light      = "I_Heli_light_03_dynamicLoadout_F";  // low altitudes.
+            CSWR_vehicle_IND_heli_medium     = "I_Heli_Transport_02_F";  // medium altitudes.
             CSWR_vehicle_IND_heli_heavy      = "I_Heli_light_03_dynamicLoadout_F";  // high altitudes.
 			
             // People groups
@@ -244,15 +248,16 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             // Options: "COLUMN", "STAG COLUMN", "WEDGE", "ECH LEFT", "ECH RIGHT", "VEE", "LINE", "FILE", "DIAMOND".
             _form_IND_1 = "WEDGE";
             _form_IND_2 = "FILE";
+            _form_IND_3 = "DIAMOND";
 
             // CSWR CORE > DONT TOUCH > Public variables:
-            publicVariable "CSWR_vehicle_IND_ground_light"; publicVariable "CSWR_vehicle_IND_ground_medium"; publicVariable "CSWR_vehicle_IND_ground_heavy"; publicVariable "CSWR_vehicle_IND_ground_custom_1"; publicVariable "CSWR_vehicle_IND_ground_custom_2"; publicVariable "CSWR_vehicle_IND_ground_custom_3"; publicVariable "CSWR_vehicle_IND_nautic_light"; publicVariable "CSWR_vehicle_IND_nautic_medium"; publicVariable "CSWR_vehicle_IND_nautic_heavy"; publicVariable "CSWR_vehicle_IND_heli_light"; publicVariable "CSWR_vehicle_IND_heli_heavy"; publicVariable "CSWR_people_IND_light"; publicVariable "CSWR_people_IND_medium"; publicVariable "CSWR_people_IND_heavy"; publicVariable "CSWR_people_IND_custom_1"; publicVariable "CSWR_people_IND_custom_2"; publicVariable "CSWR_people_IND_custom_3"; publicVariable "CSWR_people_IND_sniper";
+            publicVariable "CSWR_vehicle_IND_ground_light"; publicVariable "CSWR_vehicle_IND_ground_medium"; publicVariable "CSWR_vehicle_IND_ground_heavy"; publicVariable "CSWR_vehicle_IND_ground_custom_1"; publicVariable "CSWR_vehicle_IND_ground_custom_2"; publicVariable "CSWR_vehicle_IND_ground_custom_3"; publicVariable "CSWR_vehicle_IND_nautic_light"; publicVariable "CSWR_vehicle_IND_nautic_medium"; publicVariable "CSWR_vehicle_IND_nautic_heavy"; publicVariable "CSWR_vehicle_IND_heli_light"; publicVariable "CSWR_vehicle_IND_heli_medium"; publicVariable "CSWR_vehicle_IND_heli_heavy"; publicVariable "CSWR_people_IND_light"; publicVariable "CSWR_people_IND_medium"; publicVariable "CSWR_people_IND_heavy"; publicVariable "CSWR_people_IND_custom_1"; publicVariable "CSWR_people_IND_custom_2"; publicVariable "CSWR_people_IND_custom_3"; publicVariable "CSWR_people_IND_sniper";
 
         // SPAWNING: INDEPENDENT
         // Define each group and their features and destination.
 
             // Vehicles
-            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleIND, CSWR_spawnsForHelicopterIND, CSWR_spawnsParadropIND]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD]; [Spawn delay: timer, trigger activation, target status] ];
+            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleIND, CSWR_spawnsForHelicopterIND, CSWR_spawnsParadropIND]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_COMBAT, _be_STEALTH, _be_CHAOS; [Destination: _move_ANY, _move_PUBLIC, _move_RESTRICTED, _move_HOLD, _move_EXTRACTION, _move_TRANSPORT]; [Spawn delay: timer, trigger activation, target status] ];
 			
             // Nautical
             [INDEPENDENT, [CSWR_spawnsForVehicleIND, "A"], CSWR_vehicle_IND_nautic_medium, _be_SAFE, [_move_ANY, ""], []] call THY_fnc_CSWR_add_vehicle;
@@ -298,7 +303,7 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             [INDEPENDENT, [CSWR_spawnsForPeopleIND, "C"], CSWR_people_IND_heavy, _form_IND_1, _be_SAFE, [_move_ANY], []] call THY_fnc_CSWR_add_people;
             [INDEPENDENT, [CSWR_spawnsForPeopleIND, "C"], CSWR_people_IND_heavy, _form_IND_1, _be_AWARE, [_move_ANY], []] call THY_fnc_CSWR_add_people;
             [INDEPENDENT, [CSWR_spawnsForPeopleIND, "C"], CSWR_people_IND_heavy, _form_IND_1, _be_AWARE, [_move_ANY], []] call THY_fnc_CSWR_add_people;
-			
+
     }; // ind ends.
 
 
@@ -321,8 +326,9 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             CSWR_vehicle_CIV_nautic_medium   = "C_Boat_Civil_01_F";
             CSWR_vehicle_CIV_nautic_heavy    = "";
             CSWR_vehicle_CIV_heli_light      = "C_Heli_Light_01_civil_F";  // low altitudes.
-            CSWR_vehicle_CIV_heli_heavy      = "";  // high altitudes.
-			
+            CSWR_vehicle_CIV_heli_medium     = "";  // medium altitudes.
+            CSWR_vehicle_CIV_heli_heavy      = "C_IDAP_Heli_Transport_02_F";  // high altitudes.
+
             // People groups
             CSWR_people_CIV_light    = ["C_man_polo_1_F"];
             CSWR_people_CIV_medium   = ["C_man_polo_1_F", "C_man_polo_2_F"];
@@ -337,14 +343,14 @@ if ( !isServer || !CSWR_isOn ) exitWith {};
             _form_CIV_2 = "FILE";
 
             // CSWR CORE > DONT TOUCH > Public variables:
-            publicVariable "CSWR_vehicle_CIV_ground_light"; publicVariable "CSWR_vehicle_CIV_ground_medium"; publicVariable "CSWR_vehicle_CIV_ground_heavy"; publicVariable "CSWR_vehicle_CIV_ground_custom_1"; publicVariable "CSWR_vehicle_CIV_ground_custom_2"; publicVariable "CSWR_vehicle_CIV_ground_custom_3"; publicVariable "CSWR_vehicle_CIV_nautic_light"; publicVariable "CSWR_vehicle_CIV_nautic_medium"; publicVariable "CSWR_vehicle_CIV_nautic_heavy"; publicVariable "CSWR_vehicle_CIV_heli_light"; publicVariable "CSWR_vehicle_CIV_heli_heavy"; publicVariable "CSWR_people_CIV_light"; publicVariable "CSWR_people_CIV_medium"; publicVariable "CSWR_people_CIV_heavy"; publicVariable "CSWR_people_CIV_custom_1"; publicVariable "CSWR_people_CIV_custom_2"; publicVariable "CSWR_people_CIV_custom_3";
+            publicVariable "CSWR_vehicle_CIV_ground_light"; publicVariable "CSWR_vehicle_CIV_ground_medium"; publicVariable "CSWR_vehicle_CIV_ground_heavy"; publicVariable "CSWR_vehicle_CIV_ground_custom_1"; publicVariable "CSWR_vehicle_CIV_ground_custom_2"; publicVariable "CSWR_vehicle_CIV_ground_custom_3"; publicVariable "CSWR_vehicle_CIV_nautic_light"; publicVariable "CSWR_vehicle_CIV_nautic_medium"; publicVariable "CSWR_vehicle_CIV_nautic_heavy"; publicVariable "CSWR_vehicle_CIV_heli_light"; publicVariable "CSWR_vehicle_CIV_heli_medium"; publicVariable "CSWR_vehicle_CIV_heli_heavy"; publicVariable "CSWR_people_CIV_light"; publicVariable "CSWR_people_CIV_medium"; publicVariable "CSWR_people_CIV_heavy"; publicVariable "CSWR_people_CIV_custom_1"; publicVariable "CSWR_people_CIV_custom_2"; publicVariable "CSWR_people_CIV_custom_3";
 		
         // SPAWNING: CIVILIAN
         // Define each group and their features and destination.
 
             // Vehicles
-            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleCIV, CSWR_spawnsForHelicopterCIV]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_CHAOS; [Destination: _move_PUBLIC, _move_HOLD]; [Spawn delay: timer, trigger activation, target status] ];
-			
+            // Guideline for you: [ Side; [Spawns: CSWR_spawnsForVehicleCIV, CSWR_spawnsForHelicopterCIV]; Vehicle type; Initial crew behavior: _be_SAFE, _be_AWARE, _be_CHAOS; [Destination: _move_PUBLIC, _move_HOLD, _move_EXTRACTION, _move_TRANSPORT]; [Spawn delay: timer, trigger activation, target status] ];
+
             // Nautical
             [CIVILIAN, [CSWR_spawnsForVehicleCIV, "B"], CSWR_vehicle_CIV_nautic_light, _be_CHAOS, [_move_PUBLIC, "A"], []] call THY_fnc_CSWR_add_vehicle;
             [CIVILIAN, [CSWR_spawnsForVehicleCIV, "B"], CSWR_vehicle_CIV_nautic_medium, _be_SAFE, [_move_PUBLIC, "A"], []] call THY_fnc_CSWR_add_vehicle;

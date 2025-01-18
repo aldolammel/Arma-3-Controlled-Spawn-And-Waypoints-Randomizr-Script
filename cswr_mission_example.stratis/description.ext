@@ -1,46 +1,69 @@
-// MISSION CONFIGS
+// About
+onLoadName      = "CSWR";
+author          = "thy @aldolammel";
+overviewPicture = "images\thumb.jpg";
+onLoadMission   = "CSWR helps you to create life and battles in a much faster and editable way."; 
+
+// Mission Info
 class Header
 {
-	gameType            = Sandbox;
-	minPlayers          = 1;
-	maxPlayers          = 1;
+	gameType   = "Sandbox";
+	minPlayers = 1;
+	maxPlayers = 1;
 };
 
-// About
-onLoadName          = "CSWR";
-author              = "thy @aldolammel";
-overviewPicture     = "images\thumb.jpg";
-onLoadMission       = "Controlled Spawn and Waypoints Randomizr (CSWR) helps you to create life and battles in a much faster and editable way."; 
-
 // Gameplay
-joinUnassigned      = 0;
-respawnButton       = 0;
-respawnDialog       = 0;
-debriefing          = 0;
-saving              = 0;
+joinUnassigned   = 0;
+respawnButton    = 0;
+respawnDialog    = 0;
+debriefing       = 0;
+saving           = 0;  // 0: disabled - 1: enabled. Default: 1
+enableTeamSwitch = 0;  // 0: disabled - 1: enabled. Default: 1
 
 // Debug
-enableDebugConsole  = 1;
-allowFunctionsLog   = 1;
+enableDebugConsole = 1;
+allowFunctionsLog  = 1;
 
 // Performance
-DisabledAI              = 1;
-minPlayerDistance       = 1000;
-corpseManagerMode       = 1;
-corpseLimit             = 5;
-corpseRemovalMinTime    = 300;
-corpseRemovalMaxTime    = 600;
-wreckManagerMode        = 1;
-wreckLimit              = 5;
-wreckRemovalMinTime     = 600;
-wreckRemovalMaxTime     = 1200;
+DisabledAI           = 1;
+minPlayerDistance    = 1000;
+corpseManagerMode    = 1;
+corpseLimit          = 5;
+corpseRemovalMinTime = 300;
+corpseRemovalMaxTime = 600;
+wreckManagerMode     = 1;
+wreckLimit           = 5;
+wreckRemovalMinTime  = 600;
+wreckRemovalMaxTime  = 1200;
 
 // CBA MOD
 cba_settings_hasSettingsFile = 0;
 
-class cfgFunctions 
-{
-	// CSWR: CONTROLLED SPAWN AND WAYPOINTS RANDOMIZR
+class cfgFunctions {
+	// CSWR: AUTOMATIZING THE WAR v7.2
 	// Documentation: https://github.com/aldolammel/Arma-3-Controlled-Spawn-And-Waypoints-Randomizr-Script/blob/main/_CSWR_Script_Documentation.pdf
-	#include "CSWRandomizr\THY_CSWR_functions.hpp"
+	#include "CSWR\THY_CSWR_functions.hpp"
+};
+
+class CfgCommunicationMenu {
+	// CSWR: AIR EXTRACTION
+	class suprtExtractAir {
+		text = "Air Extraction";
+		submenu = "";
+		expression = "_this call THY_fnc_CSWR_support_extract_by_air";
+		icon = "\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa";
+		cursor = "\a3\Ui_f\data\IGUI\Cfg\Cursors\iconCursorSupport_ca.paa";
+		enable = "1";
+		removeAfterExpressionCall = 1;
+	};
+	// CSWR: AIR TRANSPORT
+	class suprtTranspAir {
+		text = "Air Transport";
+		submenu = "";
+		expression = "_this call THY_fnc_CSWR_support_transp_by_air";
+		icon = "\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa";
+		cursor = "\a3\Ui_f\data\IGUI\Cfg\Cursors\iconCursorSupport_ca.paa";
+		enable = "1";
+		removeAfterExpressionCall = 1;
+	};
 };
