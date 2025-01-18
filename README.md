@@ -1,4 +1,4 @@
-# Arma 3 / CSWR: Controlled Spawn & Waypoints Randomizr v7.2
+# Arma 3 / CSWR: Automatizing the War v7.2
 >*Dependencies: none.*
 
 CSWR is an Arma 3 script that allows you to spawn AI groups and vehicles how and wherever you want, making them automatically move through the easily defined map regions without the need for scripting knowledge. CSWR almost doesn't change original AI behaviors, saving server performance and Arma 3 integrity.
