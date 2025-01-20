@@ -20,12 +20,12 @@ __
 ## QUICK START
 
 **Steps for Basic Editors:**
-1 - Download and open the documentation;
-2 - Install the script (10 seconds);
-3 - Turn "TRUE" which side(s) CSWR takes care;
-4 - Define how many groups and vehicles should be spawned;
-5 - On the map, drag and drop the markers for spawns and destinations;
-6 - Play.
+- 1 - Download and open the documentation;
+- 2 - Install the script (10 seconds);
+- 3 - Turn "TRUE" which side(s) CSWR takes care;
+- 4 - Define how many groups and vehicles should be spawned;
+- 5 - On the map, drag and drop the markers for spawns and destinations;
+- 6 - Play.
 
 **Extra steps for Advanced Editors:**
 - Which language and ethnicity does the side belong to;
